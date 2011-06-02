@@ -1,0 +1,12 @@
+{
+  "keyboard_shortcut": "", 
+  "name": "New class (prompt)", 
+  "value": [
+    "\t/**\n\t * class [[%ask1:Name:]]\n\t * superclass [[%ask2:Superclass:]]\n\t * [[%ask3:Purpose:]]\n\t */\n\t[[%ask1]] = Function()\n\t{\n\t\t[[%tabstop:// call superclass\n\t\t\t[[%ask2]].apply(this, arguments);]]\n\t\t\t\n\t\t// methods\n\t\t\tthis.[[%tabstop:method]] = function()!@#_currentPos!@#_anchor\n\t\t\t{\n\t\t\t\t[[%tabstop:]]\n\t\t\t}\n\t\t\t\n\t}\n\t// inherit from [[%ask2]]\n\t[[%ask1]].prototype = new [[%ask2]];\n\t\n\t// assign constructor\n\t[[%ask1]].prototype.constructor = [[%ask1]];"
+  ], 
+  "set_selection": "true", 
+  "version": "1.0.7", 
+  "type": "snippet", 
+  "indent_relative": "true", 
+  "icon": "chrome://famfamfamsilk/skin/icons/page_white_code_red.png"
+}

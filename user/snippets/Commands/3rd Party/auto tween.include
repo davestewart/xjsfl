@@ -1,0 +1,1779 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// David Johnston's auto-tweener and general JSFL library v2.2
+/// http://blog.pinkandaint.com/
+/// Sunday, April 04, 2010
+///
+/// Automatically tweens all selected elements so that they're between their current position
+/// and the position of the same object in the next frame.  Only works if the reflectivity of
+/// the symbol doesn't change between keyframes.  Groups will be tweened to a group with the
+/// same height and width when the transform is removed.  Thus, it'll only work if the transform
+/// hasn't been reset (by editing the group or ungrouping and regrouping).  Symbol instances
+/// will be set to have the same start frame as the destination instance (only if the source 
+/// instance is set to "single frame").
+///
+/// New to version 2: now you can auto-tween raw shapes!  In order to make it work you have
+/// to have a symbol whose library name is _shape_hint and have a copy of it in the same
+/// layer and frame as the shape.  The vertex on the shape that's closest to the shape hint
+/// symbol will be seen as the "first" vertex.  The tween will be done under the assumption
+/// that the hinted vertices of the two shapes are the vertices that correspond to each other.
+/// The rest of the vertices will be matched consecutively around the shapes.  This means that
+/// the tween will only work smoothly if both shapes have the same number of vertices.
+///
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// CONST
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// How much variance (in pixels) will be tolerated in matching shapes based on their dimensions
+var SHAPE_SIZE_TOLERANCE = 0.3;
+
+// The name of the shape hint symbol
+SHAPE_HINT_NAME = "_shape_hint";
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// coords_toString = function(coords)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+coords_toString = function(coords)
+{
+	return "" + coords.x + ", " + coords.y;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Class ProgBar
+//
+// A class for displaying a progress bar (0 to 100%)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+function ProgBar(x, y)
+{
+	this.center_x = x;
+	this.center_y = y;
+	this.scale = 1 / fl.getDocumentDOM().zoomFactor;
+	fl.drawingLayer.beginDraw(true);
+}
+
+ProgBar.prototype.end = function()
+{
+	fl.drawingLayer.beginFrame();  // Clear the drawing
+	fl.drawingLayer.endDraw();
+}
+
+ProgBar.prototype.setLocation = function(x, y)
+{
+	this.center_x = x;
+	this.center_y = y;
+	this.scale = 1 / fl.getDocumentDOM().zoomFactor;
+}
+
+ProgBar.prototype.drawRect = function(x1, y1, x2, y2)
+{
+	var n;
+	var start;
+	var end;
+	if(Math.abs(x1 - x2) > Math.abs(y1 - y2))
+	{
+		// X is bigger than y, so iterate over y
+		start = Math.min(y1, y2);
+		end = Math.max(y1, y2);
+		for(n = start; n < end; n += this.scale)
+		{
+			fl.drawingLayer.moveTo(x1, n);
+			fl.drawingLayer.lineTo(x2, n);
+		}
+	}
+	else
+	{
+		// Y is bigger than X, so iterate over X
+		start = Math.min(x1, x2);
+		end = Math.max(x1, x2);
+		for(n = start; n < end; n += this.scale)
+		{
+			fl.drawingLayer.moveTo(n, y1);
+			fl.drawingLayer.lineTo(n, y2);
+		}
+	}
+
+}
+
+
+ProgBar.prototype.setProgress = function(newProg)
+{
+	// Frist make sure the new progress percentage is within range: 0 <= prog <= 1
+	if(newProg > 1)
+		newProg = 1;
+	else if (newProg < 0)
+		newProg = 0;
+		
+	//fl.trace("progress: " + (newProg * 100.0) + "%");
+
+	var PROG_WIDTH = 200;
+	var PROG_HEIGHT = 10;
+
+	fl.drawingLayer.beginFrame();
+	fl.drawingLayer.setColor(0xffffff);  // white
+	fl.drawingLayer.moveTo(this.center_x - this.scale * (PROG_WIDTH + 1), this.center_y - this.scale * (PROG_HEIGHT + 1));
+	fl.drawingLayer.lineTo(this.center_x - this.scale * (PROG_WIDTH + 1), this.center_y + this.scale * (PROG_HEIGHT + 1));
+	fl.drawingLayer.lineTo(this.center_x + this.scale * (PROG_WIDTH + 1), this.center_y + this.scale * (PROG_HEIGHT + 1));
+	fl.drawingLayer.lineTo(this.center_x + this.scale * (PROG_WIDTH + 1), this.center_y - this.scale * (PROG_HEIGHT + 1));
+	fl.drawingLayer.lineTo(this.center_x - this.scale * (PROG_WIDTH + 1), this.center_y - this.scale * (PROG_HEIGHT + 1));
+	fl.drawingLayer.setColor(0x000000);  // black
+	fl.drawingLayer.moveTo(this.center_x - this.scale * (PROG_WIDTH + 2), this.center_y - this.scale * (PROG_HEIGHT + 2));
+	fl.drawingLayer.lineTo(this.center_x - this.scale * (PROG_WIDTH + 2), this.center_y + this.scale * (PROG_HEIGHT + 2));
+	fl.drawingLayer.lineTo(this.center_x + this.scale * (PROG_WIDTH + 2), this.center_y + this.scale * (PROG_HEIGHT + 2));
+	fl.drawingLayer.lineTo(this.center_x + this.scale * (PROG_WIDTH + 2), this.center_y - this.scale * (PROG_HEIGHT + 2));
+	fl.drawingLayer.lineTo(this.center_x - this.scale * (PROG_WIDTH + 2), this.center_y - this.scale * (PROG_HEIGHT + 2));
+	
+	fl.drawingLayer.setColor(0x0000ff);  // blue
+
+	var START_X = this.center_x - (this.scale * PROG_WIDTH);
+	this.drawRect(START_X                                        , this.center_y - this.scale * PROG_HEIGHT,
+	              START_X + this.scale * PROG_WIDTH * 2 * newProg, this.center_y + this.scale * PROG_HEIGHT);
+
+	fl.drawingLayer.endFrame();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Class profiler()
+//
+// A class for profiling the performance of code.  Create an instance and it'll start its timer.
+// Call profiler.mark() and it'll mark a "lap time" with a label.  Call toString() to create a 
+// nice print-out of all the marks so far
+// 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+function Profiler()
+{
+	this.times = new Array();
+	var date_obj = new Date();
+	
+	this.times[0] = date_obj.getTime();
+}
+
+Profiler.prototype.toString = function()
+{
+	retval = "Start: " + this.times[0] + "\n";
+	
+	var x;
+	for (x = 1; x < this.times.length; x += 2)
+	{
+		retval = retval.concat(this.times[x+1].toFixed(3) + ": " + this.times[x] + "\n");
+	}
+		
+	return retval;
+}
+
+Profiler.prototype.mark = function(id_string)
+{
+	var date_obj = new Date();
+	this.times.push(id_string);
+	this.times.push((date_obj.getTime() - this.times[0]) / 1000);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Class transform_components(source_matrix)
+//
+// Holds the extracted fransform elements (scale, skew, and translation).
+// The constructor extracts the transform elements from a matrix.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+transform_components = function(source_matrix_param)
+{
+	if(undefined == source_matrix_param)
+	{
+		this.scale_x = this.scale_y = 1;
+		this.skew_x = this.skew_y = 0;
+		this.tx = this.ty = 0;
+	}
+	else
+	{
+		var source_matrix = new Object();
+		
+		source_matrix.a  = source_matrix_param.a;
+		source_matrix.b  = source_matrix_param.b;
+		source_matrix.c  = source_matrix_param.c;
+		source_matrix.d  = source_matrix_param.d;
+		source_matrix.tx = source_matrix_param.tx;
+		source_matrix.ty = source_matrix_param.ty;
+
+		// Determine the scale of the matrix
+		this.scale_x = Math.sqrt(source_matrix.a * source_matrix.a + source_matrix.b * source_matrix.b);
+		this.scale_y = Math.sqrt(source_matrix.c * source_matrix.c + source_matrix.d * source_matrix.d);
+	
+		// Determine the rotation of the first item
+		if(this.scale_x != 0)
+		{
+			source_matrix.a /= this.scale_x;
+			source_matrix.c /= this.scale_x;
+		}
+		if(this.scale_y != 0)
+		{
+			source_matrix.b /= this.scale_y;
+			source_matrix.d /= this.scale_y;
+		}
+		
+		// Now source_matrix contains the rotation/skew matrix plus translation
+	
+		this.skew_x = Math.acos(source_matrix.d);
+		this.skew_y = Math.acos(source_matrix.a);
+		
+		if(source_matrix.b < 0)
+			this.skew_y = -this.skew_y;
+		if(source_matrix.c > 0)
+			this.skew_x = -this.skew_x;
+			
+		this.tx = source_matrix.tx;
+		this.ty = source_matrix.ty;
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+transform_components.prototype.toString = function()
+{
+	return   "skew:      " + (this.skew_x / Math.PI * 180) + ", " + (this.skew_y / Math.PI * 180) +
+	       "\nscale:     " + this.scale_x + ", " + this.scale_y +
+	       "\ntranslate: " + this.tx + ", " + this.ty;
+}
+
+transform_components.prototype.is_reflected = function()
+{
+	var retval = Math.abs(this.skew_x - this.skew_y) <= Math.PI / 2;
+	retval = retval || (Math.abs(this.skew_x - this.skew_y) >= 3 * Math.PI / 2);
+	
+	return retval;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// transform_components.prototype.tween = function(tweener, dist)
+//
+// Changes the transform to be a tween between itself and another transform_components object.
+// dist is the percentage movement between the two extremes (0..1)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+transform_components.prototype.tween = function(tweener, dist)
+{
+	this.scale_x += (tweener.scale_x - this.scale_x) * dist;
+	this.scale_y += (tweener.scale_y - this.scale_y) * dist;
+	
+	// Calculating skew is a little harder, since we have to account for crossing the threshold at 180 degrees
+	
+	var abs_x = Math.abs(this.skew_x - tweener.skew_x);
+	var crosswise_dist_x = (2 * Math.PI - abs_x);
+	if(abs_x < crosswise_dist_x)
+		this.skew_x += (tweener.skew_x - this.skew_x) * dist;
+	else
+	{
+		if(this.skew_x > 0)
+		{
+			this.skew_x += crosswise_dist_x * dist;
+			if(this.skew_x > Math.PI)
+				this.skew_x -= 2 * Math.PI;
+		}
+		else
+		{
+			this.skew_x -= crosswise_dist_x * dist;
+			if(this.skew_x < -Math.PI)
+				this.skew_x += 2 * Math.PI;
+		}
+	}
+	
+	var abs_y = Math.abs(this.skew_y - tweener.skew_y);
+	var crosswise_dist_y = (2 * Math.PI - abs_y);
+	if(abs_y < crosswise_dist_y)
+		this.skew_y += (tweener.skew_y - this.skew_y) * dist;
+	else
+	{
+		if(this.skew_y > 0)
+		{
+			this.skew_y += crosswise_dist_y * dist;
+			if(this.skew_y > Math.PI)
+				this.skew_y -= 2 * Math.PI;
+		}
+		else
+		{
+			this.skew_y -= crosswise_dist_y * dist;
+			if(this.skew_y < -Math.PI)
+				this.skew_y += 2 * Math.PI;
+		}
+	}
+
+	//fl.trace("start position: " + this.tx + ", " + this.ty);
+	//fl.trace("end position:   " + tweener.tx + ", " + tweener.ty);
+	//fl.trace("" + (dist * 100) + "% change: " + ((tweener.tx - this.tx) * dist) + ", " + ((tweener.ty - this.ty) * dist));
+
+	this.tx += (tweener.tx - this.tx) * dist;
+	this.ty += (tweener.ty - this.ty) * dist;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// transform_components.prototype.to_matrix = function()
+//
+// Returns a matrix with the same components as the transform_components object
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+transform_components.prototype.to_matrix = function()
+{
+	// Create the rotation/skew matrix
+	var return_matrix = {a:Math.cos(this.skew_y), b:Math.sin(this.skew_y), c:-Math.sin(this.skew_x), d:Math.cos(this.skew_x), tx:this.tx, ty:this.ty};
+	
+	return_matrix.a *= this.scale_x;
+	return_matrix.b *= this.scale_x;
+	return_matrix.c *= this.scale_y;
+	return_matrix.d *= this.scale_y;
+	
+	return return_matrix;
+}
+
+/////////////////////////////////////////////////////////////////////////
+// function object_reflected(obj)
+//
+// Returns true if obj's transform is reflected
+/////////////////////////////////////////////////////////////////////////
+
+object_reflected = function(obj)
+{
+	var reflected;
+	
+	reflected = Math.abs(obj.skewX - obj.skewY);
+	if(reflected > 180.0)
+		reflected = 360.0 - reflected;
+		
+	return (reflected > 90);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function apply_transform(matrix, point)
+//
+// Applies a transform matrix to a point and returns the transformed point
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+apply_transform = function(matrix, point)
+{
+	// The matrix is of the form
+	//
+	//  a  b 
+	//  c  d 
+	//  tx ty
+	//
+	// so that x' = ax + cy + tx 
+	// and     y' = bx + dy + ty
+	//
+	// See http://www.senocular.com/flash/tutorials/transformmatrix/ for details.
+	
+	var transformed_point = new Object;
+	transformed_point.x = matrix.a * point.x + matrix.c * point.y + matrix.tx;
+	transformed_point.y = matrix.b * point.x + matrix.d * point.y + matrix.ty;
+	return transformed_point;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function get_global_pivot()
+//
+// Returns the pivot point of the currently selected element in global coordinates
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+get_global_pivot = function()
+{
+	var el = doc.selection[0];
+	
+	// In order to get the global pivot point,
+	// apply the element's transform to its local pivot point coordinates
+
+	var transform_matrix = el.matrix;
+	var pivot = doc.getTransformationPoint();
+	
+	// If we're dealing with a shape then just find its middle
+	//if("shape" == el.elementType)
+	//  return pivot;
+
+	//fl.trace("******* selection size: " + doc.selection.length);
+	//fl.trace("******* local pivot for " + doc.selection[0].libraryItem.name + ": " + pivot.x + ", " + pivot.y);
+	
+	// Apply the element's transform to the pivot coordinates to make them relative to the stage
+	return apply_transform(transform_matrix, pivot);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function select_element(element, frame)
+//
+// Sets the current frame and selects the given element
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+select_element = function(element, frame)
+{
+	//prof.mark("about to select a(n) " + element.elementType);
+	// Changing timeline.currentFrame can be costly so let's do it only if we need to.
+	if(timeline.currentFrame != frame)
+	{
+		//prof.mark("about to switch frames");
+		timeline.currentFrame = frame;
+		//prof.mark("switched frames");
+	}
+	
+	doc.selectNone();
+	
+	//prof.mark("selected none");
+	
+	var new_selection = new Array();
+
+	new_selection[0] = element;
+	//fl.trace("selecting " + element.libraryItem.name + ": " + element.matrix.tx + ", " + element.matrix.ty);
+	doc.selection = new_selection;
+	
+	//prof.mark("selected object");
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function get_shape_elements(layer, frame_num)
+//
+// Selects the any raw shapes that exist in the given layer/frame
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+get_shape_elements = function(layer, frame_num)
+{
+	timeline.currentFrame = frame_num;
+	doc.selectNone();
+	var frame_shapes = new Array();
+	var frame_elements = layer.frames[frame_num].elements;
+	for(n = 0; n < frame_elements.length; n++)
+	{
+		// Search till we find a raw shape, then add it to the array
+		if(frame_elements[n].elementType == "shape" && !frame_elements[n].isGroup)
+		{
+			frame_shapes.push(frame_elements[n]);
+		}
+	}
+	return frame_shapes;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// SHAPE TWEEN FUNCTIONS //////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// A function to get an array which gives the order of the indeces of of the cubic curves used in the given contour
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+getCurveOrder = function(cont)
+{
+	he = cont.getHalfEdge();
+	
+	curveOrd = new Array;
+	
+	// Get the first curve index and make that one the first one in our list where we're keeping track of the order
+	firstCurve = segIndex = he.getEdge().cubicSegmentIndex;
+	//fl.trace("first curve I'm testing in getCurveOrder: " + segIndex);
+	
+	//fl.trace("cont.orientation: " + cont.orientation);
+	//fl.trace("cont.interior: " + cont.interior);
+	
+	n = 0;
+	do
+	{
+		// Add the next entry to the curve order list
+		curveOrd[n] = segIndex;
+		//fl.trace("curveOrd[" + n + "] = " + curveOrd[n]);
+		do
+		{
+			if(cont.orientation < 0)
+				he = he.getNext();
+			else he = he.getPrev();
+			segIndex = he.getEdge().cubicSegmentIndex;
+		}
+		while (segIndex == curveOrd[n]);
+		n++;
+	}
+	while (segIndex != firstCurve);
+	
+	//fl.trace("number of curves: " + curveOrd.length);
+	//fl.trace("curveOrd[0] = " + curveOrd[0]);
+	
+	return curveOrd;
+}
+
+getEdgeOrderQuad = function(edges)
+{
+	var prevEndPoint;
+	var nextStartPoint;
+	edgeOrd = new Array;
+	
+	// Get the first curve index and make that one the first one in our list where we're keeping track of the order
+	firstEdge = edgeIndex = 0;
+	//fl.trace("first curve I'm testing in getedgeOrder: " + edgeIndex);
+	
+	//fl.trace("cont.orientation: " + cont.orientation);
+	//fl.trace("cont.interior: " + cont.interior);
+	
+	n = 0;
+	do
+	{
+		// Add the next entry to the curve order list
+		edgeOrd[n] = edgeIndex;
+		prevEndPoint =  edges[edgeIndex].getControl(2);
+		//fl.trace("edgeOrd[" + n + "] = " + edgeOrd[n]);
+		do
+		{
+			edgeIndex = (edgeIndex + 1) % edges.length;
+			nextStartPoint = edges[edgeIndex].getControl(0);
+		}
+		while (prevEndPoint.x != nextStartPoint.x || prevEndPoint.y != nextStartPoint.y);
+		n++;
+	}
+	while (edgeIndex != firstEdge);
+	
+	//fl.trace("number of curves: " + edgeOrd.length);
+	//fl.trace("edgeOrd[0] = " + edgeOrd[0]);
+	
+	return edgeOrd;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Returns the index into curveOrder that is the first curve that should be used when
+// doing the tween
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+getFirstCurve = function(shape, curveOrd, hintInstance)
+{
+	error = Number.MAX_VALUE;
+	
+	//fl.trace("Now the number of curves is " + shape.numCubicSegments);
+	//fl.trace("Curve order: " + curveOrd);
+	
+	for(n = 0; n < curveOrd.length; n++)
+	{
+		//fl.trace("testing the start point of curve " + n);
+		newError = fl.Math.pointDistance({x: hintInstance.x, y: hintInstance.y}, shape.getCubicSegmentPoints(curveOrd[n])[0])
+		//fl.trace("newError = " + newError);
+		if(newError < error)
+		{
+			error = newError;
+			startCurve = n;
+		}
+	}
+	
+	//fl.trace("error = " + error);
+	return startCurve;
+}
+
+getFirstEdgeQuad = function(edges, edgeOrd, hintInstance)
+{
+	error = Number.MAX_VALUE;
+	
+	//fl.trace("Now the number of curves is " + shape.numCubicSegments);
+	//fl.trace("Curve order: " + edgeOrd);
+	
+	for(n = 0; n < edgeOrd.length; n++)
+	{
+		//fl.trace("testing the start point of curve " + n);
+		newError = fl.Math.pointDistance({x: hintInstance.x, y: hintInstance.y}, edges[edgeOrd[n]].getControl(0))
+		//fl.trace("newError = " + newError);
+		if(newError < error)
+		{
+			error = newError;
+			startEdge = n;
+		}
+	}
+	
+	//fl.trace("error = " + error);
+	return startEdge;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function set_tween_fill(fills, tween_dist)
+//
+// Sets the custom fill style to be a blend between the first and second 
+// elements of the fill array.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+set_tween_fill = function(fills, tween_dist)
+{	
+	// We have to have sepparate color and alpha vars, because Javascript's
+	// bitwise operators operate as if it's 32-bit signed integer :(
+	var colors = [];
+	var NO_COLOR = -1;
+	var alphas = [];
+	var x;
+	var new_fill = doc.getCustomFill("toolbar");
+	
+	var do_fill;
+	
+	do_fill = false;  // This will be set to true if one or both shapes have a fill
+	
+	for(x = 0; x < fills.length; x++)
+	{
+		// Get the integer representation of the RGBA value
+		if(fills[x].style == "noFill")
+		{
+			colors[x] = NO_COLOR;
+			alphas[x] = 0;          // 100% transparent
+		}
+		else
+		{
+			// At least one of the fills exists, so do the fill blend
+			do_fill = true;
+			if(typeof (fills[x].color) == "number")       // The integer will be of the form 0xrrggbb
+			{
+				colors[x] = fills[x].color;               // So we must add in the opaque alpha value
+				alphas[x] = 0;
+			}
+			else if(fills[x].color.length == 7)           // "#RRGGBB"
+			{
+				colors[x] = parseInt(fills[x].color.slice(1), 16);
+				alphas[x] = 0xff;
+			}
+			else                                          // "#RRGGBBAA"
+			{
+				colors[x] = parseInt(fills[x].color.slice(1, 7), 16);
+				alphas[x] = parseInt(fills[x].color.slice(7), 16);
+			}
+		}
+	}
+	
+	if(!do_fill)
+		return false;
+	
+	new_fill = doc.getCustomFill("toolbar");
+	
+	// If one of the fills didn't exist then copy the color from the other one
+	if(colors[0] == NO_COLOR)
+		colors[0] = colors[1]
+	if(colors[1] == NO_COLOR)
+		colors[1] = colors[0]
+		
+	var src_mult = 1 - tween_dist;
+	var dest_mult = tween_dist;
+	
+	colors[2] = (((colors[0] & 0xff0000) * src_mult + (colors[1] & 0xff0000) * dest_mult) & 0xff0000) +
+	            (((colors[0] & 0x00ff00) * src_mult + (colors[1] & 0x00ff00) * dest_mult) & 0x00ff00) +
+                (((colors[0] & 0x0000ff) * src_mult + (colors[1] & 0x0000ff) * dest_mult) & 0x0000ff);
+    alphas[2] = Math.round(alphas[0] * src_mult + alphas[1] * dest_mult);
+    
+    var new_color_string = colors[2].toString(16);
+    // Pad with zeros
+    for(x = new_color_string.length; x < 6; x++)
+    	new_color_string = "0" + new_color_string;
+    if(alphas[2] < 0x10)
+    	new_color_string = new_color_string + "0";
+    new_color_string = "#" + new_color_string + alphas[2].toString(16);
+    
+    new_fill.color = new_color_string;
+
+	new_fill.style = "solid"; 
+	doc.setCustomFill(new_fill);
+	
+	return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function set_tween_stroke(strokes, tween_dist)
+//
+// Sets the custom stroke style to be a blend between the first and second 
+// elements of the stroke array.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+set_tween_stroke = function(strokes, tween_dist)
+{	
+	// We have to have sepparate color and alpha vars, because Javascript's
+	// bitwise operators operate as if it's 32-bit signed integer :(
+	var colors = [];
+	var NO_COLOR = -1;
+	var alphas = [];
+	var x;
+	var new_stroke = doc.getCustomStroke("toolbar");
+	
+	var do_stroke;
+	
+	do_stroke = false;  // This will be set to true if one or both shapes have a stroke
+	
+	for(x = 0; x < strokes.length; x++)
+	{
+		// Get the integer representation of the RGBA value
+		if(strokes[x].shapeFill == undefined)
+		{
+			colors[x] = NO_COLOR;
+			alphas[x] = 0;          // 100% transparent
+		}
+		else
+		{
+			// At least one of the strokes exists, so do the stroke blend
+			do_stroke = true;
+			if(typeof (strokes[x].shapeFill.color) == "number")       // The integer will be of the form 0xrrggbb
+			{
+				colors[x] = strokes[x].shapeFill.color;               // So we must add in the opaque alpha value
+				alphas[x] = 0;
+			}
+			else if(strokes[x].shapeFill.color.length == 7)           // "#RRGGBB"
+			{
+				colors[x] = parseInt(strokes[x].shapeFill.color.slice(1), 16);
+				alphas[x] = 0xff;
+			}
+			else                                          // "#RRGGBBAA"
+			{
+				colors[x] = parseInt(strokes[x].shapeFill.color.slice(1, 7), 16);
+				alphas[x] = parseInt(strokes[x].shapeFill.color.slice(7), 16);
+			}
+		}
+	}
+	
+	if(!do_stroke)
+		return false;
+	
+	new_stroke.shapeFill = doc.getCustomFill("toolbar");
+	
+	// If one of the strokes didn't exist then copy the color from the other one
+	if(colors[0] == NO_COLOR)
+		colors[0] = colors[1]
+	if(colors[1] == NO_COLOR)
+		colors[1] = colors[0]
+	
+	var src_mult = 1 - tween_dist;
+	var dest_mult = tween_dist;
+	
+	colors[2] = (((colors[0] & 0xff0000) * src_mult + (colors[1] & 0xff0000) * dest_mult) & 0xff0000) +
+	            (((colors[0] & 0x00ff00) * src_mult + (colors[1] & 0x00ff00) * dest_mult) & 0x00ff00) +
+                (((colors[0] & 0x0000ff) * src_mult + (colors[1] & 0x0000ff) * dest_mult) & 0x0000ff);
+    alphas[2] = Math.round(alphas[0] * src_mult + alphas[1] * dest_mult);
+    
+    var new_color_string = colors[2].toString(16);
+    // Pad with zeros
+    for(x = new_color_string.length; x < 6; x++)
+    	new_color_string = "0" + new_color_string;
+    if(alphas[2] < 0x10)
+    	new_color_string = new_color_string + "0";
+    new_color_string = "#" + new_color_string + alphas[2].toString(16);
+    
+    new_stroke.shapeFill.color = new_color_string;
+
+	new_stroke.shapeFill.style = "solid"; 
+
+	new_thickness = strokes[0].thickness * src_mult + strokes[1].thickness * dest_mult;
+	if(new_thickness <= 0)
+		return false;	    // No stroke.
+	new_stroke.thickness = new_thickness;
+	
+	doc.setCustomStroke(new_stroke);
+	
+	return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function tween_shape(source_info, dest_info, source_frame, tween_dist)
+//
+// Takes as parameters a source and destination shape and the frame the source is on.
+// Creates a shape that's a blend between the two endpoints.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+tween_shape = function(source_info, dest_info, source_frame, tween_dist)
+{	
+	shape = [];
+	curveOrder = [];
+	currentCurveNum = [];
+	segPoints = [];
+	firstCurveNum = [];
+	hints = [];
+	fills = [];
+	strokes = [];
+	
+	shape[0] = source_info.shape;
+	shape[1] = dest_info.shape;
+	hints[0] = source_info.hint;
+	hints[1] = dest_info.hint;
+	
+	for(m = 0; m < 2; m++)
+	{
+		curveOrder[m] = getCurveOrder(shape[m].contours[1]);
+		//fl.trace("freshly returned curve order: " + curveOrder[m]);
+		//fl.trace("freshly returned curveOrder[0]: " + curveOrder[m][0]);
+		currentCurveNum[m] = firstCurveNum[m] = getFirstCurve(shape[m], curveOrder[m], hints[m]);
+		fills[m] = shape[m].contours[1].fill;
+		strokes[m] = shape[m].edges[0].stroke;
+	}
+	
+	tweenPath = fl.drawingLayer.newPath();
+	
+	// Determine if the order of the points in each curve is 
+	// flipped from the order of the curves
+	
+	curvesFlipped = [];
+	for(n = 0; n < 2; n++)
+	{
+		// the last curve
+		curve2 = shape[n].getCubicSegmentPoints(curveOrder[n][(currentCurveNum[n] + curveOrder[n].length -  1) % curveOrder[n].length]); 
+		// the first curve
+		curve1 = shape[n].getCubicSegmentPoints(curveOrder[n][currentCurveNum[n]]);
+		// the second curve
+		curve2 = shape[n].getCubicSegmentPoints(curveOrder[n][(currentCurveNum[n] + 1) % curveOrder[n].length])
+		if(curve1[0].x  == curve2[3].x && curve1[0].y == curve2[3].y)
+		{
+			//fl.trace("shape " + n + " has flipped curves");
+			curvesFlipped[n] = true;
+		}
+		else curvesFlipped[n] = false;
+	}
+	
+	// if there are flipped curves, the shape should actually start on the previous curve
+	for(n = 0; n < 2; n++)
+	{
+		if(curvesFlipped[n])
+		{
+			currentCurveNum[n] = (currentCurveNum[n] + 1) % curveOrder[n].length;
+			firstCurveNum[n] = currentCurveNum[n];
+		}
+	}
+	
+	// Create the new shape as a blend between the start and finish shapes */
+	do
+	{
+		segPoints[0] = shape[0].getCubicSegmentPoints(curveOrder[0][currentCurveNum[0]]);
+		segPoints[1] = shape[1].getCubicSegmentPoints(curveOrder[1][currentCurveNum[1]]);
+		
+		var src_mult  = 1 - tween_dist;
+		var dest_mult = tween_dist;
+	
+		/*
+		fl.trace("curve 0 starts at: " + segPoints[0][0].x + ", " + segPoints[0][0].y);
+		fl.trace("curve 0 ends at: " + segPoints[0][3].x + ", " + segPoints[0][3].y);
+		fl.trace("curve 1 starts at: " + segPoints[1][0].x + ", " + segPoints[1][0].y);
+		fl.trace("curve 1 ends at: " + segPoints[1][3].x + ", " + segPoints[1][3].y);
+		*/
+	
+		if(curvesFlipped[0])
+		{
+			if(curvesFlipped[1])
+			{
+				tweenPath.addCubicCurve(segPoints[0][3].x * src_mult + segPoints[1][3].x * dest_mult, segPoints[0][3].y * src_mult + segPoints[1][3].y * dest_mult, 
+										segPoints[0][2].x * src_mult + segPoints[1][2].x * dest_mult, segPoints[0][2].y * src_mult + segPoints[1][2].y * dest_mult, 
+										segPoints[0][1].x * src_mult + segPoints[1][1].x * dest_mult, segPoints[0][1].y * src_mult + segPoints[1][1].y * dest_mult, 
+										segPoints[0][0].x * src_mult + segPoints[1][0].x * dest_mult, segPoints[0][0].y * src_mult + segPoints[1][0].y * dest_mult);
+			}
+			else
+			{
+				tweenPath.addCubicCurve(segPoints[0][3].x * src_mult + segPoints[1][0].x * dest_mult, segPoints[0][3].y * src_mult + segPoints[1][0].y * dest_mult, 
+										segPoints[0][2].x * src_mult + segPoints[1][1].x * dest_mult, segPoints[0][2].y * src_mult + segPoints[1][1].y * dest_mult, 
+										segPoints[0][1].x * src_mult + segPoints[1][2].x * dest_mult, segPoints[0][1].y * src_mult + segPoints[1][2].y * dest_mult, 
+										segPoints[0][0].x * src_mult + segPoints[1][3].x * dest_mult, segPoints[0][0].y * src_mult + segPoints[1][3].y * dest_mult);
+			}
+		}
+		else // !curvesFlipped[0]
+		{
+			if(curvesFlipped[1])
+			{
+				tweenPath.addCubicCurve(segPoints[0][0].x * src_mult + segPoints[1][3].x * dest_mult, segPoints[0][0].y * src_mult + segPoints[1][3].y * dest_mult, 
+										segPoints[0][1].x * src_mult + segPoints[1][2].x * dest_mult, segPoints[0][1].y * src_mult + segPoints[1][2].y * dest_mult, 
+										segPoints[0][2].x * src_mult + segPoints[1][1].x * dest_mult, segPoints[0][2].y * src_mult + segPoints[1][1].y * dest_mult, 
+										segPoints[0][3].x * src_mult + segPoints[1][0].x * dest_mult, segPoints[0][3].y * src_mult + segPoints[1][0].y * dest_mult);
+			}
+			else
+			{
+				tweenPath.addCubicCurve(segPoints[0][0].x * src_mult + segPoints[1][0].x * dest_mult, segPoints[0][0].y * src_mult + segPoints[1][0].y * dest_mult, 
+										segPoints[0][1].x * src_mult + segPoints[1][1].x * dest_mult, segPoints[0][1].y * src_mult + segPoints[1][1].y * dest_mult, 
+										segPoints[0][2].x * src_mult + segPoints[1][2].x * dest_mult, segPoints[0][2].y * src_mult + segPoints[1][2].y * dest_mult, 
+										segPoints[0][3].x * src_mult + segPoints[1][3].x * dest_mult, segPoints[0][3].y * src_mult + segPoints[1][3].y * dest_mult);
+			}
+		}
+		
+		//if(!curvesFlipped[0])
+			currentCurveNum[0] = (currentCurveNum[0] + 1) % curveOrder[0].length;
+		//else
+		//	currentCurveNum[0] = (currentCurveNum[0] + curveOrder[0].length - 1) % curveOrder[0].length;
+		//if(!curvesFlipped[1])
+			currentCurveNum[1] = (currentCurveNum[1] + 1) % curveOrder[1].length;
+		//else
+		//	currentCurveNum[1] = (currentCurveNum[1] + curveOrder[1].length - 1) % curveOrder[1].length;
+	}
+	while(currentCurveNum[0] != firstCurveNum[0]);
+	
+	// Set the fill and stroke for the new tweened shape
+	var old_fill = doc.getCustomFill("toolbar");  
+	var old_stroke = doc.getCustomStroke("toolbar");
+	var do_fill = set_tween_fill(fills, tween_dist);
+	var do_stroke = set_tween_stroke(strokes, tween_dist);
+	
+	var old_shapes = get_shape_elements(source_info.layer, source_frame);
+	doc.selection = old_shapes;
+	doc.group();
+	doc.deleteSelection();
+	
+	// draw the curve
+	tweenPath.makeShape(!do_fill, !do_stroke);
+
+	// Retstore the original fill and stroke
+	doc.setCustomFill(old_fill);
+	doc.setCustomStroke(old_stroke);
+	
+}
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function tween_shape_quad(source_info, dest_info, source_frame, tween_dist)
+//
+// Takes as parameters a source and destination shape and the frame the source is on.
+// Creates a shape that's a blend between the two endpoints.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+tween_shape_quad = function(source_info, dest_info, source_frame, tween_dist)
+{	
+	shape = [];
+	edgeOrder = [];
+	currentEdgeNum = [];
+	segPoints = [];
+	firstEdgeNum = [];
+	hints = [];
+	fills = [];
+	strokes = [];
+	
+	shape[0] = source_info.shape;
+	shape[1] = dest_info.shape;
+	hints[0] = source_info.hint;
+	hints[1] = dest_info.hint;
+	
+	for(m = 0; m < 2; m++)
+	{
+		edgeOrder[m] = getEdgeOrderQuad(shape[m].edges);
+		currentEdgeNum[m] = firstEdgeNum[m] = getFirstEdgeQuad(shape[m].edges, edgeOrder[m], hints[m]);
+		fills[m] = shape[m].contours[1].fill;
+		strokes[m] = shape[m].edges[0].stroke;
+	}
+	
+	tweenPath = fl.drawingLayer.newPath();
+	
+	// Determine if the order of the points in each curve is 
+	// flipped from the order of the curves
+	
+	// Create the new shape as a blend between the start and finish shapes */
+	do
+	{
+		segPoints[0] = [shape[0].edges[edgeOrder[0][currentEdgeNum[0]]].getControl(0),
+		                shape[0].edges[edgeOrder[0][currentEdgeNum[0]]].getControl(1),
+		                shape[0].edges[edgeOrder[0][currentEdgeNum[0]]].getControl(2)];
+		segPoints[1] = [shape[1].edges[edgeOrder[1][currentEdgeNum[1]]].getControl(0),
+		                shape[1].edges[edgeOrder[1][currentEdgeNum[1]]].getControl(1),
+		                shape[1].edges[edgeOrder[1][currentEdgeNum[1]]].getControl(2)];
+		
+		var src_mult  = 1 - tween_dist;
+		var dest_mult = tween_dist;
+	
+		tweenPath.addCurve(segPoints[0][0].x * src_mult + segPoints[1][0].x * dest_mult, segPoints[0][0].y * src_mult + segPoints[1][0].y * dest_mult, 
+						   segPoints[0][1].x * src_mult + segPoints[1][1].x * dest_mult, segPoints[0][1].y * src_mult + segPoints[1][1].y * dest_mult, 
+						   segPoints[0][2].x * src_mult + segPoints[1][2].x * dest_mult, segPoints[0][2].y * src_mult + segPoints[1][2].y * dest_mult);
+		
+		currentEdgeNum[0] = (currentEdgeNum[0] + 1) % edgeOrder[0].length;
+		currentEdgeNum[1] = (currentEdgeNum[1] + 1) % edgeOrder[1].length;
+	}
+	while(currentEdgeNum[0] != firstEdgeNum[0]);
+	
+	// Set the fill and stroke for the new tweened shape
+	var old_fill = doc.getCustomFill("toolbar");  
+	var old_stroke = doc.getCustomStroke("toolbar");
+	var do_fill = set_tween_fill(fills, tween_dist);
+	var do_stroke = set_tween_stroke(strokes, tween_dist);
+	
+	var old_shapes = get_shape_elements(source_info.layer, source_frame);
+	doc.selection = old_shapes;
+	doc.group();
+	doc.deleteSelection();
+	
+	// draw the curve
+	tweenPath.makeShape(!do_fill, !do_stroke);
+
+	// Retstore the original fill and stroke
+	doc.setCustomFill(old_fill);
+	doc.setCustomStroke(old_stroke);
+	
+}
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function tween_element(source_element, source_frame, dest_element, dest_frame)
+//
+// Takes as parameters a source and destination element and the frames that they're on.
+// Moves the source element to be linearly in-between its original location and the
+// destination element's location.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+tween_element = function(source_element, source_frame, dest_element, tween_dist, dest_element_pivots)
+{		
+	// Some variables to reduce dereferencing
+	var source_element_matrix = source_element.matrix;
+	var dest_element_matrix = dest_element.matrix;
+	var pivot_src;
+	var pivot_dest;
+	var global_pivot_src;
+	var global_pivot_dest;
+	var global_pivot_tween;
+		
+	var dest_frame = source_frame + source_element.layer.frames[source_frame].duration
+	
+	//fl.trace("tween distance is " + tween_dist);
+	if(tween_dist == 1.0)  // If the tween distance is 1 then we just copy the dest element's transform matrix
+	{
+		tween_matrix  = dest_element_matrix;
+	
+	}
+	else
+	{
+		// Get the transform components for the source and dest element matrices
+		var first_trans_comp  = new transform_components(source_element_matrix);
+		var second_trans_comp = new transform_components(dest_element_matrix);
+
+		// tween the first 
+		first_trans_comp.tween(second_trans_comp, tween_dist);
+		var tween_matrix = first_trans_comp.to_matrix();
+	}
+	
+	// Find the pivot of the dest element
+
+	pivot_dest = dest_element_pivots.pivot;
+	global_pivot_dest = dest_element_pivots.global_pivot;
+	
+	select_element(source_element, source_frame);
+	// Set the source pivot to match that of the dest element
+	doc.setTransformationPoint(pivot_dest);
+	global_pivot_src = get_global_pivot();	
+		
+	if("shape" == source_element.elementType && source_element.isGroup)
+	{
+		// Get its inverted transform matrix
+		var undo_transform = fl.Math.invertMatrix(source_element_matrix);
+
+		// remove the transform from this object (but leave the translation intact)
+		doc.transformSelection(undo_transform.a, undo_transform.b, undo_transform.c, undo_transform.d);
+	
+		// Set the transform on this object to the tween transform
+		doc.transformSelection(tween_matrix.a, tween_matrix.b, tween_matrix.c, tween_matrix.d);
+
+		var corrected_tween_matrix = doc.selection[0].matrix;
+		corrected_tween_matrix.tx = source_element_matrix.tx + (dest_element_matrix.tx - source_element_matrix.tx) * tween_dist;
+		corrected_tween_matrix.ty = source_element_matrix.ty + (dest_element_matrix.ty - source_element_matrix.ty) * tween_dist;
+		doc.selection[0].matrix = corrected_tween_matrix;
+		
+		// Set the pivot point to match the destination
+		doc.setTransformationPoint(pivot_dest);
+		
+		//Correct the translation
+		var global_pivot_tween = get_global_pivot();
+		var ideal_global_pivot = {x: global_pivot_src.x + (global_pivot_dest.x - global_pivot_src.x) * tween_dist,
+		                          y: global_pivot_src.y + (global_pivot_dest.y - global_pivot_src.y) * tween_dist }
+		                          
+		corrected_tween_matrix.tx += ideal_global_pivot.x - global_pivot_tween.x;
+		corrected_tween_matrix.ty += ideal_global_pivot.y - global_pivot_tween.y;
+		doc.selection[0].matrix = corrected_tween_matrix;
+
+		// Once again, set the pivot point to match the destination
+		doc.setTransformationPoint(pivot_dest);
+
+		var global_pivot_tween = get_global_pivot();
+		
+		return;
+	}
+	
+	// Now we've taken care of shapes so we must be dealing with a symbol instance
+	
+	if(tween_dist == 1.0) // If the tween distance is 1 then we just copy the dest element's transform matrix
+	{
+		source_element.matrix = tween_matrix;
+	}
+	else
+	{
+		tween_matrix.tx = source_element_matrix.tx + (dest_element_matrix.tx - source_element_matrix.tx ) * tween_dist;
+		tween_matrix.ty = source_element_matrix.ty + (dest_element_matrix.ty - source_element_matrix.ty ) * tween_dist;
+
+		source_element.matrix = tween_matrix;
+		doc.setTransformationPoint(pivot_dest);
+		global_pivot_tween = get_global_pivot();	
+
+		// Figure out how far off from the ideal translation point we are
+		// We want to make it so the pivot point ends up linearly tweened between the two keys.
+
+		var ideal_pivot_loc = 
+		{
+			x: global_pivot_src.x + (global_pivot_dest.x - global_pivot_src.x) * tween_dist,
+			y: global_pivot_src.y + (global_pivot_dest.y - global_pivot_src.y) * tween_dist
+		};
+
+		var dist_from_ideal = {x: ideal_pivot_loc.x - global_pivot_tween.x,
+				       y: ideal_pivot_loc.y - global_pivot_tween.y}
+
+		//fl.trace("source location:      " + global_pivot_src.x + ", " + global_pivot_src.y);
+		//fl.trace("tween location:       " + global_pivot_tween.x + ", " + global_pivot_tween.y);
+		//fl.trace("ideal tween location: " + ideal_pivot_loc.x + ", " + ideal_pivot_loc.y);
+		//fl.trace("dest location:        " + global_pivot_dest.x + ", " + global_pivot_dest.y);
+		//fl.trace("ideal difference:     " + dist_from_ideal.x + ", " + dist_from_ideal.y);
+
+		// Correct the translation now that we've corrected the pivot point
+
+		tween_matrix.tx += dist_from_ideal.x;
+		tween_matrix.ty += dist_from_ideal.y;
+
+		source_element.matrix = tween_matrix;
+	}
+
+	// Now set the pivot point to its correct location
+	doc.setTransformationPoint(pivot_dest);
+	
+	// If this is a symbol set to single-frame, set the start frame to be the same as dest
+	if("instance" == source_element.elementType)
+		if("symbol" == source_element.instanceType)
+			if("graphic" == source_element.symbolType)
+				if("single frame" == source_element.loop)
+					if("graphic" == dest_element.symbolType)
+						if(tween_dist >= 0.5)
+						{
+							//fl.trace("source element = " + source_element.libraryItem.name);
+							source_element.firstFrame = dest_element.firstFrame;
+						}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function get_shape_dimensions(el)
+//
+// Get the dimensions of the untransformed shape.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+get_shape_dimensions = function(el, frame)
+{
+	var dimensions = new Object();
+	
+	// Let's reset its transform matrix so we can test its width and height
+	// Get its transform matrix and also its inverted matrix
+	var original_transform = el.matrix;
+	var undo_transform = fl.Math.invertMatrix(el.matrix);
+	var original_x = el.matrix.tx;
+	var original_y = el.matrix.ty;
+
+	// select this object
+	var old_selection = doc.selection;	
+	var old_frame = timeline.currentFrame;
+	//fl.trace("selecting element on frame " + frame);
+	select_element(el, frame);
+	if(undefined == doc.selection[0])
+	{
+		//fl.trace("error selecting " + el.elementType + " in get_shape_dimensions()");
+	}
+
+	// undo all the transformations on this object
+	doc.transformSelection(undo_transform.a, undo_transform.b, undo_transform.c, undo_transform.d);
+
+	dimensions.x = el.width;
+	dimensions.y = el.height;
+	
+	// redo all the transformations on this object
+	doc.transformSelection(original_transform.a, original_transform.b, original_transform.c, original_transform.d);
+	doc.moveSelectionBy({x: original_x - el.matrix.tx, y: original_y - el.matrix.ty});
+	
+	timeline.currentFrame = old_frame;
+	doc.selection = old_selection;
+	
+	return dimensions;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function find_corresponding_element(src_element, dest_frame, allow_reflection)
+//
+// Returns an instance of the same library item as src_element but in dest_frame.  If
+// allow_reflection is false then it won't match elements that are instances of the same 
+// library item but are have opposite reflection from src_element.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+find_corresponding_element = function(src_element, src_frame, dest_frame, allow_reflection)
+{
+	if(dest_frame == undefined || src_frame == undefined || src_element == undefined)
+		return undefined;
+		
+	var src_dimensions = new Object();
+	
+	if("shape" == src_element.elementType)
+	{
+		if(src_element.isGroup)
+		{
+			// Save the width and height
+			//fl.trace("trying to find the dimensions of a source shape in find_corresponding_element()");
+			src_dimensions = get_shape_dimensions(src_element, src_frame);
+			//fl.trace("matching to a shape");
+		}
+		else
+		{
+			//fl.trace("Trying to match a raw shape");
+			src_dimensions.x = src_dimensions.y = -1;
+		}
+	}
+	else if("instance" == src_element.elementType)
+	{
+		src_dimensions.x = src_dimensions.y = -1;
+		//fl.trace("matching to an instance");
+	}
+	else 
+	{
+		//fl.trace("not matchable");
+		return undefined;
+	}
+	    
+	// if the x and y scale of a symbol are both positive or both negative then it isn't reflected.
+	var src_transform = new transform_components(src_element.matrix);
+	var is_reflected = src_transform.is_reflected();
+	
+	//fl.trace("source skew difference: " + Math.abs(src_transform.skew_x - src_transform.skew_y));
+
+	//fl.trace("source transform:\n" + src_transform);
+
+	//fl.trace("number of dest elements: " + dest_frame.elements.length);
+
+	// find an element that is an instance of the same library item as src_element
+	var return_candidate = undefined;
+	var new_item_idx;
+	for(new_item_idx = 0; new_item_idx < dest_frame.elements.length; new_item_idx++)
+	{
+		var this_is_reflected;
+		var is_a_candidate;
+		
+		var dest_element = dest_frame.elements[new_item_idx];
+		
+		is_a_candidate = false;
+		
+		//fl.trace("trying to match item " + new_item_idx + ": " + dest_element.elementType);
+		
+		// Make sure this is a library instance
+		if("instance" == dest_element.elementType && "instance" == src_element.elementType)
+		{
+			//fl.trace("comparing an instance: " + dest_element.libraryItem.name);
+			// If this is an instance of the same library item as src_element then we're done.
+			if(dest_element.libraryItem == src_element.libraryItem)
+			{
+				is_a_candidate = true;
+				//fl.trace("found a symbol match");
+			}
+		}
+		else if("shape" == dest_element.elementType && "shape"== src_element.elementType)
+		{
+			if(dest_element.isGroup && src_element.isGroup)
+			{
+				//fl.trace("comparing a shape");
+				// We're dealing with a shape or a group.
+				// Reset its transform matrix so we can test its width and height
+				//fl.trace("trying to find the dimensions of a dest shape in find_corresponding_element()");
+				var dest_dimensions = get_shape_dimensions(dest_element, dest_frame.startFrame);
+				
+				//fl.trace("From frame " + (src_frame + 1) + " to frame " + (dest_frame.startFrame + 1) + ":");
+				//fl.trace("trying to match " + src_dimensions.x + ", " + src_dimensions.y);
+				//fl.trace("           with " + dest_dimensions.x + ", " + dest_dimensions.y);
+				
+				if(Math.abs(dest_dimensions.x - src_dimensions.x) <= SHAPE_SIZE_TOLERANCE &&
+				   Math.abs(dest_dimensions.y - src_dimensions.y) <= SHAPE_SIZE_TOLERANCE )
+				{
+					is_a_candidate = true;
+					//fl.trace("found a shape match");
+				}
+			}
+			else if (!dest_element.isGroup && !src_element.isGroup)
+			{
+				// Let's just say that any raw shape is a match to any raw shape
+				//fl.trace("corresponding "+ dest_element);
+				return dest_element;
+			}
+				
+		}
+		
+		//fl.trace("checking for candidacy");
+		if(is_a_candidate)
+		{
+			// This element is a candidate.  Remember this one in case we don't find a better one
+			return_candidate = dest_element;
+			
+			var dest_transform = new transform_components(dest_element.matrix);
+
+			//figure out if this element is reflected or not
+			var this_is_reflected = dest_transform.is_reflected();
+			
+			//fl.trace("dest skew difference: " + Math.abs(dest_transform.skew_x - dest_transform.skew_y));
+		
+			//fl.trace("return candidate: " /*+ return_candidate.libraryItem.name*/);
+			//fl.trace(is_reflected ? "source reflected" : "source not reflected");
+			//fl.trace(this_is_reflected ? "dest reflected" : "dest not reflected");
+			//fl.trace("source transform:\n" + src_transform);
+			//fl.trace("dest transform:\n" + dest_transform);
+
+
+			if(is_reflected == this_is_reflected)
+			{
+				// A perfect match.  Return this element.
+				return return_candidate;
+			}
+		}
+		//fl.trace("done checking for candidacy");		
+	}
+	
+	// If we made it to this point then we didn't find an exact match.  Return whatever we did find
+	// (it'll still be undefined if we didn't find anything).
+	if(allow_reflection)
+		return return_candidate;
+		
+	return undefined;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// function find_corresponding_elements(src_elements, dest_elements_pivots)
+//
+// Assembles an array of elements in the next keyframes
+// Unfortunately this is currently ~O(n^2).  I'd like to optimize this at some point....
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+find_corresponding_elements = function(src_elements, dest_elements_pivots)
+{
+	dest_elements = new Array();
+	dest_elements.length = src_elements.length;
+	
+	//fl.trace("number of elements: " + src_elements.length);
+	
+	var src_length = src_elements.length;
+	var current_frame_num = timeline.currentFrame;
+	
+	for(var el = 0; el < src_length; el++)
+	{
+		//fl.trace("Starting on element " + el);
+		
+		// Only do stuff if this isn't an ungrouped shape
+		if("shape" != src_elements[el].elementType || src_elements[el].isGroup)
+		{
+			current_src_element = src_elements[el];
+			//fl.trace("getting dest frame on " + src_elements[el].layer.name);
+			
+			// There must be some way to not have to do all this dereferencing every time through the loop.  Maybe it doesn't matter, though?
+			var layer_frames = current_src_element.layer.frames;
+			var current_frame = layer_frames[current_frame_num];
+			var dest_frame = layer_frames[current_frame.startFrame + current_frame.duration];
+			
+			// Only do stuff if there's a next keyframe
+			if(undefined != dest_frame)
+			{
+				
+				// Find the corresponding element in the next keyframe
+				//fl.trace("try looking for a match for element " + el);
+				dest_elements[el] = find_corresponding_element(current_src_element, current_frame_num, dest_frame, false);
+				//fl.trace("Done looking for a match for element " + el);
+				
+				// Now load up the dest element details
+				if(undefined != dest_elements[el])
+				{
+					dest_elements_pivots[el] = new Object;
+					//fl.trace("selecting an object of type " + dest_elements[el].elementType);
+					select_element(dest_elements[el], dest_frame.startFrame);
+					dest_elements_pivots[el].pivot = doc.getTransformationPoint();
+					dest_elements_pivots[el].global_pivot = get_global_pivot();
+					if("shape" == dest_elements[el].elementType)
+					{
+						//fl.trace("trying to find the dimensions of a dest shape");
+						dest_elements_pivots[el].dimensions = get_shape_dimensions(dest_elements[el], dest_frame.startFrame);
+					}
+				}
+				
+				// DEBUG: Now make sure we've found the appropriate elements 
+				
+				//if("instance" == src_elements[el].elementType)
+				//{
+				//	if(undefined == dest_elements[el])
+				//	{
+				//	//fl.trace("couldn't find a match for " + src_elements[el].libraryItem.name);
+				//	}
+				//	else
+				//	//fl.trace(el.toString() + ": found " + src_elements[el].libraryItem.name + " linked to " + dest_elements[el].libraryItem.name +
+				//		         " at " + dest_elements[el].matrix.tx + ", " + dest_elements[el].matrix.ty);
+				//}
+				//else
+				//{
+				//	//fl.trace("source isn't an instance");
+				//}
+				
+			}
+			else
+			{
+				//fl.trace("Undefined destination frame");
+			}
+		}
+	}
+	
+	//fl.trace("finishing up with the finding");
+	return dest_elements;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// set_keyframe_same_selection = function()
+//
+// Creates a keyframe on every layer that has a selection, and keeps the same selection as before.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+set_keyframe_same_selection = function()
+{
+	var initial_selection = new Array();
+	var layers = timeline.layers;
+	var current_frame = timeline.currentFrame;
+	
+	// save the current selection
+	var original_selection = doc.selection;
+	
+	var layer, element;
+	var elements;
+	//var new_frame_selection = new Array();
+	
+	var layer_selection = new Array();
+	var layer_selected = new Array();
+	
+	//prof.mark("starting to loop layers");
+	
+	var counter = 0;
+	for(layer = 0; layer < layers.length; layer++)
+	{
+		layer_selected[layer] = false;
+		
+		var this_layer = layers[layer];
+		var this_frame = this_layer.frames[current_frame];
+		
+		// Only do stuff if this layer hasn't ended yet
+		if(undefined != this_frame)
+		{
+			elements = this_frame.elements;
+			for(element = 0; element < elements.length; element++)
+			{	
+				// if this frame is in a tween, only do stuff if it is the start frame of the tween
+				if(this_frame.startFrame == current_frame || this_frame.tweenType == "none")
+				{
+					// save whether each element is selected
+					initial_selection[counter] = elements[element].selected;
+	
+					//fl.trace("layer " + this_layer.name + "'s tween: " + this_frame.tweenType);
+	
+					// remember that there was something selected on this layer
+					// Only do this, though, if the current frame isn't on a locked or invisible layer
+					if(initial_selection[counter] && !this_layer.locked && this_layer.visible )
+					{
+						layer_selected[layer] = true;
+						//fl.trace("layer " + this_layer.name + " is selected.");
+					}
+				}
+				counter++;
+			}
+			if(layer_selected[layer])
+			{
+				//fl.trace("selecting layer " + layer + ", \"" + layers[layer].name + "\"");
+				// Add this frame to the layer selection
+				layer_selection.push(layer);
+				layer_selection.push(current_frame);
+				layer_selection.push(current_frame + 1);
+			}
+		}
+	}
+	
+	//prof.mark("creating keyframes");
+
+	// create a keyframe on every layer with a selected element
+	var original_selected_layer = timeline.currentLayer;
+	for(layer = 0; layer < layer_selected.length; layer++)
+	{
+		if(layer_selected[layer])
+		{
+			timeline.currentLayer = layer;
+			
+			// make sure only the current frame is selected
+			// (added to keep it from tweening an element that's in a motion tween.  This can happen when 
+			// going from Edit Multiple Frames mode back to normal mode.
+			timeline.setSelectedFrames(current_frame, current_frame + 1);
+			
+			// Only create a new keyframe if this one isn't already a keyframe
+			if(current_frame != timeline.layers[layer].frames[current_frame].startFrame)
+			{
+				//fl.trace("creating a keyframe on layer layer " + layer + ", \"" + layers[layer].name + "\"");
+				timeline.insertKeyframe();
+			}
+		}
+	}
+	//prof.mark("done creating keyframes");
+
+	timeline.currentLayer = original_selected_layer;
+
+	// update the selection to match what it was before
+	var new_selection = new Array();
+	
+	// clear the frame selection
+	doc.selectNone();
+	
+	//prof.mark("Figuring out new selection");
+	
+	counter = 0;
+	for(layer = 0; layer < layers.length; layer++)
+	{
+		var this_frame = layers[layer].frames[current_frame];
+
+		// Only do stuff if this layer hasn't ended yet
+		if(undefined != this_frame)
+		{
+		
+			elements = this_frame.elements;
+			elements_length = elements.length;
+			for(element = 0; element < elements_length; element++)
+			{	
+				// assemble a list of what should be selected
+				if(initial_selection[counter])
+				{
+					new_selection.push(elements[element]);
+				}
+				counter++;
+			}
+		}
+	}
+	
+	
+	// Now apply the new selection
+	timeline.setSelectedFrames(layer_selection);
+	doc.selectNone();
+	doc.selection = new_selection;
+
+	//prof.mark("Done keyframing");
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// get_shape_info(src_selection)
+//
+// Returns an array of objects with info about shape/hint pairs
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+get_shape_info = function(src_selection)
+{
+	shape_array = [];
+	var shape_info = {layer: src_selection[0].layer, shape: undefined, hint: undefined};
+	
+	for(var n = 0; n < src_selection.length; n++)
+	{
+		if(src_selection[n].layer != shape_info.layer)
+		{
+			// New layer.  Clear the shape_info struct.
+			shape_info.layer = src_selection[n].layer;
+			shape_info.shape = undefined;
+			shape_info.hint = undefined;
+		}
+		
+		// If this element is a raw shape
+		if(src_selection[n].elementType == "shape" && !src_selection[n].isGroup)
+		{
+			shape_info.shape = src_selection[n];
+			
+			// Now see if there's a parent layer with a tween hint symbol on it
+			
+			var parent = shape_info.layer.parentLayer;
+			if(parent != null && parent.layerType == "guide")
+			{
+				var parent_elements = parent.frames[doc.getTimeline().currentFrame].elements;
+				for(var m = 0; m < parent_elements.length; m++)
+				{
+					if(parent_elements[m].elementType == "instance" && parent_elements[m].libraryItem.name == SHAPE_HINT_NAME)
+					{
+						shape_info.hint = parent_elements[m];
+						break;
+					}
+				}
+			}
+		}
+		else if(shape_info.hint == undefined && src_selection[n].elementType == "instance" && src_selection[n].libraryItem.name == SHAPE_HINT_NAME)
+		{
+			shape_info.hint = src_selection[n];
+		}
+		
+		// If the shape info struct is full, add it to the array
+		if(shape_info.hint != undefined && shape_info.shape != undefined)
+		{
+			// Add this shape to the shape array
+			shape_array.push(shape_info);
+			
+			// Create a new object for subsequent shapes
+			shape_info = {layer: src_selection[n].layer, shape: undefined, hint: undefined};
+		}
+	}
+	return shape_array;
+}
+
+/////////////////////////////////////////////////////////////////////////
+// save_edit_place()
+//
+// Remembers where the user is currently editing-in-place
+/////////////////////////////////////////////////////////////////////////
+
+save_edit_place = function()
+{
+	var edit_stack = new Array();
+	var edit_stack_entry;
+	
+	edit_stack_entry = new Object();
+	edit_stack_entry.frame = doc.getTimeline().currentFrame;
+	edit_stack_entry.selection = doc.selection;
+	edit_stack.push(edit_stack_entry);
+	//fl.trace("initial frame: " + edit_stack_entry.frame);
+	
+	//fl.trace("initial timeline's name: " + doc.getTimeline().name);
+	//fl.trace("initial core timeline's name: " + doc.timelines[doc.currentTimeline].name);
+	while(doc.getTimeline().name != doc.timelines[doc.currentTimeline].name)
+	{
+		doc.exitEditMode();
+		edit_stack_entry = new Object();
+		edit_stack_entry.object = doc.selection[0];
+		edit_stack_entry.frame = doc.getTimeline().currentFrame;
+		edit_stack.push(edit_stack_entry);
+		//fl.trace("exited back to " + doc.getTimeline().name + ", now stack length is " + edit_stack.length);
+	}
+	
+	edit_stack.push(doc.currentTimeline);
+	
+	//fl.trace("edit stack length: " + edit_stack.length);
+	return edit_stack;
+}
+
+/////////////////////////////////////////////////////////////////////////
+// restore_edit_place(edit_Stack)
+//
+// Remembers where the user is currently editing-in-place
+/////////////////////////////////////////////////////////////////////////
+
+restore_edit_place = function(edit_stack)
+{
+	var edit_stack_entry;
+	
+	doc.currentTimeline = edit_stack.pop();
+	
+	while(doc.getTimeline().name != doc.timelines[doc.currentTimeline].name)
+	{
+		doc.exitEditMode();
+	}
+	
+	while(edit_stack.length > 1)
+	{
+		edit_stack_entry = edit_stack.pop();
+		doc.getTimeline().currentFrame = edit_stack_entry.frame;
+		doc.selection = [edit_stack_entry.object];
+		//fl.trace("re-editing " + doc.selection[0].libraryItem.name + " on frame " + edit_stack_entry.frame);
+		doc.enterEditMode("inPlace");
+	}
+	
+	edit_stack_entry = edit_stack.pop();
+	doc.getTimeline().currentFrame = edit_stack_entry.frame;
+	//fl.trace("final frame: " + edit_stack_entry.frame);
+	doc.selection = [];
+	
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// MAIN
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+auto_tween = function(active_doc, tween_dist)
+{
+	doc = active_doc;
+	
+	if(doc != null)
+	{
+		prof = new Profiler();
+		prof.mark("start");
+
+		timeline = doc.getTimeline();
+		
+		fl.setActiveWindow(doc);
+		
+		var selectionRect = doc.getSelectionRect()
+		prog = new ProgBar((selectionRect.left + selectionRect.right) / 2,
+		                   (selectionRect.top + selectionRect.bottom) / 2);
+		
+		// Create a keyframe here if there isn't one already, but keep the same selection as before
+		set_keyframe_same_selection();
+		
+		var src_selection = doc.selection;
+		
+		if(src_selection.length != 0)
+		{
+			var src_frame_num = timeline.currentFrame;
+			
+			// Get info about all the shapes in the source selection
+			var src_shapes = get_shape_info(src_selection);
+		
+			var dest_elements_pivots = new Array();
+			var dest_selection = find_corresponding_elements(src_selection, dest_elements_pivots);
+			
+			//prof.mark("found elements");
+			
+			var frame_selection = timeline.getSelectedFrames(); 
+			timeline.setSelectedFrames([]); // Deselect all frames
+			
+			var src_selection_length = src_selection.length;
+			
+			prof.mark("found elements");
+			
+			// First let's deal with any raw shapes so that we don't move 
+			// shape hints before the shapes they're hinting
+			prog.setProgress(0);
+			for(var x = 0; x < src_shapes.length; x++)
+			{
+				var dest_frame_num = src_shapes[x].layer.frames[src_frame_num].duration + src_shapes[x].layer.frames[src_frame_num].startFrame;
+				
+				// Try to find a shape element in the next keyframe
+				var dest_shapes = get_shape_info(src_shapes[x].layer.frames[dest_frame_num].elements);
+						
+				// If we found a destination shape, tween 'em.
+				if(dest_shapes[0] != undefined)
+					tween_shape_quad(src_shapes[x], dest_shapes[0], src_frame_num, tween_dist);
+					
+				prog.setProgress((x + 1) / Number(src_shapes.length));
+			}
+			
+			// Now tween all the non-shape elements
+			prog.setProgress(0);
+			for(x = 0; x < src_selection_length; x++)
+			{
+				if(undefined != dest_selection[x])
+				{
+					//alert("tweening element " + x);
+					tween_element(src_selection[x], src_frame_num, dest_selection[x], tween_dist, dest_elements_pivots[x]);
+					//alert("blah");
+					prog.setProgress((x + 1) / Number(src_selection_length));
+				}
+			}
+			
+			prof.mark("tweened elements");
+			
+			// Update the display
+			// This bit is just a workaround for a display bug introduced in the Flash 10.0.2 update
+			document.setSelectionRect({left:0, top:0, right:10, bottom:10});
+			
+			timeline.setSelectedFrames(frame_selection); // Reselect frames that were selected at the beginning
+			
+			// Go through the saved selection in the source frame, remove all
+			// the raw shapes, and replace them with the new ones that are 
+			// there now.
+			for(x = 0; x < src_selection_length; x++)
+			{
+				if(undefined != src_selection[x] && 
+				   src_selection[x].elementType == "shape" && 
+				   !src_selection[x].isGroup)
+				{
+					// remove this element from the array
+					src_selection.splice(x, 1);
+				}
+			}
+			for(x = 0; x < src_shapes.length; x++)
+			{
+				src_selection = src_selection.concat(get_shape_elements(src_shapes[x].layer, src_frame_num));	
+			}
+			
+			doc.selectNone();
+			doc.selection = src_selection;
+			
+			prog.end();
+			
+			//fl.trace("autotween " + (tween_dist * 100) + "%");
+		
+			prof.mark("done");
+			//fl.trace(prof);
+		} // if src_selection.length != 0
+	}
+}

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Commands>
+  <name source="AIR - Application and Installer Settings" target="AIR - Application and Installer Settings"></name>
+  <name source="AIR - Create AIR File" target="AIR - Create AIR File"></name>
+  <name source="Copy Motion as XML" target="Copy Motion as XML"></name>
+  <name source="Export Motion XML" target="Export Motion XML"></name>
+  <name source="Import Motion XML" target="Import Motion XML"></name>
+  <name source="Copy Font Name for ActionScript" target="Copy Font Name for ActionScript"></name>
+  <name source="Convert Symbol to Flex Container" target="Convert Symbol to Flex Container"></name>
+  <name source="Convert Symbol to Flex Component" target="Convert Symbol to Flex Component"></name>
+</Commands>

@@ -1,0 +1,19 @@
+{
+  "insertOutput": 0, 
+  "parseRegex": "", 
+  "doNotOpenOutputWindow": 0, 
+  "icon": "chrome://fugue/skin/icons/question-balloon.png", 
+  "keyboard_shortcut": "Alt+F1", 
+  "name": "JSFL keyword help (Alt+F1)", 
+  "operateOnSelection": 0, 
+  "value": [
+    "%(browser) http://www.google.co.uk/search?q=site:http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/+%W"
+  ], 
+  "parseOutput": 0, 
+  "version": "1.0.7", 
+  "env": "", 
+  "showParsedOutputList": 0, 
+  "type": "command", 
+  "cwd": "", 
+  "runIn": "command-output-window"
+}

@@ -1,0 +1,24 @@
+this/is/a/path/*.png
+this/is/a/path/:item[type=something]
+this/is/a/path/*skin*:graphic
+
+"this is/a path" :bitmap
+
+skin*:folder
+skin*:bitmap[smoothing]
+
+[type=something]
+[class^=flash.display]
+:bitmap[smoothing=0]
+[type=foo],[type=bar]
+
+:item[class$=Sprite],[class$=MovieClip]
+
+:empty
+:folder
+:graphic
+:movieclip
+:audio
+:video
+:Class
+:bitmap

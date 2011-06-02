@@ -1,0 +1,29 @@
+<files type="folder" label="scripts" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/" iconsURI="file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20xJSFL/modules/Snippets/assets/icons/16x16/">
+	<item type="folder" label="Commands" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/" items="3"/>
+	<item type="folder" label="3rd Party" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/3rd Party/" items="6"/>
+	<item type="file" label="Art brush" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/3rd Party/Art brush.jsfl" icon="{iconsURI}Objects/object/object_billiard_marker.png" desc="Maps the selected library symbol onto the selected path"/>
+	<item type="file" label="Bitmap Slice 9" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/3rd Party/Bitmap Slice 9.jsfl" icon="{iconsURI}/design/imaging/imaging_workspace.png" desc="Slices a bitmap into parts so slice-9 scaling works correctly"/>
+	<item type="file" label="Create Classes" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/3rd Party/Create Classes.jsfl"/>
+	<item type="file" label="PNG 2 SWF" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/3rd Party/PNG 2 SWF.jsfl"/>
+	<item type="folder" label="Adobe" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/Adobe/" items="6"/>
+	<item type="file" label="Copy Motion as XML" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/Adobe/Copy Motion as XML.jsfl"/>
+	<item type="file" label="Export Motion XML" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/Adobe/Export Motion XML.jsfl"/>
+	<item type="file" label="Import Motion XML" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/Adobe/Import Motion XML.jsfl"/>
+	<item type="file" label="Rename MovieClips" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Commands/Adobe/Rename MovieClips.jsfl"/>
+	<item type="folder" label="Demo" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Demo/" items="1"/>
+	<item type="file" label="Make test Sprites" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Demo/Make test Sprites.jsfl"/>
+	<item type="folder" label="Development" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Development/" items="6"/>
+	<item type="file" label="Check variable is defined" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Development/Check variable is defined.jsfl" icon="{iconsURI}Feedback/action/action_help.png" desc="Allows you to check which variables are defined"/>
+	<item type="file" label="Copy Font Name for ActionScript" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Development/Copy Font Name for ActionScript.jsfl" icon="{iconsURI}Design/font/Font.png"/>
+	<item type="file" label="Declare Stage Instances" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Development/Declare Stage Instances.jsfl" icon="{iconsURI}FileSystem/file/file_actionscript.png" desc="Declare Stage Instances"/>
+	<item type="file" label="Hello World" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Development/Hello World.jsfl" icon="{iconsURI}Actions/heart/heart.png"/>
+	<item type="file" label="List defined variables" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Development/List defined variables.jsfl" icon="{iconsURI}Feedback/action/action_help.png" desc="Lists all defined variables"/>
+	<item type="file" label="Load ActionScript template" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Development/Load ActionScript template.jsfl" icon="{iconsURI}Filesystem/file/file_code_red.png" desc="Prompts the user for a template script, then loads it into the current frame"/>
+	<item type="folder" label="Instances" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Instances/" items="2"/>
+	<item type="file" label="Instance name from Library item name" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Instances/Instance name from Library item name.jsfl"/>
+	<item type="file" label="Movieclips to Graphics" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Instances/Movieclips to Graphics.jsfl"/>
+	<item type="folder" label="Library" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Library/" items="3"/>
+	<item type="file" label="Change library item type" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Library/Change library item type.jsfl"/>
+	<item type="file" label="Delete empty folders" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Library/Delete empty folders.jsfl"/>
+	<item type="file" label="Run JSFL in library items" path="E:/05 - Commercial Projects/xJSFL/3 - xJSFL/user/jsfl/scripts/Library/Run JSFL in library items.jsfl"/>
+</files>

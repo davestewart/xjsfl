@@ -1,0 +1,13 @@
+<settings>
+	<user>
+		<author>Dave Stewart</author>
+		<url>www.xjsfl.com</url>
+	</user>
+	<panel>
+		<root></root>
+	</panel>
+	<icons default="0">
+		<icon>Filesystem/page/page_white.png</icon>
+		<icon>Filesystem/file/file_code_red.png</icon>
+	</icons>
+</settings>

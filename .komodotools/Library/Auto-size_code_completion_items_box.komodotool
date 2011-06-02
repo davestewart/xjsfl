@@ -1,0 +1,19 @@
+{
+  "keyboard_shortcut": "", 
+  "name": "Auto-size code completion items box", 
+  "language": "JavaScript", 
+  "trigger_enabled": 1, 
+  "rank": 100, 
+  "trigger": "trigger_postopen", 
+  "value": [
+    "if (ko.views.manager.currentView && ko.views.manager.currentView.scimoz)", 
+    "{", 
+    "    ko.views.manager.currentView.scimoz.autoCMaxHeight = 20;", 
+    "}", 
+    ""
+  ], 
+  "version": "1.0.7", 
+  "async": 1, 
+  "type": "macro", 
+  "icon": "chrome://fugue/skin/icons/application-dock-270.png"
+}
