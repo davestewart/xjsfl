@@ -8,7 +8,7 @@
 	CIX =
 	{
 		nodes:(function(){
-			var cix = 'file:///F|/Users/Dave%20Stewart/AppData/Local/ActiveState/KomodoEdit/6.1/apicatalogs/jsfl.cix';
+			var cix = 'file:///C|/Users/Dave%20Stewart/AppData/Local/ActiveState/KomodoEdit/6.1/apicatalogs/jsfl.cix';
 			var str = xjsfl.file.load(cix).replace('<?xml version="1.0" encoding="UTF-8"?>', '');
 			var xml = eval(str)
 			return xml..scope.(@name == 'Document');
@@ -94,7 +94,7 @@
 						params:	'',
 						url:	this.attr(name, 'url')
 					}
-					trace('')
+					//trace('')
 				}
 				
 			// populate and return
@@ -233,7 +233,7 @@
 									props.content = 'return ' + props.content;
 								}
 								
-								trace(CIX.signature(this.member))
+								//trace(CIX.signature(this.member))
 							}
 						
 						// property
@@ -255,7 +255,7 @@
 						props.setter	= 'document.' + CIX.signature(this.setter);
 						props.doc		= CIX.docComment(this.getter);
 						
-						trace(props.setter + '	' + props.getter);
+						//trace(props.setter + '	' + props.getter);
 					}
 					
 				// populate
@@ -372,7 +372,7 @@ function process()
 		// if object, stick on stack
 			if(element.type == 'object')
 			{
-				trace('')
+				//trace('')
 				parentElement = element;
 			}
 			
@@ -390,7 +390,6 @@ function process()
 	}
 	
 	close(lastElement);
-	trace('Rendering')
 	trace(rootElement.render())
 }
 

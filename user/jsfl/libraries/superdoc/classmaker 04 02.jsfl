@@ -17,7 +17,18 @@
 		find:function findNode(name)
 		{
 			var node = this.nodes.*.(@name == name);
-			return node;
+			if(node.length() > 0)
+			{
+				return node;
+			}
+			else
+			{
+				node = <name />
+				node.@name = name;
+				node.@type = 'unknown';
+				return node;
+			}
+			
 		},
 		
 		attr:function(name, attr)
@@ -40,8 +51,20 @@
 		
 		signature:function(name)
 		{
-			var signature = String(this.attr(name, 'signature')).replace(/[\[\] ]/g, '').replace(/,/g, ', ').replace(/:\w+$/, '');
-			return signature;
+			var signature = String(this.attr(name, 'signature'));
+			
+			if(signature)
+			{
+				var matches		= signature.match(/\w+\s*\((.*)\)/);
+				var params		= matches[1].match(/\w+/g);
+				signature		= name + '(' + (params || []).join(', ') + ')';
+			}
+			else
+			{
+				signature = name;
+			}
+			
+			return 'document.' + signature;
 		},
 		
 		params:function(name)
@@ -59,7 +82,7 @@
 		{
 			// basics
 				var type		= this.type(name);
-				var template	= new Template(xjsfl.utils.createURI('templates/comment.txt', fl.scriptURI));
+				var template	= new SimpleTemplate(xjsfl.utils.createURI('templates/simple/comment.txt', fl.scriptURI));
 				
 			// method
 				if(type == 'method')
@@ -94,7 +117,7 @@
 						params:	'',
 						url:	this.attr(name, 'url')
 					}
-					trace('')
+					//trace('')
 				}
 				
 			// populate and return
@@ -105,25 +128,6 @@
 	}
 	
 	//trace(CIX.docComment('addNewPublishProfile'));
-
-// --------------------------------------------------------------------------------
-// templates
-
-	function loadTemplate(uri)
-	{
-		return new Template(xjsfl.utils.createURI(uri, fl.scriptURI));
-	}
-	
-	Templates =
-	{
-		root:			loadTemplate('templates/root.txt'),
-		object:			loadTemplate('templates/object.txt'),
-		method:			loadTemplate('templates/method.txt'),
-		gettersetter:	loadTemplate('templates/getter-setter.txt'),
-		getter:			loadTemplate('templates/getter.txt'),
-		setter:			loadTemplate('templates/setter.txt'),
-		property:		loadTemplate('templates/property.txt')
-	};
 
 
 // --------------------------------------------------------------------------------
@@ -148,6 +152,23 @@
 			this.level		= 0;
 			this.parent		= null;
 			
+		// load templates
+			function loadTemplate(uri)
+			{
+				return new SimpleTemplate(xjsfl.utils.createURI(uri, fl.scriptURI));
+			}
+			
+			ElementPrototype.templates =
+			{
+				root:			loadTemplate('templates/simple/root.txt'),
+				object:			loadTemplate('templates/simple/object.txt'),
+				method:			loadTemplate('templates/simple/method.txt'),
+				gettersetter:	loadTemplate('templates/simple/getter-setter.txt'),
+				getter:			loadTemplate('templates/simple/getter.txt'),
+				setter:			loadTemplate('templates/simple/setter.txt'),
+				property:		loadTemplate('templates/simple/property.txt')
+			}
+			
 		// debug
 			//trace('Loaded templates');
 	}
@@ -158,7 +179,7 @@
 			init: function(thisLine, nextLine)
 			{
 				// variables
-					var rx = /^(\t*)(\w+)\t(\w*)\t(\w*)/;
+					var rx = /^(\t*)(\w+)\t(\w*)\t(\w*)\t(\w*)/;
 					
 				// properties
 					if(thisLine)
@@ -166,15 +187,9 @@
 						var matches 	= thisLine.match(rx);
 						this.indent		= matches[1];
 						this.name		= matches[2];
-						if(matches[4])
-						{
-							this.setter		= matches[3];
-							this.getter		= matches[4];
-						}
-						else
-						{
-							this.member		= matches[3];
-						}
+						this.member		= matches[3];
+						this.setter		= matches[4];
+						this.getter		= matches[5];
 						this.level		= this.indent.length;
 					}
 					
@@ -192,7 +207,7 @@
 					}
 					
 				// template
-					this.template	= this.level == 0 ? Templates.root : Templates[type];
+					this.template	= this.level == 0 ? ElementPrototype.templates.root : ElementPrototype.templates[this.type];
 			},
 			
 		// public methods
@@ -226,24 +241,24 @@
 						// method
 							if(CIX.type(this.member) == 'method')
 							{
-								this.template	= Templates.method;
+								this.template	= ElementPrototype.templates.method;
 								props.params	= CIX.params(this.member);
-								props.content	= 'document.' + CIX.signature(this.member) + ';';
+								props.content	= CIX.signature(this.member) + ';';
 								props.doc		= CIX.docComment(this.member);
 								if(CIX.returns(this.member))
 								{
 									props.content = 'return ' + props.content;
 								}
 								
-								trace(CIX.signature(this.member))
+								//trace(CIX.signature(this.member))
 							}
 						
 						// property
 							else
 							{
-								this.template	= Templates.property;
+								this.template	= ElementPrototype.templates.property;
 								props.param		= this.name;
-								props.content	= 'document.' + this.member;
+								props.content	= CIX.signature(this.member);
 								props.doc		= CIX.docComment(this.member);
 							}
 					}
@@ -251,13 +266,34 @@
 				// getter / setter
 					else if(this.getter || this.setter)
 					{
-						this.template	= Templates.gettersetter;
-						props.params	= CIX.params(this.setter),
-						props.getter	= 'document.' + CIX.signature(this.getter),
-						props.setter	= 'document.' + CIX.signature(this.setter);
-						props.doc		= CIX.docComment(this.getter);
+						// template
+							this.template		= new SimpleTemplate();
+							this.template.input	+= '{doc}\n';
 						
-						trace(props.setter + '	' + props.getter);
+						// setter
+							if(this.setter)
+							{
+								props.doc		= CIX.docComment(this.setter);
+								this.template.input	+= ElementPrototype.templates.setter.input;
+							}
+						
+						// getter
+							if(this.getter)
+							{
+								if(this.setter)
+								{
+									this.template.input += ',\n';
+								}
+								props.doc		= CIX.docComment(this.getter);
+								this.template.input	+= ElementPrototype.templates.getter.input;
+							}
+						
+						// props
+							props.params	= CIX.params(this.setter),
+							props.getter	= CIX.signature(this.getter);
+							props.setter	= CIX.signature(this.setter);
+							
+							//trace(props.setter + '	' + props.getter);
 					}
 					
 				// populate
@@ -311,7 +347,7 @@
 // variables
 
 	// lines
-		var str		= new File(xjsfl.utils.createURI('source/superdoc.txt', fl.scriptURI)).contents;
+		var str		= new File(xjsfl.utils.createURI('source/superdoc02.txt', fl.scriptURI)).contents;
 		var lines	= str.split(/\n/);
 		
 	// delete empty lines
@@ -374,7 +410,7 @@ function process()
 		// if object, stick on stack
 			if(element.type == 'object')
 			{
-				trace('')
+				//trace('')
 				parentElement = element;
 			}
 			
@@ -392,7 +428,6 @@ function process()
 	}
 	
 	close(lastElement);
-	trace('Rendering')
 	trace(rootElement.render())
 }
 

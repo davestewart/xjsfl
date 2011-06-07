@@ -1,2 +1,1 @@
-{doc}
-get {name}(){ return {getter} },
+get {name}(){ return {getter}; }

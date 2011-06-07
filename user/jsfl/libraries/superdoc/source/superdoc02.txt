@@ -193,9 +193,9 @@ Superdoc
 			remove	deletePublishProfile		
 			rename	renamePublishProfile		
 			duplicate	duplicatePublishProfile		
-			import	importPublishProfile		
+			importProfile	importPublishProfile		
 			importString	importPublishProfileString		
-			export	exportPublishProfile		
+			exportProfile	exportPublishProfile		
 			exportString	exportPublishProfileString		
 	shapes					
 		outlines				
