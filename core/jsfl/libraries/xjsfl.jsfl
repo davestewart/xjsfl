@@ -381,6 +381,25 @@
 			return [value];
 		},
 		
+		/**
+		 * Returns a unique array without any duplicate items
+		 * @param	arrIn	{Array}		Any array
+		 * @returns			{Array}		A unique array
+		 * @author	Dave Stewart	
+		 */
+		unique:function(arrIn)
+		{
+			var arrOut	= [];
+			var i		= -1;
+			while(i++ < arrIn.length - 1)
+			{
+				if(arrOut.indexOf(arrIn[i]) === -1)
+				{
+					arrOut.push(arrIn[i]);
+				}
+			}
+			return arrOut;
+		},		
 
 		/**
 		 * Get the class of an object as a string
@@ -446,7 +465,6 @@
 		
 	}
 	
-
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████        ██                ██   
@@ -528,7 +546,161 @@
 		
 	}
 	
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██                     ██                    
+//  ██  ██                     ██                    
+//  ██ █████ █████ ████ █████ █████ █████ ████ █████ 
+//  ██  ██   ██ ██ ██      ██  ██   ██ ██ ██   ██    
+//  ██  ██   █████ ██   █████  ██   ██ ██ ██   █████ 
+//  ██  ██   ██    ██   ██ ██  ██   ██ ██ ██      ██ 
+//  ██  ████ █████ ██   █████  ████ █████ ██   █████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Iterators
+
+	xjsfl.iterators =
+	{
+		/**
+		 * Iterates through an array of library Items, optionally processing each one with a callback, and optionally processing each of its layers with a callback
+		 * @param	items			{Array}			An array of Item objects
+		 * @param	itemCallback	{Function}		A callback of the format function(item, index, items)
+		 * @param	layerCallback	{Function}		A callback of the format function(layer, index, layers)
+		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		items:function(items, itemCallback, layerCallback, frameCallback, elementCallback)
+		{
+			for(var i = 0; i < items.length; i++)
+			{
+				// callback
+					if(itemCallback && itemCallback(items[i], i, items))
+					{
+						return true;
+					}
+					
+				// layers
+					if(items[i]['timeline'] && (layerCallback || frameCallback || elementCallback))
+					{
+						this.layers(items[i].timeline, layerCallback, frameCallback, elementCallback)
+					}
+			}
+			return false;			
+		},
+		
+		/**
+		 * Iterates through a Symbol's layers, optionally processing each one with a callback, and optionally processing each of its frames with a callback
+		 * @param	symbol			{SymbolItem}	A SymbolItem or SymbolInstance object
+		 * @param	layerCallback	{Function}		A callback of the format function(layer, index, layers)
+		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		layers:function(symbol, layerCallback, frameCallback, elementCallback)
+		{
+			if(symbol)
+			{
+				var timeline = symbol instanceof SymbolInstance ? symbol.libraryItem.timeline : symbol.timeline;
+			}
+			else
+			{
+				var timeline = fl.getDocumentDOM().getTimeline();
+			}
+			
+			if(timeline)
+			{
+				for(var i = 0; i < timeline.layers.length; i++)
+				{
+					// callback
+						if(layerCallback && layerCallback(timeline.layers[i], i, timeline.layers))
+						{
+							return true;
+						}
+						
+					// frames
+						if(frameCallback || elementCallback)
+						{
+							this.frames(timeline.layers[i], frameCallback, elementCallback)
+						}
+				}
+			}
+			return false;			
+		},
+		
+		/**
+		 * Iterates through a Layer's frames, optionally processing each one with a callback, and optionally processing each of its elements with a callback
+		 * @param	layer			{Layer}			A Layer, Layer index or Layer name
+		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		frames:function(layer, frameCallback, elementCallback)
+		{
+			if(typeof layer == 'string')
+			{
+				var timeline	= fl.getDocumentDOM().getTimeline();
+				var index		= timeline.findLayerIndex(layer);
+				layer			= timeline.layers[index];
+			}
+			else if(typeof layer == 'number')
+			{
+				layer = fl.getDocumentDOM().getTimeline().layers[layer];
+			}
+			
+			if(layer)
+			{
+				for(var i = 0; i < layer.frames.length; i++)
+				{
+					if(i == layer.frames[i].startFrame)
+					{
+						// callback
+							if(frameCallback && frameCallback(layer.frames[i], i, layer.frames))
+							{
+								return true;
+							}
+						
+						// elements
+							if(elementCallback)
+							{
+								this.elements(layer.frames[i], elementCallback)
+							}
+					}
+						
+				}
+			}
+			return false;			
+		},
+		
+		/**
+		 * Iterates through a frame's elements, processing each one with a callback
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		elements:function(frame, elementCallback)
+		{
+			if(frame == null)
+			{
+				var timeline	= fl.getDocumentDOM().getTimeline();
+				var layer		= timeline.layers[timeline.currentLayer];
+				frame 			= layer.frames[timeline.currentFrame];
+			}
+			
+			if(frame)
+			{
+				for(var i = 0; i < frame.elements.length; i++)
+				{
+					if(elementCallback(frame.elements[i], i, frame.elements))
+					{
+						return true;
+					}
+				}
+			}
+			return false;			
+		}
+	}
 	
+
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██ ██       
@@ -834,7 +1006,9 @@
 									break;
 								
 									case 'xml':
-										return new XML(FLfile.read(uri));
+										var contents = FLfile.read(uri);
+										contents = contents.replace(/<\?.+?>/, ''); // remove any doc type declaration
+										return new XML(contents);
 									break;
 								
 									default:
@@ -891,7 +1065,7 @@
 		 */
 		register:function(name, obj)
 		{
-			if( ! name.match(/load|register|restore/) )
+			if( ! name.match(/items|load|register|restore/) )
 			{
 				xjsfl.classes.items[name] = obj;
 			}
@@ -999,32 +1173,25 @@
 	 */
 	xjsfl.init = function(scope)
 	{
-			// debug
-				xjsfl.output.trace('setting environment variables');
+		// debug
+			xjsfl.output.trace('setting environment variables');
+		
+		// variables
+			scope.dom			= fl.getDocumentDOM();
 			
-			// variables
-				scope.dom			= fl.getDocumentDOM();
-				
-			// functions
-				scope.trace			= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
-				scope.clear			= fl.outputPanel.clear;
-				
-			// methods
-				xjsfl.trace			= xjsfl.output.trace;
-				
-			// classes
-				xjsfl.classes.restore(scope);
-				//scope.$				= xjsfl.elements;
-				
-		if( ! scope.dom)
-		{
-		}
+		// functions
+			scope.trace			= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
+			scope.clear			= fl.outputPanel.clear;
+			
+		// methods
+			xjsfl.trace			= xjsfl.output.trace;
+			
+		// classes
+			xjsfl.classes.restore(scope);
 	}
 
 	// debug
 		//xjsfl.settings.debugLevel = 2;
-		
-	// extract key variables
-		//xjsfl.init(this);
+
 
 
