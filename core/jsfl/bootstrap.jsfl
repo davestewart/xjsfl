@@ -6,7 +6,7 @@
  */
 try
 {
-	// feedback
+	// output
 		fl.outputPanel.clear();
 		fl.trace(FLfile.read(fl.configURI + 'Tools/xJSFL Splash.txt').replace(/\r\n/g, '\n'));
 		fl.trace('> xjsfl: running core bootstrap...');
@@ -27,6 +27,8 @@ try
 			'config',
 			'module',
 			'jsfl',
+			'timer',
+			'library',
 			//'events',
 			/*,
 			'data',
@@ -44,6 +46,9 @@ try
 		([
 			'Snippets',
 		]);
+		
+	// initialize
+		xjsfl.init(this);
 		
 }
 catch(err)
