@@ -19,6 +19,7 @@ Template = function(uri, data)
 	//TODO Add option to auto-clean unused tags
 	//TODO Look at re-constructing class to make variables private
 	//TODO Look at renaming variables to _name, then updating Output class
+	//TODO Add some kind of post-processing / callback, which is called after render
 }
 
 // static properties

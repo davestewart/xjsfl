@@ -1,6 +1,9 @@
 SimpleTemplate = function(uri, data)
 {
-	this.load(uri);
+	if(uri)
+	{
+		this.load(uri);
+	}
 	if(data)
 	{
 		this.populate(data)
@@ -22,7 +25,7 @@ SimpleTemplate.prototype =
 	
 	output:'',
 	
-	load:function(uri)
+	load:function(uri, append)
 	{
 		// input
 			this.uri	= uri;
@@ -31,8 +34,14 @@ SimpleTemplate.prototype =
 		// load file
 			if( ! this.input)
 			{
-				var contents = new File(uri).contents;
-				this.input = SimpleTemplate.templates[uri] = contents;
+				// load contents
+					var input = new File(uri).contents;
+					
+				// cache?
+					//SimpleTemplate.templates[uri] = input;
+					
+				// update input
+					append ? this.input += input : this.input = input;
 			}
 			
 		// return
