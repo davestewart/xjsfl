@@ -18,27 +18,37 @@ try
 	// libraries
 		xjsfl.classes.load
 		([
-			'output',
-			'class',
-			'filesystem',
-			'template',
-			'simple-template',
-			'collections',
-			'config',
-			'module',
-			'jsfl',
-			'timer',
-			'library',
-			//'events',
-			/*,
-			'data',
-			'debug',
-			'functions',
-			'Prototype',
-			'xml'
-			*/
-			//'selectors',
-			'superdoc',
+			// core
+				'output',
+				'class',
+				'filesystem',
+				
+			// modules
+				'config',
+				'module',
+				'jsfl',
+				
+			// design
+				'collections',
+				'library',
+				//'stage',
+				
+			// utility
+				'template',
+				'simple-template',
+				'timer',
+				'table',
+				'superdoc',
+				
+			// other
+				/*
+				'events',
+				'data',
+				'debug',
+				'functions',
+				'Prototype',
+				'xml'
+				*/
 		]);
 		
 	// modules
