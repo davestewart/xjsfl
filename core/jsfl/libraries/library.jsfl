@@ -34,7 +34,12 @@ $$ = function(expression, context)
 			expression		= expression.replace(/\*/g, '.*');
 			
 		// reference to library
-			var library		= fl.getDocumentDOM().library;
+			var dom			= fl.getDocumentDOM();
+			if( ! dom)
+			{
+				return new ItemCollection();
+			}
+			var library		= dom.library;
 			
 	// --------------------------------------------------------------------------------
 	// selector functions
