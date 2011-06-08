@@ -462,6 +462,37 @@
 		},
 		
 		/**
+		 * Updates the elements from the hard disk
+		 * @author	Dave Stewart	
+		 */
+		update:function()
+		{
+			this.elements.forEach(function(e){ this.library.updateItem(e.name) }, this);
+			return this;
+		},
+		
+		/**
+		 * 
+		 * @param	state	
+		 * @param	recurse	
+		 * @returns		
+		 * @author	Dave Stewart	
+		 */
+		expand:function(state, recurse)
+		{
+			state = state == undefined ? true : state;
+			for(var i = 0; i < this.elements.length; i++)
+			{
+				var item = this.elements[i];
+				if(item.itemType == 'folder')
+				{
+					this.library.expandFolder(state, recurse, item.name)
+				}
+			}
+			return this;
+		},
+		
+		/**
 		 * Move the item to a folder
 		 * @param	path	
 		 * @param	replace	
@@ -481,39 +512,101 @@
 			{
 				this.library.moveToFolder(path, this.elements[i].name, Boolean(replace));
 			}
+			return this;
 		},
 		
 		/**
 		 * Remove the item from the library
 		 * @param		
 		 * @returns		
-		 * @author	Dave Stewart	
 		 */
 		remove:function()
 		{
-			
+			for(var i = this.elements.length - 1; i >= 0; i--)
+			{
+				this.library.deleteItem(this.elements[i].name);
+			}
+			return this;
 		},
 		
 		/**
-		 * Rename the item using a pattern or callback
-		 * @param	pattern	
-		 * @returns		
-		 * @author	Dave Stewart	
+		 * Rename the the items in the collection using a pattern or callback
+		 * @param	baseName	{String}			A base name for numerical naming. Alternatively, pass a callback of the format function(name, index, item) and return a string
+		 * @returns	this		(ItemCollection)
 		 */
-		rename:function(pattern)
+		rename:function(baseName, padding)
 		{
-			
+			// padding function
+				function pad(num, length)
+				{
+					var str = String(num);
+					while(str.length < length)
+					{
+						str = '0' + str;
+					}
+					return str;
+				}
+				
+			// default callback function
+				function callback(name, index, item)
+				{
+					return baseName + ' ' + pad(index + 1);
+				}
+				
+			// default pattern
+				if(typeof baseName == 'function')
+				{
+					callback = baseName;
+				}
+				else
+				{
+					baseName	= baseName || 'Item';
+					padding		= padding || String(this.elements.length).length + 1;
+				}
+				
+			// start
+				for(var i = 0; i < this.elements.length; i++)
+				{
+					// get item path and name
+						var parts	= this.elements[i].name.split('/');
+						var name	= parts.pop();
+						
+					// run via renaming callback
+						name		= callback(name, i, this.elements[i]);
+						var path	= parts.join('/') + '/' + name;
+						this.elements[i].name = name;
+				}
+				
+				return this;
 		},
 		
 		/**
 		 * Run a function in each item in the collection by entering edit mode, running the function, then moving onto the next item
-		 * @param	callback	
-		 * @returns		
+		 * @param	callback		{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
+		 * @param	params			{Array}				An array of optional parameters to pass to the callback
+		 * @returns					{ItemCollection}	The original ItemCollection
 		 * @author	Dave Stewart	
 		 */
-		invoke:function(callback)
+		exec:function(callback, params)
 		{
-			
+			var that = this;
+			this.elements.forEach
+			(
+				function(element, index, array)
+				{
+					that.library.editItem(element.name);
+					callback.apply(that, [element, index].concat(params));
+				}
+			)
+			return this;
+		},
+		
+		invoke:function(method, params)
+		{
+			for(var i = this.elements.length - 1; i >= 0; i--)
+			{
+				this.library[method].apply(this, params);
+			}
 		},
 		
 		inspect:function()
@@ -537,7 +630,6 @@
 
 	fl.trace(itemCollection.elements.length)
 	*/
-
 
 
 // ------------------------------------------------------------------------------------------------------------------------
