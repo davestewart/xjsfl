@@ -3,56 +3,70 @@
 	
 	/**
 	 * Table constructor
-	 * @param rows		{Array}		The input array
-	 * @param head		{Boolean}	Show heading
-	 * @param maxWidth	{Number}	Max Column Height (returns)
-	 * @param maxHeight	{Number}	Max Row Width (chars)
+	 * @param rows			{Array}		The input array
+	 * @param keys			{Array}		An optional anything-delimted string, or array of columns to extract from the data, or a Table ORDER Constant to order all columns
+	 * @param maxColWidth	{Number}	Max Column Height (returns)
+	 * @param maxRowHeight	{Number}	Max Row Width (chars)
 	 */
-	function Table(rows, showHeading, maxColWidth, maxRowHeight)
+	function Table(rows, keys, maxColWidth, maxRowHeight)
 	{
-		// return early
-			if(rows.length == 0)
-			{
-				return false;
-			}
+		if(rows.length > 0)
+		{
+			// variables
+				this.rows			= rows;
+				this.cols			= [];
+				this.colWidths		= [];
+				this.rowHeights		= [];
+				
+			// widths and heights
+				this.mW				= maxColWidth || this.mW;
+				this.mH				= maxRowHeight || this.mH;
 			
-		// variables
-			this.rows			= rows;
-			this.cols			= [];
-			this.colWidths		= [];
-			this.rowHeights		= [];
-			this.keys			= xjsfl.utils.keys(this.rows[0]);
+			// filter column data
+				this.setKeys(keys);
 			
-		// widths and heights
-			this.mW				= maxColWidth || this.mW;
-			this.mH				= maxRowHeight || this.mH;
-		
-		// set max widths
-			for(var y = 0; y < rows.length; y++)
-			{
-				for(var x = 0; x < this.keys.length; x++)
+			// set max widths
+				for(var y = 0; y < this.rows.length; y++)
 				{
-					this.setMax(y, x, this.rows[y][this.keys[x]]);
+					for(var x = 0; x < this.keys.length; x++)
+					{
+						this.setMax(y, x, this.rows[y][this.keys[x]]);
+					}
 				}
-			}
-			
-		// set headers
-			this.showHeading(showHeading);
-			
-			return true;
-		
+				
+			// add headings
+				this.setHeading();
+		}
 	}
 
+// ---------------------------------------------------------------------------------------------------------------
+// static properties
+	
 	/**
 	 * Static table method to print a table
 	 * @param	rows	
 	 * @param	showHeading	
 	 * @param	maxColWidth	
 	 */
-	Table.print = function(rows, showHeading, maxColWidth)
+	Table.print = function(rows, keys, maxColWidth)
 	{
-		new Table(rows, showHeading, maxColWidth).render(true);
+		new Table(rows, keys, maxColWidth).render(true);
 	}
+	
+	/// Sort table columns in the order they are first found
+	Table.ORDER_FOUND	= 0;
+	
+	/// Sort table columns in alphabetical order
+	Table.ORDER_ALPHA	= 1;
+	
+	/// Sort table columns by the most popular keys first
+	Table.ORDER_COUNT	= 2;
+	
+	/// Sort table columns by the most popular rows first
+	Table.ORDER_GROUP	= 3;
+	
+	/// Sort table columns by the first row's keys only (this will hide data for some objects!)
+	Table.ORDER_FIRST	= 4;
 			
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -68,6 +82,13 @@
 			 */
 			rows:		null,
 		
+			/** 
+			 * @type	{Array}	An array of column {key, width, align} objects
+			 */
+			cols:		[
+							{key:'', width:0, align:0}
+						],
+		
 			/**
 			 * @var int The Column index of keys
 			 */
@@ -77,11 +98,6 @@
 			 * @var int The column width settings
 			 */
 			colWidths:	[],
-		
-			/** 
-			 * @type	{Array}	An array of column {key, width, align} objects
-			 */
-			cols:		[],
 		
 			/** 
 			 * @var int the column width settings
@@ -103,7 +119,8 @@
 			 */
 			mW:		100,
 		
-			head:	false,
+			head:	null,
+			
 			output:	'',
 			
 			chars:
@@ -115,42 +132,8 @@
 			
 			
 		// ---------------------------------------------------------------------------------------------------------------
-		// instantiation
+		// public methods
 		
-			
-			/**
-			 * Show the headers using the key values of the array for the titles
-			 * 
-			 * @param bool bool
-			 */
-			showHeading:function(bool)
-			{
-				if(bool)
-				{
-					this.setHeading();
-				}
-			},
-			
-			/**
-			 * Set the maximum width (number of characters) per column before truncating
-			 * 
-			 * @param int maxWidth
-			 */
-			setMaxWidth:function(maxWidth)
-			{
-				this.mW = Math.floor(maxWidth);
-			},
-			
-			/**
-			 * Set the maximum height (number of lines) per row before truncating
-			 * 
-			 * @param int maxHeight
-			 */
-			setMaxHeight:function(maxHeight)
-			{
-				this.mH = Math.floor(maxHeight);
-			},
-			
 			/**
 			 * Prints the data to a text table
 			 *
@@ -183,8 +166,121 @@
 			},
 		
 		// ---------------------------------------------------------------------------------------------------------------
-		// private methods
+		// set methods
 		
+			/**
+			 * Filter the displayed row data by key (column)
+			 * @param	keys	{Array|Number}
+			 */
+			setKeys:function(keys)
+			{
+				// default
+					keys = keys || Table.ORDER_GROUP;
+				
+				// string - split into keys
+					if(typeof keys == 'string')
+					{
+						keys = xjsfl.utils.trim(keys.replace(/\s*[^\w ]+\s*/g, ',')).split(/,/g);
+					}
+					
+				// Sort keys according to a Table.ORDER Constant
+					else if(typeof keys == 'number')
+					{
+						// variables
+							var temp	= [];
+							var hash	= {};
+							
+						// found-order or alphapetical-order
+							if(keys === Table.ORDER_FOUND || keys === Table.ORDER_ALPHA)
+							{
+								// found-order
+									for(var y = 0; y < this.rows.length; y++)
+									{
+										temp = temp.concat(xjsfl.utils.keys(this.rows[y]));
+									}
+									temp = xjsfl.utils.unique(temp);
+								
+								// alphapetical-order
+									if(keys === Table.ORDER_ALPHA)
+									{
+										temp = temp.sort();
+									}
+									
+								// assign
+									keys = temp;
+							}
+							
+						// count-order
+							else if(keys === Table.ORDER_COUNT)
+							{
+								// grab all keys individually
+									for(var y = 0; y < this.rows.length; y++)
+									{
+										var props = xjsfl.utils.keys(this.rows[y]);
+										for each(var prop in props)
+										{
+											if( ! hash[prop])
+											{
+												hash[prop] = 0;
+											}
+											hash[prop] ++;
+										}
+									}
+									
+								// add key values to an array
+									keys = this.getSortedKeys(hash);
+							}
+							
+						// group-order
+							else if(keys === Table.ORDER_GROUP)
+							{
+								// grab keys per entire row
+									for(var y = 0; y < this.rows.length; y++)
+									{
+										var props = xjsfl.utils.keys(this.rows[y]).join(',');
+										if( ! hash[props])
+										{
+											hash[props] = 0;
+										}
+										hash[props] ++;
+									}
+									
+								// add key values to an array
+									keys = this.getSortedKeys(hash);
+							}
+						// otherwise, just grab the keys from the first row
+							else
+							{
+								this.keys = xjsfl.utils.keys(this.rows[0]);
+							}
+					}
+					
+				// if keys are an array, set the keys property
+					if(xjsfl.utils.isArray(keys))
+					{
+						this.keys = keys;
+					}
+					
+			},
+			
+			/**
+			 * Set the maximum width (number of characters) per column before truncating
+			 * @param int maxWidth
+			 */
+			setMaxWidth:function(maxWidth)
+			{
+				this.mW = Math.floor(maxWidth);
+			},
+			
+			/**
+			 * Set the maximum height (number of lines) per row before truncating
+			 * @param int maxHeight
+			 */
+			setMaxHeight:function(maxHeight)
+			{
+				this.mH = Math.floor(maxHeight);
+			},
+			
 			setMax:function(y, x, value)
 			{
 				// variables
@@ -209,7 +305,7 @@
 					}
 			
 				// update row heights
-					if(y !== false && (this.rowHeights[y] == undefined || this.rowHeights[y] < h))
+					if(y > -1 && (this.rowHeights[y] == undefined || this.rowHeights[y] < h))
 					{
 						this.rowHeights[y] = h;
 					}
@@ -225,7 +321,7 @@
 					{
 						var value	= this.keys[x];
 						data[x]		= value;
-						this.setMax(false, x, value);
+						this.setMax(-1, x, value);
 					}
 					
 				// check data was provided
@@ -253,6 +349,7 @@
 							for(var x = 0; x < this.keys.length; x++)
 							{
 								var value	= this.rows[y][this.keys[x]];
+								value		= value === undefined ? '' : value;
 								var pad		= typeof value == 'number' ? true : false;
 								output		+= " ";
 								output		+= this.pad(String(value).substr(this.mW * (line-1), this.mW), this.colWidths[x], ' ', pad);
@@ -327,6 +424,41 @@
 					str = right ? chr + str : str + chr;
 				}
 				return str;
+			},
+			
+			getSortedKeys:function(hash)
+			{
+				// sort function
+					function byCount(a, b, c)
+					{
+						var v1 = a.count;
+						var v2 = b.count;
+						return v1 < v2 ? 1 : (v1 > v2 ? -1 : 0);
+					}
+				
+				// loop through hash, and create sortable array
+					var arr = [];
+					for(var key in hash)
+					{
+						arr.push({key:key, count:hash[key]})
+					}
+					
+				// sort the array
+					arr.sort(byCount)
+					
+				// add hash-keys in order to a keys array
+					var keys = [];
+					for(var i = 0; i < arr.length; i++)
+					{
+						keys.push(arr[i].key);
+					}
+					
+				// convert the the array to a string, then to an array, then make unique
+					keys	= keys.join(',').split(',');
+					keys	= xjsfl.utils.unique(keys);
+					
+				// return
+					return keys;
 			}
 	}
 	
@@ -348,8 +480,8 @@
 		[
 			{name:'Folder 1', value:200, symbol:'folder'},
 			{name:'Folder 1/Folder 2', value:50, symbol:'folder'},
-			{name:'Folder 1/Folder 2/Movieclip 1', value:-7, symbol:'movie clip'},
+			{age:'Folder 1/Folder 2/Movieclip 1', value:-7, symbol:'movie clip'},
 		]
 		
-		Table.print(data, true);
+		Table.print(data, 'name              | value | symbol ');
 	}
