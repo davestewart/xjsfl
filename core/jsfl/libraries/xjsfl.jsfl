@@ -463,6 +463,21 @@
 			// return
 				return arrOut;
 		},
+		
+		/**
+		 * Get an object's keys
+		 * @param	obj	{Object}	Any object with iterable properties
+		 * @returns		{Array}		An array of key names
+		 */
+		keys:function(obj)
+		{
+			var keys = [];
+			for(var i in obj)
+			{
+				keys.push(i);
+			}
+			return keys;
+		},
 
 		/**
 		 * Get the class of an object as a string
