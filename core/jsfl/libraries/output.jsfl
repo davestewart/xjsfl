@@ -31,15 +31,37 @@ Output =
 	 */
 	print:function(content, title, output)
 	{
-		output		= output == undefined ? true : false;
-		var result	= '';
-		result		+= '\n\t' +title + '\n\t--------------------------------------------------------------------------\n';
-		result		+= '\t' + String(content).replace(/\n/g, '\n\t') + '\n';
-		if (output)
-		{
-			Output.trace(result);
-		}
-		return result;
+		// variables
+			output		= output == undefined ? true : false;
+			var result	= '';
+			result		+= '\n\t' +title + '\n\t--------------------------------------------------------------------------\n';
+			result		+= '\t' + String(content).replace(/\n/g, '\n\t') + '\n';
+			
+		// trace
+			if (output)
+			{
+				Output.trace(result);
+			}
+			
+		// return
+			return result;
+	},
+	
+	list:function(arrIn, property, label, output)
+	{
+		// variables
+			property	= property || 'name';
+			label		= label || 'List'
+			
+		// parse
+			var arrOut = [];
+			for(var i = 0; i < arrIn.length; i++)
+			{
+				arrOut[i] = arrIn[i][property];
+			}
+			
+		// trace
+			return Output.inspect(arrOut, label, 1, output)
 	},
 	
 	/**

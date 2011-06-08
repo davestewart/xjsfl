@@ -9,7 +9,7 @@ var Superdoc =
 			 * @param color {Fill} The color of the fill, in one of the following formats: 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dd5.html
-			 */ 
+			 */
 			color:function(color)
 			{
 				document.setFillColor(color);
@@ -19,28 +19,28 @@ var Superdoc =
 			 * @param objectToFill {String} A string that specifies the location of the fill object. The following values are valid:	
 			 * @returns {Fill}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0d.html
-			 */ 
-			get toolbar(){ return document.getCustomFill(objectToFill) },
+			 */
 			set toolbar(fill)
 			{
 				document.setCustomFill(fill);
 			},
+			get toolbar(){ return document.getCustomFill(objectToFill); },
 			/**
 			 * Retrieves the fill object of the selected shape or, if specified, of the Tools panel and Property inspector. 
 			 * @param objectToFill {String} A string that specifies the location of the fill object. The following values are valid:	
 			 * @returns {Fill}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0d.html
-			 */ 
-			get selection(){ return document.getCustomFill(objectToFill) },
+			 */
 			set selection(fill)
 			{
 				document.setCustomFill(fill);
 			},
+			get selection(){ return document.getCustomFill(objectToFill); },
 			/**
 			 * Swaps the Stroke and Fill colors. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cb2.html
-			 */ 
+			 */
 			swapWithStroke:function()
 			{
 				document.swapStrokeAndFill();
@@ -53,8 +53,8 @@ var Superdoc =
 			 * @param color {Stroke} The color of the stroke, in one of the following formats: 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc7.html
-			 */ 
-			color:function(color)
+			 */
+			set color(color)
 			{
 				document.setStrokeColor(color);
 			},
@@ -63,31 +63,19 @@ var Superdoc =
 			 * @param locationOfStroke {String} A string that specifies the location of the stroke object. The following values are valid:	
 			 * @returns {Stroke}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0c.html
-			 */ 
-			get custom(){ return document.getCustomStroke(locationOfStroke) },
+			 */
 			set custom(stroke)
 			{
 				document.setCustomStroke(stroke);
 			},
-			/**
-			 * Sets the color, width, and style of the selected stroke. For information on changing the stroke in the Tools panel and Property inspector, see document.setCustomStroke().
-			 * @param color {Stroke} The color of the stroke, in one of the following formats: 
-			 * @param size {Number} A floating-point value that specifies the new stroke size for the selection. 
-			 * @param strokeType {String} A string that specifies the new type of stroke for the selection. Acceptable values are "hairline", "solid", "dashed", "dotted", "ragged", "stipple", and "hatched". 
-			 * @returns {}
-			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc8.html
-			 */ 
-			properties:function(color, size, strokeType)
-			{
-				document.setStroke(color, size, strokeType);
-			},
+			get custom(){ return document.getCustomStroke(locationOfStroke); },
 			/**
 			 * Changes the stroke size of the selection to the specified size. For information on changing the stroke in the Tools panel and Property inspector, see document.setCustomStroke().
 			 * @param size {Number} A floating-point value from 0.25 to 10 that specifies the stroke size. The method ignores precision greater than two decimal places.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc6.html
-			 */ 
-			size:function(size)
+			 */
+			set size(size)
 			{
 				document.setStrokeSize(size);
 			},
@@ -96,16 +84,28 @@ var Superdoc =
 			 * @param strokeType {String} A string that specifies the stroke style for the current selection. Acceptable values are "hairline", "solid","dashed", "dotted", "ragged", "stipple", and "hatched". 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc5.html
-			 */ 
-			style:function(strokeType)
+			 */
+			set style(strokeType)
 			{
 				document.setStrokeStyle(strokeType);
+			},
+			/**
+			 * Sets the color, width, and style of the selected stroke. For information on changing the stroke in the Tools panel and Property inspector, see document.setCustomStroke().
+			 * @param color {Stroke} The color of the stroke, in one of the following formats: 
+			 * @param size {Number} A floating-point value that specifies the new stroke size for the selection. 
+			 * @param strokeType {String} A string that specifies the new type of stroke for the selection. Acceptable values are "hairline", "solid", "dashed", "dotted", "ragged", "stipple", and "hatched". 
+			 * @returns {}
+			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc8.html
+			 */
+			set:function(color, size, strokeType)
+			{
+				document.setStroke(color, size, strokeType);
 			},
 			/**
 			 * Swaps the Stroke and Fill colors. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cb2.html
-			 */ 
+			 */
 			swapWithFill:function()
 			{
 				document.swapStrokeAndFill();
@@ -116,7 +116,7 @@ var Superdoc =
 			/**
 			 * An integer that specifies the width of the document (Stage) in pixels. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7d3d.html
-			 */ 
+			 */
 			get width(){ return document.width; },
 			set width(value)
 			{
@@ -125,16 +125,26 @@ var Superdoc =
 			/**
 			 * An integer that specifies the height of the document (Stage) in pixels. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e53.html
-			 */ 
+			 */
 			get height(){ return document.height; },
 			set height(value)
 			{
 				document.height = value;
 			},
 			/**
+			 * 
+			 * @see 
+			 */
+			set size(value)
+			{
+				document.width	= value[0];
+				document.height = value[1];
+			},
+			get size(){ return [document.width, document.height]; },
+			/**
 			 * A float value that specifies the number of frames displayed per second when the SWF file plays; the default is 12. Setting this property is the same as setting the default frame rate in the Document Properties dialog box (Modify &gt; Document) in the FLA file. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e54.html
-			 */ 
+			 */
 			get frameRate(){ return document.frameRate; },
 			set frameRate(value)
 			{
@@ -143,7 +153,7 @@ var Superdoc =
 			/**
 			 * The color of the background, in one of the following formats:
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e5a.html
-			 */ 
+			 */
 			get backgroundColor(){ return document.backgroundColor; },
 			set backgroundColor(value)
 			{
@@ -152,7 +162,7 @@ var Superdoc =
 			/**
 			 * Read-only property; a unique integer (assigned automatically) that identifies a document during a Flash session. Use this property in conjunction with fl.findDocumentDOM() to specify a particular document for an action.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fcd.html
-			 */ 
+			 */
 			get id(){ return document.id; },
 			set id(value)
 			{
@@ -164,7 +174,7 @@ var Superdoc =
 			/**
 			 * A Boolean value that specifies whether Live Preview is enabled. If set to true, components appear on the Stage as they will appear in the published Flash content, including their approximate size. If set to false, components appear only as outlines. The default value is true.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e4f.html
-			 */ 
+			 */
 			get livePreview(){ return document.livePreview; },
 			set livePreview(value)
 			{
@@ -173,7 +183,7 @@ var Superdoc =
 			/**
 			 * Read-only property; a Matrix object. The viewMatrix is used to transform from object space to document space when the document is in edit mode. The mouse location, as a tool receives it, is relative to the object that is currently being edited. See Matrix object.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cb6.html
-			 */ 
+			 */
 			get matrix(){ return document.viewMatrix; },
 			set matrix(value)
 			{
@@ -184,8 +194,8 @@ var Superdoc =
 			 * @param point {Object} A point that specifies the x and y coordinates of the location at which to set the vanishing point for viewing 3D objects.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS98947551-DB0B-4342-A8A0-F12DA9359735.html
-			 */ 
-			vanishingPoint:function(point)
+			 */
+			set vanishingPoint(point)
 			{
 				document.setStageVanishingPoint(point);
 			},
@@ -194,15 +204,15 @@ var Superdoc =
 			 * @param angle {Fl} A floating point value between 0.0 and 179.0. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WSB992D8DA-2CC2-4320-BF2B-39992B47A849.html
-			 */ 
-			viewAngle:function(angle)
+			 */
+			set viewAngle(angle)
 			{
 				document.setStageViewAngle(angle);
 			},
 			/**
 			 * Specifies the zoom percent of the Stage at authoring time. A value of 1 equals 100 percent zoom, 8 equals 800 percent, .5 equals 50 percent, and so on.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7c6f.html
-			 */ 
+			 */
 			get zoom(){ return document.zoomFactor; },
 			set zoom(value)
 			{
@@ -217,16 +227,12 @@ var Superdoc =
 			/**
 			 * Read-only property; an array of Timeline objects (see Timeline object). 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7f90.html
-			 */ 
+			 */
 			get all(){ return document.timelines; },
-			set all(value)
-			{
-				document.timelines = value;
-			},
 			/**
 			 * An integer that specifies the index of the active timeline. You can set the active timeline by changing the value of this property; the effect is almost equivalent to calling document.editScene(). The only difference is that you don’t get an error message if the index of the timeline is not valid; the property is simply not set, which causes silent failure.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e58.html
-			 */ 
+			 */
 			get current(){ return document.currentTimeline; },
 			set current(value)
 			{
@@ -237,7 +243,7 @@ var Superdoc =
 			 * @param editMode {String} A string that specifies the editing mode. Acceptable values are "inPlace" or "newWindow". If no parameter is specified, the default is symbol-editing mode. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e14.html
-			 */ 
+			 */
 			edit:function(editMode)
 			{
 				document.enterEditMode(editMode);
@@ -246,7 +252,7 @@ var Superdoc =
 			 * Exits from symbol-editing mode and returns focus to the next level up from the editing mode. For example, if you are editing a symbol inside another symbol, this method takes you up a level from the symbol you are editing, into the parent symbol. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e13.html
-			 */ 
+			 */
 			exit:function()
 			{
 				document.exitEditMode();
@@ -255,7 +261,7 @@ var Superdoc =
 			 * Retrieves the current Timeline object in the document. The current timeline can be the current scene, the current symbol being edited, or the current screen. 
 			 * @returns {Timeline}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e02.html
-			 */ 
+			 */
 			get:function()
 			{
 				return document.getTimeline();
@@ -268,7 +274,7 @@ var Superdoc =
 			 * @param name {} Specifies the name of the scene. If you do not specify a name, a new scene name is generated. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e3f.html
-			 */ 
+			 */
 			add:function(name)
 			{
 				return document.addNewScene(name);
@@ -277,7 +283,7 @@ var Superdoc =
 			 * Deletes the current scene (Timeline object) and, if the deleted scene was not the last one, sets the next scene as the current Timeline object. If the deleted scene was the last one, it sets the first object as the current Timeline object. If only one Timeline object (scene) exists, it returns the value false. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e24.html
-			 */ 
+			 */
 			remove:function()
 			{
 				return document.deleteScene();
@@ -286,7 +292,7 @@ var Superdoc =
 			 * Makes a copy of the currently selected scene, giving the new scene a unique name and making it the current scene. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e19.html
-			 */ 
+			 */
 			duplicate:function()
 			{
 				return document.duplicateScene();
@@ -296,7 +302,7 @@ var Superdoc =
 			 * @param index {Number} A zero-based integer that specifies which scene to edit. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e17.html
-			 */ 
+			 */
 			edit:function(index)
 			{
 				document.editScene(index);
@@ -306,7 +312,7 @@ var Superdoc =
 			 * @param name {String} A string that specifies the new name of the scene. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7ded.html
-			 */ 
+			 */
 			rename:function(name)
 			{
 				return document.renameScene(name);
@@ -317,7 +323,7 @@ var Superdoc =
 			 * @param sceneToPutItBefore {Number} An integer that specifies the scene before which you want to move the scene specified by sceneToMove. Specify 0 (zero) for the first scene. For example, if you specify 1 for sceneToMove and 0 for sceneToPutItBefore, the second scene is placed before the first scene. Specify -1 to move the scene to the end. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dec.html
-			 */ 
+			 */
 			reorder:function(sceneToMove, sceneToPutItBefore)
 			{
 				document.reorderScene(sceneToMove, sceneToPutItBefore);
@@ -329,38 +335,27 @@ var Superdoc =
 			 * Use before using the document.screenOutline property. If this method returns the value true, you can safely access document.screenOutline; Flash displays an error if you access document.screenOutline in a document without screens. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e3b.html
-			 */ 
-			allow:function()
-			{
-				return document.allowScreens();
-			},
+			 */
+			get allow(){ return document.allowScreens(); },
 			/**
 			 * Read-only property; the current ScreenOutline object for the document. Before accessing the object for the first time, make sure to use document.allowScreens() to determine whether the property exists. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e4b.html
-			 */ 
-			get outline(){ return document.screenOutline; },
-			set outline(value)
-			{
-				document.screenOutline = value;
-			}
+			 */
+			get outline(){ return document.screenOutline; }
 		},
 		panel:
 		{
 			/**
 			 * Read-only property; the library object for a document. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7f95.html
-			 */ 
+			 */
 			get library(){ return document.library; },
-			set library(value)
-			{
-				document.library = value;
-			},
 			/**
 			 * Posts an XMLUI dialog box. See fl.xmlui.
 			 * @param fileURI {String} A string, expressed as a file:/// URI, that specifies the path to the XML file defining the controls in the panel. The full path is required. 
 			 * @returns {Object}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7ca9.html
-			 */ 
+			 */
 			xml:function(fileURI)
 			{
 				return document.xmlPanel(fileURI);
@@ -376,7 +371,7 @@ var Superdoc =
 		 * @param data {value} The value to add. Valid types depend on the type parameter.
 		 * @returns {}
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e47.html
-		 */ 
+		 */
 		set:function(name, type, data)
 		{
 			document.addDataToDocument(name, type, data);
@@ -386,7 +381,7 @@ var Superdoc =
 		 * @param name {String} A string that specifies the name of the data to return.
 		 * @returns {}
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0b.html
-		 */ 
+		 */
 		get:function(name)
 		{
 			document.getDataFromDocument(name);
@@ -395,12 +390,12 @@ var Superdoc =
 		 * Returns a string containing the XML metadata associated with the document, or an empty string if there is no metadata.
 		 * @returns {String}
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e07.html
-		 */ 
-		get meta(){ return document.getMetadata() },
+		 */
 		set meta(strMetadata)
 		{
 			document.setMetadata(strMetadata);
-		}
+		},
+		get meta(){ return document.getMetadata(); }
 	},
 	elements:
 	{
@@ -409,7 +404,7 @@ var Superdoc =
 			/**
 			 * A Boolean value that is equivalent to the Auto Label check box in the Accessibility panel. You can use this property to tell Flash to automatically label objects on the Stage with the text associated with them.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e5b.html
-			 */ 
+			 */
 			get autoLabel(){ return document.autoLabel; },
 			set autoLabel(value)
 			{
@@ -418,7 +413,7 @@ var Superdoc =
 			/**
 			 * A string that is equivalent to the Description field in the Accessibility panel. The description is read by the screen reader. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e57.html
-			 */ 
+			 */
 			get description(){ return document.description; },
 			set description(value)
 			{
@@ -427,7 +422,7 @@ var Superdoc =
 			/**
 			 * A Boolean value that specifies whether the children of the specified object are accessible. This is equivalent to the inverse logic of the Make Child Objects Accessible setting in the Accessibility panel. That is, if forceSimple is true, it is the same as the Make Child Object Accessible option being unchecked. If forceSimple is false, it is the same as the Make Child Object Accessible option being checked. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e55.html
-			 */ 
+			 */
 			get forceSimple(){ return document.forceSimple; },
 			set forceSimple(value)
 			{
@@ -436,7 +431,7 @@ var Superdoc =
 			/**
 			 * A string that is equivalent to the Name field in the Accessibility panel. Screen readers identify objects by reading the name aloud. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e60.html
-			 */ 
+			 */
 			get name(){ return document.accName; },
 			set name(value)
 			{
@@ -445,7 +440,7 @@ var Superdoc =
 			/**
 			 * A Boolean value that specifies whether the object is accessible. This is equivalent to the inverse logic of the Make Movie Accessible setting in the Accessibility panel. That is, if document.silent is true, it is the same as the Make Movie Accessible option being unchecked. If it is false, it is the same as the Make Movie Accessible option being checked. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e48.html
-			 */ 
+			 */
 			get silent(){ return document.silent; },
 			set silent(value)
 			{
@@ -460,7 +455,7 @@ var Superdoc =
 			 * @param item {Item} An Item object that specifies the item to add and the library from which to add it (see Item object).
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e44.html
-			 */ 
+			 */
 			item:function(position, item)
 			{
 				return document.addItem(position, item);
@@ -471,7 +466,7 @@ var Superdoc =
 			 * @param endpoint {Number} A pair of floating-point numbers that specify the x and y coordinates where the line ends. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e43.html
-			 */ 
+			 */
 			line:function(startPoint, endpoint)
 			{
 				document.addNewLine(startPoint, endpoint);
@@ -483,7 +478,7 @@ var Superdoc =
 			 * @param bSuppressStroke {Boolean} A Boolean value that, if set to true, causes the method to create the shape without a stroke. The default value is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e42.html
-			 */ 
+			 */
 			oval:function(boundingRectangle, bSuppressFill, bSuppressStroke)
 			{
 				document.addNewOval(boundingRectangle, bSuppressFill, bSuppressStroke);
@@ -495,7 +490,7 @@ var Superdoc =
 			 * @param bSuppressStroke {Boolean} A Boolean value that, if set to true, causes the method to create the oval without a stroke. The default value is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WSCF572308-4FC6-4809-BF4F-1145EC7EEA37.html
-			 */ 
+			 */
 			primitiveOval:function(boundingRectangle, bSpupressFill, bSuppressStroke)
 			{
 				document.addNewPrimitiveOval(boundingRectangle, bSpupressFill, bSuppressStroke);
@@ -508,7 +503,7 @@ var Superdoc =
 			 * @param bSuppressStroke {Boolean} A Boolean value that, if set to true, causes the method to create the rectangle without a stroke. The default value is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS89493EAA-1C9F-471d-A011-14511DA42162.html
-			 */ 
+			 */
 			primitiveRectangle:function(boundingRectangle, roundness, bSuppressFill, bSuppressStroke)
 			{
 				document.addNewPrimitiveRectangle(boundingRectangle, roundness, bSuppressFill, bSuppressStroke);
@@ -521,7 +516,7 @@ var Superdoc =
 			 * @param bSuppressStroke {Boolean} A Boolean value that, if set to true, causes the method to create the rectangle without a stroke. The default value is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e40.html
-			 */ 
+			 */
 			rectangle:function(boundingRectangle, roundness, bSuppressFill, bSuppressStroke)
 			{
 				document.addNewRectangle(boundingRectangle, roundness, bSuppressFill, bSuppressStroke);
@@ -532,7 +527,7 @@ var Superdoc =
 			 * @param text {String} An optional string that specifies the text to place in the field. If you omit this parameter, the selection in the Tools panel switches to the Text tool. Therefore, if you don’t want the selected tool to change, pass a value for text.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fa4.html
-			 */ 
+			 */
 			text:function(boundingRectangle, text)
 			{
 				document.addNewText(boundingRectangle, text);
@@ -545,7 +540,7 @@ var Superdoc =
 			 * @param filterName {String} A string specifying the filter to be added to the Filters list and enabled for the selected object(s). Acceptable values are "adjustColorFilter", "bevelFilter", "blurFilter", "dropShadowFilter", "glowFilter", "gradientBevelFilter", and "gradientGlowFilter". 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e45.html
-			 */ 
+			 */
 			add:function(filterName)
 			{
 				document.addFilter(filterName);
@@ -555,7 +550,7 @@ var Superdoc =
 			 * @param filterIndex {Number} An integer specifying the zero-based index of the filter to remove from the selected object(s).
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7def.html
-			 */ 
+			 */
 			remove:function(filterIndex)
 			{
 				document.removeFilter(filterIndex);
@@ -567,7 +562,7 @@ var Superdoc =
 			 * @param value {Number} A number or string specifying the value to be set for the specified filter property. Acceptable values depend on the property and the filter being set. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dd4.html
-			 */ 
+			 */
 			setProperty:function(property, filterIndex, value)
 			{
 				document.setFilterProperty(property, filterIndex, value);
@@ -578,7 +573,7 @@ var Superdoc =
 			 * @param newIndex {Number} An integer that represents the new index position of the filter in the list.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e2e.html
-			 */ 
+			 */
 			changeOrder:function(oldIndex, newIndex)
 			{
 				document.changeFilterOrder(oldIndex, newIndex);
@@ -588,7 +583,7 @@ var Superdoc =
 			 * @param filterIndex {Number} An integer specifying the zero-based index of the filter in the Filters list to enable.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e15.html
-			 */ 
+			 */
 			enable:function(filterIndex)
 			{
 				document.enableFilter(filterIndex);
@@ -598,7 +593,7 @@ var Superdoc =
 			 * @param filterIndex {Number} An integer representing the zero-based index of the filter in the Filters list.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e20.html
-			 */ 
+			 */
 			disable:function(filterIndex)
 			{
 				document.disableFilter(filterIndex);
@@ -608,7 +603,7 @@ var Superdoc =
 			 * @param enabledFilterIndex {Number} An integer representing the zero-based index of the filter that should remain enabled after other filters are disabled. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e1f.html
-			 */ 
+			 */
 			disableOther:function(enabledFilterIndex)
 			{
 				document.disableOtherFilters(enabledFilterIndex);
@@ -621,7 +616,7 @@ var Superdoc =
 			 * @param filterArray {Array} The array of filters currently specified.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dd3.html
-			 */ 
+			 */
 			set:function(filterArray)
 			{
 				document.setFilters(filterArray);
@@ -630,7 +625,7 @@ var Superdoc =
 			 * Returns an array that contains the list of filters applied to the currently selected object(s). If multiple objects are selected and they don’t have identical filters, this method returns the list of filters applied to the first selected object. 
 			 * @returns {Array}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e08.html
-			 */ 
+			 */
 			get:function()
 			{
 				return document.getFilters();
@@ -639,7 +634,7 @@ var Superdoc =
 			 * Removes all filters from the selected object(s).
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df2.html
-			 */ 
+			 */
 			remove:function()
 			{
 				document.removeAllFilters();
@@ -648,7 +643,7 @@ var Superdoc =
 			 * Disables all filters on the selected objects. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e21.html
-			 */ 
+			 */
 			disable:function()
 			{
 				document.disableAllFilters();
@@ -657,7 +652,7 @@ var Superdoc =
 			 * Enables all the filters on the Filters list for the selected object(s).
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e16.html
-			 */ 
+			 */
 			enable:function()
 			{
 				document.enableAllFilters();
@@ -670,8 +665,8 @@ var Superdoc =
 			 * @param opacity {Number} An integer between 0 (transparent) and 100 (completely saturated) that adjusts the transparency of the instance.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dd2.html
-			 */ 
-			alpha:function(opacity)
+			 */
+			set alpha(opacity)
 			{
 				document.setInstanceAlpha(opacity);
 			},
@@ -679,19 +674,19 @@ var Superdoc =
 			 * 
 			 * @returns {String}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0e.html
-			 */ 
-			get blendMode(){ return document.getBlendMode() },
+			 */
 			set blendMode(mode)
 			{
 				document.setBlendMode(mode);
 			},
+			get blendMode(){ return document.getBlendMode(); },
 			/**
 			 * Sets the brightness for the instance. 
 			 * @param brightness {Number} An integer that specifies brightness as a value from -100 (black) to 100 (white). 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dd1.html
-			 */ 
-			brightness:function(brightness)
+			 */
+			set brightness(brightness)
 			{
 				document.setInstanceBrightness(brightness);
 			},
@@ -700,17 +695,17 @@ var Superdoc =
 			 * @param propertyName {String}  A string that specifies the name of the Element property for which to retrieve the value.
 			 * @returns {value}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0a.html
-			 */ 
-			get property(){ return document.getElementProperty(propertyName) },
+			 */
 			set property(property, value)
 			{
 				document.setElementProperty(property, value);
 			},
+			get property(){ return document.getElementProperty(propertyName); },
 			/**
 			 * Resets the transformation matrix. This method is equivalent to selecting Modify &gt; Transform &gt; Remove Transform.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7de9.html
-			 */ 
+			 */
 			resetTransform:function()
 			{
 				document.resetTransformation();
@@ -721,8 +716,8 @@ var Superdoc =
 			 * @param strength {Number} An integer between 0 and 100 that specifies the opacity of the tint. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dd0.html
-			 */ 
-			tint:function(color, strength)
+			 */
+			set tint(color, strength)
 			{
 				document.setInstanceTint(color, strength);
 			},
@@ -730,7 +725,7 @@ var Superdoc =
 			 * Unlocks all locked elements on the currently selected frame. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7caa.html
-			 */ 
+			 */
 			unlock:function()
 			{
 				document.unlockAllElements();
@@ -745,21 +740,21 @@ var Superdoc =
 			 * @param endIndex {Number} An integer that specifies the index of last character. This parameter is optional.
 			 * @returns {Text}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e09.html
-			 */ 
-			get attributes(){ return document.getElementTextAttr(attrName, startIndex, endIndex) },
+			 */
 			set attributes(attrName, attrValue, startIndex, endIndex)
 			{
 				document.setElementTextAttr(attrName, attrValue, startIndex, endIndex);
 			},
+			get attributes(){ return document.getElementTextAttr(attrName, startIndex, endIndex); },
 			/**
 			 * Changes the bounding rectangle for the selected text item to the specified size. This method causes the text to reflow inside the new rectangle; the text item is not scaled or transformed. The values passed in boundingRectangle are used as follows:
 			 * @param boundingRectangle {Rectangle} A rectangle that specifies the new size within which the text item should flow. For information on the format of boundingRectangle, see document.addNewRectangle(). 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc4.html
-			 */ 
-			rectangle:function(boundingRectangle)
+			 */
+			set rectangle(boundingRectangle)
 			{
-				return document.setTextRectangle(boundingRectangle);
+				document.setTextRectangle(boundingRectangle);
 			},
 			/**
 			 * Sets the text selection of the currently selected text field to the values specified by the startIndex and endIndex values. Text editing is activated, if it isn’t already. 
@@ -767,10 +762,10 @@ var Superdoc =
 			 * @param endIndex {Number} An integer that specifies the end position of the selection up to, but not including, endIndex. The first character position is 0 (zero).
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc3.html
-			 */ 
-			selection:function(startIndex, endIndex)
+			 */
+			set selection(startIndex, endIndex)
 			{
-				return document.setTextSelection(startIndex, endIndex);
+				document.setTextSelection(startIndex, endIndex);
 			},
 			/**
 			 * Gets the currently selected text. If the optional parameters are not passed, the current text selection is used. If text is not currently opened for editing, the whole text string is returned. If only startIndex is passed, the string starting at that index and ending at the end of the field is returned. If startIndex and endIndex are passed, the string starting from startIndex up to, but not including, endIndex is returned. 
@@ -778,12 +773,12 @@ var Superdoc =
 			 * @param endIndex {Number} An integer that is an index of last character to get. This parameter is optional.
 			 * @returns {String}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e03.html
-			 */ 
-			get string(){ return document.getTextString(startIndex, endIndex) },
+			 */
 			set string(text, startIndex, endIndex)
 			{
 				document.setTextString(text, startIndex, endIndex);
-			}
+			},
+			get string(){ return document.getTextString(startIndex, endIndex); }
 		}
 	},
 	file:
@@ -793,7 +788,7 @@ var Superdoc =
 			/**
 			 * Read-only property; a string that represents the name of a document (FLA file).
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7f97.html
-			 */ 
+			 */
 			get name(){ return document.name; },
 			set name(value)
 			{
@@ -802,7 +797,7 @@ var Superdoc =
 			/**
 			 * Read-only property; a string that represents the path of the document in a platform-specific format. If the document has never been saved, this property is undefined. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e4d.html
-			 */ 
+			 */
 			get path(){ return document.path; },
 			set path(value)
 			{
@@ -811,7 +806,7 @@ var Superdoc =
 			/**
 			 * Read-only property; a string that represents the path of the document, expressed as a file:/// URI. If the document has never been saved, this property is undefined. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS9931616E-E7F0-41de-A90D-50B9342C8D04.html
-			 */ 
+			 */
 			get uri(){ return document.pathURI; },
 			set uri(value)
 			{
@@ -825,7 +820,7 @@ var Superdoc =
 			 * @param bPromptToSaveChanges {Boolean} A Boolean value that, when set to true, causes the method to prompt the user with a dialog box if there are unsaved changes in the document. If bPromptToSaveChanges is set to false, the user is not prompted to save any changed documents. The default value is true. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e2a.html
-			 */ 
+			 */
 			close:function(bPromptToSaveChanges)
 			{
 				document.close(bPromptToSaveChanges);
@@ -834,7 +829,7 @@ var Superdoc =
 			 * Reverts the specified document to its previously saved version. This method is equivalent to selecting File &gt; Revert. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e35.html
-			 */ 
+			 */
 			revert:function()
 			{
 				document.revert();
@@ -843,7 +838,7 @@ var Superdoc =
 			 * If the file can be reverted, displays a dialog box to let the user confirm that the file should be reverted. If the user confirms, this method reverts the file to the version stored on the Version Cue server and logs any errors to the Output panel. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fca.html
-			 */ 
+			 */
 			revertToLastVersion:function()
 			{
 				return document.revertToLastVersion();
@@ -853,7 +848,7 @@ var Superdoc =
 			 * @param bOkToSaveAs {Parameter} An optional parameter that, if true or omitted, and the file was never saved, opens the Save As dialog box. If false and the file was never saved, the file is not saved.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7de5.html
-			 */ 
+			 */
 			save:function(bOkToSaveAs)
 			{
 				return document.save(bOkToSaveAs);
@@ -863,7 +858,7 @@ var Superdoc =
 			 * @param bOkToSaveAs {Parameter} An optional parameter that, if true or omitted and the file was never saved, opens the Save As dialog box. If false and the file was never saved, the file is not saved. The default value is true.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7de4.html
-			 */ 
+			 */
 			saveAndCompact:function(bOkToSaveAs)
 			{
 				return document.saveAndCompact(bOkToSaveAs);
@@ -872,7 +867,7 @@ var Superdoc =
 			 * If the file can be saved to the Version Cue server, displays a dialog box to let the user enter version comments, saves a version of the specified document to the server, and logs any errors to the Output panel.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fc9.html
-			 */ 
+			 */
 			saveAVersion:function()
 			{
 				return document.saveAVersion();
@@ -881,10 +876,10 @@ var Superdoc =
 			 * Synchronizes the specified document with the most current version on the Version Cue server, and logs any errors to the Output panel.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fc4.html
-			 */ 
-			synchronizeWithHeadVersion:function()
+			 */
+			synchronizeWithHeadVersion:function(swapStrokeAndFill)
 			{
-				return document.synchronizeWithHeadVersion();
+				return document.synchronizeWithHeadVersion(swapStrokeAndFill);
 			}
 		},
 		imports:
@@ -895,7 +890,7 @@ var Superdoc =
 			 * @param importToLibrary {Boolean} A Boolean value that specifies whether to import the file only into the document’s library (true) or to also place a copy on the Stage (false). The default value is false.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dfd.html
-			 */ 
+			 */
 			file:function(fileURI, importToLibrary)
 			{
 				document.importFile(fileURI, importToLibrary);
@@ -905,7 +900,7 @@ var Superdoc =
 			 * @param fileURI {String} A string, expressed as a file:/// URI, that specifies the file for the SWF file to import.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dfc.html
-			 */ 
+			 */
 			swf:function(fileURI)
 			{
 				document.importSWF(fileURI);
@@ -920,7 +915,7 @@ var Superdoc =
 			 * @param bCurrentFrame {Boolean} A Boolean value that specifies whether to export only the current frame (true) or to export all frames, with each frame as a separate PNG file (false). This parameter is optional. The default value is false. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e12.html
-			 */ 
+			 */
 			png:function(fileURI, bCurrentPNGSettings, bCurrentFrame)
 			{
 				return document.exportPNG(fileURI, bCurrentPNGSettings, bCurrentFrame);
@@ -931,7 +926,7 @@ var Superdoc =
 			 * @param bCurrentSettings {Boolean} A Boolean value that, when set to true, causes Flash to use current SWF publish settings. Otherwise, Flash displays the Export Flash Player dialog box. The default is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e10.html
-			 */ 
+			 */
 			swf:function(fileURI, bCurrentSettings)
 			{
 				document.exportSWF(fileURI, bCurrentSettings);
@@ -943,7 +938,7 @@ var Superdoc =
 			 * Determines whether you can use the document.revert() or fl.revertDocument() method successfully.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e36.html
-			 */ 
+			 */
 			revert:function()
 			{
 				return document.canRevert();
@@ -952,7 +947,7 @@ var Superdoc =
 			 * Determines whether a version of the specified document can be saved to the Version Cue server. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd1.html
-			 */ 
+			 */
 			saveAVersion:function()
 			{
 				return document.canSaveAVersion();
@@ -961,7 +956,7 @@ var Superdoc =
 			 * Determines whether you can use the document.testMovie() method successfully. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e32.html
-			 */ 
+			 */
 			testMovie:function()
 			{
 				return document.canTestMovie();
@@ -970,7 +965,7 @@ var Superdoc =
 			 * Determines whether you can use the document.testScene() method successfully. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e30.html
-			 */ 
+			 */
 			testScene:function()
 			{
 				return document.canTestScene();
@@ -982,7 +977,7 @@ var Superdoc =
 			 * Executes a Test Movie operation on the document. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e31.html
-			 */ 
+			 */
 			movie:function()
 			{
 				document.testMovie();
@@ -991,7 +986,7 @@ var Superdoc =
 			 * Executes a Test Scene operation on the current scene of the document. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e2f.html
-			 */ 
+			 */
 			scene:function()
 			{
 				document.testScene();
@@ -1001,7 +996,7 @@ var Superdoc =
 		 * Publishes the document according to the active publish settings (File &gt; Publish Settings). This method is equivalent to selecting File &gt; Publish.
 		 * @returns {}
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df4.html
-		 */ 
+		 */
 		publish:function()
 		{
 			document.publish();
@@ -1015,7 +1010,7 @@ var Superdoc =
 			 * Copies the current selection from the document to the Clipboard. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e2d.html
-			 */ 
+			 */
 			copy:function()
 			{
 				document.clipCopy();
@@ -1024,7 +1019,7 @@ var Superdoc =
 			 * Cuts the current selection from the document and writes it to the Clipboard.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e2c.html
-			 */ 
+			 */
 			cut:function()
 			{
 				document.clipCut();
@@ -1034,7 +1029,7 @@ var Superdoc =
 			 * @param bInPlace {Boolean} A Boolean value that, when set to true, causes the method to perform a paste-in-place operation. The default value is false, which causes the method to perform a paste operation to the center of the document. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e2b.html
-			 */ 
+			 */
 			paste:function(bInPlace)
 			{
 				document.clipPaste(bInPlace);
@@ -1049,7 +1044,7 @@ var Superdoc =
 			 * @param bShiftSel {Boolean} A Boolean value that specifies the state of the application preference Shift select: true for on; false for off.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df9.html
-			 */ 
+			 */
 			click:function(position, bToggleSel, bShiftSel)
 			{
 				document.mouseClick(position, bToggleSel, bShiftSel);
@@ -1062,7 +1057,7 @@ var Superdoc =
 			 * @param bShiftSelect {Boolean} A Boolean value that indicates the state of the application preference Shift select: true for on; false for off. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df8.html
-			 */ 
+			 */
 			dblClk:function(position, bAltDown, bShiftDown, bShiftSelect)
 			{
 				document.mouseDblClk(position, bAltDown, bShiftDown, bShiftSelect);
@@ -1074,7 +1069,7 @@ var Superdoc =
 			 * Sets all values in the Property inspector to default Oval object settings. If any Oval objects are selected, their properties are reset to default values as well.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fcc.html
-			 */ 
+			 */
 			resetOval:function()
 			{
 				document.resetOvalObject();
@@ -1083,7 +1078,7 @@ var Superdoc =
 			 * Sets all values in the Property inspector to default Rectangle object settings. If any Rectangle objects are selected, their properties are reset to default values as well.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fcb.html
-			 */ 
+			 */
 			resetRectangle:function()
 			{
 				document.resetRectangleObject();
@@ -1094,7 +1089,7 @@ var Superdoc =
 			 * @param value {value} The value to be assigned to the property. Acceptable values vary depending on the property you specify in propertyName.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fc7.html
-			 */ 
+			 */
 			setOvalProperty:function(propertyName, value)
 			{
 				document.setOvalObjectProperty(propertyName, value);
@@ -1105,7 +1100,7 @@ var Superdoc =
 			 * @param value {value} The value to be assigned to the property. Acceptable values vary depending on the property you specify in propertyName.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fc5.html
-			 */ 
+			 */
 			setRectangleProperty:function(propertyName, value)
 			{
 				document.setRectangleObjectProperty(propertyName, value);
@@ -1117,7 +1112,7 @@ var Superdoc =
 		/**
 		 * An array of the selected objects in the document. If nothing is selected, returns an array of length zero. If no document is open, returns null.
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7f91.html
-		 */ 
+		 */
 		get elements(){ return document.selection; },
 		set elements(value)
 		{
@@ -1131,7 +1126,7 @@ var Superdoc =
 			 * @param bUseDocumentBounds {Boolean} A Boolean value that, if set to true, causes the method to align to the bounds of the document. Otherwise, the method uses the bounds of the selected objects. The default is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e3c.html
-			 */ 
+			 */
 			align:function(alignmode, bUseDocumentBounds)
 			{
 				document.align(alignmode, bUseDocumentBounds);
@@ -1141,7 +1136,7 @@ var Superdoc =
 			 * @param arrangeMode {value} Specifies the direction in which to move the selection. Acceptable values are "back", "backward", "forward", and "front". It provides the same capabilities as these options provide on the Modify &gt; Arrange menu.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e39.html
-			 */ 
+			 */
 			arrange:function(arrangeMode)
 			{
 				document.arrange(arrangeMode);
@@ -1152,7 +1147,7 @@ var Superdoc =
 			 * @param bUseDocumentBounds {Boolean} A Boolean value that, when set to true, distributes the selected objects using the bounds of the document. Otherwise, the method uses the bounds of the selected objects. The default is false. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e1e.html
-			 */ 
+			 */
 			distribute:function(distributemode, bUseDocumentBounds)
 			{
 				document.distribute(distributemode, bUseDocumentBounds);
@@ -1164,7 +1159,7 @@ var Superdoc =
 			 * @param bUseDocumentBounds {Boolean} A Boolean value that, when set to true, causes the method to match the size of the objects to the bounds of the document. Otherwise, the method uses the bounds of the largest object. The default is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dfa.html
-			 */ 
+			 */
 			match:function(bWidth, bHeight, bUseDocumentBounds)
 			{
 				document.match(bWidth, bHeight, bUseDocumentBounds);
@@ -1175,7 +1170,7 @@ var Superdoc =
 			 * @param bUseDocumentBounds {Boolean} A Boolean value that, when set to true, spaces the objects to the document bounds. Otherwise, the method uses the bounds of the selected objects. The default is false. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7ddb.html
-			 */ 
+			 */
 			space:function(direction, bUseDocumentBounds)
 			{
 				document.space(direction, bUseDocumentBounds);
@@ -1184,12 +1179,12 @@ var Superdoc =
 			 * Identical to retrieving the value of the To Stage button in the Align panel. Gets the preference that can be used for document.align(), document.distribute(), document.match(), and document.space() methods on the document. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0f.html
-			 */ 
-			get toDocument(){ return document.getAlignToDocument() },
+			 */
 			set toDocument(bToStage)
 			{
 				document.setAlignToDocument(bToStage);
-			}
+			},
+			get toDocument(){ return document.getAlignToDocument(); }
 		},
 		/**
 		 * Stores specified data with the selected object(s). Data is written to the FLA file and is available to JavaScript when the file reopens. Only symbols and bitmaps support persistent data. 
@@ -1198,8 +1193,7 @@ var Superdoc =
 		 * @param data {value} The value to add. Valid types depend on the type parameter.
 		 * @returns {}
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e46.html
-		 */ 
-		get data(){ return document.getDataFromDocument(name) },
+		 */
 		set data(name, type, data)
 		{
 			document.addDataToSelection(name, type, data);
@@ -1210,7 +1204,7 @@ var Superdoc =
 			 * Performs a break-apart operation on the current selection. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e38.html
-			 */ 
+			 */
 			breakApart:function()
 			{
 				document.breakApart();
@@ -1219,7 +1213,7 @@ var Superdoc =
 			 * Indicates whether the Edit Symbols menu and functionality are enabled. This is not related to whether the selection can be edited. This method should not be used to test whether fl.getDocumentDOM().enterEditMode() is allowed.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e37.html
-			 */ 
+			 */
 			canEditSymbol:function()
 			{
 				return document.canEditSymbol();
@@ -1228,7 +1222,7 @@ var Superdoc =
 			 * Converts lines to fills on the selected objects. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e29.html
-			 */ 
+			 */
 			convertLinesToFills:function()
 			{
 				document.convertLinesToFills();
@@ -1240,7 +1234,7 @@ var Superdoc =
 			 * @param registration point {Object} Specifies the point that represents the 0,0 location for the symbol. Acceptable values are: "top left", "top center", "top right", "center left", "center", "center right", "bottom left", "bottom center", and "bottom right".
 			 * @returns {Object}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e28.html
-			 */ 
+			 */
 			convertToSymbol:function(type, name, registrationPoint)
 			{
 				return document.convertToSymbol(type, name, registrationPoint);
@@ -1249,7 +1243,7 @@ var Superdoc =
 			 * Deletes the current selection on the Stage. Displays an error message if there is no selection.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e22.html
-			 */ 
+			 */
 			remove:function()
 			{
 				document.deleteSelection();
@@ -1258,7 +1252,7 @@ var Superdoc =
 			 * Performs a distribute-to-layers operation on the current selection—equivalent to selecting Distribute to Layers. This method displays an error if there is no selection.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e1d.html
-			 */ 
+			 */
 			distributeToLayers:function()
 			{
 				document.distributeToLayers();
@@ -1267,35 +1261,35 @@ var Superdoc =
 			 * Duplicates the selection on the Stage.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e18.html
-			 */ 
+			 */
 			duplicate:function()
 			{
 				document.duplicateSelection();
 			},
 			/**
 			 * Switches the authoring tool into the editing mode specified by the parameter. If no parameter is specified, the method defaults to symbol-editing mode, which has the same result as right-clicking the symbol to invoke the context menu and selecting Edit. 
-			 * @param editMode {String} A string that specifies the editing mode. Acceptable values are "inPlace" or "newWindow". If no parameter is specified, the default is symbol-editing mode. This parameter is optional.
+			 * @param newWindow {Boolean} A boolean that specifies to edit the symbol in a new window, versus in place
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e14.html
-			 */ 
-			enter:function(editMode)
+			 */
+			enter:function(newWindow)
 			{
-				document.enterEditMode(editMode);
+				fl.getDocumentDOM().enterEditMode(newWindow ? 'newWindow' : 'inPlace');
 			},
 			/**
 			 * Exits from symbol-editing mode and returns focus to the next level up from the editing mode. For example, if you are editing a symbol inside another symbol, this method takes you up a level from the symbol you are editing, into the parent symbol. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e13.html
-			 */ 
+			 */
 			exit:function()
 			{
-				document.exitEditMode();
+				fl.getDocumentDOM().exitEditMode();
 			},
 			/**
 			 * Converts the current selection to a group. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dff.html
-			 */ 
+			 */
 			group:function()
 			{
 				document.group();
@@ -1305,7 +1299,7 @@ var Superdoc =
 			 * @param name {String} A string that specifies the name of the library item to use. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cb3.html
-			 */ 
+			 */
 			swapElement:function(name)
 			{
 				document.swapElement(name);
@@ -1318,7 +1312,7 @@ var Superdoc =
 			 * @param cornerThreshold {String} A string that is similar to curveFit, but it pertains to the corners of the bitmap image. Acceptable values are "many corners", "normal", and "few corners". 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cae.html
-			 */ 
+			 */
 			traceBitmap:function(threshold, minimumArea, curveFit, cornerThreshold)
 			{
 				document.traceBitmap(threshold, minimumArea, curveFit, cornerThreshold);
@@ -1327,7 +1321,7 @@ var Superdoc =
 			 * Ungroups the current selection. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7d3e.html
-			 */ 
+			 */
 			unGroup:function()
 			{
 				document.unGroup();
@@ -1339,7 +1333,7 @@ var Superdoc =
 			 * Selects all items on the Stage. This method is equivalent to pressing Control+A (Windows) or Command+A (Macintosh) or selecting Edit &gt; Select All. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7de1.html
-			 */ 
+			 */
 			all:function()
 			{
 				document.selectAll();
@@ -1348,7 +1342,7 @@ var Superdoc =
 			 * Deselects any selected items. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7de0.html
-			 */ 
+			 */
 			none:function()
 			{
 				document.selectNone();
@@ -1362,8 +1356,8 @@ var Superdoc =
 			 * @param bContactSensitiveSelection {Boolean} A Boolean value that specifies whether the Contact Sensitive selection mode is enabled (true) or disabled (false) during object selection. The default value is false. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dca.html
-			 */ 
-			bounds:function(boundingRectangle, bContactSensitiveSelection)
+			 */
+			set bounds(boundingRectangle, bContactSensitiveSelection)
 			{
 				document.setSelectionBounds(boundingRectangle, bContactSensitiveSelection);
 			},
@@ -1371,18 +1365,18 @@ var Superdoc =
 			 * Gets the location of the transformation point of the current selection. You can use the transformation point for commutations such as rotate and skew. 
 			 * @returns {Object}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e00.html
-			 */ 
-			get center(){ return document.getTransformationPoint() },
+			 */
 			set center(transformationPoint)
 			{
 				document.setTransformationPoint(transformationPoint);
 			},
+			get center(){ return document.getTransformationPoint(); },
 			/**
 			 * Moves selected objects by a specified distance. 
 			 * @param distanceToMove {Number} A pair of floating-point values that specify the x and y coordinate values by which the method moves the selection. For example, passing ({x:1,y:2}) specifies a location one pixel to the right and two pixels down from the current location. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df6.html
-			 */ 
+			 */
 			moveBy:function(distanceToMove)
 			{
 				document.moveSelectionBy(distanceToMove);
@@ -1391,19 +1385,19 @@ var Superdoc =
 			 * Gets the bounding rectangle of the current selection. If a selection is non-rectangular, the smallest rectangle encompassing the entire selection is returned. The rectangle is based on the document space or, when in edit mode, the registration point (also origin point or zero point) of the symbol being edited.
 			 * @returns {Rectangle}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e04.html
-			 */ 
-			get rect(){ return document.getSelectionRect() },
+			 */
 			set rect(rect, bReplaceCurrentSelection, bContactSensitiveSelection)
 			{
 				document.setSelectionRect(rect, bReplaceCurrentSelection, bContactSensitiveSelection);
 			},
+			get rect(){ return document.getSelectionRect(); },
 			/**
 			 * Rotates the selection by a specified number of degrees. The effect is the same as using the Free Transform tool to rotate the object.
 			 * @param angle {Number} A floating-point value that specifies the angle of the rotation. 
 			 * @param rotationPoint {String} A string that specifies which side of the bounding box to rotate. Acceptable values are "top right", "top left", "bottom right", "bottom left", "top center", "right center", "bottom center", and "left center". If unspecified, the method uses the transformation point. This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7de6.html
-			 */ 
+			 */
 			rotate:function(angle, rotationPoint)
 			{
 				document.rotateSelection(angle, rotationPoint);
@@ -1415,7 +1409,7 @@ var Superdoc =
 			 * @param whichCorner {String} A string value that specifies the edge about which the transformation occurs. If omitted, scaling occurs about the transformation point. Acceptable values are: "bottom left", "bottom right", "top right", "top left", "top center", "right center", "bottom center", and "left center". This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7de2.html
-			 */ 
+			 */
 			scale:function(xScale, yScale, whichCorner)
 			{
 				document.scaleSelection(xScale, yScale, whichCorner);
@@ -1427,7 +1421,7 @@ var Superdoc =
 			 * @param whichEdge {String} A string that specifies the edge where the transformation occurs; if omitted, skew occurs at the transformation point. Acceptable values are "top center", "right center", "bottom center", and "left center". This parameter is optional.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc0.html
-			 */ 
+			 */
 			skew:function(xSkew, ySkew, whichEdge)
 			{
 				document.skewSelection(xSkew, ySkew, whichEdge);
@@ -1440,7 +1434,7 @@ var Superdoc =
 			 * @param d {Number} A floating-point number that specifies the (1,1) element of the transformation matrix.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cad.html
-			 */ 
+			 */
 			transform:function(a, b, c, d)
 			{
 				document.transformSelection(a, b, c, d);
@@ -1454,7 +1448,7 @@ var Superdoc =
 			 * @param bGlobalTransform {Boolean} A Boolean value that specifies whether the transformation mode should be global (true) or local (false).
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS0866D18E-C028-4ec1-B351-59F12BAB2743.html
-			 */ 
+			 */
 			rotate:function(xyzCoordinate, bGlobalTransform)
 			{
 				document.rotate3DSelection(xyzCoordinate, bGlobalTransform);
@@ -1464,7 +1458,7 @@ var Superdoc =
 			 * @param xyzCoordinate {Object} An XYZ coordinate that specifies the center point for 3D rotation or translation. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS19655B33-1D64-40f7-AE53-E089C37C0F83.html
-			 */ 
+			 */
 			translateCenter:function(xyzCoordinate)
 			{
 				document.translate3DCenter(xyzCoordinate);
@@ -1475,7 +1469,7 @@ var Superdoc =
 			 * @param bGlobalTransform {Boolean} A Boolean value that specifies whether the transformation mode should be global (true) or local (false).
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS7EAC74FE-B200-4f4d-9C6B-46858F05897E.html
-			 */ 
+			 */
 			translate:function(xyzCoordinate, bGlobalTransform)
 			{
 				document.translate3DSelection(xyzCoordinate, bGlobalTransform);
@@ -1489,7 +1483,7 @@ var Superdoc =
 			/**
 			 * A Boolean value that describes whether the instances placed on the Stage are automatically added to user-defined timeline classes. The default value is true.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd7.html
-			 */ 
+			 */
 			get autoDeclare(){ return document.as3AutoDeclare; },
 			set autoDeclare(value)
 			{
@@ -1498,7 +1492,7 @@ var Superdoc =
 			/**
 			 * A string that describes the ActionScript 3.0 “dialect” being used in the specified document. The default value is "AS3". If you wish to allow prototype classes, as permitted in earlier ECMAScript specifications, set this value to "ES".
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd6.html
-			 */ 
+			 */
 			get dialect(){ return document.as3Dialect; },
 			set dialect(value)
 			{
@@ -1507,7 +1501,7 @@ var Superdoc =
 			/**
 			 * A string that specifies the top-level ActionScript 3.0 class associated with the document. If the document isn’t configured to use ActionScript 3.0, this property is ignored. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd0.html
-			 */ 
+			 */
 			get docClass(){ return document.docClass; },
 			set docClass(value)
 			{
@@ -1516,7 +1510,7 @@ var Superdoc =
 			/**
 			 * An integer that specifies in which frame to export ActionScript 3.0 classes. By default, classes are exported in Frame 1.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd5.html
-			 */ 
+			 */
 			get exportFrame(){ return document.as3ExportFrame; },
 			set exportFrame(value)
 			{
@@ -1525,7 +1519,7 @@ var Superdoc =
 			/**
 			 * A string that contains a list of items in the document’s ActionScript 3.0 External library path, which specifies the location of SWC files used as runtime shared libraries. Items in the string are delimited by semi-colons. In the authoring tool, the items are specified by choosing File &gt; Publish Settings and then choosing ActionScript 3.0 Script Settings on the Flash tab.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WSFE6C8B4D-A287-4f77-A002-38516C28C318.html
-			 */ 
+			 */
 			get externalLibraryPath(){ return document.externalLibraryPath; },
 			set externalLibraryPath(value)
 			{
@@ -1534,7 +1528,7 @@ var Superdoc =
 			/**
 			 * A string that contains a list of items in the document’s ActionScript 3.0 Library path, which specifies the location of SWC files or folders containing SWC files. Items in the string are delimited by semi-colons. In the authoring tool, the items are specified by choosing File &gt; Publish Settings and then choosing ActionScript 3.0 Script Settings on the Flash tab.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WSA93A3E72-B9A1-44a5-9C99-08D88DB7BF0C.html
-			 */ 
+			 */
 			get libraryPath(){ return document.libraryPath; },
 			set libraryPath(value)
 			{
@@ -1543,7 +1537,7 @@ var Superdoc =
 			/**
 			 * A string that contains a list of items in the document’s ActionScript 3.0 Source path, which specifies the location of ActionScript class files. Items in the string are delimited by semi-colons. In the authoring tool, the items are specified by choosing File &gt; Publish Settings and then choosing ActionScript 3.0 Script Settings on the Flash tab.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5A00B146-30BC-4841-A27F-325968E8084B.html
-			 */ 
+			 */
 			get sourcePath(){ return document.sourcePath; },
 			set sourcePath(value)
 			{
@@ -1552,7 +1546,7 @@ var Superdoc =
 			/**
 			 * A Boolean value that specifies whether the ActionScript 3.0 compiler should compile with the Strict Mode option turned on (true) or off (false). Strict Mode causes warnings to be reported as errors, which means that compilation will not succeed if those errors exist. The default value is true.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd4.html
-			 */ 
+			 */
 			get strictMode(){ return document.as3StrictMode; },
 			set strictMode(value)
 			{
@@ -1561,7 +1555,7 @@ var Superdoc =
 			/**
 			 * An integer that specifies which version of ActionScript is being used in the specified document. Acceptable values are 1, 2, and 3. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd2.html
-			 */ 
+			 */
 			get version(){ return document.asVersion; },
 			set version(value)
 			{
@@ -1570,7 +1564,7 @@ var Superdoc =
 			/**
 			 * A Boolean value that specifies whether the ActionScript 3.0 compiler should compile with the Warnings Mode option turned on (true) or off (false). Warnings Mode causes extra warnings to be reported that are useful for discovering incompatibilities when updating ActionScript 2.0 code to ActionScript 3.0. The default value is true.
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fd3.html
-			 */ 
+			 */
 			get warningsMode(){ return document.as3WarningsMode; },
 			set warningsMode(value)
 			{
@@ -1581,28 +1575,28 @@ var Superdoc =
 		 * Returns the mobile XML settings for the document.
 		 * @returns {String}
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fcf.html
-		 */ 
-		get mobile(){ return document.getMobileSettings() },
+		 */
 		set mobile(xmlString)
 		{
 			document.setMobileSettings(xmlString);
 		},
+		get mobile(){ return document.getMobileSettings(); },
 		/**
 		 * Returns a string that represents the targeted player version for the specified document. For a list of values that this method can return, see document.setPlayerVersion().
 		 * @returns {String}
 		 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fce.html
-		 */ 
-		get playerVersion(){ return document.getPlayerVersion() },
+		 */
 		set playerVersion(version)
 		{
 			document.setPlayerVersion(version);
 		},
+		get playerVersion(){ return document.getPlayerVersion(); },
 		publishProfile:
 		{
 			/**
 			 * A string that specifies the name of the active publish profile for the specified document. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e59.html
-			 */ 
+			 */
 			get current(){ return document.currentPublishProfile; },
 			set current(value)
 			{
@@ -1611,7 +1605,7 @@ var Superdoc =
 			/**
 			 * Read-only property; an array of the publish profile names for the document. 
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e4c.html
-			 */ 
+			 */
 			get all(){ return document.publishProfiles; },
 			set all(value)
 			{
@@ -1622,7 +1616,7 @@ var Superdoc =
 			 * @param profileName {Parameter} The unique name of the new profile. If you do not specify a name, a default name is provided. This parameter is optional.
 			 * @returns {Number}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e41.html
-			 */ 
+			 */
 			add:function(profileName)
 			{
 				return document.addNewPublishProfile(profileName);
@@ -1631,7 +1625,7 @@ var Superdoc =
 			 * Deletes the currently active profile, if there is more than one. There must be at least one profile left. 
 			 * @returns {Number}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e25.html
-			 */ 
+			 */
 			remove:function()
 			{
 				return document.deletePublishProfile();
@@ -1641,7 +1635,7 @@ var Superdoc =
 			 * @param profileNewName {Parameter} An optional parameter that specifies the new name for the profile. The new name must be unique. If the name is not specified, a default name is provided.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dee.html
-			 */ 
+			 */
 			rename:function(profileNewName)
 			{
 				return document.renamePublishProfile(profileNewName);
@@ -1651,7 +1645,7 @@ var Superdoc =
 			 * @param profileName {String} A string that specifies the unique name of the duplicated profile. If you do not specify a name, the method uses the default name. This parameter is optional.
 			 * @returns {Number}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e1a.html
-			 */ 
+			 */
 			duplicate:function(profileName)
 			{
 				return document.duplicatePublishProfile(profileName);
@@ -1661,7 +1655,7 @@ var Superdoc =
 			 * @param fileURI {String} A string, expressed as a file:/// URI, that specifies the path of the XML file defining the profile to import. 
 			 * @returns {Number}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dfe.html
-			 */ 
+			 */
 			importProfile:function(fileURI)
 			{
 				return document.importPublishProfile(fileURI);
@@ -1671,7 +1665,7 @@ var Superdoc =
 			 * @param xmlString {String} A string that contains the XML data to be imported as the current profile.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WSB3F3672A-EB9D-4087-9485-657EFFF8FA72.html
-			 */ 
+			 */
 			importString:function(xmlString)
 			{
 				return document.importPublishProfileString(xmlString);
@@ -1681,7 +1675,7 @@ var Superdoc =
 			 * @param fileURI {String} A string, expressed as a file:/// URI, that specifies the path of the XML file to which the profile is exported. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e11.html
-			 */ 
+			 */
 			exportProfile:function(fileURI)
 			{
 				document.exportPublishProfile(fileURI);
@@ -1691,7 +1685,7 @@ var Superdoc =
 			 * @param profileName {String} A string that specifies the name of the profile to export to an XML string. This parameter is optional.
 			 * @returns {String}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS014AAEC0-0522-4832-99CD-72FCF71AA794.html
-			 */ 
+			 */
 			exportString:function(profileName)
 			{
 				return document.exportPublishProfileString(profileName);
@@ -1707,7 +1701,7 @@ var Superdoc =
 			 * @param delta {Number} A pair of floating-point values that specify the x and y coordinates in pixels by which the selected Bézier points are moved. For example, passing ({x:1,y:2}) specifies a location that is to the right by one pixel and down by two pixels from the current location. 
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df7.html
-			 */ 
+			 */
 			moveSelectedPointsBy:function(delta)
 			{
 				document.moveSelectedBezierPointsBy(delta);
@@ -1718,7 +1712,7 @@ var Superdoc =
 			 * @param bUseMultiplePasses {Boolean} A Boolean value that, when set to true, indicates that the method should use multiple passes, which is slower but produces a better result. This parameter has the same effect as clicking the Use Multiple Passes button in the Optimize Curves dialog box.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df5.html
-			 */ 
+			 */
 			optimize:function(smoothing, bUseMultiplePasses)
 			{
 				document.optimizeCurves(smoothing, bUseMultiplePasses);
@@ -1727,7 +1721,7 @@ var Superdoc =
 			 * Smooths the curve of each selected fill outline or curved line. This method performs the same action as the Smooth button in the Tools panel.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dbf.html
-			 */ 
+			 */
 			smooth:function()
 			{
 				document.smoothSelection();
@@ -1736,7 +1730,7 @@ var Superdoc =
 			 * Straightens the currently selected strokes. This method is equivalent to using the Straighten button in the Tools panel.
 			 * @returns {}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cb4.html
-			 */ 
+			 */
 			straighten:function()
 			{
 				document.straightenSelection();
@@ -1748,7 +1742,7 @@ var Superdoc =
 			 * Uses the top selected drawing object to crop all selected drawing objects underneath it. This method returns false if there are no drawing objects selected or if any of the selected items are not drawing objects.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e27.html
-			 */ 
+			 */
 			crop:function()
 			{
 				return document.crop();
@@ -1757,7 +1751,7 @@ var Superdoc =
 			 * Deletes the envelope (bounding box that contains one or more objects) from the selected objects. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e26.html
-			 */ 
+			 */
 			deleteEnvelope:function()
 			{
 				return document.deleteEnvelope();
@@ -1766,7 +1760,7 @@ var Superdoc =
 			 * Creates an intersection drawing object from all selected drawing objects. This method returns false if there are no drawing objects selected, or if any of the selected items are not drawing objects.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dfb.html
-			 */ 
+			 */
 			intersect:function()
 			{
 				return document.intersect();
@@ -1775,7 +1769,7 @@ var Superdoc =
 			 * Uses the top selected drawing object to punch through all selected drawing objects underneath it. This method returns false if there are no drawing objects selected or if any of the selected items are not drawing objects.
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7df3.html
-			 */ 
+			 */
 			punch:function()
 			{
 				return document.punch();
@@ -1784,7 +1778,7 @@ var Superdoc =
 			 * Combines all selected shapes into a drawing object. 
 			 * @returns {Boolean}
 			 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7d97.html
-			 */ 
+			 */
 			union:function()
 			{
 				return document.union();
