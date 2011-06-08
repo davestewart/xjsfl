@@ -27,7 +27,7 @@
 		// load templates
 			function loadTemplate(uri)
 			{
-				return new Template(xjsfl.utils.createURI(uri, fl.scriptURI));
+				return new Template(xjsfl.utils.makeURI(uri, fl.scriptURI));
 			}
 			
 			this.templates =
@@ -254,7 +254,7 @@
 		{
 			// basics
 				var type		= this.type(name);
-				var template	= new Template(xjsfl.utils.createURI('templates/comment.txt', fl.scriptURI));
+				var template	= new Template(xjsfl.utils.makeURI('templates/comment.txt', fl.scriptURI));
 				
 			// method
 				if(type == 'method')
@@ -305,7 +305,7 @@
 // variables
 
 	// lines
-		var str		= new File(xjsfl.utils.createURI('superdoc.txt', fl.scriptURI)).contents;
+		var str		= new File(xjsfl.utils.makeURI('superdoc.txt', fl.scriptURI)).contents;
 		var lines	= str.split(/\n/);
 		
 	// delete empty lines

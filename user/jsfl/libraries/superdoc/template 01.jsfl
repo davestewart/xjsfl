@@ -93,9 +93,9 @@ Template.prototype =
 
 var urls =
 {
-	comment:	xjsfl.utils.createURI('templates/comment.txt', fl.scriptURI),
-	property:	xjsfl.utils.createURI('templates/property.txt', fl.scriptURI),
-	method:		xjsfl.utils.createURI('templates/method.txt', fl.scriptURI),
+	comment:	xjsfl.utils.makeURI('templates/comment.txt', fl.scriptURI),
+	property:	xjsfl.utils.makeURI('templates/property.txt', fl.scriptURI),
+	method:		xjsfl.utils.makeURI('templates/method.txt', fl.scriptURI),
 }
 
 new Template(urls.comment);

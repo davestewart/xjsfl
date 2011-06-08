@@ -69,14 +69,14 @@
 		clear();
 	
 	// lines
-		var str		= new File(xjsfl.utils.createURI('simpledoc.txt', fl.scriptURI)).contents;
+		var str		= new File(xjsfl.utils.makeURI('simpledoc.txt', fl.scriptURI)).contents;
 		var lines	= str.split(/\n/);
 		var level	= 0;
 		trace(str)
 	
 	// templates	
-		var objectTemplate		= new File(xjsfl.utils.createURI('templates/object.txt', fl.scriptURI)).contents;
-		var functionTemplate	= new File(xjsfl.utils.createURI('templates/function.txt', fl.scriptURI)).contents;
+		var objectTemplate		= new File(xjsfl.utils.makeURI('templates/object.txt', fl.scriptURI)).contents;
+		var functionTemplate	= new File(xjsfl.utils.makeURI('templates/function.txt', fl.scriptURI)).contents;
 	
 // --------------------------------------------------------------------------------
 // main

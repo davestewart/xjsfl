@@ -8,7 +8,7 @@
 	CIX =
 	{
 		nodes:(function(){
-			var cix = 'file:///C|/Users/Dave%20Stewart/AppData/Local/ActiveState/KomodoEdit/6.1/apicatalogs/jsfl.cix';
+			var cix = 'file:///F|/Users/Dave%20Stewart/AppData/Local/ActiveState/KomodoEdit/6.1/apicatalogs/jsfl.cix';
 			var str = xjsfl.file.load(cix).replace('<?xml version="1.0" encoding="UTF-8"?>', '');
 			var xml = eval(str)
 			return xml..scope.(@name == 'Document');
@@ -82,7 +82,7 @@
 		{
 			// basics
 				var type		= this.type(name);
-				var template	= new SimpleTemplate(xjsfl.utils.createURI('templates/simple/comment.txt', fl.scriptURI));
+				var template	= new SimpleTemplate(xjsfl.utils.makeURI('templates/simple/comment.txt', fl.scriptURI));
 				
 			// method
 				if(type == 'method')
@@ -155,7 +155,7 @@
 		// load templates
 			function loadTemplate(uri)
 			{
-				return new SimpleTemplate(xjsfl.utils.createURI(uri, fl.scriptURI));
+				return new SimpleTemplate(xjsfl.utils.makeURI(uri, fl.scriptURI));
 			}
 			
 			ElementPrototype.templates =
@@ -347,7 +347,7 @@
 // variables
 
 	// lines
-		var str		= new File(xjsfl.utils.createURI('source/superdoc02.txt', fl.scriptURI)).contents;
+		var str		= new File(xjsfl.utils.makeURI('source/superdoc02.txt', fl.scriptURI)).contents;
 		var lines	= str.split(/\n/);
 		
 	// delete empty lines

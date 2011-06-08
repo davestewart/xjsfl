@@ -238,8 +238,8 @@ Template.prototype =
 
 var urls =
 {
-	object:		xjsfl.utils.createURI('templates/object.txt', fl.scriptURI),
-	method:		xjsfl.utils.createURI('templates/method.txt', fl.scriptURI),
+	object:		xjsfl.utils.makeURI('templates/object.txt', fl.scriptURI),
+	method:		xjsfl.utils.makeURI('templates/method.txt', fl.scriptURI),
 }
 
 // inner template

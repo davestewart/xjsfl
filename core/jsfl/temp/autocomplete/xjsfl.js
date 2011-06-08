@@ -1,23 +1,5 @@
 // ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████                    ██                     ██              
-//  ██                        ██                     ██              
-//  ██     █████ █████ █████ █████ ████ ██ ██ █████ █████ █████ ████ 
-//  ██     ██ ██ ██ ██ ██     ██   ██   ██ ██ ██     ██   ██ ██ ██   
-//  ██     ██ ██ ██ ██ █████  ██   ██   ██ ██ ██     ██   ██ ██ ██   
-//  ██     ██ ██ ██ ██    ██  ██   ██   ██ ██ ██     ██   ██ ██ ██   
-//  ██████ █████ ██ ██ █████  ████ ██   █████ █████  ████ █████ ██   
-//
-// ------------------------------------------------------------------------------------------------------------------------
-// Constructor
-
-	xjsfl = window.xjsfl = xjsfl = function (selector)
-	{
-		return xjsfl.elements(selector);
-	}
-		
-// ------------------------------------------------------------------------------------------------------------------------
-//
 //  ██████        ██               
 //  ██            ██               
 //  ██     █████ █████ ██ ██ █████ 
@@ -32,9 +14,9 @@
 // Setup
 
 	// root uri
-		xjsfl.uri		= xjsfl.uri; // fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf('/xJSFL/')) + '/xJSFL/';
+		//xjsfl.uri = xjsfl.uri = xjsfl.uri; // fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf('/xJSFL/')) + '/xJSFL/';
 		
-	// temp variable for framework setup
+	// temp variables for framework setup
 		xjsflPath		= FLfile.uriToPlatformPath(xjsfl.uri).replace(/\\/g, '/');
 		
 	// temp output object, needed before libraries are loaded
@@ -55,184 +37,15 @@
 			fl.runScript(xjsfl.uri + path);
 			xjsfl.output.trace('Loaded "<xJSFL>/' +path+ '"');
 		}
-	
-// ------------------------------------------------------------------------------------------------------------------------
-//
-//  ██  ██  ██   ██ ██       
-//  ██  ██  ██      ██       
-//  ██  ██ █████ ██ ██ █████ 
-//  ██  ██  ██   ██ ██ ██    
-//  ██  ██  ██   ██ ██ █████ 
-//  ██  ██  ██   ██ ██    ██ 
-//  ██████  ████ ██ ██ █████ 
-//
-// ------------------------------------------------------------------------------------------------------------------------
-// Utils
-
-	/**
-	 * Miscellaneous utility functions
-	 */
-	xjsfl.utils =
-	{
 		
-		/**
-		 * Converts back-slashes to forward-slashes, as Windows machines use back-slashes by default
-		 * @param path {String} The path to convert
-		 */
-		tidyPath:function(path)
+	// to string function
+		xjsfl.toString = function()
 		{
-			return path.replace(/\\/g, '/');
-		},
-
-		/**
-		 * Checks if the object is an array or not
-		 * @param obj {Object} Any object that needs to be checked if it's a true Array
-		 * @returns {Boolean} True or false
-		 */
-		isArray:function (obj)
-		{
-			return toString.call(obj) === "[object Array]";
-		},
-		
-		/**
-		 * Extends an object or array with more properties or elements
-		 * @param obj {Object|Array} The source object or array to be extended
-		 * @param props {Object|Array} The properties or elements to be added
-		 * @returns {Object|Array} Returns the modified object or array
-		 */
-		extend:function(obj, props)
-		{
-			// variables
-				var prop;
-				
-			// extend array
-				if(xjsfl.utils.isArray(obj) && xjsfl.utils.isArray(props))
-				{
-					for(var i = 0; i < props.length; i++)
-					{
-						obj.push(props[i]);
-					}
-				}
-			
-			// extend object
-				else if (typeof props === "object")
-				{
-					for(prop in props)
-					{
-						if(props[prop] != undefined)
-						{
-							obj[prop] = props[prop];
-						}
-					}
-				}
-				
-			// return
-				return obj;
-		},
-		
-		/**
-		 * Returns a platform agnostic URI from a platform specific path
-		 * Creates relative paths from the config directory, but leaves absolute paths as is
-		 * @param path {String} The relative path of the file to be found
-		 * @param root {String} An optional root path to the file (defaults to the config directory)
-		 * @returns {String} The file URI-formatted path, i.e file:///c|/path/to/file.jsfl
-		 */
-		getUri:function(path, root)
-		{
-			root = root || xjsfl.settings.folders.root;
-			if( ! xjsfl.utils.isAbsolute(path))
-			{
-				path = root + path;
-			}
-			path = path.replace(/\\/g, '/')
-			return FLfile.platformPathToURI(path);
-		},
-		
-		createPath:function()
-		{
-			// dummy
-		},
-		
-		/**
-		 * Convert a path to a uri
-		 * @param {string} path	
-		 * @returns	{string} The path in uri format
-		 * @author	Dave Stewart	
-		 */
-		toUri:function(path)
-		{
-			return FLfile.platformPathToURI(path);
-		},
-		
-		/**
-		 * Checks if a path is absolute or not
-		 * @param path {String} The path to the file
-		 * @returns {Boolean} True (absolute) or False (relative)
-		 */
-		isAbsolute:function(path)
-		{
-			if(xjsfl.settings.platform == 'mac')
-			{
-				return path.substr(0, 1).replace('\\', '/') == '/';
-			}
-			else
-			{
-				return path.match(/^[A-Z]:/i);
-			}
-		},
-		
-		
-		/**
-		 * Tests if a supplied path is a filename
-		 * @param path {String} A file path
-		 */
-		isFilename:function(path)
-		{
-			return /\/.+\..+$/.test(path);
-		},
-		
-		/**
-		 * Gets the path of the file relative to the core JSFL script
-		 * @param file {String} A full path
-		 * @returns {String} A filepath of the format <xJSFL>/path/to/file.jsfl
-		 */
-		getRootRelativePath:function(file)
-		{
-			return FLfile.uriToPlatformPath(file).replace(/\\/g, '/').replace(xjsfl.settings.folders.root, '<xJSFL>/');
-		},
-		
-		/**
-		 * Gets the path of the file relative to the core JSFL script
-		 * @param file {String} A full path
-		 * @returns {String} A filepath
-		 */
-		getRelativeFilePath:function(file)
-		{
-			return FLfile.uriToPlatformPath(file).replace(FLfile.uriToPlatformPath(this.folder), '');
-		},
-		
-		/**
-		 * Gets the relative path of the currently-running script
-		 * @returns {String} A filepath
-		 */
-		getScriptPath:function()
-		{
-			return xjsfl.utils.getRelativeFilePath(fl.scriptURI);
-		},
-		
-		/**
-		 * Returns an array of files / line-numbers executing at the current time
-		 */
-		getStack:function(output)
-		{
-			/** @type {Error} */
-			var error = new Error('Stack Trace');
-			inspect(error);
+			return '[class xJSFL]';
 		}
-		
-	}
-	
 
+
+	
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                       ██████        ██    ██   ██                   
@@ -247,6 +60,7 @@
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Core Settings
+
 
 	/**
 	 * Core settings and cached variables
@@ -282,248 +96,374 @@
 		 */
 		folders:
 		{
-			root:		xjsflPath,
-			user:		xjsflPath + 'user/',
-			modules:	xjsflPath + 'modules/',
+			xjsfl:		xjsflPath,
 			core:		xjsflPath + 'core/',
-			flash:		xjsfl.utils.tidyPath(fl.configDirectory),
-			swf:		xjsfl.utils.tidyPath(fl.configDirectory + 'WindowSWF/')
+			modules:	xjsflPath + 'modules/',
+			user:		xjsflPath + 'user/',
+			config:		fl.configDirectory.replace(/\\/g, '/'),
+			swf:		fl.configDirectory.replace(/\\/g, '/') + 'WindowSWF/'
 		},
 
 		/**
 		 * Search paths
-		 * A cache of paths which xJSFL searches in reverse order when loading files
+		 * A cache of paths which xJSFL searches in order when loading files
+		 * Path arrays are updated automatically when new modules are added
 		 */
 		paths:
 		{
 			// properties
-				user:		[ ],	// <path/to/folder>
-				module:		[ ],	// <modulename>
-				core:		[ ],	// xjsfl.settings.folders.xjsfl
+				core:	[ xjsflPath + 'core/' ],
+				module: [ ],
+				user:	[ xjsflPath + 'user/' ],
 				
 			// methods
-				add:		function(path, type)
+				add:function(path, type)
 				{
-					type = type || 'user';
-					path = path.replace(/[\/]+$/g, '') + '/';
-					if(type == 'module')
-					{
-						path = xjsfl.settings.folders.root + 'modules/' + path
-					}
-					this[type].push(path);
+					// variables
+						type == type || 'user';
+						path = path.replace(/[\/]+$/g, '') + '/';	// ensure a single trailing slash
+						
+					// module type
+						if(type == 'module')
+						{
+							path = xjsfl.settings.folders.root + 'modules/' + path
+						}
+						
+					// user type - should be absolute
+						else
+						{
+							// check if absolute
+						}
+						
+					// add
+						if(this[type].indexOf(path) == -1)
+						{
+							this[type].push(path);
+						}
+				},
+				
+				get:function()
+				{
+					var paths = xjsfl.settings.paths;
+					return paths.core.concat(paths.module).concat(paths.user);
 				}
 		},
 			
-		/**
-		 * loaded files
-		 * An internal cache which stores which file paths have been loaded, so they aren't loaded twice
-		 */
-		loadedFiles:
-		{
-			files:[	],
-			set:function(uri){ this.files.push(uri);},
-			get:function(uri){ return this.files.indexOf(uri) != -1; }
-		},
-		
 		/**
 		 * Debug level
 		 * Can be set by the developer to either trace or alert framework errors and warnings
 		 * @type {Number} debug level 0: off, 1:trace, 2:alert
 		 */
-		debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)
+		debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1),
+		
+		
+		/**
+		 * Newline character depending on PC or Mac
+		 * @type {String} 
+		 */
+		newLine:fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n'
 			
 	}
 	
 // ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████ ██ ██       
-//  ██        ██       
-//  ██     ██ ██ █████ 
-//  █████  ██ ██ ██ ██ 
-//  ██     ██ ██ █████ 
-//  ██     ██ ██ ██    
-//  ██     ██ ██ █████ 
+//  ██  ██  ██   ██ ██       
+//  ██  ██  ██      ██       
+//  ██  ██ █████ ██ ██ █████ 
+//  ██  ██  ██   ██ ██ ██    
+//  ██  ██  ██   ██ ██ █████ 
+//  ██  ██  ██   ██ ██    ██ 
+//  ██████  ████ ██ ██ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// File
-	
+// Utils
+
+
 	/**
-	 * framework-specific file functionality
+	 * Miscellaneous utility functions
 	 */
-	xjsfl.file =
+	xjsfl.utils =
 	{
+		
 		/**
-		 * Finds files within the cascading file system
-		 * @param path {String} A relative (from the config directory) or absolute path to a file
-		 * @returns {String|Array|null} A string path if the file is found, or a bull value if not. If a path is not found, the system throws an error
+		 * Extends an object or array with more properties or elements
+		 * 
+		 * @param obj {Object|Array} The source object or array to be extended
+		 * @param props {Object|Array} The properties or elements to be added
+		 * @returns {Object|Array} Returns the modified object or array
 		 */
-		find:function(filePath)
+		extend:function(obj, props)
 		{
 			// variables
-				var uris = [];
-				var folderPaths = []
+				var prop;
 				
-			// if path is absolute, grab a single empty path
-				if(xjsfl.utils.isAbsolute(filePath))
+			// extend array
+				if(xjsfl.utils.isArray(obj) && xjsfl.utils.isArray(props))
 				{
-					folderPaths = [''];
-				}
-				
-			// if path is relative, collect all source paths into a single array
-				else
-				{
-					for each(var type in ['user','modules','core'])
+					for(var i = 0; i < props.length; i++)
 					{
-						for(var i = 0; i < xjsfl.settings.paths[type].length; i++)
-						{
-							folderPaths.push(xjsfl.settings.paths[type][i]);
-						}
+						obj.push(props[i]);
 					}
-				}
-				
-			// if a library name was passed in, instead of a path, convert it to a proper library file path
-				if(filePath.match(/^[\w_-/ ]+$/))
-				{
-					filePath = 'jsfl/' + filePath + '.jsfl';
 				}
 			
-			// attempt all paths if relative
-				for(var i = 0; i < folderPaths.length; i++)
+			// extend object
+				else if (typeof props === "object")
 				{
-					var uri = xjsfl.utils.getUri(filePath, folderPaths[i]);
-					if(FLfile.exists(uri))
+					for ( var i in props )
 					{
-						return uri;
-					}
-					else
-					{
-						uris.push(xjsfl.utils.getRootRelativePath(uri));
-					}
-				}
-				
-			// file not found,so add the error to the stack and return null
-				xjsfl.output.error('File "' +filePath+ '" not found in search paths', {'attempted filepaths':uris});
-				return null;
-		},
-		
-		/**
-		 * Attempts to find and run a script (jsfl) file from the cascading file structure.
-		 * @param file {String|Array} The relative or absolute path to the file, a name of a library without the file extension, or a comma-delimited list of the previous
-		 * @param catchErrors {Boolean} An optional switch to read and eval file contents which traps errors
-		 * @param reload {Boolean} An optional switch to force a reload of the file. Normally, paths are cached and limited to being loaded only once
-		 * @returns {Boolean} A Boolean indicating Whether the file was successfully found and loaded
-		 */
-		load:function (file, catchErrors, reload)
-		{
-			// test for multiple files and recursively load if so
-				if(file.indexOf(',') != -1)
-				{
-					var files = file.replace(/^\s+|\s+$/g, '').split(/\s*,\s*/);
-					for(var i = 0; i < files.length; i++)
-					{
-						xjsfl.file.load(files[i], catchErrors, reload);
-					}
-				}
-				
-			// if not, attempt to load file
-				else
-				{
-					// find the file
-						var uri = xjsfl.file.find(file);
-						
-						//trace('file: ' + file)
-						//trace('uri: ' + uri)
-						
-					// if the file is found and not already loaded, attempt to load it
-						if(uri !== null && (reload || !xjsfl.settings.loadedFiles.get(uri) ))
-						{
-							// variables
-								var strFilePath	= '"' + xjsfl.utils.getRootRelativePath(uri) + '"';
+						// getter / setter
+							var g = props.__lookupGetter__(i), s = props.__lookupSetter__(i);
+							if ( g || s )
+							{
+								if ( g ) obj.__defineGetter__(i, g);
+								if ( s ) obj.__defineSetter__(i, s);
+							}
 							
-							// read file and perform an eval. Slower(?) but gives some idea if/where errors are occurring
-								if(catchErrors)
-								{
-									try
-									{
-										var str = FLfile.read(uri);
-										eval(str);
-										xjsfl.output.trace('Executed: ' +strFilePath);
-										xjsfl.settings.loadedFiles.set(uri);
-										return true;
-									}
-									catch(err)
-									{
-										xjsfl.output.error('The file ' +strFilePath+ ' could not be executed');
-										return false;
-									}
-								}
-			
-							// otherwise, simply run the file
-								else
-								{
-									fl.runScript(uri);
-									xjsfl.output.trace('Loaded ' + strFilePath);
-									xjsfl.settings.loadedFiles.set(uri);
-								}
-						}
-				}
-
-				
-			// return
-				return this;
-		},
-		
-		/**
-		 * Loads all JSFL filesfrom the given folder
-		 * @param path {String} A string path to the folder
-		 */
-		loadFolder:function(path)
-		{
-			// grab files
-				var files = FLfile.listFolder(FLfile.platformPathToURI(path), 'files');
-				if(files)
-				{
-					for(var file in files)
-					{
-						//xjsfl.file.load(path + file);
-						trace(files.propertyIsEnumerable(file))
+						// normal property
+							else
+							{
+								obj[i] = props[i];
+							}
 					}
 				}
 				
 			// return
-				return this;
-			
+				return obj;
 		},
 		
-		loadLib:function (libName)
+		trim:function(string)
 		{
-			
+			return String(string).replace(/(^\s*|\s*)/g, '');
 		},
 		
 		/**
-		 * Attempts to read a file or folder
-		 * @param path {String} The relative or absolute path to the file or folder
-		 * @returns {String|Array|null} Returns the contents of the specified file or folder if it exists or null if the read fails
+		 * Create a valid URI from a supplied string
+		 * 
+		 * Function has the same internal functionality as makePath()
+		 * 
+		 * @param	str			{String}	An absolute path, relative path, or uri
+		 * @param	context		{String}	An optional context (uri or path), from which to start the URI
+		 * @param	context		{Boolean}	An alternative optional Boolean indicating to automatically derive the URI from the calling function's file location
+		 * @returns				{String}	An absolute URI
+		 * @see								xjsfl.utils#makePath
 		 */
-		read:function (path)
+		makeURI:function(str, context)
 		{
-			if(! xjsfl.utils.isFilename(path))
+			// if an additional filepath is passed in, the returned URI will be relative to it
+				if(typeof context === 'string')
+				{
+					context = context.replace(/[^\/\\]+$/, '');
+					str		= xjsfl.utils.makePath(context) + str;
+				}
+				
+			// if context is true, then the returned URI will be relative to the calling script
+			// if str is true, the returned URI will be the folder of the calling script
+				else if(context === true || str === true)
+				{
+					var stack	= xjsfl.utils.getStack();
+					var path	= stack[1].path;
+					str			= xjsfl.utils.makePath(path) + (str === true ? '' : str);
+				}
+				return str ? FLfile.platformPathToURI(xjsfl.utils.makePath(str)) : '';
+		},
+		
+		
+		/**
+		 * Create a valid path from a supplied string
+		 * 
+		 * Function will:
+		 * 
+		 * - convert file:/// to paths
+		 * - convert <xjsfl> and <config> tokens
+		 * - convert relative paths to absolute from <xjsfl> folder
+		 * - replace multiple / and \ with /
+		 * - resolve ../ tokens to correct parent folder
+		 * 
+		 * @param	str			{String}	An absolute path, relative path, or uri
+		 * @param	shorten		{Boolean}	An optional boolean to return a path with <xjsfl> or <config> swapped out from the actual path
+		 * @returns				{String}	An absolute or shortened path
+		 */
+		makePath:function(str, shorten)
+		{
+			// if a URI is passed in, just convert it
+				if(str.match(/^file:\/\/\//))
+				{
+					path = FLfile.uriToPlatformPath(str);
+				}
+				else
+				{
+					path = str;
+				}
+				
+			// convert <config> and <xjsfl> tokens
+				path = path
+					.replace(/^.*<config>/g, xjsfl.settings.folders.config)
+					.replace(/^.*<xjsfl>/g, xjsfl.settings.folders.xjsfl);
+				
+			// if a relative path is passed in, convert it to absolute from the xJSFL root
+				if( ! xjsfl.utils.isAbsolutePath(path))
+				{
+					path = xjsflPath + path;
+				}
+				
+			// replace backslashes
+				path = path.replace(/\\+/g, '/');
+				
+			// replace double-slashes
+				path = path.replace(/\/+/g, '/');
+				
+			// resolve ../
+				while(path.indexOf('../') > -1)
+				{
+					path = path.replace(/\/[^\/]+\/\.\.\//, "/");
+				}
+				
+			// optionally, shorten path
+				if(shorten)
+				{
+					path = path
+						.replace(xjsfl.settings.folders.config, '<config>/')
+						.replace(xjsfl.settings.folders.xjsfl, '<xjsfl>/');
+				}
+				
+			// return
+				return path
+		},
+		
+		/**
+		 * Checks if a path is absolute or not
+		 * 
+		 * @param path {String} The path to the file
+		 * @returns {Boolean} True (absolute) or False (relative)
+		 */
+		isAbsolutePath:function(path)
+		{
+			if(xjsfl.settings.platform == 'mac')
 			{
-				return FLfile.exists(path) ? FLfile.listFolder(path) : null;
+				return path.substr(0, 1).replace('\\', '/') == '/';
 			}
 			else
 			{
-				var uri = xjsfl.file.find(path);
-				if(uri !== false)
+				return path.match(/^[A-Z]:/i);
+			}
+		},
+		
+		/**
+		 * Checks if the object is an array or not
+		 * 
+		 * @param obj {Object} Any object that needs to be checked if it's a true Array
+		 * @returns {Boolean} True or false
+		 */
+		isArray:function (obj)
+		{
+			return toString.call(obj) === "[object Array]";
+		},
+		
+		/**
+		 * Turns a single value into an array
+		 * It either returns an existing array, splits a string at delimiters, or wraps the single value in an array
+		 * @param	value	
+		 * @returns		
+		 */
+		toArray:function(value, delim)
+		{
+			delim = delim || ',';
+			if(xjsfl.utils.isArray(value))
+			{
+				return value;
+			}
+			else if(typeof value === 'string' && value.indexOf(delim) > -1)
+			{
+				var rx1	= new RegExp('^[\s' +delim+ ']+|[\s' +delim+ ']+$', 'g'); // trim
+				var rx2	= new RegExp('\s*' +delim+ '\s*', 'g'); // split 
+				return value.replace(rx1, '').split(rx2);
+			}
+			return [value];
+		},
+		
+		/**
+		 * Returns a unique array without any duplicate items
+		 * @param	arrIn	{Array}		Any array
+		 * @returns			{Array}		A unique array
+		 * @author	Dave Stewart	
+		 */
+		unique:function(arrIn)
+		{
+			var arrOut	= [];
+			var i		= arrIn.length - 1;
+			while(i-- >= 0)
+			{
+				if(arrOut.indexOf(arrIn[i]) === -1)
 				{
-					return FLfile.read(uri);
+					arrOut.push(arrIn[i]);
 				}
 			}
-			return null;
-		}
+			return arrOut;
+		},		
 
+		/**
+		 * Get the class of an object as a string
+		 * @param	value	{mixed}		Any value
+		 * @returns			{String}	The class name of the value i.e. 'String', 'Date', 'CustomClass'
+		 */
+		classOf:function(value)
+		{
+			var className = toString.call(value).match(/\[\w+ (\w+)/)[1];
+			if(className === 'Object')
+			{
+				return object.constructor ? String(value.constructor).match(/function (\w+)/)[1] : className;
+			}
+			return className;
+		},
+		
+		test:function(fn)
+		{
+			try
+			{
+				fn();
+			}
+			catch(err)
+			{
+				xjsfl.output.error(err);
+			}
+		},
+		
+		/**
+		 * Returns an array of the the currently executing files, paths, lines, and code
+		 * @param	error		{Error}		An optional Boolean to shorten any core paths with <xjsfl>
+		 * @param	shorten		{Boolean}	An optional Boolean to shorten any core paths with <xjsfl>
+		 * @returns				{Array}		An array of the executing files, paths, lines and code
+		 */
+		getStack:function(error, shorten)
+		{
+			// variables
+				var rx			= /^(.*?)@(.+?)([^\/\\]*):(\d*)$/gm;
+				error			= error || new Error();
+				var matches		= error.stack.match(rx);
+				var stack		= [];
+				var xjsflPath	= FLfile.uriToPlatformPath(xjsfl.uri);
+				var parts, path
+				
+			// parse stack
+				for (var i = 1; i < matches.length; i++)
+				{
+					rx.lastIndex	= 0;
+					parts			= rx.exec(matches[i]);
+					path			= (parts[2] || '');
+					stack[i - 1] =
+					{
+						code:parts[1] || '',
+						line:parseInt(parts[4]) || '',
+						file:parts[3] || '',
+						path:(shorten ? path.replace(xjsflPath, '<xjsfl>/') : path).replace(/\\/g, '/')
+					};
+				}
+				
+			// return
+				return stack;
+		}
+		
 	}
-	
 	
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -559,29 +499,18 @@
 		},
 		
 		/**
-		 * Output object in hierarchical format
-		 * @param obj {Object} Any object
-		 * @param label {String} An optional label or information to be printed to the Output panel
-		 * @param maxDepth {Number} an optional max depth to recurse to. Needed to limit recursive objects
-		 */
-		inspect:function(obj, label, maxDepth)
-		{
-			return window['Output'] ? Output.inspect(obj, label, maxDepth) : ! this.trace('The Output class has not yet been loaded');
-		},
-		
-		/**
 		 * Issue a warning to the user
-		 * @param message {String} The message to be displayed
-		 * @param debugLevel {Number} 1 traces the message to the output panel, 2 shows the alert dialog
+		 * @param message		{String} The message to be displayed
+		 * @param debugLevel	{Number} 1 traces the message to the output panel, 2 shows the alert dialog
 		 */
 		warn:function(message)
 		{
 			xjsfl.output.error(message);
-			if(xjsfl.settings.debugLevel > 0)
+			if(xjsfl.settings.debugLevel >= 1)
 			{
 				fl.trace('Warning: ' + message);
 			}
-			if(xjsfl.settings.debugLevel > 1)
+			if(xjsfl.settings.debugLevel >= 2)
 			{
 				alert(message);
 			}
@@ -589,45 +518,508 @@
 
 		/**
 		 * Traces a human-readable error to the Output Panel
-		 * @param message	{String} A string defining the main error message
-		 * @param message	{Error} A JavaScript Error object
-		 * @param data		{Object} An optional Object contaiing key:value pairs of extra information
+		 * @param error		{String}	A string defining the main error message
+		 * @param error		{Error}		A javaScript Error object
+		 * @param data		{Object}	An optional Object contaiing key:value pairs of extra information
 		 */
-		error:function(message, data)
+		error:function(error, data)
 		{
-			// generate error
-				err = new Error(message);
-			
 			// variables
-				var rxStack			= /^(.*?)@(.*?):(\d+)$/gim;
-				var rxStackLine		= /(.*?)@(.*?):(\d+)/;
-				var stack			= err.stack ? err.stack.match(rxStack) : [];
-				
-			// convert stack trace
-				for(var i = 0; i < stack.length; i++)
+				var stack;
+				if(error instanceof Error)
 				{
-					var matches = stack[i].match(rxStackLine);
-					stack[i] =
-					{
-						code:matches[1] || '',
-						file:matches[2] || '',
-						line:parseInt(matches[3]) || ''
-					}
-					
-					stack[i].file = stack[i].file.replace(/\\/g, '/').replace(xjsfl.settings.folders.root, 'xJSFL/');
-					
+					stack	= xjsfl.utils.getStack(error, true);
 				}
-				stack = stack.slice(2);
+				else
+				{
+					error	= new Error(error);
+					stack	= xjsfl.utils.getStack(error, true);
+					stack	= stack.slice(1);
+				}
 				
-			// add any extra data
-				data = xjsfl.utils.extend( { message:err.message, stack:stack }, data || {});
+			// data
+				data = xjsfl.utils.extend( { message:error.message, stack:stack }, data || {});
 				
 			// output
-				xjsfl.output.inspect(data, err.name)
+				Output.inspect(data, error.name)
 		}
 		
 	}
 	
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██                     ██                    
+//  ██  ██                     ██                    
+//  ██ █████ █████ ████ █████ █████ █████ ████ █████ 
+//  ██  ██   ██ ██ ██      ██  ██   ██ ██ ██   ██    
+//  ██  ██   █████ ██   █████  ██   ██ ██ ██   █████ 
+//  ██  ██   ██    ██   ██ ██  ██   ██ ██ ██      ██ 
+//  ██  ████ █████ ██   █████  ████ █████ ██   █████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Iterators
+
+	xjsfl.iterators =
+	{
+		/**
+		 * Iterates through an array of library Items, optionally processing each one with a callback, and optionally processing each of its layers with a callback
+		 * @param	items			{Array}			An array of Item objects
+		 * @param	itemCallback	{Function}		A callback of the format function(item, index, items)
+		 * @param	layerCallback	{Function}		A callback of the format function(layer, index, layers)
+		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		items:function(items, itemCallback, layerCallback, frameCallback, elementCallback)
+		{
+			for(var i = 0; i < items.length; i++)
+			{
+				// callback
+					if(itemCallback && itemCallback(items[i], i, items))
+					{
+						return true;
+					}
+					
+				// layers
+					if(items[i]['timeline'] && (layerCallback || frameCallback || elementCallback))
+					{
+						this.layers(items[i].timeline, layerCallback, frameCallback, elementCallback)
+					}
+			}
+			return false;			
+		},
+		
+		/**
+		 * Iterates through a Symbol's layers, optionally processing each one with a callback, and optionally processing each of its frames with a callback
+		 * @param	symbol			{SymbolItem}	A SymbolItem or SymbolInstance object
+		 * @param	layerCallback	{Function}		A callback of the format function(layer, index, layers)
+		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		layers:function(symbol, layerCallback, frameCallback, elementCallback)
+		{
+			var timeline = symbol instanceof SymbolInstance ? symbol.libraryItem.timeline : symbol.timeline;
+			
+			if(symbol)
+			{
+				for(var i = 0; i < timeline.layers.length; i++)
+				{
+					// callback
+						if(layerCallback && layerCallback(timeline.layers[i], i, timeline.layers))
+						{
+							return true;
+						}
+						
+					// frames
+						if(frameCallback || elementCallback)
+						{
+							this.frames(timeline.layers[i], frameCallback, elementCallback)
+						}
+				}
+			}
+			return false;			
+		},
+		
+		/**
+		 * Iterates through a Layer's frames, optionally processing each one with a callback, and optionally processing each of its elements with a callback
+		 * @param	layer			{Layer}			A Layer, Layer index or Layer name
+		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		frames:function(layer, frameCallback, elementCallback)
+		{
+			if(typeof layer == 'string')
+			{
+				var timeline	= fl.getDocumentDOM().getTimeline();
+				var index		= timeline.findLayerIndex(layer);
+				layer			= timeline.layers[index];
+			}
+			else if(typeof layer == 'number')
+			{
+				layer = fl.getDocumentDOM().getTimeline().layers[layer];
+			}
+			
+			if(layer)
+			{
+				for(var i = 0; i < layer.frames.length; i++)
+				{
+					if(i == layer.frames[i].startFrame)
+					{
+						// callback
+							if(frameCallback && frameCallback(layer.frames[i], i, layer.frames))
+							{
+								return true;
+							}
+						
+						// elements
+							if(elementCallback)
+							{
+								this.elements(layer.frames[i], elementCallback)
+							}
+					}
+						
+				}
+			}
+			return false;			
+		},
+		
+		/**
+		 * Iterates through a frame's elements, processing each one with a callback
+		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
+		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 */
+		elements:function(frame, elementCallback)
+		{
+			if(frame == null)
+			{
+				var timeline	= fl.getDocumentDOM().getTimeline();
+				var layer		= timeline.layers[timeline.currentLayer];
+				frame 			= layer.frames[timeline.currentFrame];
+			}
+			
+			if(frame)
+			{
+				for(var i = 0; i < frame.elements.length; i++)
+				{
+					if(elementCallback(layer.frames[i], i, layer.frames))
+					{
+						return true;
+					}
+				}
+			}
+			return false;			
+		}
+	}
+	
+
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██████ ██ ██       
+//  ██        ██       
+//  ██     ██ ██ █████ 
+//  █████  ██ ██ ██ ██ 
+//  ██     ██ ██ █████ 
+//  ██     ██ ██ ██    
+//  ██     ██ ██ █████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// File
+	
+	/**
+	 * framework-specific file functionality
+	 */
+	xjsfl.file =
+	{
+		/**
+		 * Finds all files of a particular type within the cascading file system
+		 * 
+		 * @param	type			{String}			The folder in which to look in to find the files, @see switch statement
+		 * @param	name			{String|Array}		A file name (pass no extension to use default), or partial file path
+		 * @param	returnType		{Number}			An optional 0, 1 or -1; 0: all files (default), -1: the last file (user), 1:the first file (core)
+		 * @returns					{String|Array|null}	A single file or an array of files
+		 * @author	Dave Stewart	
+		 */
+		find:function(type, name, returnType)
+		{
+			// --------------------------------------------------------------------------------
+			// work out base uri
+			
+				// file-specific variables
+					var path, ext, which;
+					
+				// switch type
+					switch(type)
+					{
+						// for modules, immedioately return the module path or null
+						case 'module':
+						case 'modules':
+							uri	= xjsfl.uri + 'modules/' + name + '/' + 'jsfl/' + name + '.jsfl';
+							return FLfile.exists(uri) ? uri : null;
+						break;
+							
+						// for scripts, return the last file found, from: core, mods, user (jsfl)
+						case 'script':
+						case 'scripts':
+						case 'jsfl':
+							path	= 'jsfl/' + name;
+							ext		= '.jsfl';
+							which	= -1;
+						break;
+						
+						// for libraries, return all found files, in order: core, mods, user (jsfl)
+						case 'lib':
+						case 'libs':
+						case 'library':
+						case 'libraries':
+							path	= 'jsfl/libraries/' + name;
+							ext		= '.jsfl';
+							which	= 0;
+						break;
+						
+						// for data or settings, return the last file found, from: core, mods, user (xml)
+						case 'data':
+						case 'settings':
+							path	= 'config/' + type + '/' + name;
+							ext		= '.xml';
+							which	= -1;
+						break;
+						
+						// for templates, return the last file found, from: core, mods, user (txt, or supplied extension)
+						case 'template':
+							path	= 'config/templates/' + name;
+							ext		= '.txt';
+							which	= -1;
+						break;
+					
+						// otherwise, return all files found, from: core, mods, user
+						default:
+							path	= type.replace(/\/+$/g, '') + '/' + name;
+							ext		= '';
+							which	= 0;
+					}
+					
+				// add default extension if not provided;
+					path += name.match(/\.\w+$/) ? '' : ext;
+					
+					
+			// --------------------------------------------------------------------------------
+			// find files
+			
+				// variables
+					var uris		= [];
+					var paths		= xjsfl.settings.paths.get();
+					
+				// check all paths for files
+					for(var i = 0; i < paths.length; i++)
+					{
+						var uri = xjsfl.utils.makeURI(paths[i] + path);
+						if(FLfile.exists(uri))
+						{
+							uris.push(uri);
+						}
+					}
+					
+				// return null if no URIs found
+					if(uris.length == 0)
+					{
+						return null;
+					}
+					
+			// --------------------------------------------------------------------------------
+			// return
+			
+				// variables
+					returnType = Number(returnType || which)
+				
+				// return
+					if(returnType > 0)
+					{
+						return uris.shift();
+					}
+					else if(returnType < 0)
+					{
+						return uris.pop();
+					}
+					else
+					{
+						return uris.length ? uris : null;
+					}
+		},
+		
+		/**
+		 * Attempts to find and run or return files from the cascading file structure.
+		 *
+		 * Parameters and return type vary depending on file type!
+		 * 
+		 * @param type			{String}		The type of file (i.e., the xjsfl folder) in which to look for files
+		 * @param name			{String|Array}	The name of a library without the file extension, or a comma-delimited list of the previous
+		 * @param catchErrors	{Boolean}		An optional switch to read and eval contents of jsfl files, which traps errors rather than failing silently
+		 *
+		 * @param filename		{String}		The relative or absolute path to the file, or a comma-delimited list of the previous
+		 * @param catchErrors	{Boolean}		An optional switch to read and eval contents of jsfl files, which traps errors rather than failing silently
+		 *
+		 * @returns				{Boolean}		A Boolean indicating Whether the file was successfully found and loaded
+		 * @returns				{XML}			An XML object of the content of the file, if XML
+		 * @returns				{String}		The string content of the file otherwise
+		 */
+		load:function (type, name, catchErrors)
+		{
+			/*
+				// path types
+					if absolute or relative path, attempt to load it
+					if type and name, find it, then attempt to load it
+					
+				// signatures
+					load(path)
+					load([paths])
+					load(type, name)
+					load(type, [names])
+			*/
+			
+			// variables
+				var result	= null;
+				
+			// --------------------------------------------------------------------------------
+			// single argument, so type is actually a file, or an array of files,
+			// so just convert the path to a uri
+			
+				if(name == null || name === true || name === false)
+				{
+					// variables
+						var path = type;
+						
+					// arrayaize path (takes into accounts delimiters)
+						var files = xjsfl.utils.toArray(path);
+						
+					// test for multiple files and recursively load if so, then return
+						if(files.length > 1)
+						{
+							for(var i = 0; i < files.length; i++)
+							{
+								result = xjsfl.file.load(files[i], name, catchErrors);
+							}
+							return result;
+						}
+				
+					// get uri
+						var uri = xjsfl.utils.makeURI(path);
+						result	= FLfile.exists(uri) ? uri : null;
+						
+				}
+			
+			// --------------------------------------------------------------------------------
+			// type and name supplied, so find the files we need in the cascading file system
+			
+				else
+				{
+					// arrayaize path
+						var names = xjsfl.utils.toArray(name);
+					
+					// test for multiple files and recursively load if so, then return
+						if(names.length > 1)
+						{
+							for(var i = 0; i < names.length; i++)
+							{
+								result = xjsfl.file.load(type, names[i], catchErrors);
+							}
+							return result;
+						}
+					
+					// find files
+						result = xjsfl.file.find(type, name);
+				}
+		
+							
+			// --------------------------------------------------------------------------------
+			// take action on results
+			
+				// debug
+					// alert('Loading ' + name);
+		
+				// if uris.length is 0, no files were found
+					if(result == null)
+					{
+						if(name == null || name === true || name === false)
+						{
+							xjsfl.output.trace('Error in xjsfl.file.load: The file "' +type+ '" could not be found');
+						}
+						else
+						{
+							xjsfl.output.trace('Error in xjsfl.file.load: Could not resolve type "' +type+ '" and name "' +name+ '" to an existing file');
+						}
+					}
+					
+				// otherwise, do something with the uris
+					else
+					{
+						
+						var uris = xjsfl.utils.classOf(result) == 'Array' ? result : [result];
+						
+						for (var i = 0; i  < uris.length; i++)
+						{
+							// variables
+								var uri		= uris[i];
+								var path	= xjsfl.utils.makePath(uri, true);
+								var ext		= uri.match(/(\w+)$/)[1];
+	
+							// debug
+								xjsfl.output.trace('loading "' + path + '"');
+								
+							// do something depending on extension
+								switch(ext)
+								{
+									case 'jsfl':
+										// test script
+											if(catchErrors)
+											{
+												xjsfl.trace('Testing..')
+												try
+												{
+													var str = FLfile.read(uri);
+													eval(str);
+													//xjsfl.output.trace('Executed: ' +path);
+													return true;
+												}
+												catch(err)
+												{
+													xjsfl.trace(err);
+													
+													/*
+													xjsfl.trace('Running: ' + path);
+													var exec = fl.version.match(/\bMAC\b/i) ? 'exec ' + path : path;
+													FLfile.runCommandLine(exec);
+													*/
+													xjsfl.output.error('The file ' +path+ ' could not be executed');
+													return false;
+												}
+											}
+									
+										// otherwise, simply run the file
+											else
+											{
+												fl.runScript(uri);
+												//xjsfl.output.trace('Loaded ' + path);
+											}
+											
+										// if the type was a module, ensure any panels are copied to the WindowSWF folder
+											if(type.match(/modules?/))
+											{
+												var folder = new Folder(xjsfl.utils.makeURI('modules/' + name + '/ui/'));
+												for each(var file in folder.contents)
+												{
+													if(file.extension == 'swf')
+													{
+														file.copy(fl.configURI + 'WindowSWF/');
+													}
+												}
+											}
+
+									break;
+								
+									case 'xml':
+										var contents = FLfile.read(uri);
+										contents = contents.replace(/<\?.+?>/, ''); // remove any doc type declaration
+										return new XML(contents);
+									break;
+								
+									default:
+										return FLfile.read(uri);
+								
+								}
+							
+						}
+					}
+
+			// return
+				return this;
+		}
+		
+	}
+	
+	
+
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██                               
@@ -642,28 +1034,42 @@
 // Classes
 
 	/**
-	 * Mechanism to store and retrieve classes between external JSFL file executions
+	 * Mechanism to store and retrieve libraries into the global (or other)
+	 * namespace between external JSFL file executions
 	 */
 	xjsfl.classes =
 	{
 		items:{},
 		
 		/**
-		 * Registers a class for later retrieval
-		 * @param	name	The name of the class to register
-		 * @param	obj		The actual class
-		 * @returns	The original class
+		 * Load a class or array of classes
+		 * @param	name	{String|Array}		A string name or array of class names
+		 */
+		load:function(name, test)
+		{
+			xjsfl.file.load('library', name, test)
+		},
+		
+		/**
+		 * Registers an element for later retrieval
+		 * @param	name	{String}	The name of the class / function / object to register
+		 * @param	obj		{Object}	The actual class / function / object
+		 * @returns			{xjsfl}		The main xJSFL object
 		 */
 		register:function(name, obj)
 		{
-			xjsfl.classes.items[name] = obj;
-			return obj;
+			if( ! name.match(/items|load|register|restore/) )
+			{
+				xjsfl.classes.items[name] = obj;
+			}
+			return this;
 		},
 		
 		/**
 		 * Restores a class to the 
 		 * @param	name	{string}	The name of the class to restore
-		 * @param	scope	{Object}	The scope to which teh class should be restored to
+		 * @param	scope	{Object}	The scope to which the class should be restored to (defaults to window)
+		 * @returns			{xjsfl}		The main xJSFL object
 		 */
 		restore:function(name, scope)
 		{
@@ -671,7 +1077,7 @@
 				if(typeof name != 'string')
 				{
 					scope = name;
-					for (var name in xjsfl.classes.items)
+					for (name in xjsfl.classes.items)
 					{
 						xjsfl.classes.restore(name, scope);
 					}	
@@ -683,133 +1089,11 @@
 					scope = scope || window;
 					scope[name] = xjsfl.classes.items[name];
 				}
+				
+			// return this for chaining
+				return this;
 		}
 	}
-
-// ------------------------------------------------------------------------------------------------------------------------
-//
-//  ██████              ██                ██   
-//  ██                  ██                ██   
-//  ██     █████ █████ █████ █████ ██ ██ █████ 
-//  ██     ██ ██ ██ ██  ██   ██ ██ ██ ██  ██   
-//  ██     ██ ██ ██ ██  ██   █████  ███   ██   
-//  ██     ██ ██ ██ ██  ██   ██    ██ ██  ██   
-//  ██████ █████ ██ ██  ████ █████ ██ ██  ████ 
-//
-// ------------------------------------------------------------------------------------------------------------------------
-// Context
-
-		/*
-			Checks:
-			document open		true
-			selection			true, 2, 1-3
-			elements can be tweened
-			library selection	true, 2,
-			library selection is folder
-			layer is selected
-			layers are selected
-			custom				fn(callback, failureMessage)
-		
-			if(check){ ... }
-		*/
-		
-	/**
-	 * The context object provides access to, and keeps track of the current document,
-	 * timeline, frame, etc that Collection classes need in order to successfully run
-	 */
-	xjsfl.context =
-	{
-		get:
-		{
-			document:function()
-			{
-				var dom = fl.getDocumentDOM();
-				if(dom == null)
-				{
-					xjsfl.output.warn("A document (.fla file) needs to be open");
-				}
-				xjsfl.context.dom = dom;
-				return dom;
-			},
-			
-			selection:function(fn)
-			{
-				if(this.document())
-				{
-					var dom = xjsfl.context.dom;
-					var sel = dom.selection;
-					if(sel == null)
-					{
-						xjsfl.output.warn("You need to make a selection first");
-					}
-				}
-				return sel;
-			},
-			
-			itemSelection:function(fn)
-			{
-				var dom = this.document();
-				if(dom)
-				{
-					var sel = dom.library.getSelectedItems();
-					if(sel == null)
-					{
-						xjsfl.output.warn("You need to make a selection in the library first");
-					}
-				}
-				return sel;
-			},
-			
-			layerSelection:function(fn)
-			{
-				if(this.document())
-				{
-					var timeline = this.dom.getTimeline();
-					var indices = timeline.getSelectedLayers();
-					return indices.map(function(index){return timeline.layers[index]}) || null;
-				}
-				return null;
-			},
-			
-			frameSelection:function(fn)
-			{
-				if(this.document())
-				{
-					return this.dom.getTimeline().getSelectedFrames() || null;
-				}
-				return null;
-			},
-			
-			elementsCanBeTweened:function(elements)
-			{
-				return null;
-			}
-
-		},
-		
-		set:function(type, value)
-		{
-			
-		},
-		
-		clear:function()
-		{
-			for(var i in this)
-			{
-				if(typeof this[i] != 'function')
-				{
-					this[i] = null;
-				}
-			}
-		},
-		
-		dom:		null,
-		item:		null,
-		layer:		null,
-		frame:		null,
-		element:	null
-	}
-	
 	
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -827,115 +1111,41 @@
 
 	/**
 	 * A namespace in which to store module code to prevent pollution of global scope
+	 * as well as a couple of methods to add and load module code
 	 */
-	xjsfl.modules = {};
+	xjsfl.modules =
+	{
 
-
-// ------------------------------------------------------------------------------------------------------------------------
-//
-//  ██████ ██                ██                ██         
-//  ██     ██                ██                ██         
-//  ██     █████ █████ ████ █████ █████ ██ ██ █████ █████ 
-//  ██████ ██ ██ ██ ██ ██    ██   ██    ██ ██  ██   ██    
-//      ██ ██ ██ ██ ██ ██    ██   ██    ██ ██  ██   █████ 
-//      ██ ██ ██ ██ ██ ██    ██   ██    ██ ██  ██      ██ 
-//  ██████ ██ ██ █████ ██    ████ █████ █████  ████ █████ 
-//
-// ------------------------------------------------------------------------------------------------------------------------
-// Shortcuts
-
-	// element selection
-	
-		var shortcuts =
+		/**
+		 * Load a module or array of modules
+		 * @param	name	{String|Array}		A module name or array of module names
+		 */
+		load:function(name)
 		{
-			/**
-			 * Selects elements on the stage
-			 * @param selector {Mixed}
-			 * @returns {Array} An array of elements
-			 */
-			elements:function(selector, frameContext)
+			xjsfl.file.load('module', name)
+		},
+		
+		/**
+		 * Register a loaded module in the xjsfl namespace
+		 * @param	name	{String}	The package name of the module
+		 * @param	module	{Object}	The actual module object to register
+		 * @returns			{xjsfl}		The main xJSFL object
+		 */
+		register:function(name, module)
+		{
+			if( ! name.match(/register|load/) )
 			{
-				var dom = xjsfl.context.get.document(2);
-				if(dom)
-				{
-					dom.selectAll();
-					return new ElementCollection(xjsfl.context.get.selection(true));
-				}
-				return null;
-			},
-			
-			/**
-			 * Selects elements on the stage
-			 * @param selector {Mixed}
-			 * @returns {Array} An array of elements
-			 */
-			selection:function()
-			{
-				//return xjsfl.context.get.selection();
-				return new ElementCollection(document.selection);
-			},
-			
-			/**
-			 * Selects frames within the document
-			 * @param selector {Mixed}
-			 * @returns {Array} An array of (key)frames
-			 */
-			frames:function(selector, layerContext)
-			{
-				var frames = xjsfl.context.get.frameSelection(true);
-				if(frames)
-				{
-					return frames;
-				}
-				return null;
-			}, 
-			
-			/**
-			 * Selects layers within the document
-			 * @param selector {Mixed}
-			 * @returns {Array} An array of layers
-			 */
-			layers:function(selector, timelineContext)
-			{
-				try
-				{
-					var dom = xjsfl.context.get.document(true);
-					if(dom)
-					{
-						timelineContext = timelineContext || dom.getCurrentTimeline();
-						return timelineContext.getSelectedLayers();
-					}
-					return null;
-				}
-				catch(err)
-				{
-					xjsfl.output.error(err);
-					return null;
-				}
-			},
-			
-			/**
-			 * Selects items within the Library
-			 * @param selector {Mixed}
-			 * @returns {Array} An array of library items
-			 */
-			items:function(selector, folderContext)
-			{
-				var dom = xjsfl.context.get.document(true);
-				if(dom)
-				{
-					return dom.library.items;
-				}
-				return null;
-			},
-			
-			documents:function(selector)
-			{
-				return fl.documents;
+				xjsfl.paths.add(name, 'module');
+				xjsfl.modules[name] = module;
 			}
-			
+			else
+			{
+				xjsfl.output.error('Module names cannot clash with named xjsfl.module methods');
+			}
 		}
 		
+	}
+
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -961,18 +1171,13 @@
 		
 		// variables
 			scope.dom			= fl.getDocumentDOM();
-			scope.xjsfl			= xjsfl;
-			scope.$				= xjsfl;
 			
 		// functions
-			scope.trace			= fl.outputPanel.trace;
+			scope.trace			= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
 			scope.clear			= fl.outputPanel.clear;
 			
 		// methods
 			xjsfl.trace			= xjsfl.output.trace;
-			scope.load			= xjsfl.file.load;
-			scope.include		= xjsfl.file.include;
-			scope.inspect		= xjsfl.output.inspect;
 			
 		// classes
 			xjsfl.classes.restore(scope);
@@ -980,12 +1185,6 @@
 
 	// debug
 		//xjsfl.settings.debugLevel = 2;
-		
-	// set root path
-		xjsfl.settings.paths.add(xjsfl.settings.folders.root + 'core/', 'core');
-		
-	// extend xjsfl with shortcut methods
-		xjsfl.utils.extend(xjsfl, shortcuts);
 
-	// debug
-		fl.trace('> xjsfl: core loaded OK');
+
+

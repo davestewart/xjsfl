@@ -239,21 +239,21 @@
 		/**
 		 * Create a valid URI from a supplied string
 		 * 
-		 * Function has the same internal functionality as createPath()
+		 * Function has the same internal functionality as makePath()
 		 * 
 		 * @param	str			{String}	An absolute path, relative path, or uri
 		 * @param	context		{String}	An optional context (uri or path), from which to start the URI
 		 * @param	context		{Boolean}	An alternative optional Boolean indicating to automatically derive the URI from the calling function's file location
 		 * @returns				{String}	An absolute URI
-		 * @see								xjsfl.utils#createPath
+		 * @see								xjsfl.utils#makePath
 		 */
-		createURI:function(str, context)
+		makeURI:function(str, context)
 		{
 			// if an additional filepath is passed in, the returned URI will be relative to it
 				if(typeof context === 'string')
 				{
 					context = context.replace(/[^\/\\]+$/, '');
-					str		= xjsfl.utils.createPath(context) + str;
+					str		= xjsfl.utils.makePath(context) + str;
 				}
 				
 			// if context is true, then the returned URI will be relative to the calling script
@@ -262,9 +262,9 @@
 				{
 					var stack	= xjsfl.utils.getStack();
 					var path	= stack[1].path;
-					str			= xjsfl.utils.createPath(path) + (str === true ? '' : str);
+					str			= xjsfl.utils.makePath(path) + (str === true ? '' : str);
 				}
-				return str ? FLfile.platformPathToURI(xjsfl.utils.createPath(str)) : '';
+				return str ? FLfile.platformPathToURI(xjsfl.utils.makePath(str)) : '';
 		},
 		
 		
@@ -283,7 +283,7 @@
 		 * @param	shorten		{Boolean}	An optional boolean to return a path with <xjsfl> or <config> swapped out from the actual path
 		 * @returns				{String}	An absolute or shortened path
 		 */
-		createPath:function(str, shorten)
+		makePath:function(str, shorten)
 		{
 			// if a URI is passed in, just convert it
 				if(str.match(/^file:\/\/\//))
@@ -865,7 +865,7 @@
 				// check all paths for files
 					for(var i = 0; i < paths.length; i++)
 					{
-						var uri = xjsfl.utils.createURI(paths[i] + path);
+						var uri = xjsfl.utils.makeURI(paths[i] + path);
 						if(FLfile.exists(uri))
 						{
 							uris.push(uri);
@@ -955,7 +955,7 @@
 						}
 				
 					// get uri
-						var uri = xjsfl.utils.createURI(path);
+						var uri = xjsfl.utils.makeURI(path);
 						result	= FLfile.exists(uri) ? uri : null;
 						
 				}
@@ -1012,7 +1012,7 @@
 						{
 							// variables
 								var uri		= uris[i];
-								var path	= xjsfl.utils.createPath(uri, true);
+								var path	= xjsfl.utils.makePath(uri, true);
 								var ext		= uri.match(/(\w+)$/)[1];
 	
 							// debug
@@ -1057,7 +1057,7 @@
 										// if the type was a module, ensure any panels are copied to the WindowSWF folder
 											if(type.match(/modules?/))
 											{
-												var folder = new Folder(xjsfl.utils.createURI('modules/' + name + '/ui/'));
+												var folder = new Folder(xjsfl.utils.makeURI('modules/' + name + '/ui/'));
 												for each(var file in folder.contents)
 												{
 													if(file.extension == 'swf')

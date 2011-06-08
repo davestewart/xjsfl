@@ -59,7 +59,7 @@
 		{
 			// basics
 				var type		= this.type(name);
-				var template	= new SimpleTemplate(xjsfl.utils.createURI('templates/simple/comment.txt', fl.scriptURI));
+				var template	= new SimpleTemplate(xjsfl.utils.makeURI('templates/simple/comment.txt', fl.scriptURI));
 				
 			// method
 				if(type == 'method')
@@ -132,7 +132,7 @@
 		// load templates
 			function loadTemplate(uri)
 			{
-				return new SimpleTemplate(xjsfl.utils.createURI(uri, fl.scriptURI));
+				return new SimpleTemplate(xjsfl.utils.makeURI(uri, fl.scriptURI));
 			}
 			
 			ElementPrototype.templates =
@@ -309,7 +309,7 @@
 // variables
 
 	// lines
-		var str		= new File(xjsfl.utils.createURI('source/superdoc.txt', fl.scriptURI)).contents;
+		var str		= new File(xjsfl.utils.makeURI('source/superdoc.txt', fl.scriptURI)).contents;
 		var lines	= str.split(/\n/);
 		
 	// delete empty lines

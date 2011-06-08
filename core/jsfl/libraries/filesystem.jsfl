@@ -25,7 +25,7 @@
 		{
 			if(pathOrUri)
 			{
-				this.uri = xjsfl.utils.createURI(pathOrUri); // this.getUri(pathOrUri);
+				this.uri = xjsfl.utils.makeURI(pathOrUri); // this.getUri(pathOrUri);
 			}
 			if(this.uri)
 			{

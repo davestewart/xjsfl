@@ -4,7 +4,7 @@
 	/**
 	 * Config class for Modules, loads and saves XML from the config folders
 	 * 
-	 * @param	name	{String}	The name of your preference object. Include slashes to place in subfolders
+	 * @param	name	{String}	The name of your Config object. Include slashes to place in subfolders
 	 * @param	type	{String}	An optional type of preference ('settings' or 'data', defaults to 'settings')
 	 * @param	path	{Module}	An optional base path (defaults to '<xJSFL>/user/config/')
 	 * @author	Dave Stewart	
@@ -46,7 +46,7 @@
 		
 		toString:function()
 		{
-			return '[class Config]';
+			return '[object Config]';
 		}
 		
 	}
