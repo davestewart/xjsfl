@@ -35,7 +35,7 @@
 			
 			start:function(name)
 			{
-				Timer.instance = new Timer(name);
+				Timer.instance = new Timer(name).start();
 			},
 			
 			stop:function(print)
@@ -75,7 +75,9 @@
 			
 		};
 		
-	// extend Timer class
+	// add static methods to Timer class
+		xjsfl.utils.extend(Timer, timer);
+		/*
 		(function(){
 			for(var i in timer)
 			{
@@ -83,6 +85,7 @@
 			}
 			
 		})()
+		*/
 	
 // --------------------------------------------------------------------------------
 // Timer instance methods
@@ -92,6 +95,8 @@
 		startDate:null,
 		
 		endDate:null,
+		
+		running:false,
 		
 		get time()
 		{
@@ -106,16 +111,21 @@
 		
 		start:function()
 		{
-			this.startDate = new Date();
+			this.running	= true;
+			this.startDate	= new Date();
 			return this;
 		},
 		
 		stop:function(print)
 		{
-			this.endDate = new Date();
-			if(print)
+			if(this.running)
 			{
-				fl.trace('Timer "' +this.name+ '" took ' + this.time)
+				this.endDate	= new Date();
+				this.running	= false;
+				if(print)
+				{
+					fl.trace('Timer "' +this.name+ '" took ' + this.time)
+				}
 			}
 			return this;
 		},
@@ -134,37 +144,49 @@
 
 	if(false)
 	{
-		// instance code
-			var timer = new Timer('Dave').start();;
-			
-			var arr = [];
-			for(var i = 0; i < 1000000; i++)
+		// methods
+			function test()
 			{
-				var sin = Math.sin(i);
-				arr.push(sin)
+				var arr = [];
+				for(var i = 0; i < 500000; i++)
+				{
+					var sin = Math.sin(i);
+					arr.push(sin)
+				}
 			}
 			
+			function report(timer)
+			{
+				fl.trace('time:			' + timer.time);
+				fl.trace('milliseconds:	' + timer.milliseconds);
+				fl.trace('startDate:		' + timer.startDate);
+				fl.trace('endDate:		' + timer.endDate);
+				fl.trace('\n');
+			}
+		
+		// clear
+			fl.outputPanel.clear();
+		
+		// instance code
+			var timer = new Timer('Instance').start();
+			test();
 			timer.stop(true);
+			report(timer)
 			
-			fl.trace(timer.time);
-			fl.trace(timer.milliseconds);
-			fl.trace(timer.startDate);
-			fl.trace(timer.endDate);
+			timer.start();
+			test();
+			timer.stop(true);
+			report(timer)
 			
 		// static code
-			Timer.start();;
-			
-			var arr = [];
-			for(var i = 0; i < 1000000; i++)
-			{
-				var sin = Math.sin(i);
-				arr.push(sin)
-			}
-			
+			Timer.start('Static');
+			test();
 			Timer.stop(true);
+			report(Timer.instance)
 			
-			fl.trace(Timer.instance.time);
-			fl.trace(Timer.instance.milliseconds);
-			fl.trace(Timer.instance.startDate);
-			fl.trace(Timer.instance.endDate);
+			Timer.start('Static');
+			test();
+			Timer.stop(true);
+			report(Timer.instance)
+
 	}
