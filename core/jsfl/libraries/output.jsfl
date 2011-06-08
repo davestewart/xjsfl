@@ -356,7 +356,7 @@ Output =
 			 */
 			
 			// reset
-				label				= label || null;
+				label				= label || 'Inspect';
 				maxDepth			= maxDepth < 0 ? 100 : maxDepth || 4;
 				print				= typeof print == 'undefined' ? 2 : print;
 				
@@ -403,7 +403,7 @@ Output =
 				}
 				else
 				{
-					Output.print(strOutput, 'Inspect: ' + (label || className) + ' (objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')');
+					Output.print(strOutput, label + ': ' + className + ' (objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')');
 				}
 				
 			// return
