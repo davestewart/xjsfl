@@ -387,19 +387,82 @@
 		 * @returns			{Array}		A unique array
 		 * @author	Dave Stewart	
 		 */
-		unique:function(arrIn)
+		unique:function(arr)
 		{
 			var arrOut	= [];
 			var i		= -1;
-			while(i++ < arrIn.length - 1)
+			while(i++ < arr.length - 1)
 			{
-				if(arrOut.indexOf(arrIn[i]) === -1)
+				if(arrOut.indexOf(arr[i]) === -1)
 				{
-					arrOut.push(arrIn[i]);
+					arrOut.push(arr[i]);
 				}
 			}
 			return arrOut;
-		},		
+		},
+		
+		/**
+		 * Collect the values of an array of objects into a new array
+		 * @param	arr		{Array}		An array of Objects
+		 * @param	prop	{String}	The name of a property to collect. Can also pass in an array of names to return a (non-unique) 2D array
+		 * @param	option	{Boolean}	If returning a flat array, pass true to make it unique. If returning a 2D array, pass true to return Objects
+		 * @returns			{Array}		A new 1D or 2D Array
+		 */
+		collect:function(arr, prop, option)
+		{
+			// variables
+				var arrOut	= [];
+				var i		= -1;
+				
+			// double loop for multiple properties
+				if(this.isArray(prop))
+				{
+					// variables
+						var props	= prop;
+						var arrOut	= new Array(arr.length);
+						
+					// return objects
+						if(option)
+						{
+							while(i++ < arr.length - 1)
+							{
+								arrOut[i] = {};
+								for(var j = 0; j < props.length; j++)
+								{
+									arrOut[i][props[j]] = arr[i][props[j]];
+								}
+							}
+						}
+						
+					// return arrays
+						else
+						{
+							while(i++ < arr.length - 1)
+							{
+								arrOut[i] = new Array(props.length);
+								for(var j = 0; j < props.length; j++)
+								{
+									arrOut[i][j] = arr[i][props[j]];
+								}
+							}
+						}
+				}
+			
+			// optimised single loop
+				else
+				{
+					while(i++ < arr.length - 1)
+					{
+						if( ! option || (option && arrOut.indexOf(arr[i][prop]) === -1) )
+						{
+							arrOut.push(arr[i][prop]);
+						}
+					}
+				}
+				
+			// return
+				return arrOut;
+		},
 
 		/**
 		 * Get the class of an object as a string
@@ -408,6 +471,7 @@
 		 */
 		classOf:function(value)
 		{
+			//TODO check this function works with objects that have unusual toString methods, and possibly rewrite if so
 			var className = toString.call(value).match(/\[\w+ (\w+)/)[1];
 			if(className === 'Object')
 			{
