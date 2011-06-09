@@ -1,21 +1,24 @@
 // ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████        ██               
-//  ██            ██               
-//  ██     █████ █████ ██ ██ █████ 
-//  ██████ ██ ██  ██   ██ ██ ██ ██ 
-//      ██ █████  ██   ██ ██ ██ ██ 
-//      ██ ██     ██   ██ ██ ██ ██ 
-//  ██████ █████  ████ █████ █████ 
-//                           ██    
-//                           ██    
+//           ██ ██████ ██████ ██     
+//           ██ ██     ██     ██     
+//  ██ ██    ██ ██     ██     ██     
+//  ██ ██    ██ ██████ █████  ██     
+//   ███     ██     ██ ██     ██     
+//  ██ ██    ██     ██ ██     ██     
+//  ██ ██ █████ ██████ ██     ██████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Setup
+// xJSFL - Rapid development framework for extending Adobe Flash
 
-	// root uri
-		//xjsfl.uri = xjsfl.uri = xjsfl.uri; // fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf('/xJSFL/')) + '/xJSFL/';
-		
+	/**
+	 * http://www.xjsfl.com
+	 * 
+	 * Copyright 2011, Dave Stewart
+	 * Licence: http://www.xjsfl.com/license
+	 *
+	 */
+
 	// temp variables for framework setup
 		xjsflPath		= FLfile.uriToPlatformPath(xjsfl.uri).replace(/\\/g, '/');
 		
@@ -38,32 +41,29 @@
 			xjsfl.output.trace('Loaded "<xJSFL>/' +path+ '"');
 		}
 		
-	// to string function
+	// toString function
 		xjsfl.toString = function()
 		{
 			return '[class xJSFL]';
 		}
 
-
-	
 // ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████                       ██████        ██    ██   ██                   
-//  ██                           ██            ██    ██                        
-//  ██     █████ ████ █████      ██     █████ █████ █████ ██ █████ █████ █████ 
-//  ██     ██ ██ ██   ██ ██      ██████ ██ ██  ██    ██   ██ ██ ██ ██ ██ ██    
-//  ██     ██ ██ ██   █████          ██ █████  ██    ██   ██ ██ ██ ██ ██ █████ 
-//  ██     ██ ██ ██   ██             ██ ██     ██    ██   ██ ██ ██ ██ ██    ██ 
-//  ██████ █████ ██   █████      ██████ █████  ████  ████ ██ ██ ██ █████ █████ 
-//                                                                    ██       
-//                                                                 █████       
+//  ██████        ██    ██   ██                   
+//  ██            ██    ██                        
+//  ██     █████ █████ █████ ██ █████ █████ █████ 
+//  ██████ ██ ██  ██    ██   ██ ██ ██ ██ ██ ██    
+//      ██ █████  ██    ██   ██ ██ ██ ██ ██ █████ 
+//      ██ ██     ██    ██   ██ ██ ██ ██ ██    ██ 
+//  ██████ █████  ████  ████ ██ ██ ██ █████ █████ 
+//                                       ██       
+//                                    █████       
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Core Settings
-
+// Settings - Core settings and cached variables
 
 	/**
-	 * Core settings and cached variables
+	 * 
 	 */
 	xjsfl.settings =
 	{
@@ -152,6 +152,7 @@
 		/**
 		 * Debug level
 		 * Can be set by the developer to either trace or alert framework errors and warnings
+		 * 
 		 * @type {Number} debug level 0: off, 1:trace, 2:alert
 		 */
 		debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1),
@@ -184,6 +185,41 @@
 	 */
 	xjsfl.utils =
 	{
+		/**
+		 * Run each element of an array through a callback function
+		 * Used to call functions in a loop without writing loop code or forEach closure, or checking that original argument is an array
+		 * 
+		 * @param	arr			{Array}		An array of elements to be passed to the callback
+		 * @param	func		{Function}	The function to call
+		 * @param	params		{Array}		An opptional array of arguments to be passed
+		 * @param	argIndex	{Number}	An optional argument index in which the original array element should be passed
+		 */
+		applyEach:function(arr, func, params, argIndex)
+		{
+			// defaults
+				params 		= params || [];
+				argIndex	= argIndex || 0;
+			
+			// if only a single element is passed, wrap it in an array
+				if( ! xjsfl.utils.isArray(arr))
+				{
+					arr = [arr];
+				}
+				
+			// for each element, call the function with the parameters
+				arr.forEach
+				(
+					function(element)
+					{
+						var args = [].concat(params);
+						args.splice(argIndex, 0, element);
+						func.apply(this, args)
+					}
+				)
+				
+			// return
+				return this;
+		},
 		
 		/**
 		 * Extends an object or array with more properties or elements
@@ -211,7 +247,7 @@
 				{
 					for ( var i in props )
 					{
-						// getter / setter
+						// getters / setters
 							var g = props.__lookupGetter__(i), s = props.__lookupSetter__(i);
 							if ( g || s )
 							{
@@ -238,7 +274,6 @@
 		
 		/**
 		 * Create a valid URI from a supplied string
-		 * 
 		 * Function has the same internal functionality as makePath()
 		 * 
 		 * @param	str			{String}	An absolute path, relative path, or uri
@@ -362,6 +397,7 @@
 		/**
 		 * Turns a single value into an array
 		 * It either returns an existing array, splits a string at delimiters, or wraps the single value in an array
+		 * 
 		 * @param	value	
 		 * @returns		
 		 */
@@ -383,6 +419,7 @@
 		
 		/**
 		 * Returns a unique array without any duplicate items
+		 * 
 		 * @param	arrIn	{Array}		Any array
 		 * @returns			{Array}		A unique array
 		 * @author	Dave Stewart	
@@ -403,6 +440,7 @@
 		
 		/**
 		 * Collect the values of an array of objects into a new array
+		 * 
 		 * @param	arr		{Array}		An array of Objects
 		 * @param	prop	{String}	The name of a property to collect. Can also pass in an array of names to return a (non-unique) 2D array
 		 * @param	option	{Boolean}	If returning a flat array, pass true to make it unique. If returning a 2D array, pass true to return Objects
@@ -466,6 +504,7 @@
 		
 		/**
 		 * Get an object's keys
+		 * 
 		 * @param	obj	{Object}	Any object with iterable properties
 		 * @returns		{Array}		An array of key names
 		 */
@@ -481,6 +520,7 @@
 
 		/**
 		 * Get the class of an object as a string
+		 * 
 		 * @param	value	{mixed}		Any value
 		 * @returns			{String}	The class name of the value i.e. 'String', 'Date', 'CustomClass'
 		 */
@@ -509,6 +549,7 @@
 		
 		/**
 		 * Returns an array of the the currently executing files, paths, lines, and code
+		 * 
 		 * @param	error		{Error}		An optional Boolean to shorten any core paths with <xjsfl>
 		 * @param	shorten		{Boolean}	An optional Boolean to shorten any core paths with <xjsfl>
 		 * @returns				{Array}		An array of the executing files, paths, lines and code
@@ -566,6 +607,7 @@
 	{
 		/**
 		 * Upgraded trace function that takes multiple arguments
+		 * 
 		 * @param args {Object} Multiple arguments
 		 */
 		trace:function()
@@ -579,6 +621,7 @@
 		
 		/**
 		 * Issue a warning to the user
+		 * 
 		 * @param message		{String} The message to be displayed
 		 * @param debugLevel	{Number} 1 traces the message to the output panel, 2 shows the alert dialog
 		 */
@@ -597,6 +640,7 @@
 
 		/**
 		 * Traces a human-readable error to the Output Panel
+		 * 
 		 * @param error		{String}	A string defining the main error message
 		 * @param error		{Error}		A javaScript Error object
 		 * @param data		{Object}	An optional Object contaiing key:value pairs of extra information
@@ -642,6 +686,7 @@
 	{
 		/**
 		 * Iterates through an array of library Items, optionally processing each one with a callback, and optionally processing each of its layers with a callback
+		 * 
 		 * @param	items			{Array}			An array of Item objects
 		 * @param	itemCallback	{Function}		A callback of the format function(item, index, items)
 		 * @param	layerCallback	{Function}		A callback of the format function(layer, index, layers)
@@ -670,6 +715,7 @@
 		
 		/**
 		 * Iterates through a Symbol's layers, optionally processing each one with a callback, and optionally processing each of its frames with a callback
+		 * 
 		 * @param	symbol			{SymbolItem}	A SymbolItem or SymbolInstance object
 		 * @param	layerCallback	{Function}		A callback of the format function(layer, index, layers)
 		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
@@ -709,6 +755,7 @@
 		
 		/**
 		 * Iterates through a Layer's frames, optionally processing each one with a callback, and optionally processing each of its elements with a callback
+		 * 
 		 * @param	layer			{Layer}			A Layer, Layer index or Layer name
 		 * @param	frameCallback	{Function}		A callback of the format function(frame, index, frames)
 		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
@@ -753,6 +800,7 @@
 		
 		/**
 		 * Iterates through a frame's elements, processing each one with a callback
+		 * 
 		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements)
 		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
 		 */
@@ -798,6 +846,13 @@
 	 */
 	xjsfl.file =
 	{
+		get loading()
+		{
+			return xjsfl.file.stack.length > 0;
+		},
+		
+		stack:[],
+		
 		/**
 		 * Finds all files of a particular type within the cascading file system
 		 * 
@@ -818,7 +873,7 @@
 				// switch type
 					switch(type)
 					{
-						// for modules, immedioately return the module path or null
+						// for modules, immediately return the module path or null
 						case 'module':
 						case 'modules':
 							uri	= xjsfl.uri + 'modules/' + name + '/' + 'jsfl/' + name + '.jsfl';
@@ -916,7 +971,6 @@
 		
 		/**
 		 * Attempts to find and run or return files from the cascading file structure.
-		 *
 		 * Parameters and return type vary depending on file type!
 		 * 
 		 * @param type			{String}		The type of file (i.e., the xjsfl folder) in which to look for files
@@ -1023,7 +1077,7 @@
 						
 						var uris = xjsfl.utils.classOf(result) == 'Array' ? result : [result];
 						
-						for (var i = 0; i  < uris.length; i++)
+						for (var i = 0; i < uris.length; i++)
 						{
 							// variables
 								var uri		= uris[i];
@@ -1032,6 +1086,9 @@
 	
 							// debug
 								xjsfl.output.trace('loading "' + path + '"');
+								
+							// flag
+								xjsfl.file.stack.push(uri);
 								
 							// do something depending on extension
 								switch(ext)
@@ -1046,6 +1103,7 @@
 													var str = FLfile.read(uri);
 													eval(str);
 													//xjsfl.output.trace('Executed: ' +path);
+													xjsfl.file.stack.pop();
 													return true;
 												}
 												catch(err)
@@ -1058,6 +1116,7 @@
 													FLfile.runCommandLine(exec);
 													*/
 													xjsfl.output.error('The file ' +path+ ' could not be executed');
+													xjsfl.file.stack.pop();
 													return false;
 												}
 											}
@@ -1067,6 +1126,7 @@
 											{
 												fl.runScript(uri);
 												//xjsfl.output.trace('Loaded ' + path);
+												xjsfl.file.stack.pop();
 											}
 											
 										// if the type was a module, ensure any panels are copied to the WindowSWF folder
@@ -1087,10 +1147,12 @@
 									case 'xml':
 										var contents = FLfile.read(uri);
 										contents = contents.replace(/<\?.+?>/, ''); // remove any doc type declaration
+										xjsfl.file.stack.pop();
 										return new XML(contents);
 									break;
 								
 									default:
+										xjsfl.file.stack.pop();
 										return FLfile.read(uri);
 								
 								}
@@ -1129,15 +1191,18 @@
 		
 		/**
 		 * Load a class or array of classes
+		 * 
 		 * @param	name	{String|Array}		A string name or array of class names
 		 */
 		load:function(name, test)
 		{
-			xjsfl.file.load('library', name, test)
+			xjsfl.utils.applyEach(name, xjsfl.file.load, ['library', test], 1);
+			//xjsfl.file.load('library', name, test)
 		},
 		
 		/**
-		 * Registers an element for later retrieval
+		 * Registers a class/function for later retrieval
+		 * 
 		 * @param	name	{String}	The name of the class / function / object to register
 		 * @param	obj		{Object}	The actual class / function / object
 		 * @returns			{xjsfl}		The main xJSFL object
@@ -1152,7 +1217,8 @@
 		},
 		
 		/**
-		 * Restores a class to the 
+		 * Restores a class/function to the supplied namespace
+		 * 
 		 * @param	name	{string}	The name of the class to restore
 		 * @param	scope	{Object}	The scope to which the class should be restored to (defaults to window)
 		 * @returns			{xjsfl}		The main xJSFL object
@@ -1204,6 +1270,7 @@
 
 		/**
 		 * Load a module or array of modules
+		 * 
 		 * @param	name	{String|Array}		A module name or array of module names
 		 */
 		load:function(name)
@@ -1213,6 +1280,7 @@
 		
 		/**
 		 * Register a loaded module in the xjsfl namespace
+		 * 
 		 * @param	name	{String}	The package name of the module
 		 * @param	module	{Object}	The actual module object to register
 		 * @returns			{xjsfl}		The main xJSFL object
@@ -1253,7 +1321,7 @@
 	xjsfl.init = function(scope)
 	{
 		// debug
-			xjsfl.output.trace('setting environment variables');
+			xjsfl.output.trace('setting environment variables...');
 		
 		// variables
 			scope.dom			= fl.getDocumentDOM();
@@ -1271,6 +1339,3 @@
 
 	// debug
 		//xjsfl.settings.debugLevel = 2;
-
-
-

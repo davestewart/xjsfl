@@ -11,8 +11,7 @@
 //                            █████                                       ████                   
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// FileSystemObject
-
+// FileSystemObject - Base FileSystem class for Folder and File classes
 
 	// -----------------------------------------------------------------------------------------------
 	// constructor and inheritance
@@ -177,7 +176,7 @@
 //  ██     █████ ██ █████ █████ ██   
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Folder
+// Folder - JSFL OO representation of operating system folders
 
 	// -----------------------------------------------------------------------------------------------
 	// constructor and inheritance
@@ -329,9 +328,6 @@
 			}
 		);
 			
-	// -----------------------------------------------------------------------------------------------
-	// code
-
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -344,7 +340,7 @@
 //  ██     ██ ██ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// File
+// File - JSFL OO representation of operating system files
 
 
 	// -----------------------------------------------------------------------------------------------
@@ -560,174 +556,182 @@
 	xjsfl.classes.register('Folder', Folder);
 	xjsfl.classes.register('File', File);
 
-//var file = new File('c:/temp/temp.txt')
 
-
-//alert(file.parent.name)
+// ---------------------------------------------------------------------------------------------------------------------
+// Test code
 	
-/*
-	
-
-//var folder = new Folder('c:/temp/this/is/a/new/folder/', true);
-//var folder = new Folder('c:');
-
-var file = new File('c:/temp/this/is/a/new/file.jsfl', 'Hello!', true)
-
-fl.trace(folder)
-fl.trace(folder.parent)
-
-fl.trace(file)
-fl.trace(file.parent)
-
-//folder.remove();
-//fl.trace(folder.uri)
-*/
-	
-	
-//alert(new Date(new File('c:/temp/test.jsfl').modified))
-
-new File('c:/temp/test.jsfl').copy('c:/temp/this')
-	
-if(false)
-{
-	
-	fl.outputPanel.clear();
-	trace = fl.trace	
-
-
-	trace = fl.trace
-	clear = fl.outputPanel.clear
-	clear();
-	
-	//var folder = new Folder('c:/temp/a new folder');
-	//var file = new File('c:/temp/some file.as', 'What\'s going on?!').open();
-	
-	
-	var file = new File('z:/test.fla').open();
-	/*
-	var file = new File('z:/test.txt', 'Some content')
-		.copy('z:/test2.as')
-		.write(' and some more', true)
-		.open();
+	if( ! xjsfl.file.loading)
+	{
+		//var file = new File('c:/temp/temp.txt')
 		
-	 */
-	/*
-	var indent = '';
-	function list(e, i)
-	{
-		trace(indent + '/' + e.name);
-		if(e instanceof Folder)
-		{
-			folders ++;
-			indent += '	';
-			e.each(list);
-			indent = indent.substring(1);
-		}
-		else
-		{
-			files ++;
-		}
+		
+		//alert(file.parent.name)
+			
+		/*
+			
+		
+		//var folder = new Folder('c:/temp/this/is/a/new/folder/', true);
+		//var folder = new Folder('c:');
+		
+		var file = new File('c:/temp/this/is/a/new/file.jsfl', 'Hello!', true)
+		
+		fl.trace(folder)
+		fl.trace(folder.parent)
+		
+		fl.trace(file)
+		fl.trace(file.parent)
+		
+		//folder.remove();
+		//fl.trace(folder.uri)
+		*/
+			
+			
+		//alert(new Date(new File('c:/temp/test.jsfl').modified))
+		
+		new File('c:/temp/test.jsfl').copy('c:/temp/this')
 	}
 	
-	$.output.recurse(root, function(e){trace(e)}, function(e){return e instanceof Folder})
-	
-	var files = 0;
-	var folders = 0;
-	var d = new Date;
-	
-	var folder = new Folder('c:/temp');
-	//folder = new Folder('C:/ProgramData/Adobe');
-	list(folder)
-	
-	trace([folders, files, new Date - d])
-	*/
-	
-	
-	/*
-	$$ =
+		
+	if( ! xjsfl.file.loading)
 	{
-		output:
-		{
-			hier:indent = function(value, level)
-			{
-				fl.trace(Array(level + 1).join('\t') + value);
-			}
-		}
-	}
-
-	function list(e)
-	{
-		indent(e.name, i)
-		if(e instanceof Folder)
-		{
-			i++;
-			e.each(list);
-			i--;
-		}
-	}
+		
+		fl.outputPanel.clear();
+		trace = fl.trace	
 	
-	var i = 0;
-	list(new Folder('c:/temp'))
-
-	//alert(folder.name)
-	*/
-				
-	//function l(e){indent(e.name,i);if(e instanceof Folder){i++;e.each(l);i--}}var i=0;l(new Folder('c:/temp/'))
-	//function l(e){$$.output.hier(e.name,i);if(e.isFolder){i++;e.each(l);i--}}i=0;l(new Folder('c:/temp'))
 	
-	/*
-	var folder = new Folder('file:///c|/temp/hello/there/mr');
-	
-	//f.contents = 'Have a nice day!';
-	//alert(folder.contents)
-	//f.remove(true)
-	
-	file.open()
-	*/
-
-
-	//var n='\t';function l(e){trace(n+'/'+e.name);if(e instanceof Folder){ n+='\t';e.each(l);n=n.substr(1);}}var f=new Folder('c:/temp');l(f)
-	
-}
-
-/*
-	function recurse(root, fnChild, fnTestChildren)
-	{
+		trace = fl.trace
+		clear = fl.outputPanel.clear
+		clear();
+		
+		//var folder = new Folder('c:/temp/a new folder');
+		//var file = new File('c:/temp/some file.as', 'What\'s going on?!').open();
+		
+		
+		var file = new File('z:/test.fla').open();
+		/*
+		var file = new File('z:/test.txt', 'Some content')
+			.copy('z:/test2.as')
+			.write(' and some more', true)
+			.open();
+			
+		 */
+		/*
 		var indent = '';
-		var level = 0;
-		
 		function list(e, i)
 		{
-			fnChild(e, i, level, indent);
-			if(fnTestChildren ? fnTestChildren(e, level) : e.length)
+			trace(indent + '/' + e.name);
+			if(e instanceof Folder)
 			{
-				level ++;
+				folders ++;
 				indent += '	';
 				e.each(list);
 				indent = indent.substring(1);
-				level--;
+			}
+			else
+			{
+				files ++;
 			}
 		}
 		
-		list(root);
+		$.output.recurse(root, function(e){trace(e)}, function(e){return e instanceof Folder})
+		
+		var files = 0;
+		var folders = 0;
+		var d = new Date;
+		
+		var folder = new Folder('c:/temp');
+		//folder = new Folder('C:/ProgramData/Adobe');
+		list(folder)
+		
+		trace([folders, files, new Date - d])
+		*/
+		
+		
+		/*
+		$$ =
+		{
+			output:
+			{
+				hier:indent = function(value, level)
+				{
+					fl.trace(Array(level + 1).join('\t') + value);
+				}
+			}
+		}
+	
+		function list(e)
+		{
+			indent(e.name, i)
+			if(e instanceof Folder)
+			{
+				i++;
+				e.each(list);
+				i--;
+			}
+		}
+		
+		var i = 0;
+		list(new Folder('c:/temp'))
+	
+		//alert(folder.name)
+		*/
+					
+		//function l(e){indent(e.name,i);if(e instanceof Folder){i++;e.each(l);i--}}var i=0;l(new Folder('c:/temp/'))
+		//function l(e){$$.output.hier(e.name,i);if(e.isFolder){i++;e.each(l);i--}}i=0;l(new Folder('c:/temp'))
+		
+		/*
+		var folder = new Folder('file:///c|/temp/hello/there/mr');
+		
+		//f.contents = 'Have a nice day!';
+		//alert(folder.contents)
+		//f.remove(true)
+		
+		file.open()
+		*/
+	
+	
+		//var n='\t';function l(e){trace(n+'/'+e.name);if(e instanceof Folder){ n+='\t';e.each(l);n=n.substr(1);}}var f=new Folder('c:/temp');l(f)
 		
 	}
 	
-	recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
-	recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)})
-*/
+	/*
+		function recurse(root, fnChild, fnTestChildren)
+		{
+			var indent = '';
+			var level = 0;
+			
+			function list(e, i)
+			{
+				fnChild(e, i, level, indent);
+				if(fnTestChildren ? fnTestChildren(e, level) : e.length)
+				{
+					level ++;
+					indent += '	';
+					e.each(list);
+					indent = indent.substring(1);
+					level--;
+				}
+			}
+			
+			list(root);
+			
+		}
+		
+		recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
+		recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)})
+	*/
+		
+	/*	
+	var file = new File('c:/temp/document.doc');
 	
-/*	
-var file = new File('c:/temp/document.doc');
-
-file.open()
+	file.open()
+		
+	var n = '\t';function l(e){ trace(n+'/'+e.name); if(e instanceof Folder){ n+= '\t'; e.each(l); n = n.substr(1);} } var f = new Folder('E:/02 - Current Jobs/xJSFL/xJSFL/user/jsfl/scripts');l(f)
 	
-var n = '\t';function l(e){ trace(n+'/'+e.name); if(e instanceof Folder){ n+= '\t'; e.each(l); n = n.substr(1);} } var f = new Folder('E:/02 - Current Jobs/xJSFL/xJSFL/user/jsfl/scripts');l(f)
-
-var f = new Folder('c:/temp/');
-trace(f)
-
-var f = new File('c:/temp/test.txt');
-trace(f)
-*/
+	var f = new Folder('c:/temp/');
+	trace(f)
+	
+	var f = new File('c:/temp/test.txt');
+	trace(f)
+	*/
 

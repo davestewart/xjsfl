@@ -1,18 +1,31 @@
-if( ! xjsfl.uri)
-{
-	// set xJSFL URI
-		xjsfl.uri = '{xjsfl}';
-		
-	// tidy up
-		delete xjsfl.name;
-		delete xjsfl.MM_path;
-		delete xjsfl.MM_loaded;
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//           ██ ██████ ██████ ██          ██                    ██            
+//           ██ ██     ██     ██          ██                    ██            
+//  ██ ██    ██ ██     ██     ██          ██     █████ █████ █████ █████ ████ 
+//  ██ ██    ██ ██████ █████  ██          ██     ██ ██    ██ ██ ██ ██ ██ ██   
+//   ███     ██     ██ ██     ██          ██     ██ ██ █████ ██ ██ █████ ██   
+//  ██ ██    ██     ██ ██     ██          ██     ██ ██ ██ ██ ██ ██ ██    ██   
+//  ██ ██ █████ ██████ ██     ██████      ██████ █████ █████ █████ █████ ██   
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// xJSFL Loader
 
-	// load bootstraps
-		fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
-		fl.runScript(xjsfl.uri + 'user/jsfl/bootstrap.jsfl');
+	if( ! xjsfl.uri)
+	{
+		// set xJSFL URI
+			xjsfl.uri = '{xjsfl}';
+			
+		// tidy up
+			delete xjsfl.name;
+			delete xjsfl.MM_path;
+			delete xjsfl.MM_loaded;
 	
-	// done!
-		fl.trace('> xjsfl: ready!');
-		fl.trace('\n=================================================================')
-}
+		// load bootstraps
+			fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
+			fl.runScript(xjsfl.uri + 'user/jsfl/bootstrap.jsfl');
+		
+		// done!
+			fl.trace('> xjsfl: ready!');
+			fl.trace('\n=================================================================')
+	}

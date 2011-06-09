@@ -1,104 +1,130 @@
-SimpleTemplate = function(uri, data)
-{
-	if(uri)
-	{
-		this.load(uri);
-	}
-	if(data)
-	{
-		this.populate(data)
-	}
-}
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██████ ██                ██          ██████                      ██        ██         
+//  ██                       ██            ██                        ██        ██         
+//  ██     ██ ████████ █████ ██ █████      ██   █████ ████████ █████ ██ █████ █████ █████ 
+//  ██████ ██ ██ ██ ██ ██ ██ ██ ██ ██      ██   ██ ██ ██ ██ ██ ██ ██ ██    ██  ██   ██ ██ 
+//      ██ ██ ██ ██ ██ ██ ██ ██ █████      ██   █████ ██ ██ ██ ██ ██ ██ █████  ██   █████ 
+//      ██ ██ ██ ██ ██ ██ ██ ██ ██         ██   ██    ██ ██ ██ ██ ██ ██ ██ ██  ██   ██    
+//  ██████ ██ ██ ██ ██ █████ ██ █████      ██   █████ ██ ██ ██ █████ ██ █████  ████ █████ 
+//                     ██                                      ██                         
+//                     ██                                      ██                         
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Simple Template - A simpler version of the Template class
 
-SimpleTemplate.templates = {};
-SimpleTemplate.toString = function()
-{
-	return '[class SimpleTemplate]';
-}
-
-SimpleTemplate.prototype =
-{
+	// ------------------------------------------------------------------------------------------------
+	// Constructor
 	
-	uri:'',
-	
-	input:'',
-	
-	output:'',
-	
-	load:function(uri, append)
-	{
-		// input
-			this.uri	= uri;
-			//this.input	= SimpleTemplate.templates[uri];
-			
-		// load file
-			if( ! this.input)
+		SimpleTemplate = function(uri, data)
+		{
+			if(uri)
 			{
-				// load contents
-					var input = new File(uri).contents;
+				this.load(uri);
+			}
+			if(data)
+			{
+				this.populate(data)
+			}
+		}
+		
+	// ------------------------------------------------------------------------------------------------
+	// Static properties
+	
+		SimpleTemplate.templates = {};
+		SimpleTemplate.toString = function()
+		{
+			return '[class SimpleTemplate]';
+		}
+		
+	// ------------------------------------------------------------------------------------------------
+	// Prototype
+	
+		SimpleTemplate.prototype =
+		{
+			
+			uri:'',
+			
+			input:'',
+			
+			output:'',
+			
+			load:function(uri, append)
+			{
+				// input
+					this.uri	= uri;
+					//this.input	= SimpleTemplate.templates[uri];
 					
-				// cache?
-					//SimpleTemplate.templates[uri] = input;
+				// load file
+					if( ! this.input)
+					{
+						// load contents
+							var input = new File(uri).contents;
+							
+						// cache?
+							//SimpleTemplate.templates[uri] = input;
+							
+						// update input
+							append ? this.input += input : this.input = input;
+					}
 					
-				// update input
-					append ? this.input += input : this.input = input;
-			}
+				// return
+					return this;
+			},
 			
-		// return
-			return this;
-	},
-	
-	populate:function(data)
-	{
-		// populate
-			var rx;
-			var text = this.input;
-			for(var i in data)
+			populate:function(data)
 			{
-				rx		= new RegExp('{' +i+ '}', 'g')
-				text	= text.replace(rx, data[i]);
-			}
+				// populate
+					var rx;
+					var text = this.input;
+					for(var i in data)
+					{
+						rx		= new RegExp('{' +i+ '}', 'g')
+						text	= text.replace(rx, data[i]);
+					}
+					
+				// update
+					this.output = text;
+					
+				// return
+					return this;
+			},
 			
-		// update
-			this.output = text;
-			
-		// return
-			return this;
-	},
-	
-	indent:function(indent)
-	{
-		// indent
-			switch(typeof indent)
+			indent:function(indent)
 			{
-				case 'string':
-					indent = indent.match(/^\t+$/) ? indent : '	';
-				break;
+				// indent
+					switch(typeof indent)
+					{
+						case 'string':
+							indent = indent.match(/^\t+$/) ? indent : '	';
+						break;
+					
+						case 'number':
+							indent = new Array(Math.floor(indent + 1)).join('	');
+						break;
+					
+						default:
+							indent = '	';
+					}
+					this.output = this.output.replace(/^/gm, indent);
+					
+				// return
+					return this;
+			},
 			
-				case 'number':
-					indent = new Array(Math.floor(indent + 1)).join('	');
-				break;
+			render:function()
+			{
+				fl.trace(this.output);
+			},
 			
-				default:
-					indent = '	';
+			toString:function()
+			{
+				return this.output;
 			}
-			this.output = this.output.replace(/^/gm, indent);
 			
-		// return
-			return this;
-	},
+		}
+		
+	// ------------------------------------------------------------------------------------------------
+	// Register class with xjsfl
 	
-	render:function()
-	{
-		fl.trace(this.output);
-	},
-	
-	toString:function()
-	{
-		return this.output;
-	}
-	
-}
-
-
-xjsfl.classes.register('SimpleTemplate', SimpleTemplate);
+		xjsfl.classes.register('SimpleTemplate', SimpleTemplate);
