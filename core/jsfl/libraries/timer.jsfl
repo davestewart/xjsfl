@@ -110,8 +110,11 @@
 			
 			get milliseconds()
 			{
-				var ms = this.endDate.getTime() - this.startDate.getTime();
-				return new Date(ms).getTime()
+				if(this.endDate && this.startDate)
+				{
+					var ms = this.endDate.getTime() - this.startDate.getTime();
+				}
+				return new Date(ms || 0).getTime()
 			},
 			
 			start:function()
@@ -140,6 +143,12 @@
 				return '[object Timer:' +this.time+ ']';
 			}
 		}
+		
+		Timer.toString = function()
+		{
+			return '[class Timer]';
+		}
+
 		
 		xjsfl.classes.register('Timer', Timer);
 	

@@ -86,13 +86,15 @@
 		
 		toString:function()
 		{
-			return '[class ' +(this.hasOwnProperty('className') ? this.className : 'UnnamedClass!') + ']';
+			return '[object ' +(this.hasOwnProperty('className') ? this.className : 'UnnamedClass!') + ']';
 		}		
 	}
 	
 	UtilityObject = Class.extend(utilityObject);
-	
-	var object = new UtilityObject();
+	UtilityObject.toString = function()
+	{
+		return '[class UtilityObject]';
+	}
 	
 	
 // ------------------------------------------------------------------------------------------------------------------------
@@ -250,6 +252,11 @@
 	}
 	
 	Collection = Class.extend(collection);
+	Collection.toString = function()
+	{
+		return '[class Collection]';
+	}
+
 	
 	/*
 	var col = new Collection([1,2,3,4,5]);
@@ -607,6 +614,10 @@
 	}
 	
 	ItemCollection = Collection.extend(itemCollection)
+	ItemCollection.toString = function()
+	{
+		return '[class ItemCollection]';
+	}
 	
 	
 	/*
@@ -675,6 +686,10 @@
 	}
 	
 	FrameCollection = Collection.extend(frameCollection);
+	FrameCollection.toString = function()
+	{
+		return '[class FrameCollection]';
+	}
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -702,6 +717,10 @@
 	}
 	
 	StageCollection = Collection.extend(stageCollection);
+	StageCollection.toString = function()
+	{
+		return '[class StageCollection]';
+	}
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -1264,6 +1283,10 @@
 	}
 	
 	ElementCollection = Collection.extend(elementCollection);
+	ElementCollection.toString = function()
+	{
+		return '[class ElementCollection]';
+	}
 
 	
 // ------------------------------------------------------------------------------------------------------------------------

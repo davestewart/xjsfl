@@ -71,6 +71,11 @@
 			functions:
 			{
 				
+			},
+			
+			toString:function()
+			{
+				return '[object Data]';
 			}
 			
 		};

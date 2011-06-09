@@ -483,4 +483,9 @@
 				return new ItemCollection(items);
 	}
 	
+	$$.toString = function()
+	{
+		return '[function $$]';
+	}
+
 	xjsfl.classes.register('$$', $$);

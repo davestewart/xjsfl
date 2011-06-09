@@ -201,6 +201,10 @@
 			}
 		});
 		
+		Class.toString = function()
+		{
+			return '[class Class]';
+		}
 		
 	// register
 		xjsfl.classes.register('Class', Class)

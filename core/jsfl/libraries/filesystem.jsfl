@@ -154,8 +154,12 @@
 				 */
 				get parent ()
 				{
-					var uri = this.uri.replace(/\/[^\/]+$/, '');
-					return uri == 'file://' ? null : new Folder(uri);
+					if(this.uri)
+					{
+						var uri = this.uri.replace(/\/[^\/]+$/, '');
+						return uri == 'file://' ? null : new Folder(uri);
+					}
+					return null;
 				}
 			
 		}
@@ -223,6 +227,8 @@
 			FLfile.runCommandLine(exec);
 			return this;
 		}
+		
+		Folder.prototype.reveal = Folder.prototype.open;
 		
 		/**
 		 * Calls a function on each element in the collection

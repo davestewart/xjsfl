@@ -26,7 +26,13 @@
 		hash:
 		{
 			
+		},
+		
+		toString:function()
+		{
+			return '[class Events]';
 		}
+
 	}
 	
 	xjsfl.classes.register('Events', Events);

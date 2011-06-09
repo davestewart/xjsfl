@@ -39,7 +39,7 @@
 				{
 					document.setCustomFill(fill);
 				},
-				get toolbar(){ return document.getCustomFill(objectToFill); },
+				get toolbar(){ return document.getCustomFill('toolbar'); },
 				/**
 				 * Retrieves the fill object of the selected shape or, if specified, of the Tools panel and Property inspector. 
 				 * @param objectToFill {String} A string that specifies the location of the fill object. The following values are valid:	
@@ -50,7 +50,7 @@
 				{
 					document.setCustomFill(fill);
 				},
-				get selection(){ return document.getCustomFill(objectToFill); },
+				get selection(){ return document.getCustomFill('selection'); },
 				/**
 				 * Swaps the Stroke and Fill colors. 
 				 * @returns {}
@@ -83,7 +83,14 @@
 				{
 					document.setCustomStroke(stroke);
 				},
-				get custom(){ return document.getCustomStroke(locationOfStroke); },
+				get selection(){ return document.getCustomStroke('selection'); },
+				/**
+				 * Changes the stroke size of the selection to the specified size. For information on changing the stroke in the Tools panel and Property inspector, see document.setCustomStroke().
+				 * @param size {Number} A floating-point value from 0.25 to 10 that specifies the stroke size. The method ignores precision greater than two decimal places.
+				 * @returns {}
+				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc6.html
+				 */
+				get toolbar(){ return document.getCustomStroke('toolbar'); },
 				/**
 				 * Changes the stroke size of the selection to the specified size. For information on changing the stroke in the Tools panel and Property inspector, see document.setCustomStroke().
 				 * @param size {Number} A floating-point value from 0.25 to 10 that specifies the stroke size. The method ignores precision greater than two decimal places.
@@ -356,7 +363,13 @@
 				 * Read-only property; the current ScreenOutline object for the document. Before accessing the object for the first time, make sure to use document.allowScreens() to determine whether the property exists. 
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e4b.html
 				 */
-				get outline(){ return document.screenOutline; }
+				get outline()
+				{
+					if( ! document.canTestScene() )
+					{
+						return document.screenOutline;
+					}
+				}
 			},
 			panel:
 			{
@@ -715,7 +728,7 @@
 				{
 					document.setElementProperty(property, value);
 				},
-				get property(){ return document.getElementProperty(propertyName); },
+				get property(propertyName){ return document.getElementProperty(propertyName); },
 				/**
 				 * Resets the transformation matrix. This method is equivalent to selecting Modify &gt; Transform &gt; Remove Transform.
 				 * @returns {}
@@ -756,11 +769,11 @@
 				 * @returns {Text}
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e09.html
 				 */
-				set attributes(attrName, attrValue, startIndex, endIndex)
+				setAttributes:function(attrName, attrValue, startIndex, endIndex)
 				{
 					document.setElementTextAttr(attrName, attrValue, startIndex, endIndex);
 				},
-				get attributes(){ return document.getElementTextAttr(attrName, startIndex, endIndex); },
+				getAttributes:function(){ return document.getElementTextAttr(attrName, startIndex, endIndex); },
 				/**
 				 * Changes the bounding rectangle for the selected text item to the specified size. This method causes the text to reflow inside the new rectangle; the text item is not scaled or transformed. The values passed in boundingRectangle are used as follows:
 				 * @param boundingRectangle {Rectangle} A rectangle that specifies the new size within which the text item should flow. For information on the format of boundingRectangle, see document.addNewRectangle(). 
@@ -778,7 +791,7 @@
 				 * @returns {Boolean}
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7dc3.html
 				 */
-				set selection(startIndex, endIndex)
+				setSelection:function(startIndex, endIndex)
 				{
 					document.setTextSelection(startIndex, endIndex);
 				},
@@ -789,11 +802,11 @@
 				 * @returns {String}
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e03.html
 				 */
-				set string(text, startIndex, endIndex)
+				setString:function(text, startIndex, endIndex)
 				{
 					document.setTextString(text, startIndex, endIndex);
 				},
-				get string(){ return document.getTextString(startIndex, endIndex); }
+				getString:function(){ return document.getTextString(startIndex, endIndex); }
 			}
 		},
 		file:
@@ -1799,7 +1812,13 @@
 					return document.union();
 				}
 			}
+		},
+		
+		toString:function()
+		{
+			return '[class Superdoc]';
 		}
+
 	}
 	
 	xjsfl.classes.register('Superdoc', Superdoc);
