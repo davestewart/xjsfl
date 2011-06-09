@@ -28,17 +28,17 @@
 			xjsfl.settings	= {debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)};
 			xjsfl.output =
 			{
-				trace: function(message){ if(xjsfl.settings.debugLevel > 0)fl.trace('> ' + message); },
-				error: function(message){ fl.trace('<< ' + message + ' >>'); }
+				trace: function(message){ if(xjsfl.settings.debugLevel > 0)fl.trace('> xjsfl: ' + message); },
+				error: function(message){ fl.trace('> xjsfl: << ' + message + ' >>'); }
 			}
 		}
 
 	 // if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
-		if( (! FLfile) || (! FLfile['platformPathToURI']) )
+		if( ! FLfile['platformPathToURI'] )
 		{
-			var path = 'core/jsfl/lib/FLfile.jsfl';
+			var path = 'core/jsfl/libraries/flfile.jsfl';
+			xjsfl.output.trace('Loading "<xJSFL>/' +path+ '"');
 			fl.runScript(xjsfl.uri + path);
-			xjsfl.output.trace('Loaded "<xJSFL>/' +path+ '"');
 		}
 		
 	// toString function
@@ -1187,10 +1187,8 @@
 	 */
 	xjsfl.classes =
 	{
-		items:{},
-		
 		/**
-		 * Load a class or array of classes
+		 * Load a class or array of classes from disk
 		 * 
 		 * @param	name	{String|Array}		A string name or array of class names
 		 */
@@ -1209,9 +1207,9 @@
 		 */
 		register:function(name, obj)
 		{
-			if( ! name.match(/items|load|register|restore/) )
+			if( ! /^load|register|restore$/.test(name) )
 			{
-				xjsfl.classes.items[name] = obj;
+				xjsfl.classes[name] = obj;
 			}
 			return this;
 		},
@@ -1225,21 +1223,26 @@
 		 */
 		restore:function(name, scope)
 		{
+				
 			// restore all classes
-				if(typeof name != 'string')
+				if(typeof name !== 'string')
 				{
 					scope = name;
-					for (name in xjsfl.classes.items)
+					for (name in xjsfl.classes)
 					{
 						xjsfl.classes.restore(name, scope);
 					}	
 				}
 				
 			// restore only one class
-				else
+				else if(typeof name == 'string')
 				{
-					scope = scope || window;
-					scope[name] = xjsfl.classes.items[name];
+					if( ! /^load|register|restore$/.test(name) )
+					{
+						//trace('Restoring:' + name)
+						scope = scope || window;
+						scope[name] = xjsfl.classes[name];
+					}
 				}
 				
 			// return this for chaining
@@ -1314,28 +1317,43 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Initialize
 	
-	
 	/**
 	 * Extracts key variables / objects / functions to global scope for convenience
+	 * @param	scope	{Object}	The scope into which teh framework shoudl be extracted
+	 * @param	force	{Boolean}	An optional Boolean to re-extract the framework, even if already extracted
+	 * @returns		
 	 */
-	xjsfl.init = function(scope)
+	xjsfl.init = function(scope, force)
 	{
-		// debug
-			xjsfl.output.trace('setting environment variables...');
+		// initialize only if xJSFL variable is not yet defined, or force is set as true
+		if( ! scope.xJSFL || force)
+		{
 		
-		// variables
-			scope.dom			= fl.getDocumentDOM();
+			// debug
+				xjsfl.output.trace('setting environment variables...');
 			
-		// functions
-			scope.trace			= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
-			scope.clear			= fl.outputPanel.clear;
-			
-		// methods
-			xjsfl.trace			= xjsfl.output.trace;
-			
-		// classes
-			xjsfl.classes.restore(scope);
+			// variables
+				scope.dom			= fl.getDocumentDOM();
+				
+			// functions
+				scope.trace			= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
+				scope.clear			= fl.outputPanel.clear;
+				
+			// methods
+				xjsfl.trace			= xjsfl.output.trace;
+				
+			// classes
+				xjsfl.classes.restore(scope);
+				
+			// flag xJSFL initialized by setting a scope-level variable
+				scope.xJSFL = xjsfl;
+		}
+		else
+		{
+			//xjsfl.output.trace('already initialized...');
+		}
 	}
+	
+	
 
-	// debug
-		//xjsfl.settings.debugLevel = 2;
+

@@ -23,6 +23,7 @@
 				xjsfl		:fl.scriptURI.replace(/core\/.+$/, ''),
 				config		:fl.configURI,
 				tools		:fl.configURI + 'Tools/',
+				commands	:fl.configURI + 'Commands/',
 				swf			:fl.configURI + 'WindowSWF/'
 			};
 			
@@ -71,6 +72,11 @@
 		// Snippets
 			src				= uris.xjsfl + 'modules/Snippets/ui/xJSFL Snippets.swf';
 			trg				= uris.swf + 'xJSFL Snippets.swf';
+			FLfile.copy(src, trg);
+			
+		// Commands
+			src				= uris.install + 'Commands/Open xJSFL user folder.jsfl';
+			trg				= uris.commands + 'xJSFL/Open xJSFL user folder.jsfl';
 			FLfile.copy(src, trg);
 			
 		// ini
