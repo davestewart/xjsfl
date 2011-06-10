@@ -1,6 +1,0 @@
-{doc}
-get {name}(){ return {content}; },
-set {name}(value)
-{
-	{content} = value;
-}

@@ -1,7 +1,0 @@
-﻿<dialog buttons = "accept, cancel" title = "Rename MovieClips">
-	<vbox>
-		<label value = "Names: (coma deliminated list) eg. 'clip 1,clip 2,clip 3,clip 4'" />
-		<textbox id = "names" value = "" size = "100" />
-		<checkbox id = "exportForAS" label = "Export for ActionScript" checked = "true" />
-	</vbox>
-</dialog>
