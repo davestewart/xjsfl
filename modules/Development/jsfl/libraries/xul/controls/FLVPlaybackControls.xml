@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog id="dialog" title="Invisible Button" buttons="accept,cancel">
+
+	<block id="LISTENER">	 
+		<label value="Listener:" align="right" control="LISTENER"/>
+		<textbox id="LISTENER" prompt="object" />
+	</block>
+	
+	<block id="EVENT_FLVPLAYBACK">
+		<label id="EVENT_LABEL" value="Select Event:" align="right" control="FLVPLAYBACK_EVENT_MENU"/>
+		<menulist id="FLVPLAYBACK_EVENT_MENU"	 prompt="event" required="false" editable="true" width="120" oncreate="fl.runScript(fl.configURI + '/Javascript/FLVPlayback.jsfl', 'setControlToEvents','FLVPLAYBACK_EVENT_MENU','flvplayback');">
+			<menuitem label=""/>										
+		</menulist>
+	</block>
+
+</dialog>

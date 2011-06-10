@@ -1,0 +1,8 @@
+<?xml-stylesheet href="style.css" type="text/css"?>
+<dialog title="Edit Snippet" buttons="accept,cancel" resizable="yes">
+	<dialogheader title="General" description="whatever"/>
+
+	<flash width="500" height="400" src="icon panel.swf" wmode="transparent" id="flash" name="flash">
+		<property id="filepath" value="none"></property>		
+	</flash>
+</dialog>

@@ -1,0 +1,6 @@
+{doc}
+get {name}(){ return {getter} },
+set {name}({params})
+{
+	{setter};
+}

@@ -1,0 +1,5 @@
+{doc}
+set {name}({params})
+{
+	{setter};
+}

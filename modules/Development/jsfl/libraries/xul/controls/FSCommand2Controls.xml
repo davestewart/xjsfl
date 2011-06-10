@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <dialog id="dialog" title="Invisible Button" buttons="accept,cancel">
+ 	<block id="COMMAND">
+		<!--the label is just a placeholder to get the columns laid out correctly - the textbox is needed so the param values match the order in the function  -->	 
+	 	<label id="COMMAND_LABEL" value="" visible="false"/>
+		<textbox id="COMMAND_PARAM" visible="false"/>
+	</block>
+	
+ 	<block id="INPUTTYPE">	 
+	 	<label id="INPUTTYPE_LABEL" align="right" value="Select Type:" control="INPUTTYPE_MENU"/>
+		<menulist id="INPUTTYPE_MENU"  prompt="type" required="true" editable="true" width="125" oncreate="fl.runScript(fl.configURI + '/Javascript/fscommand2.jsfl', 'setControlToInputTypes','INPUTTYPE_MENU');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	 
+ 	<block id="NO_PARAMETERS">	 
+	 	<label id="NO_PARAMS" value="No Parameters"/>
+	</block>
+	 
+	<block id="QUALITYTYPE">	 
+	 	<label id="QUALITYTYPE_LABEL" align="right" value="Select Quality:" control="QUALITYTYPE_MENU"/>
+		<menulist id="QUALITYTYPE_MENU"  prompt="quality" required="true" editable="true" width="125" oncreate="fl.runScript(fl.configURI + '/Javascript/fscommand2.jsfl', 'setControlToQualityTypes','QUALITYTYPE_MENU');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>	
+	
+	<block id="REPEAT">	 
+	 	<label id="REPEAT_LABEL" align="right" value="Repeat:" control="REPEAT_MENU"/>
+		<menulist id="REPEAT_MENU"  prompt="pick times" required="true" editable="true" width="125" oncreate="fl.runScript(fl.configURI + '/Javascript/fscommand2.jsfl', 'setControlToNumbeList','REPEAT_MENU','3');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+
+ </dialog>

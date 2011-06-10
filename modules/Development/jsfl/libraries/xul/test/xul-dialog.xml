@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<dialog id="donothing" title="Dialog example"
+   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   buttons="accept,cancel"
+   buttonlabelcancel="Cancel"
+   buttonlabelaccept="Save"
+   ondialogaccept="return doOK();"
+   ondialogcancel="return doCancel();">
+	
+	
+      <caption label="Colour"/>
+
+	<toolbox id="topbox">
+	   <toolbar>
+		  <titledbutton class="push" value="Back" id="back"  />
+		  <titledbutton class="push" value="Forward" id="forward" />
+		  <titledbutton class="push" value="Print" id="print" />
+		  <spring flex="4" />
+		  <titledbutton id="marquee" value="Mozilla Mini-Browser" flex="2" />
+	   </toolbar>
+	</toolbox>
+	
+	<box id="bbox" align="horizontal">
+	   <box id="navpane" 
+		  align="vertical"
+		width="200px" >
+		   <html:label>Item 1</html:label>
+		   <titledbutton value="Item 2" />
+		   <titledbutton value="Item 3" />
+		   <titledbutton value="Item 4" />
+	
+	   </box>
+	
+	   <box id="content" align="horizontal">
+	
+	   </box>
+	
+	</box>
+
+</dialog>

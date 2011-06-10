@@ -1,0 +1,18 @@
+<!--paste_motion_special-->
+<!--This XML file is used as a template to re-write the other file PasteMotionSpecialDialog.xml, in order to persist the settings.-->
+<dialog title="Paste Motion Special" buttons="accept, cancel">
+	<vbox>
+		<label value="Paste these properties:" />
+		<checkbox id="x" checked="true" label="X position"/>
+		<checkbox id="y" checked="true" label="Y position"/>
+		<checkbox id="scaleX" checked="true" label="Horizontal scale"/>
+		<checkbox id="scaleY" checked="true" label="Vertical scale"/>
+		<checkbox id="rotationAndSkew" checked="true" label="Rotation and skew"/>
+		<checkbox id="color" checked="true" label="Color"/>
+		<checkbox id="filters" checked="true" label="Filters"/>
+		<checkbox id="blendMode" checked="true" label="Blend mode"/>
+		<separator/> 
+		<checkbox id="overrideScale" checked="false" label="Override target scale properties"/>
+		<checkbox id="overrideRotationAndSkew" checked="false" label="Override target rotation and skew properties"/>
+	</vbox>
+</dialog> 

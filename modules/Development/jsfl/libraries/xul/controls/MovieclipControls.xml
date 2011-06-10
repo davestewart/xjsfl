@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <dialog id="dialog" title="Invisible Button" buttons="accept,cancel">
+
+	 <block id="INSTANCENAME">	
+		<label value="New Name:"  align="right" control="INSTANCENAME_EXPRESSION"/>
+		<expression id="INSTANCENAME_EXPRESSION" size="40" prompt="instance name"/>
+	</block>
+	
+	<block id="DEPTH">
+		<label value="Depth:"  align="right" control="LEVEL_TEXTBOX"/>
+		<textbox id="LEVEL_TEXTBOX" size="20" prompt="level"/>
+	</block>
+	
+	<block id="POINT">
+		<label value="Point:"  align="right" control="PT_TEXTBOX"/>
+		<textbox id="PT_TEXTBOX" size="40" prompt="Point object"/>
+	</block>
+	
+	<block id="URL_VARIABLES_OPT">
+		<label value="[Variables]:"  align="right" control="URL_VARIABLES_MENU"/>
+		<menulist id="URL_VARIABLES_MENU" required="false" editable="true" width="210" oncreate="fl.runScript(fl.configURI + '/Javascript/movieclip.jsfl', 'setControlToURLVariableOptions','URL_VARIABLES_MENU');">
+			<menuitem label=""/>                     
+		</menulist>
+	</block>
+	
+	<block id="XPOS">
+		<label value="X Pos:"  align="right" control="XPOS_TEXTBOX"/>
+		<textbox id="XPOS_TEXTBOX" size="20" prompt="horizontal"/>
+	</block>
+	
+	<block id="YPOS">
+		<label value="Y Pos:"  align="right" control="YPOS_TEXTBOX"/>
+		<textbox id="YPOS_TEXTBOX" size="20" prompt="vertical"/>
+	</block>
+	
+	<block id="WIDTH">
+		<label value="Width:"  align="right" control="WIDTH_TEXTBOX"/>
+		<textbox id="WIDTH_TEXTBOX" size="20" prompt="pixels"/>
+	</block>
+	
+	<block id="HEIGHT">
+		<label value="Height:"  align="right" control="HEIGHT_TEXTBOX"/>
+		<textbox id="HEIGHT_TEXTBOX" size="20" prompt="pixels"/>
+	</block>
+	
+	<block id="INITOBJ_OPT">
+		<label value="[Initialize to Object]:"  align="right" control="INITOBJ_EXPRESSION"/>
+		<expression id="INITOBJ_EXPRESSION" size="40" prompt="Object"/>
+	</block>
+	
+	<block id="FRAME">
+		<label value="Frame:"  align="right" control="FRAME_EXPRESSION"/>
+		<expression id="FRAME_EXPRESSION" size="40" prompt="number or label"/>
+	</block>
+	
+	<block id="URL">
+		<label id="URL_LABEL" value="URL:"  align="right" control="URL_EXPRESSION"/>
+		<expression id="URL_EXPRESSION" size="40" prompt="URL"/>
+	</block>
+	
+	<block id="RGB_OPT">
+		<label value="[Color]:"  align="right" control="HEX_COLORCHIP"/>
+		<colorchip id="HEX_COLORCHIP" format="hex"/>
+	</block>
+			
+	<block id="RGB">
+		<label value="Color:"  align="right" control="HEX_COLORCHIP"/>
+		<colorchip id="HEX_COLORCHIP" format="hex"/>
+	</block>
+		
+	<block id="ALPHA_OPT">
+		<label value="[Alpha]:"  align="right" control="ALPHA_TEXTBOX"/>
+		<textbox id="ALPHA_TEXTBOX" size="40" prompt="0-100"/>
+	</block>
+		
+	<block id="ALPHA">
+		<label value="Alpha:"  align="right" control="ALPHA_TEXTBOX"/>
+		<textbox id="ALPHA_TEXTBOX" size="40" prompt="0-100"/>
+	</block>
+	
+	<block id="MOVIECLIP_PROPERTIES">
+		<label value="Property:"  align="right" control="MOVIECLIP_PROPERTIES_MENU"/>
+		<menulist id="MOVIECLIP_PROPERTIES_MENU" required="false" editable="true" width="120" oncreate="fl.runScript(fl.configURI + '/Javascript/movieclip.jsfl', 'setControlToMovieClipProperties','MOVIECLIP_PROPERTIES_MENU');">
+			<menuitem label=""/>                     
+		</menulist>
+	</block>
+	
+ </dialog>

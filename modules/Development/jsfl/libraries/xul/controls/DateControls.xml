@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <dialog id="dialog" title="Invisible Button" buttons="accept,cancel">
+ 	<block id="YEAR">	 
+	 	<label id="YEAR_LABEL" value="Year:" align="right" control="YEAR_MENU"/>
+		<menulist id="YEAR_MENU"  required="true" editable="true" width="100" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToYear','YEAR_MENU');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	
+ 	<block id="YEAR_FLEX">	 
+	 	<label id="YEAR_LABEL2" value="Year:" align="right" control="YEAR_MENU_FLEX"/>
+		<menulist id="YEAR_MENU_FLEX"  flex="1" required="true" editable="true" width="100" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToYear','YEAR_MENU_FLEX');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	
+	<block id="MONTH">
+		<label id="MONTH_LABEL" value="Month:" align="right" control="MONTH_MENU"/>
+		<menulist id="MONTH_MENU"  prompt="pick month" required="true" editable="true" width="100" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToMonth','MONTH_MENU');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	
+	<block id="MONTH_OPT">
+		<label id="MONTH_LABEL_OPT" value="[Month]:" align="right" control="MONTH_MENU_OPT"/>
+		<menulist id="MONTH_MENU_OPT"  prompt="pick month" required="false" editable="true" width="100" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToMonth','MONTH_MENU_OPT');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	
+	<block id="MONTH_OPT_FLEX">
+		<label id="MONTH_LABEL_OPT2" value="[Month]:" align="right" control="MONTH_MENU_OPT_FLEX"/>
+		<menulist id="MONTH_MENU_OPT_FLEX"  flex="1" prompt="pick month" required="false" editable="true" width="100" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToMonth','MONTH_MENU_OPT_FLEX');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+
+	<block id="DAY">
+	 	<label id="DAY_LABEL" align="right" value="Day:" control="DAY_MENU"/>
+		<menulist id="DAY_MENU" required="true" editable="true" width="80" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToDate','DAY_MENU');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	
+	<block id="DAY_OPT">
+	 	<label id="DAY_LABEL_OPT" value="[Day]:" align="right" control="DAY_MENU_OPT"/>
+		<menulist id="DAY_MENU_OPT" required="false" editable="true" width="80" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToDate','DAY_MENU_OPT');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	
+	<block id="DAY_OPT_FLEX">
+	 	<label id="DAY_LABEL_OPT2" value="[Day]:" align="right" control="DAY_MENU_OPT_FLEX"/>
+		<menulist id="DAY_MENU_OPT_FLEX" flex="1" required="false" editable="true" width="80" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToDate','DAY_MENU_OPT_FLEX');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+	
+ 	<block id="HOURS">	 
+	 	<label id="HOURS_LABEL" value="Hours:" align="right" control="HOURS_MENU"/>
+		<menulist id="HOURS_MENU" required="true" editable="true" width="80" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToHours','HOURS_MENU');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+
+ 	<block id="HOURS_OPT">	 
+	 	<label id="HOURS_LABEL_OPT" value="[Hours]:" align="right" control="HOURS_MENU_OPT"/>
+		<menulist id="HOURS_MENU_OPT" required="false" editable="true" width="80" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToHours','HOURS_MENU_OPT');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+
+ 	<block id="HOURS_OPT_FLEX">	 
+	 	<label id="HOURS_LABEL_OPT2" value="[Hours]:" align="right" control="HOURS_MENU_OPT_FLEX"/>
+		<menulist id="HOURS_MENU_OPT_FLEX" flex="1" required="false" editable="true" width="80" oncreate="fl.runScript(fl.configURI + '/Javascript/date.jsfl', 'setControlToHours','HOURS_MENU_OPT_FLEX');">
+			<menuitem label=""/>                    
+		</menulist>
+	</block>
+
+ 	<block id="MINUTES">	 
+	 	<label id="MINUTES_LABEL" value="Minutes:" align="right" control="MINUTES_TEXTBOX"/>
+		<textbox id="MINUTES_TEXTBOX" required="true" size="8" prompt="0-59"/>
+	</block>
+
+ 	<block id="MINUTES_OPT">	 
+	 	<label id="MINUTES_LABEL_OPT" value="[Minutes]:" align="right" control="MINUTES_TEXTBOX_OPT"/>
+		<textbox id="MINUTES_TEXTBOX_OPT" required="false" size="8" prompt="0-59"/>
+	</block>
+
+ 	<block id="MINUTES_OPT_FLEX">	 
+	 	<label id="MINUTES_LABEL_OPT2" value="[Minutes]:" align="right" control="MINUTES_TEXTBOX_OPT_FLEX"/>
+		<textbox id="MINUTES_TEXTBOX_OPT_FLEX" flex="1" required="false" size="8" prompt="0-59"/>
+	</block>
+
+ 	<block id="SECONDS">	 
+	 	<label id="SECONDS_LABEL" value="Seconds:" align="right" control="SECONDS_TEXTBOX"/>
+		<textbox id="SECONDS_TEXTBOX" required="true" size="8" prompt="0-59"/>
+	</block>
+
+ 	<block id="SECONDS_OPT">	 
+	 	<label id="SECONDS_LABEL_OPT" value="[Seconds]:" align="right" control="SECONDS_TEXTBOX_OPT"/>
+		<textbox id="SECONDS_TEXTBOX_OPT" required="false" size="8" prompt="0-59"/>
+	</block>
+
+ 	<block id="SECONDS_OPT_FLEX">	 
+	 	<label id="SECONDS_LABEL_OPT2" value="[Seconds]:" align="right" control="SECONDS_TEXTBOX_OPT_FLEX"/>
+		<textbox id="SECONDS_TEXTBOX_OPT_FLEX" flex="1" required="false" size="8" prompt="0-59"/>
+	</block>
+
+ 	<block id="MILLISECONDS">	 
+	 	<label id="MILLISECONDS_LABEL" value="Milliseconds:" align="right" control="MILLISECONDS_TEXTBOX"/>
+		<textbox id="MILLISECONDS_TEXTBOX" required="true"/>
+	</block>
+
+	 <block id="MILLISECONDS_OPT">	 
+	 	<label id="MILLISECONDS_LABEL_OPT" value="[Milliseconds]:" align="right" control="MILLISECONDS_TEXTBOX_OPT"/>
+		<textbox id="MILLISECONDS_TEXTBOX_OPT" required="false" size="8"/>
+	</block>
+
+	 <block id="MILLISECONDS_OPT_FLEX">	 
+	 	<label id="MILLISECONDS_LABEL_OPT2" value="[Milliseconds]:" align="right" control="MILLISECONDS_TEXTBOX_OPT_FLEX"/>
+		<textbox id="MILLISECONDS_TEXTBOX_OPT_FLEX" flex="1" required="false" size="8"/>
+	</block>
+
+ </dialog>

@@ -1,0 +1,568 @@
+<TypeListing>
+	
+	<type name="DOMDocument">
+		<accessor name="backgroundColor" type="String" defaultValue="#ffffff"/>
+		<accessor name="frameRate" type="Number" defaultValue="24"/>
+		<accessor name="currentTimeline" type="Number" defaultValue="0"/>
+		<!--metadata moved to separate file-->
+		<!--<accessor name="metadata" type="String" defaultValue=""/>-->
+		<!--<accessor name="docClass" type="String" defaultValue=""/>-->
+
+		<!--<accessor name="gridSpacing" type="Object"/>-->
+			
+		<accessor name="gridColor" type="String" defaultValue="#c0c0c0"/>
+		<accessor name="gridSnapAccuracy" type="Number" defaultValue="1"/>
+		<accessor name="gridSnapTo" type="Boolean" defaultValue="false"/> 
+		
+		<accessor name="guidesColor" type="String" defaultValue="#00ff00"/>
+		<accessor name="guidesLocked" type="Boolean" defaultValue="false"/>
+		<accessor name="guidesSnapAccuracy" type="Number" defaultValue="1"/>
+		<accessor name="guidesSnapTo" type="Boolean" defaultValue="true"/>
+		<accessor name="guidesVisible" type="Boolean" defaultValue="true"/>
+		<accessor name="paperType" type="Number" defaultValue="0"/>
+
+		<accessor name="rulerVisible" type="Boolean" defaultValue="false"/>
+		
+		<accessor name="pixelSnap" type="Boolean" defaultValue="false"/>
+		
+		<accessor name="snapAlign" type="Boolean" defaultValue="true"/>
+		<accessor name="snapAlignBorder" type="Boolean" defaultValue="false"/>
+		<accessor name="snapAlignBorderSpacing" type="Number" defaultValue="18"/>
+		<accessor name="snapAlignHorizontalCenter" type="Boolean" defaultValue="false"/>
+		<accessor name="snapAlignHorizontalSpacing" type="Number" defaultValue="0"/>
+		<accessor name="snapAlignVerticalCenter" type="Boolean" defaultValue="false"/>
+		<accessor name="snapAlignVerticalSpacing" type="Number" defaultValue="0"/> 
+		
+		<accessor name="objectsSnapTo" type="Boolean" defaultValue="true"/>
+		
+			
+<!--
+		<accessor name="documentType" type="String" defaultValue="timeline"/>
+
+		<accessor name="breakpointCount" type="Number" defaultValue="0"/>
+		<accessor name="buildNumber" type="Number" defaultValue="85"/>
+		<accessor name="drawMode" type="Number" defaultValue="3"/>
+		<accessor name="exportAllComponentSchemasToSWF" type="Boolean" defaultValue="false"/>
+		<accessor name="gridColor" type="String" defaultValue="#c0c0c0"/>
+		<accessor name="gridSnapAccuracy" type="Number" defaultValue="1"/>
+		<accessor name="gridSnapTo" type="Boolean" defaultValue="false"/>
+		<accessor name="guid" type="Undefined" defaultValue="undefined"/>
+		<accessor name="guidesColor" type="String" defaultValue="#00ff00"/>
+		<accessor name="guidesLocked" type="Boolean" defaultValue="false"/>
+		<accessor name="guidesSnapAccuracy" type="Number" defaultValue="1"/>
+		<accessor name="guidesSnapTo" type="Boolean" defaultValue="true"/>
+		<accessor name="guidesVisible" type="Boolean" defaultValue="true"/>
+		<accessor name="hasData" type="Boolean" defaultValue="false"/>
+		<accessor name="hasPostProcessor" type="Boolean" defaultValue="false"/>
+		<accessor name="hasStageLanguage" type="Boolean" defaultValue="false"/>
+		<accessor name="languagePrefAutoDetect" type="Boolean" defaultValue="true"/>
+		<accessor name="languagePrefAvailableLanguages" type="Undefined" defaultValue="undefined"/>
+		<accessor name="languagePrefDefaultLanguage" type="String" defaultValue=""/>
+		<accessor name="languagePrefIndex" type="Number" defaultValue="-1"/>
+		<accessor name="languagePrefURL" type="String" defaultValue=""/>
+		<accessor name="libraryPrefsOpen" type="Boolean" defaultValue="false"/>
+		<accessor name="libraryPrefsShowPreview" type="Boolean" defaultValue="true"/>
+		<accessor name="libraryPrefsSortColumn" type="Number" defaultValue="1"/>
+		<accessor name="libraryPrefsUseCountsUpToDate" type="Boolean" defaultValue="false"/>
+		<accessor name="libraryPrefsUseGrid" type="Boolean" defaultValue="false"/>
+		<accessor name="libraryPrefsUseMovieBackground" type="Boolean" defaultValue="true"/>
+		<accessor name="libraryPrefsVersion" type="Number" defaultValue="1"/>
+		<accessor name="majorVersion" type="Number" defaultValue="10"/>
+		<accessor name="minorVersion" type="Number" defaultValue="0"/>
+		<accessor name="mobileSettings" type="String" defaultValue=""/>
+		<accessor name="nextItemTag" type="Number" defaultValue="1"/>
+		
+		<accessor name="nextMediaID" type="Number" defaultValue="1"/>
+		<accessor name="nextSceneID" type="Number" defaultValue="2"/>
+		<accessor name="nextSymbolID" type="Number" defaultValue="1"/>
+		<accessor name="nextTextFieldID" type="Number" defaultValue="1"/>
+		<accessor name="pageControlVisible" type="Boolean" defaultValue="false"/>
+		<accessor name="paperType" type="Number" defaultValue="0"/>
+		<accessor name="pixelSnap" type="Boolean" defaultValue="false"/>
+		<accessor name="platform" type="String" defaultValue="Windows"/>
+		<accessor name="postProcessorName" type="String" defaultValue=""/>
+		<accessor name="previewFrame" type="Number" defaultValue="0"/>
+			
+		<accessor name="replaceStringsMethod" type="Number" defaultValue="0"/>
+		<accessor name="rulerVisible" type="Boolean" defaultValue="false"/>
+		<accessor name="sharedLibURL" type="String" defaultValue=""/>
+		<accessor name="stageLanguage" type="String" defaultValue=""/>
+		<accessor name="tabOrderMode" type="Number" defaultValue="1"/>
+		<accessor name="templateDescription" type="String" defaultValue=""/>
+		<accessor name="templateFilename" type="String" defaultValue=""/>
+		<accessor name="timelineHeight" type="Number" defaultValue="-1"/>
+		<accessor name="timelineLayerWidth" type="Number" defaultValue="-1"/>
+		<accessor name="unitType" type="Number" defaultValue="5"/>
+		<accessor name="version" type="Number" defaultValue="67"/>
+		<accessor name="versionInfo" type="String" defaultValue=""/>
+		<accessor name="viewOptions" type="Number" defaultValue="141"/>
+-->	
+		<!--  
+		<accessor name="publishSettings" type="String" defaultValue=""/>
+		-->
+		<!--
+		<accessor name="parentDocument" type="Object"/>
+		<accessor name="timelines" type="Object"/>
+		<accessor name="symbols" type="Object"/>
+		<accessor name="media" type="Object"/>
+		<accessor name="fonts" type="Object"/>
+		<accessor name="folders" type="Object"/>
+		<accessor name="items" type="Object"/>
+		<accessor name="paperBounds" type="Object"/>
+		<accessor name="gridSpacing" type="Object"/>
+		<accessor name="colorList" type="Object"/>
+		<accessor name="libraryPrefsPosition" type="Object"/>
+		-->
+		
+	</type>
+	
+	<type name="DOMTimeline">
+		<accessor name="name" type="String" defaultValue=""/>
+		<accessor name="currentFrame" type="Number" defaultValue="0"/>
+		<accessor name="guides" type="String" defaultValue="&lt;guidelines>&#xA;&lt;/guidelines>&#xA;" />
+	</type>
+	
+	<type name="DOMLayer">
+		<accessor name="name" type="String" defaultValue=""/>
+		<accessor name="layerType" type="String" defaultValue="normal"/>
+		<accessor name="animationType" type="String" defaultValue="none"/>
+		<accessor name="visible" type="Boolean" defaultValue="true"/>
+		<accessor name="locked" type="Boolean" defaultValue="false"/>
+		<!--<accessor name="frameCount" type="Number" defaultValue="1"/>-->
+		<accessor name="color" type="String" defaultValue=""/>
+		<accessor name="outline" type="Boolean" defaultValue="false"/>
+		<accessor name="current" type="Boolean" defaultValue="false"/>
+		<accessor name="heightMultiplier" type="Number" defaultValue="1"/>
+		<accessor name="heightLiteral" type="Number" defaultValue="-1"/>
+		<accessor name="open" type="Boolean" defaultValue="true"/>
+		<accessor name="autoNamed" type="Boolean" defaultValue="false"/>
+	</type>
+	
+	<type name="DOMFrame">
+		<accessor name="name" type="String" defaultValue=""/>
+		<!--<accessor name="actionScript" type="String" defaultValue=""/>-->
+		<!--<accessor name="startFrame" type="Number" defaultValue="0"/>-->
+		<accessor name="duration" type="Number" defaultValue="1"/>
+		
+		<accessor name="soundEffect" type="String" defaultValue="none"/>
+		<accessor name="soundName" type="String" defaultValue=""/>
+		<accessor name="soundSync" type="String" defaultValue="event"/>
+		<accessor name="soundLoopMode" type="String" defaultValue="repeat"/>
+		<accessor name="soundLoop" type="Number" defaultValue="1"/>
+		<accessor name="inPoint44" type="Number" defaultValue="0"/>
+		<accessor name="outPoint44" type="Number" defaultValue="1073741823"/>
+		<accessor name="soundZoomLevel" type="Number" defaultValue="-1"/>
+<!--		
+envelopeMark44
+envelopeLevel0
+envelopeLevel1
+-->
+		<accessor name="acceleration" type="Number" defaultValue="0"/>
+		<!--<accessor name="rotationDirection" type="Number" defaultValue="0"/>-->
+		<!--<accessor name="rotationLoops" type="Number" defaultValue="0"/>-->
+		<!-- <accessor name="morphShape" type="Undefined" defaultValue="undefined"/> -->
+		<!--<accessor name="morphType" type="Number" defaultValue="0"/>-->
+		<!-- <accessor name="hintsList" type="Undefined" defaultValue="undefined"/> -->
+		<!--<accessor name="intrinsicDescription" type="String" defaultValue=""/>-->
+		<!--<accessor name="blankKeyFrame" type="Boolean" defaultValue="false"/>-->
+		<accessor name="bookmark" type="Boolean" defaultValue="false"/>
+	</type>
+	
+	<!-- The tweening properties are separated out because 
+	the import needs to run two passes on the frames, creating then adding tweens. 
+	This doesn't affect the export, but we want to have the same schema for both.
+	-->
+	<type name="FrameTweenProperties">
+		<accessor name="tweenType" type="String" defaultValue="none"/>
+		<accessor name="tweenEasing" type="Number" defaultValue="0"/>
+		<accessor name="motionTweenOrientToPath" type="Boolean" defaultValue="false"/>
+		<accessor name="motionTweenRotate" type="String" defaultValue="auto"/>
+		<accessor name="motionTweenRotateTimes" type="Number" defaultValue="0"/>
+		<accessor name="motionTweenScale" type="Boolean" defaultValue="true"/>
+		<accessor name="motionTweenSnap" type="Boolean" defaultValue="false"/>
+		<accessor name="motionTweenSync" type="Boolean" defaultValue="false"/>
+		<accessor name="shapeTweenBlend" type="String" defaultValue="distributive"/>
+		<accessor name="hasCustomEase" type="Boolean" defaultValue="false"/>
+		<accessor name="useSingleEaseCurve" type="Boolean" defaultValue="true"/>
+		
+		<accessor name="isIKPose" type="Boolean" defaultValue="false"/>
+		<accessor name="isMotionObject" type="Boolean" defaultValue="false"/>
+		<!-- Note that setting keyMode causes motion tweens to appear on frames, which can add extra filters. -->
+		<!--<accessor name="keyMode" type="Number" defaultValue="1536"/>-->
+	</type>
+	
+	
+	<type name="MotionObjectProperties">
+		<!--<accessor name="isMotionObject" type="Boolean" defaultValue="false"/>-->
+		<!--<accessor name="motionObjectXML" type="String" defaultValue=""/>-->
+		<accessor name="visibleAnimationKeyframes" type="Number" defaultValue="0"/>
+		<accessor name="tweenInstanceName" type="String" defaultValue=""/>
+	</type>
+	
+	
+	<type name="DOMItem">
+		<!--This need to be done manually because there are slashes in the name indicating folder structure.-->
+		<!--<accessor name="name" type="String"/>-->
+
+		<accessor name="linkageExportForAS" type="Boolean" defaultValue="false"/>
+		<accessor name="linkageExportForRS" type="Boolean" defaultValue="false"/>
+
+		<!--If this linkageImportForRS is set to true, both item.linkageExportForAS and 
+		item.linkageExportForRS must be set to false. 
+		Also, you must specify an identifier (item.linkageIdentifier) and a URL (item.linkageURL).-->
+
+		<!--<accessor name="linkageImportForRS" type="Boolean" defaultValue="false"/>-->
+		
+	</type>
+	
+	<type name="DOMItem_linkageExportForAS">
+		<accessor name="linkageBaseClass" type="String" defaultValue=""/>
+		<accessor name="linkageClassName" type="String" defaultValue=""/>
+		<accessor name="linkageExportInFirstFrame" type="Boolean" defaultValue="true"/>
+		<accessor name="linkageURL" type="String" defaultValue=""/>
+
+		<!--This has to be checked and copied manually because of AS2/AS3 differences, 
+		and an error warning that pops up in AS3 if linkageIdentifier is "".-->
+		<!--<accessor name="linkageIdentifier" type="String" defaultValue=""/>-->
+		
+<!--		
+		<accessor name="linkageType" type="Number" defaultValue="0"/>
+		<accessor name="linkageExportType" type="Number" defaultValue="0"/>
+		<accessor name="linkageImportType" type="Number" defaultValue="0"/>
+-->
+	</type>	
+
+	<type name="DOMItem_linkageImportForRS">
+		<accessor name="linkageClassName" type="String" defaultValue=""/>
+		<accessor name="linkageURL" type="String" defaultValue=""/>
+
+		<!--This has to be checked and copied manually because of AS2/AS3 differences, 
+		and an error warning that pops up in AS3 if linkageIdentifier is "".-->
+		<!--<accessor name="linkageIdentifier" type="String" defaultValue=""/>-->
+		
+		
+<!--		
+		<accessor name="linkageType" type="Number" defaultValue="0"/>
+		<accessor name="linkageExportType" type="Number" defaultValue="0"/>
+		<accessor name="linkageImportType" type="Number" defaultValue="0"/>
+-->
+	</type>	
+	
+	<type name="DOMBitmapItem">
+		<accessor name="allowSmoothing" type="Boolean" defaultValue="true"/>
+		<accessor name="useDeblocking" type="Boolean" defaultValue="false"/>
+		<accessor name="compressionType" type="String"/>
+		<!--<accessor name="compressionTypeAsInt" type="Number"/>-->
+		<!-- originalCompressionType is set automatically when the bitmap is imported -->		
+		<!--<accessor name="originalCompressionType" type="String"/>-->
+		<!--quality only applies to JPEGs-->
+		<!--<accessor name="quality" type="Number"/>-->
+	</type>
+	
+
+	
+	<type name="DOMSoundItem">
+		<accessor name="compressionType" type="String"/>
+		<accessor name="originalCompressionType" type="String"/>
+<!--		
+		<accessor name="bits" type="String"/>
+		<accessor name="convertStereoToMono" type="Boolean" defaultValue="false"/>
+		<accessor name="sampleRate" type="String"/>
+		
+		<accessor name="bitRate" type="String" />
+		<accessor name="quality" type="String"/>
+		<accessor name="useImportedMP3Quality" type="Boolean" defaultValue="true"/>
+		<accessor name="use8kSampleRate" type="Boolean" />
+		<accessor name="sourcePlatform" type="Number" />
+-->		
+	</type>
+	
+	<type name="DOMFontItem">
+		<!-- font might be missing from computer, so check in code -->
+		<!--<accessor name="font" type="String"/>-->
+		<accessor name="bold" type="Boolean" defaultValue="false"/>
+		<accessor name="italic" type="Boolean" defaultValue="false"/>
+		<accessor name="bitmap" type="Boolean" defaultValue="false"/>
+		<accessor name="size" type="Number" defaultValue="12" />
+		<accessor name="embedVariantGlyphs" type="Boolean" defaultValue="false" />
+		<!--<accessor name="id" type="Number"/>-->
+		<!--<accessor name="modifiedDate" type="String"/>-->
+	</type>
+	
+	
+	
+	<type name="DOMSymbolItem">
+		<accessor name="symbolType" type="String" defaultValue="movie clip"/>
+		
+<!--		
+	The itemType property seems to be made redundant by the tag name, i.e. DOMSymbolItem, DOMFolderItem, etc.
+	<accessor name="itemType" type="String" defaultValue="movie clip"/>
+-->
+<!--		
+		<accessor name="libraryItemID" type="String" defaultValue=""/>
+		<accessor name="parentLibraryItemID" type="String" defaultValue="0000000000000000"/>
+	
+		<accessor name="sourceFilePath" type="String" defaultValue=""/>
+		<accessor name="sourceLibraryName" type="String" defaultValue=""/>
+		<accessor name="sourceAutoUpdate" type="Boolean" defaultValue="false"/>
+		<accessor name="sourceLastModifiedDate" type="String" defaultValue=""/>
+		<accessor name="sourceLibraryItemID" type="String" defaultValue="00000000ffffffff"/>
+-->
+	</type>
+	
+	
+	<type name="DOMComponentItem">
+	</type>
+	
+	<type name="DOMComponentItem_timeline">
+		<accessor name="displayAsComponent" type="Boolean" defaultValue="false"/>	
+		<accessor name="requiredMinimumASVersion" type="Number" access="readwrite"/>
+		<accessor name="requiredMinimumPlayerVersion" type="Number" access="readwrite"/>
+		<accessor name="requiredMinimumPlayerVersionName" type="String" access="readwrite"/>
+
+	</type>
+	
+	
+	
+	<type name="DOMElement">
+		<accessor name="name" type="String" defaultValue=""/>
+		<accessor name="locked" type="Boolean" defaultValue="false"/>
+	</type>
+	
+	<type name="DOMSymbolInstance">
+		<accessor name="symbolType" type="String" defaultValue="movie clip"/>
+		<accessor name="blendMode" type="String" defaultValue="normal"/>
+		<accessor name="cacheAsBitmap" type="Boolean" defaultValue="false"/>
+		<accessor name="accName" type="String" defaultValue=""/>
+		<accessor name="description" type="String" defaultValue=""/>
+		<accessor name="shortcut" type="String" defaultValue=""/>
+		<accessor name="tabIndex" type="Number" defaultValue="0"/>
+		<accessor name="silent" type="Boolean" defaultValue="false"/>
+		<accessor name="forceSimple" type="Boolean" defaultValue="false"/>
+		
+		
+		
+		<!--<accessor name="libraryItem" type="String" defaultValue=""/>-->
+<!--		
+		// redundant
+		<accessor name="instanceType" type="String" defaultValue="symbol"/>
+-->		
+		
+		<!-- These 2 properties are only for graphic symbols. -->
+<!--		
+		<accessor name="firstFrame" type="Number" defaultValue="0"/>
+		<accessor name="loop" type="String" defaultValue="loop"/>
+-->		
+		<!-- This applies only to button-type instances. -->
+<!--		
+		<accessor name="buttonTracking" type="String" defaultValue="button"/>
+-->
+<!--		
+		<accessor name="effectSymbol" type="Boolean" defaultValue="false"/>
+-->
+		<!-- ActionScript is put into a child node, rather than an attribute. -->
+		<!--<accessor name="actionScript" type="String" defaultValue=""/>-->
+			
+		<!-- These are handled by the Color tag from MotionXML. 
+			 12 properties are covered between the different color modes. --> 
+		<!--
+		<accessor name="colorAlphaPercent" type="Number" defaultValue="100"/>
+		<accessor name="colorRedPercent" type="Number" defaultValue="100"/>
+		<accessor name="colorGreenPercent" type="Number" defaultValue="100"/>
+		<accessor name="colorBluePercent" type="Number" defaultValue="100"/>
+		<accessor name="colorAlphaAmount" type="Number" defaultValue="0"/>
+		<accessor name="colorRedAmount" type="Number" defaultValue="0"/>
+		<accessor name="colorGreenAmount" type="Number" defaultValue="0"/>
+		<accessor name="colorBlueAmount" type="Number" defaultValue="0"/>
+		<accessor name="colorMode" type="String" defaultValue="none"/>
+		-->
+			
+		<!-- 19 filter properties in JSFL Filter object. 7 filter types are available on the authoring timeline. -->
+		<!--<accessor name="filters" type="Array" defaultValue="null"/>-->
+
+	</type>
+
+	
+	<type name="DOMShape">
+		
+	</type>
+ 
+	   
+	
+	
+	
+	
+	<type name="DOMText_Common">
+		<!-- <accessor name="name" type="String"/> -->
+		<!--<accessor name="textType" type="String"/>-->
+		<accessor name="top" type="Number"/>
+		<accessor name="left" type="Number"/>
+		<accessor name="width" type="Number"/>
+		<accessor name="height" type="Number"/>
+		
+		<!--<accessor name="autoExpand" type="Boolean" defaultValue="false" />-->
+			
+		<accessor name="fontRenderingMode" type="String" defaultValue="advanced" />
+		<!-- useDeviceFonts is redundant; covered by fontRenderingMode="device" -->
+		<!--<accessor name="useDeviceFonts" type="Boolean" defaultValue="false" />-->
+	</type>
+	
+	<type name="DOMText_Common_customThicknessSharpness">
+		<!--// These are only available when text.fontRenderingMode is set to "customThicknessSharpness"-->
+		<accessor name="antiAliasSharpness" type="Number"/>
+		<accessor name="antiAliasThickness" type="Number"/>
+	</type>
+	
+	<type name="DOMStaticText">
+		<!--// This property cannot be used with dynamic text.-->
+		<accessor name="accName" type="String" defaultValue=""/>
+		<!--// Only with static text.-->
+		<accessor name="orientation" type="String" defaultValue="horizontal" />
+	</type>
+	
+	<type name="DOMText_DynamicOrInput">
+<!--	This property works only with dynamic or input text. -->		
+		<accessor name="scrollable" type="Boolean" defaultValue="false" />
+		<accessor name="border" type="Boolean" defaultValue="false" /> 
+		<accessor name="name" type="String" defaultValue="" />
+		<accessor name="variableName" type="String" defaultValue="" />
+		<accessor name="renderAsHTML" type="Boolean"/>
+		<accessor name="embeddedCharacters" type="String" defaultValue=""/>
+		<accessor name="embedRanges" type="String" defaultValue=""/>
+		<accessor name="embedVariantGlyphs" type="Boolean" defaultValue="false" />
+		<accessor name="lineType" type="String" defaultValue="single line" />
+		<!--accessibility-->
+		<accessor name="description" type="String" defaultValue="" />
+		<accessor name="silent" type="Boolean" defaultValue="false" />
+		<accessor name="tabIndex" type="Number" defaultValue="0"/>
+
+	</type>
+	
+	<type name="DOMDynamicText">
+<!--		// Input text is always selectable. It generates a warning when set to false and used with input text.
+-->		<accessor name="selectable" type="Boolean" defaultValue="true" />
+	</type>
+	
+	<type name="DOMInputText">
+<!--		// This property works only with input text; if used with other text types, the property generates a warning. 
+-->		<accessor name="maxCharacters" type="Number"/>
+		<accessor name="accName" type="String" defaultValue=""/>
+		<accessor name="shortcut" type="String" defaultValue="" />
+	</type>
+		
+	<type name="DOMTextAttrs_Static">
+		<accessor name="characterPosition" type="String" defaultValue="normal"/>  
+		<accessor name="target" type="String" defaultValue="" />
+		<accessor name="url" type="String" defaultValue="" />
+		<!-- only valid with static text with orientation not horizontal-->
+		<!--<accessor name="rotation" type="Boolean" defaultValue="false" /> -->
+	</type>
+
+	<type name="DOMTextAttrs">
+		<accessor name="face" type="String"/>
+		<accessor name="fillColor" type="String"/>
+		<accessor name="alignment" type="String" defaultValue="left" />  
+		<accessor name="autoKern" type="Boolean" defaultValue="true" />
+		<accessor name="bold" type="Boolean" defaultValue="false" />
+		<accessor name="characterPosition" type="String"/>  
+		<accessor name="characterSpacing" type="Number" defaultValue="0"/>  
+		<accessor name="indent" type="Number" defaultValue="0" />
+		<accessor name="italic" type="Boolean" defaultValue="false" />
+		<accessor name="leftMargin" type="Number" defaultValue="0"/>
+		<accessor name="letterSpacing" type="Number" defaultValue="0"/>
+		<accessor name="lineSpacing" type="Number" defaultValue="2" />
+		<accessor name="rightMargin" type="Number" defaultValue="0"/>
+		
+		<!--
+		<accessor name="aliasText" type="Boolean" defaultValue="false"/>
+		-->
+		
+		<accessor name="size" type="Number"/>
+	</type>
+
+	
+
+	
+	<type name="DashedStroke">
+		<accessor name="dash1" type="Number"/>
+		<accessor name="dash2" type="Number"/>
+	</type>
+	<type name="DottedStroke">
+		<accessor name="dotSpace" type="Number"/>
+	</type>
+	<type name="RaggedStroke">
+		<accessor name="pattern" type="String"/>
+		<accessor name="waveHeight" type="String"/>
+		<accessor name="waveLength" type="String"/>
+	</type>
+	<type name="StippleStroke">
+		<accessor name="density" type="String"/>
+		<accessor name="dotSize" type="String"/>
+		<accessor name="variation" type="String"/>
+	</type>
+	<type name="HatchedStroke">
+		<accessor name="curve" type="String"/>
+		<accessor name="hatchThickness" type="String"/>
+		<accessor name="jiggle" type="String"/>
+		<accessor name="length" type="String"/>
+		<accessor name="rotate" type="String"/>
+		<accessor name="space" type="String"/>
+	</type>
+	
+	
+	<type name="DOMCompiledClipItem">
+		<accessor name="name" type="String" defaultValue=""/>
+		
+<!--
+		<accessor name="asVersion" type="Number" access="readwrite"/>
+		<accessor name="playerVersion" type="Number" access="readwrite"/>
+
+		
+		<accessor name="displayAsComponent" type="Boolean" access="readwrite"/>
+		
+		<accessor name="requiredMinimumASVersion" type="Number" access="readwrite"/>
+		<accessor name="requiredMinimumPlayerVersion" type="Number" access="readwrite"/>
+		<accessor name="requiredMinimumPlayerVersionName" type="String" access="readwrite"/>
+
+		<accessor name="swcHashKey" type="String" access="readwrite"/>
+		<accessor name="swcExists" type="Boolean" access="readwrite"/>
+
+		<accessor name="rootSymbolLinkageID" type="String" access="readwrite"/>
+		<accessor name="conponentTooltip" type="String" access="readwrite"/>
+		<accessor name="customIconID" type="Number" access="readwrite"/>
+		<accessor name="userPropertiesLocked" type="Boolean" access="readwrite"/>
+		<accessor name="descriptionType" type="Number" access="readwrite"/>
+		<accessor name="actionscriptClass" type="String" access="readwrite"/>
+		<accessor name="description" type="String" access="readwrite"/>
+		<accessor name="xmlProperties" type="String" access="readwrite"/>
+		<accessor name="hasCustomIcon" type="Boolean" access="readwrite"/>
+		<accessor name="editFrame" type="Number" access="readwrite"/>
+		<accessor name="requiredMinimumPlayerVersionName" type="String" access="readwrite"/>
+		<accessor name="requiredMinimumPlayerVersion" type="Number" access="readwrite"/>
+		<accessor name="requiredMinimumASVersion" type="Number" access="readwrite"/>
+		<accessor name="parametersAsXML" type="String" access="readwrite"/>
+		<accessor name="swcMD5Hash" type="String" access="readwrite"/>
+		<accessor name="swcImplementation" type="String" access="readwrite"/>
+		<accessor name="swcItemVersion" type="String" access="readwrite"/>
+		<accessor name="isTopLevelOfComponentTree" type="Boolean" access="readwrite"/>
+		<accessor name="intrinsicClass" type="String" access="readwrite"/>
+		<accessor name="intrinsicScript" type="String" access="readwrite"/>
+-->
+	<!--		
+		<accessor name="movieRect" type="rect" access="readwrite"/>
+
+		<accessor name="assetKeys" type="string array" access="readwrite"/>
+		<accessor name="taskDescriptions" type="string array" access="readwrite"/>
+		<accessor name="taskScripts" type="string array" access="readwrite"/>
+		<accessor name="assetNames" type="string array" access="readwrite"/>
+		<accessor name="includes" type="string array" access="readwrite"/>
+		<accessor name="exportAfters" type="string array" access="readwrite"/>
+		<accessor name="swcClassDefinitions" type="string array" access="readwrite"/>
+-->	</type>
+	
+	<type name="DOMCompiledClipInstance">
+	</type>
+
+	
+
+</TypeListing>
