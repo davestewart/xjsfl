@@ -119,7 +119,7 @@
     "\t\t\t\taddType('returns', '');", 
     "\t\t\t\t", 
     "\t\t\t// author", 
-    "\t\t\t\taddType('author', author);", 
+    "\t\t\t\t//addType('author', author);", 
     "\t\t\t\t", 
     "\t\t}", 
     "\t", 

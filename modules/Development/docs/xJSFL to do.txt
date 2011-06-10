@@ -1,0 +1,10 @@
+xJSFL To Do's
+-------------------------------------------------------------------------------
+
+Create Debug key-combo from Kohana:
+
+- copies file to file.run.jsfl
+- wraps with a try/catch
+- if there's an error, outputs it
+	- changing the .run filename for the original
+	- correcting the line numbers by taking off 1 line (for the try {)
