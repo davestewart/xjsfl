@@ -43,6 +43,8 @@
 		SimpleTemplate.prototype =
 		{
 			
+			constructor:SimpleTemplate,
+		
 			uri:'',
 			
 			input:'',

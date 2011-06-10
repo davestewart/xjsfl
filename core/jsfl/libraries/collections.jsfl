@@ -240,7 +240,7 @@
 		
 		toString:function()
 		{
-			return '[' +this.className+ ': ' + this.elements.length+ ' elements]';
+			return '[object ' +this.className+ ': ' + this.elements.length+ ' elements]';
 		},
 		
 		debug:function()

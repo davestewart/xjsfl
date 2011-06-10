@@ -23,7 +23,7 @@
 		 * @returns		
 		 * @author	Dave Stewart	
 		 */
-		Template = function(uri, data)
+		function Template(uri, data)
 		{
 			if(uri)
 			{
@@ -67,6 +67,11 @@
 				
 			// --------------------------------------------------------------------------------
 			// properties
+			
+				/**
+				 * reset constructor
+				 */
+				constructor:Template,
 			
 				/**
 				 * Loads the template source text file

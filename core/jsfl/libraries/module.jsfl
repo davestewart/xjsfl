@@ -64,6 +64,9 @@
 	
 		Module.prototype =
 		{
+			// reset constructor
+				constructor:Module,
+			
 			// core properties
 				name:		'',
 				uri:		'',

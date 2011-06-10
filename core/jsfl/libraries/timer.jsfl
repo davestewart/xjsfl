@@ -97,6 +97,8 @@
 	
 		Timer.prototype =
 		{
+			constructor:Timer,
+		
 			startDate:null,
 			
 			endDate:null,

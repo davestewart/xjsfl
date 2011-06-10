@@ -508,7 +508,7 @@
 		 * @param	obj	{Object}	Any object with iterable properties
 		 * @returns		{Array}		An array of key names
 		 */
-		keys:function(obj)
+		getKeys:function(obj)
 		{
 			var keys = [];
 			for(var i in obj)
@@ -521,30 +521,49 @@
 		/**
 		 * Get the class of an object as a string
 		 * 
-		 * @param	value	{mixed}		Any value
+		 * @param	value	{value}		Any value
 		 * @returns			{String}	The class name of the value i.e. 'String', 'Date', 'CustomClass'
 		 */
-		classOf:function(value)
+		getClass:function(obj)
 		{
-			//TODO check this function works with objects that have unusual toString methods, and possibly rewrite if so
-			var className = toString.call(value).match(/\[\w+ (\w+)/)[1];
-			if(className === 'Object')
+			if (obj != null && obj.constructor && obj.constructor.toSource !== undefined)
 			{
-				return object.constructor ? String(value.constructor).match(/function (\w+)/)[1] : className;
+				// match constructor function name
+					var matches = obj.constructor.toSource().match(/^function\s*(\w+)/);
+					if (matches && matches.length == 2)
+					{
+						// fail if the return value is an anonymous / wrapped Function
+							if(matches[1] != 'Function')
+							{
+								//trace('Constructor')
+								return matches[1];
+							}
+							
+						// attempt to grab object toSource() result
+							else
+							{
+								matches = obj.toSource().match(/^function\s*(\w+)/);
+								if(matches && matches[1])
+								{
+									//trace('Source')
+									return matches[1];
+								}
+								
+							// attempt to grab object toString() result
+								else
+								{
+									matches = obj.toString().match(/^\[\w+\s*(\w+)/);
+									if(matches && matches[1])
+									{
+										//trace('String')
+										return matches[1];
+									}
+								}
+							}
+				}
 			}
-			return className;
-		},
-		
-		test:function(fn)
-		{
-			try
-			{
-				fn();
-			}
-			catch(err)
-			{
-				xjsfl.output.error(err);
-			}
+	
+			return undefined;
 		},
 		
 		/**
@@ -581,6 +600,18 @@
 				
 			// return
 				return stack;
+		},
+		
+		test:function(fn)
+		{
+			try
+			{
+				fn();
+			}
+			catch(err)
+			{
+				xjsfl.output.error(err);
+			}
 		}
 		
 	}
@@ -1075,7 +1106,7 @@
 					else
 					{
 						
-						var uris = xjsfl.utils.classOf(result) == 'Array' ? result : [result];
+						var uris = xjsfl.utils.getClass(result) == 'Array' ? result : [result];
 						
 						for (var i = 0; i < uris.length; i++)
 						{

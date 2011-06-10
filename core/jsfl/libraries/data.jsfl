@@ -75,7 +75,7 @@
 			
 			toString:function()
 			{
-				return '[object Data]';
+				return '[class Data]';
 			}
 			
 		};

@@ -43,6 +43,8 @@
 			xml:	null,
 			uri:	'',
 			
+			constructor:Config,
+		
 			load:function()
 			{
 				var text = new File(this.uri).contents;

@@ -96,6 +96,11 @@
 			// variables
 			
 				/** 
+				 * reset constructor
+				 */
+				constructor:Table,
+			
+				/** 
 				 * @var array The array for processing
 				 */
 				rows:		null,
@@ -214,7 +219,7 @@
 									// found-order
 										for(var y = 0; y < this.rows.length; y++)
 										{
-											temp = temp.concat(xjsfl.utils.keys(this.rows[y]));
+											temp = temp.concat(xjsfl.utils.getKeys(this.rows[y]));
 										}
 										temp = xjsfl.utils.unique(temp);
 									
@@ -234,7 +239,7 @@
 									// grab all keys individually
 										for(var y = 0; y < this.rows.length; y++)
 										{
-											var props = xjsfl.utils.keys(this.rows[y]);
+											var props = xjsfl.utils.getKeys(this.rows[y]);
 											for each(var prop in props)
 											{
 												if( ! hash[prop])
@@ -255,7 +260,7 @@
 									// grab keys per entire row
 										for(var y = 0; y < this.rows.length; y++)
 										{
-											var props = xjsfl.utils.keys(this.rows[y]).join(',');
+											var props = xjsfl.utils.getKeys(this.rows[y]).join(',');
 											if( ! hash[props])
 											{
 												hash[props] = 0;
@@ -269,7 +274,7 @@
 							// otherwise, just grab the keys from the first row
 								else
 								{
-									this.keys = xjsfl.utils.keys(this.rows[0]);
+									this.keys = xjsfl.utils.getKeys(this.rows[0]);
 								}
 						}
 						
@@ -435,19 +440,19 @@
 			// utilities
 			
 				/**
-				 * 
-				 * @param	str	
-				 * @param	length	
-				 * @param	chr	
-				 * @param	right	
-				 * @returns		
+				 * Pad a string with characters to a certain length
+				 * @param	str		{String}	A string to be padded
+				 * @param	length	{Number}	The length the string should be padded to
+				 * @param	chr		{String}	An optional pad character (defaults to ' ')
+				 * @param	left	{Boolean}	An optional switch to pad to the left, rather than right
+				 * @returns			{String}	The padded string
 				 */
-				pad:function(str, length, chr, right)
+				pad:function(str, length, chr, left)
 				{
 					chr = chr || ' ';
 					while(str.length < length)
 					{
-						str = right ? chr + str : str + chr;
+						str = left ? chr + str : str + chr;
 					}
 					return str;
 				},

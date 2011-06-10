@@ -57,6 +57,11 @@
 			// methods
 		
 				/**
+				 * reset constructor
+				 */
+				constructor:FileSystemObject,
+			
+				/**
 				 * Gets a uri-formatted string to the filesystem resource
 				 * @param pathOrUri	Any valid path or uri-formatted pointer to a filsystem resource	
 				 * @returns	{String} The uri-formatted string to the filesystem resource
@@ -216,6 +221,11 @@
 	// methods
 
 
+		/**
+		 * reset constructor
+		 */
+		Folder.prototype.constructor = Folder;
+	
 		/**
 		 * Opens the folder in the Explorer / Finder
 		 * @returns {File} The original file
@@ -403,6 +413,11 @@
 	
 	// -----------------------------------------------------------------------------------------------
 	// methods
+	
+		/**
+		 * reset constructor
+		 */
+		File.prototype.constructor = Folder;
 	
 		/**
 		 * Opens the file in the Flash authoring environment
