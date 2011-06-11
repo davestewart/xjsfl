@@ -46,6 +46,36 @@
 		{
 			return '[class xJSFL]';
 		}
+		
+	// document check function
+		xjsfl.__defineGetter__
+		(
+			'dom',
+			function()
+			{
+				var dom = fl.getDocumentDOM();
+				if(dom)
+				{
+					return dom;
+				}
+				else
+				{
+					alert('A document (.fla) needs to be open before running this command.');
+					return false;
+				}
+			}
+		)
+		
+	// currently-running script dir
+		xjsfl.__defineGetter__
+		(
+			'scriptDir',
+			function()
+			{
+				var stack = xjsfl.utils.getStack();
+				return xjsfl.utils.makeURI(stack[1].path)
+			}
+		)
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -151,9 +181,9 @@
 			
 		/**
 		 * Debug level
-		 * Can be set by the developer to either trace or alert framework errors and warnings
+		 * Can be set by the developer to trace, alert, or error on xjsfl.output.warn()
 		 * 
-		 * @type {Number} debug level 0: off, 1:trace, 2:alert
+		 * @type {Number} debug level 0: off, 1:trace, 2:alert, 3:error, 4+: off
 		 */
 		debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1),
 		
@@ -439,35 +469,49 @@
 		},
 		
 		/**
-		 * Collect the values of an array of objects into a new array
+		 * Collect child values from an Array of Objects into a new Array
 		 * 
-		 * @param	arr		{Array}		An array of Objects
-		 * @param	prop	{String}	The name of a property to collect. Can also pass in an array of names to return a (non-unique) 2D array
+		 * @param	input	{Array}		An Object or an array of Objects
+		 * @param	prop	{String|Array|Boolean}	The name of a property to collect. Can also pass in an array of names to return a (non-unique) 2D array, or true to collect all values
 		 * @param	option	{Boolean}	If returning a flat array, pass true to make it unique. If returning a 2D array, pass true to return Objects
 		 * @returns			{Array}		A new 1D or 2D Array
 		 */
-		collect:function(arr, prop, option)
+		collect:function(input, prop, option)
 		{
 			// variables
-				var arrOut	= [];
+				var output	= [];
 				var i		= -1;
+				var single	= false;
+				
+			// convert input to array if just a single object
+				if(xjsfl.utils.getClass(input) !== 'Array')
+				{
+					input	= [input];
+					single	= true;
+				}
+				
+			// collect all values?
+				if(prop === true)
+				{
+					prop = xjsfl.utils.getKeys(input[0]);
+				}
 				
 			// double loop for multiple properties
 				if(this.isArray(prop))
 				{
 					// variables
 						var props	= prop;
-						var arrOut	= new Array(arr.length);
+						var output	= new Array(input.length);
 						
 					// return objects
 						if(option)
 						{
-							while(i++ < arr.length - 1)
+							while(i++ < input.length - 1)
 							{
-								arrOut[i] = {};
+								output[i] = {};
 								for(var j = 0; j < props.length; j++)
 								{
-									arrOut[i][props[j]] = arr[i][props[j]];
+									output[i][props[j]] = input[i][props[j]];
 								}
 							}
 						}
@@ -475,31 +519,31 @@
 					// return arrays
 						else
 						{
-							while(i++ < arr.length - 1)
+							while(i++ < input.length - 1)
 							{
-								arrOut[i] = new Array(props.length);
+								output[i] = new Array(props.length);
 								for(var j = 0; j < props.length; j++)
 								{
-									arrOut[i][j] = arr[i][props[j]];
+									output[i][j] = input[i][props[j]];
 								}
 							}
 						}
 				}
 			
-			// optimised single loop
+			// single loop for collecting only a single property
 				else
 				{
-					while(i++ < arr.length - 1)
+					while(i++ < input.length - 1)
 					{
-						if( ! option || (option && arrOut.indexOf(arr[i][prop]) === -1) )
+						if( ! option || (option && output.indexOf(input[i][prop]) === -1) )
 						{
-							arrOut.push(arr[i][prop]);
+							output.push(input[i][prop]);
 						}
 					}
 				}
 				
 			// return
-				return arrOut;
+				return single ? output[0] : output;
 		},
 		
 		/**
@@ -569,7 +613,7 @@
 		/**
 		 * Returns an array of the the currently executing files, paths, lines, and code
 		 * 
-		 * @param	error		{Error}		An optional Boolean to shorten any core paths with <xjsfl>
+		 * @param	error		{Error}		An optional error object
 		 * @param	shorten		{Boolean}	An optional Boolean to shorten any core paths with <xjsfl>
 		 * @returns				{Array}		An array of the executing files, paths, lines and code
 		 */
@@ -658,14 +702,19 @@
 		 */
 		warn:function(message)
 		{
-			xjsfl.output.error(message);
-			if(xjsfl.settings.debugLevel >= 1)
+			switch(xjsfl.settings.debugLevel)
 			{
-				fl.trace('Warning: ' + message);
-			}
-			if(xjsfl.settings.debugLevel >= 2)
-			{
-				alert(message);
+				case 1:
+					this.trace('Warning - ' + message);
+				break;
+				case 2:
+					alert(message);
+				break;
+				case 3:
+					throw new Error('Error: ' + message);
+				break;
+				default:
+					// do nothing
 			}
 		},
 
@@ -1361,7 +1410,7 @@
 		{
 		
 			// debug
-				xjsfl.output.trace('setting environment variables...');
+				//xjsfl.output.trace('setting environment variables...');
 			
 			// variables
 				scope.dom			= fl.getDocumentDOM();
@@ -1384,7 +1433,3 @@
 			//xjsfl.output.trace('already initialized...');
 		}
 	}
-	
-	
-
-
