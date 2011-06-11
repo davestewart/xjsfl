@@ -43,7 +43,7 @@
     "\t\t// run the first view", 
     "\t\t\tif(firstView)", 
     "\t\t\t{", 
-    "\t\t\t\txjsfl.launch(firstView);", 
+    "\t\t\t\txjsfl.launch(firstView, 'panel');", 
     "\t\t\t}", 
     "\t\t\telse", 
     "\t\t\t{", 
