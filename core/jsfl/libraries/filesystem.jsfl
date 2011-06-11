@@ -238,6 +238,9 @@
 			return this;
 		}
 		
+		/**
+		 * alias for open()
+		 */
 		Folder.prototype.reveal = Folder.prototype.open;
 		
 		/**
@@ -265,6 +268,24 @@
 			{
 				fl.trace('Unknown FileSystemItem type!')
 			}
+		}
+		
+		/**
+		 * Return a filtered array of the folder's contents, matching against the filenames
+		 * @param	rx	{RegExp}	A Regular Expression or string, wildcards allowed
+		 * @returns		{Array}		An array of Filesystem objects
+		 */
+		Folder.prototype.filter = function(rx)
+		{
+			if(typeof rx === 'string')
+			{
+				rx = new RegExp(rx.replace(/\*/g, '.*'));
+			}
+			if(rx instanceof RegExp)
+			{
+				return this.contents.filter(function(e){ return rx.test(e.name); });
+			}
+			return [];
 		}
 		
 		/**
@@ -417,7 +438,7 @@
 		/**
 		 * reset constructor
 		 */
-		File.prototype.constructor = Folder;
+		File.prototype.constructor = File;
 	
 		/**
 		 * Opens the file in the Flash authoring environment
