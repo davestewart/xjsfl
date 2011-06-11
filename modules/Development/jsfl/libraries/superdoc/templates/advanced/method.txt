@@ -1,5 +1,0 @@
-{doc}
-{name}:function({params})
-{
-	{content}
-}
