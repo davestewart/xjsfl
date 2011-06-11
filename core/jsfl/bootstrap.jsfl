@@ -23,7 +23,7 @@
 		// core
 			fl.trace('> xjsfl: loading "<xjsfl>/core/jsfl/libraries/xjsfl.jsfl"');
 			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
-	
+
 		// libraries
 			xjsfl.classes.load
 			([
@@ -32,12 +32,7 @@
 					'class',
 					'filesystem',
 					
-				// modules
-					'config',
-					'module',
-					'jsfl',
-					
-				// design
+				// elements
 					'collections',
 					'library',
 					'stage',
@@ -50,6 +45,15 @@
 					'timer',
 					'table',
 					'superdoc',
+					
+				// modules
+					'config',
+					'module',
+					'jsfl',
+					
+				// ui
+					'xul',
+					//'xul-controls'
 			]);
 			
 		// modules

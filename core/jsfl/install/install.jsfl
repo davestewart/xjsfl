@@ -30,7 +30,7 @@
 	// ----------------------------------------------------------------------------------------
 	// functions
 	
-		function populate(srcURI, obj, trgURI)
+		function populate(obj, srcURI, trgURI)
 		{
 			// read file
 				var text = FLfile.read(srcURI);
@@ -62,12 +62,12 @@
 		// loader
 			src				= uris.install + 'xJSFL Loader.jsfl';
 			trg				= uris.tools + 'xJSFL Loader.jsfl';
-			populate(src, uris, trg);
+			populate(uris, src, trg);
 			
 		// Splash
 			src				= uris.install + 'xJSFL Splash.txt';
 			trg				= uris.tools + 'xJSFL Splash.txt';
-			populate(src, uris, trg);
+			populate(uris, src, trg);
 			
 		// Snippets
 			src				= uris.xjsfl + 'modules/Snippets/ui/xJSFL Snippets.swf';
@@ -80,7 +80,7 @@
 			FLfile.copy(src, trg);
 			
 		// ini
-			populate(uris.install + 'xJSFL.ini', uris, uris.tools + 'xJSFL.ini');
+			populate(uris, uris.install + 'xJSFL.ini', uris.tools + 'xJSFL.ini');
 			
 	// ----------------------------------------------------------------------------------------
 	// finish

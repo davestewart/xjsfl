@@ -1,1 +1,0 @@
-uri = "file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20xJSFL/modules/Development/jsfl/testing/alert.jsfl";
