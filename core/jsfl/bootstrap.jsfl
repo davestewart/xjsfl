@@ -31,6 +31,7 @@
 					'output',
 					'class',
 					'filesystem',
+					'xml',
 					
 				// elements
 					'collections',
@@ -46,14 +47,14 @@
 					'table',
 					'superdoc',
 					
+				// ui
+					'xul',
+					'validate',
+					
 				// modules
 					'config',
 					'module',
-					'jsfl',
-					
-				// ui
-					'xul',
-					//'xul-controls'
+					'jsfl'
 			]);
 			
 		// modules
