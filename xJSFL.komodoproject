@@ -8,7 +8,7 @@
   <string id="import_exclude_matches">*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;_svn;*%*;tmp*.html;.DS_Store; .git;*.komodo*;.git*;README;desktop.ini;</string>
   <string id="import_include_matches"></string>
   <boolean id="import_live">1</boolean>
-  <string relative="path" id="javascriptExtraPaths">modules/Development/assets/autocomplete/jsfl</string>
+  <string relative="path" id="javascriptExtraPaths">core/jsfl/libraries</string>
   <string id="mappedPaths"></string>
   <string id="perlExtraPaths"></string>
   <boolean id="perl_lintOption_includeCurrentDirForLinter">0</boolean>

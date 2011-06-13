@@ -34,7 +34,7 @@
     "\t\t\t\tvar uri\t\t\t= document.file.encodedURI;", 
     "\t\t\t\t", 
     "\t\t\t// save file", 
-    "\t\t\t\tdocument.save(true)", 
+    "\t\t\t\tdocument.save(true);", 
     "\t\t\t\t", 
     "\t\t\t// check for XUL dialog", 
     "\t\t\t\tif(/\\.(xml|xul)$/.test(uri))", 
