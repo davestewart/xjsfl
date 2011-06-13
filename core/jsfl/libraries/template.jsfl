@@ -34,6 +34,21 @@
 				this.set(data);
 			}
 			
+			/*
+			_render = function()
+			{
+				
+			}
+			
+			this.render = function()
+			{
+				return _render();
+			}
+			*/
+			
+			//TODO Make render() more obvious - offload to a protected method perhaps? Need to make stack better-protected
+			
+			
 			//TODO Add option to auto-clean unused tags
 			//TODO Look at re-constructing class to make variables private
 			//TODO Look at renaming variables to _name, then updating Output class
@@ -101,6 +116,34 @@
 						
 					// return
 						return this;
+				},
+				
+				/**
+				 * Saves the rendered template to a file
+				 * @param	uri			{String}	The uri of where to save the file
+				 * @param	overwrite	{Boolean}	An optional Boolean specifying whether to overwrite an existing file or not
+				 * @returns				{Template}	Itself
+				 */
+				save:function(uri, overwrite)
+				{
+					if(uri != this.uri)
+					{
+						var file = new File(uri, this.render());
+						if( ! file.exists || overwrite)
+						{
+							file.save();
+						}
+						else
+						{
+							xjsfl.output.warn('The template "' +xjsfl.utils.makePath(uri, true)+ '" was not saved');
+						}
+					}
+					else
+					{
+						xjsfl.output.warn('A template cannot be saved over itself!');
+					}
+					
+					return this;
 				},
 				
 				/**
