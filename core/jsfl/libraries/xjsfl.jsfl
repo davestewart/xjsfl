@@ -192,7 +192,8 @@
 		 * Newline character depending on PC or Mac
 		 * @type {String} 
 		 */
-		newLine:fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n'
+		newLine:fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n',
+		
 			
 	}
 	
@@ -299,7 +300,7 @@
 		
 		trim:function(string)
 		{
-			return String(string).replace(/(^\s*|\s*)/g, '');
+			return String(string || '').replace(/(^\s*|\s*$)/g, '');
 		},
 		
 		/**
@@ -428,23 +429,44 @@
 		 * Turns a single value into an array
 		 * It either returns an existing array, splits a string at delimiters, or wraps the single value in an array
 		 * 
-		 * @param	value	
+		 * @param	value	{Value}
+		 * @param	delim	{String|RegExp}
 		 * @returns		
 		 */
 		toArray:function(value, delim)
 		{
-			delim = delim || ',';
-			if(xjsfl.utils.isArray(value))
-			{
-				return value;
-			}
-			else if(typeof value === 'string' && value.indexOf(delim) > -1)
-			{
-				var rx1	= new RegExp('^[\s' +delim+ ']+|[\s' +delim+ ']+$', 'g'); // trim
-				var rx2	= new RegExp('\s*' +delim+ '\s*', 'g'); // split 
-				return value.replace(rx1, '').split(rx2);
-			}
-			return [value];
+			// if delimiter is not supplied, default to any non-word character
+				delim = delim || /\W+/;
+				
+			// if the value is already an array, return
+				if(xjsfl.utils.isArray(value))
+				{
+					return value;
+				}
+				
+			// if the value is a string, start splitting
+				else if(typeof value === 'string')
+				{
+					// trim
+						value = xjsfl.utils.trim(value);
+						
+					// if RegExp, split
+						if(delim instanceof RegExp)
+						{
+							delim.global = true;
+							return value.split(rx2);
+						}
+						
+					// if RegExp, split
+						else
+						{
+							var rx1	= new RegExp('^[\s' +delim+ ']+|[\s' +delim+ ']+$', 'g'); // trim
+							var rx2	= new RegExp('\s*' +delim+ '\s*', 'g'); // split 
+							return value.replace(rx1, '').split(rx2);
+						}
+					
+				}
+				return [value];
 		},
 		
 		/**
@@ -628,12 +650,12 @@
 				var parts, path
 				
 			// parse stack
-				for (var i = 1; i < matches.length; i++)
+				for (var i = 0; i < matches.length; i++)
 				{
 					rx.lastIndex	= 0;
 					parts			= rx.exec(matches[i]);
 					path			= (parts[2] || '');
-					stack[i - 1] =
+					stack[i] =
 					{
 						code:parts[1] || '',
 						line:parseInt(parts[4]) || '',
@@ -646,8 +668,14 @@
 				return stack;
 		},
 		
+		/**
+		 * Tests a callback and outputs the error stack if the call fails
+		 * @param	fn	
+		 * @returns		
+		 */
 		test:function(fn)
 		{
+			//TODO Check that the stack outputs the line of the ORIGINAL error
 			try
 			{
 				fn();
@@ -1382,6 +1410,50 @@
 		}
 		
 	}
+
+	// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██ ██ 
+//  ██  ██ ██ 
+//  ██  ██ ██ 
+//  ██  ██ ██ 
+//  ██  ██ ██ 
+//  ██  ██ ██ 
+//  ██████ ██ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// UI
+
+
+	/**
+	 * Global storage for XUL UIs and settings
+	 */
+	xjsfl.ui =
+	{
+		stack:[],
+		
+		get current()
+		{
+			return this.stack[this.stack.length - 1];
+		},
+		
+		add:function(xul)
+		{
+			this.stack.push(xul);
+		},
+		
+		remove:function()
+		{
+			this.stack.pop();
+		},
+		
+		clear:function()
+		{
+			this.stack = [];
+		}
+	}
+	
+	xjsfl.ui.clear();
 
 
 // ------------------------------------------------------------------------------------------------------------------------
