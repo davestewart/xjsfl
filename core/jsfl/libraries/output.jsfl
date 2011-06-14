@@ -37,7 +37,7 @@
 			// variables
 				output		= output == undefined ? true : false;
 				var result	= '';
-				result		+= '\n\t' +title + '\n\t--------------------------------------------------------------------------\n';
+				result		+= '\n\t' +title + '\n\t----------------------------------------------------------------------------------------------------\n';
 				result		+= '\t' + String(content).replace(/\n/g, '\n\t') + '\n';
 				
 			// trace
