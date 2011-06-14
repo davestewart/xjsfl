@@ -81,7 +81,7 @@
 				_indent:	'',
 				
 			// --------------------------------------------------------------------------------
-			// properties
+			// methods
 			
 				/**
 				 * reset constructor
@@ -256,7 +256,7 @@
 						}
 						
 					// placeholder matching regular expressions
-						var rxLocal		= /^(\s*){>(\w+)\??}|{(\w+)\??}/;
+						var rxLocal		= /^([\t ]*){>(\w+)\??}|{(\w+)\??}/;
 						var rxGlobal	= new RegExp(rxLocal.source, 'g');
 						
 					// recursion check
@@ -304,8 +304,12 @@
 							// add non-blank results to output
 								if( ! isBlank(lines[i]) && ! isBlank(result))
 								{
-									output.push(result)
+									// TODO See how lines that have all placeholders removed can be removed, without removing ALL blank lines
+									// Some kind of clever regexp parsing? exec()?
 								}
+								
+							// output results
+								output.push(result)
 						}
 						
 					// convert lines to text and indent
