@@ -16,11 +16,12 @@
 	
 		// folders
 			var src, trg, file;
-			var win = fl.version.indexOf('WIN') != -1;
+			var win		= fl.version.indexOf('WIN') != -1;
+			var xjsfl	= fl.scriptURI.replace(/core\/.+$/, '');
 			var uris =
 			{
 				install		:fl.scriptURI.replace(/[^\/]+$/, ''),
-				xjsfl		:fl.scriptURI.replace(/core\/.+$/, ''),
+				xjsfl		:xjsfl,
 				config		:fl.configURI,
 				tools		:fl.configURI + 'Tools/',
 				commands	:fl.configURI + 'Commands/',
@@ -54,20 +55,23 @@
 	// copy files
 	
 		// dll
-			file			= win ? 'xjsfl.dll' : 'xjsfl';
+			file			= win ? 'xjsfl.dll' : 'xjsfl.bundle';
 			src				= uris.install + 'External Libraries/' + file;
 			trg				= uris.config + 'External Libraries/' + file;
 			FLfile.copy(src, trg);
 			
 		// loader
-			src				= uris.install + 'xJSFL Loader.jsfl';
+			src				= uris.install + 'Tools/xJSFL Loader.jsfl';
 			trg				= uris.tools + 'xJSFL Loader.jsfl';
 			populate(uris, src, trg);
 			
 		// Splash
-			src				= uris.install + 'xJSFL Splash.txt';
+			src				= uris.install + 'Tools/xJSFL Splash.txt';
 			trg				= uris.tools + 'xJSFL Splash.txt';
 			populate(uris, src, trg);
+			
+		// ini
+			populate(uris, uris.install + 'Tools/xJSFL.ini', uris.tools + 'xJSFL.ini');
 			
 		// Snippets
 			src				= uris.xjsfl + 'modules/Snippets/ui/xJSFL Snippets.swf';
@@ -79,10 +83,12 @@
 			trg				= uris.commands + 'xJSFL/Open xJSFL user folder.jsfl';
 			FLfile.copy(src, trg);
 			
-		// ini
-			populate(uris, uris.install + 'xJSFL.ini', uris.tools + 'xJSFL.ini');
-			
 	// ----------------------------------------------------------------------------------------
-	// finish
+	// splash
 	
-		alert('xJSFL has installed. Restart Flash and navigate to... \n\n        Window > Other Panels > xJSFL Snippets \n\n...to get started.');
+		var dom = fl.getDocumentDOM();
+		if( ! dom )
+		{
+			dom = fl.createDocument();
+		}
+		dom.xmlPanel(xjsfl + 'core/ui/install.xml')
