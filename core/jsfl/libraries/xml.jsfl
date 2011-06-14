@@ -20,17 +20,39 @@
 	 */
 	XML.prototype.function::find = function(callback, descendents)
 	{
-		var output	= new XMLList();
-		var input	= descendents ? this..* : this.*;
-		var length	= input.length();
-		for(var i = 0; i < length; i++)
-		{
-			if(callback(input[i], i, input))
+		// variables
+			var output	= new XMLList();
+			var input	= descendents ? this..* : this.*;
+			var length	= input.length();
+			
+		// prepare callbacks
+			if(typeof callback == 'string')
 			{
-				output += input[i];
+				var value = callback;
+				
+				if(/^\.\w+$/.test(callback))
+				{
+					callback = function(node, i){ return '.' + node.attribute('class') == value; }
+				}
+				else if(/^#\w+$/.test(callback))
+				{
+					callback = function(node, i){ return '#' + node.attribute('id') == value; }
+				}
+				else
+				{
+					callback = function(node, i){ return node.name() == value; }
+				}
 			}
-		}
-		return output;
+		
+		// filter
+			for(var i = 0; i < length; i++)
+			{
+				if(callback(input[i], i, input))
+				{
+					output += input[i];
+				}
+			}
+			return output;
 	}
 	
 	/**
