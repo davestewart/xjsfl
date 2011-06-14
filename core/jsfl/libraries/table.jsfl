@@ -23,7 +23,7 @@
 		 */
 		function Table(rows, keys, maxColWidth, maxRowHeight)
 		{
-			if(rows.length > 0)
+			if(rows instanceof Array && rows.length > 0)
 			{
 				// variables
 					this.rows			= rows;
@@ -49,6 +49,10 @@
 					
 				// add headings
 					this.setHeading();
+			}
+			else
+			{
+				throw new Error('Table constructor requires that the first argument be an Array, with at least one element');
 			}
 		}
 	
