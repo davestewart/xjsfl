@@ -684,6 +684,19 @@
 			{
 				xjsfl.output.error(err);
 			}
+		},
+		
+		/**
+		 * Re-runs the xJSFL bootstrap to reload all classes from disk
+		 */
+		reboot:function()
+		{
+			if(window.rebooting != true)
+			{
+				fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
+				window.rebooting = true;
+			}
+			delete window.rebooting;
 		}
 		
 	}
@@ -747,7 +760,7 @@
 		},
 
 		/**
-		 * Traces a human-readable error to the Output Panel
+		 * Traces a human-readable error stack to the Output Panel
 		 * 
 		 * @param error		{String}	A string defining the main error message
 		 * @param error		{Error}		A javaScript Error object
@@ -768,11 +781,23 @@
 					stack	= stack.slice(1);
 				}
 				
-			// data
-				data = xjsfl.utils.extend( { message:error.message, stack:stack }, data || {});
+			// template uris
+				var uriErrors	= xjsfl.utils.makeURI('core/config/templates/errors/errors.txt');
+				var uriError	= xjsfl.utils.makeURI('core/config/templates/errors/error.txt');
 				
-			// output
-				Output.inspect(data, error.name)
+			// build errors
+				var content = '';
+				for(var i = 0; i < stack.length; i++)
+				{
+					stack[i].index = i;
+					content += new Template(uriError, stack[i]).render();
+				}
+				
+			// build output
+				data			= { error:error.toString(), content:content };
+				trace(new Template(uriErrors, data).render());
+				
+				
 		}
 		
 	}
