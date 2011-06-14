@@ -488,26 +488,43 @@
 		},
 		
 		/**
-		 * Move the item to a folder
-		 * @param	path	
-		 * @param	replace	
-		 * @returns		
-		 * @author	Dave Stewart	
+		 * Move collection elements to a folder
+		 * @param	path		{String}	The path to move items to
+		 * @param	replace		{Boolean}	Replace any items of the same name (set false to automatically rename)
+		 * @param	expand		{Boolean}	Expand any newly-created folders
+		 * @returns				{ItemCollection}
 		 */
-		move:function(path, replace)
+		move:function(path, replace, expand)
 		{
-			path = path.replace(/[:\(\)\[\]\*\+]/g, '')
-			
-			if( ! this.library.itemExists(path))
-			{
-				this.library.addNewItem('folder', path);
-			}
-			
-			for(var i = 0; i < this.elements.length; i++)
-			{
-				this.library.moveToFolder(path, this.elements[i].name, Boolean(replace));
-			}
-			return this;
+			// varaibles
+				path	= path.replace(/[:\(\)\[\]\*\+]/g, '')
+				expand	= expand === false ? false : true;
+				
+			// create folder if it doesn't exist
+				if( ! this.library.itemExists(path))
+				{
+					this.library.addNewItem('folder', path);
+				}
+				
+			// move items
+				for(var i = 0; i < this.elements.length; i++)
+				{
+					this.library.moveToFolder(path, this.elements[i].name, Boolean(replace));
+				}
+				
+			// expand folders
+			//TODO double check that expandFolder IS actually buggy
+				if(expand)
+				{
+					while(path != '')
+					{
+						path = path.replace(/\/?[^\/]+$/, '');
+						this.library.expandFolder(true, true, path);
+					}
+				}
+				
+			// return
+				return this;
 		},
 		
 		/**
@@ -525,8 +542,8 @@
 		},
 		
 		/**
-		 * Rename the the items in the collection using a pattern or callback
-		 * @param	baseName	{String}			A base name for numerical naming. Alternatively, pass a callback of the format function(name, index, item) and return a string
+		 * Numerically rename the the items in the collection using a pattern or callback
+		 * @param	baseName	{String}			A base name for numerical naming. Alternatively, pass a callback of the format function(name, index, item) which returns a custom name
 		 * @returns	this		(ItemCollection)
 		 */
 		rename:function(baseName, padding)
@@ -549,7 +566,7 @@
 				}
 				
 			// default pattern
-				if(typeof baseName == 'function')
+				if(typeof baseName === 'function')
 				{
 					callback = baseName;
 				}
@@ -629,7 +646,7 @@
 
 	fl.trace(itemCollection.elements.length)
 	*/
-
+	
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
