@@ -388,8 +388,8 @@
 				if(shorten)
 				{
 					path = path
-						.replace(xjsfl.settings.folders.config, '<config>/')
-						.replace(xjsfl.settings.folders.xjsfl, '<xjsfl>/');
+						.replace(xjsfl.settings.folders.config, 'Configuration/')
+						.replace(xjsfl.settings.folders.xjsfl, 'xJSFL/');
 				}
 				
 			// return

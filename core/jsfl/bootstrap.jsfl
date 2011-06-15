@@ -21,7 +21,7 @@
 			fl.trace('> xjsfl: running core bootstrap...');
 	
 		// core
-			fl.trace('> xjsfl: loading "<xjsfl>/core/jsfl/libraries/xjsfl.jsfl"');
+			fl.trace('> xjsfl: loading "xJSFL/core/jsfl/libraries/xjsfl.jsfl"');
 			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 
 		// libraries
