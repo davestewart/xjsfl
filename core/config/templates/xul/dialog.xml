@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<dialog id="dialog" title="" buttons="accept,cancel">
+	
+	<grid>
+		
+		<columns>
+			<column flex="1" />
+			<column flex="2" />
+		</columns>
+		
+		<rows id="controls">
+			
+		</rows>
+		
+	</grid>
+	
+	<scripts id="scripts">
+		
+		<script id="scriptInitialize">
+			
+		</script>
+		
+		<script id="scriptUser">
+	
+		</script>
+		
+	</scripts>
+	
+	<!--<separator />-->
+
+</dialog>
