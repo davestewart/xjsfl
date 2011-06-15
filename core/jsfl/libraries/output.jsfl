@@ -254,7 +254,7 @@
 									type = 'Object';
 								}
 								*/
-								else if (value instanceof Array)
+								else if (value instanceof Array && value.constructor == Array)
 								{
 									type		= 'array';
 									className	= 'Array';
