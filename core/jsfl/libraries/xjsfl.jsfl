@@ -494,8 +494,10 @@
 		 * Collect child values from an Array of Objects into a new Array
 		 * 
 		 * @param	input	{Array}		An Object or an array of Objects
-		 * @param	prop	{String|Array|Boolean}	The name of a property to collect. Can also pass in an array of names to return a (non-unique) 2D array, or true to collect all values
-		 * @param	option	{Boolean}	If returning a flat array, pass true to make it unique. If returning a 2D array, pass true to return Objects
+		 * @param	prop	{String}	The name of a property to collect
+		 * @param	prop	{Array}		The names of properties to collect
+		 * @param	prop	{Boolean}	A Boolean indicates you want to collect ALL properties
+		 * @param	option	{Boolean}	If passing and returning a single object, pass true to make it unique. If returning a 2D array, pass true to return Objects
 		 * @returns			{Array}		A new 1D or 2D Array
 		 */
 		collect:function(input, prop, option)
@@ -504,6 +506,7 @@
 				var output	= [];
 				var i		= -1;
 				var single	= false;
+				prop		= prop || true;
 				
 			// convert input to array if just a single object
 				if(xjsfl.utils.getClass(input) !== 'Array')
