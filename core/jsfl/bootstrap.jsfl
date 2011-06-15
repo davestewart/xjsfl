@@ -15,11 +15,6 @@
 
 	try
 	{
-		// output
-			fl.outputPanel.clear();
-			fl.trace(FLfile.read(fl.configURI + 'Tools/xJSFL Splash.txt').replace(/\r\n/g, '\n'));
-			fl.trace('> xjsfl: running core bootstrap...');
-	
 		// core
 			fl.trace('> xjsfl: loading "xJSFL/core/jsfl/libraries/xjsfl.jsfl"');
 			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
@@ -70,5 +65,5 @@
 	catch(err)
 	{
 		fl.runScript(xjsfl.uri + 'core/jsfl/libraries/output.jsfl');
-		Output.inspect(err, 'Error running bootstrap');
+		Output.inspect(err, 'Error running core bootstrap');
 	}

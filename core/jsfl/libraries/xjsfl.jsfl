@@ -690,16 +690,14 @@
 		},
 		
 		/**
-		 * Re-runs the xJSFL bootstrap to reload all classes from disk
+		 * Re-runs the xJSFL loader to reload all classes from disk
 		 */
-		reboot:function()
+		reload:function()
 		{
-			if(window.rebooting != true)
+			if( ! xjsfl.loading)
 			{
-				fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
-				window.rebooting = true;
+				fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
 			}
-			delete window.rebooting;
 		}
 		
 	}
