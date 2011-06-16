@@ -9,7 +9,7 @@
 //  ██  ██ ██████ ██████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// XUL - OO library for creating and managing a universal XUL dialog
+// XUL - OO library for creating and managing XUL dialogs
 
 	// --------------------------------------------------------------------------------
 	// constructor
@@ -63,7 +63,7 @@
 							this.rules		= {};
 							this.widths		= {left:80, right:150}, 
 							this.error		= null;
-							//TODO implement right widths
+							//TODO implement right widths, and ensure (some) elements flex to fill
 						
 					// --------------------------------------------------------------------------------
 					// instantiate if values are provided
@@ -1105,7 +1105,10 @@
 			
 				setTitle:function(title)
 				{
-					this.xml.@title = ' ' + title;
+					if(this.xml)
+					{
+						this.xml.@title = ' ' + title;
+					}
 					return this;
 				},
 				
@@ -1242,7 +1245,7 @@
 							// get control values and convert to array for callbacks
 								if(accept || cancel)
 								{
-									var args = xjsfl.utils.collect(this.values);
+									var args = xjsfl.utils.getValues(this.values);
 									Output.inspect(args)
 								}
 	
@@ -1427,8 +1430,8 @@
 				function demo()
 				{
 					//var results = XUL.create('One,Two,Three', test);
-					//var settings = XUL.create('listbox:Names=[1,2,3,4],colorchip:,button:Hello,Some Value');
-					//var settings = XUL.create('My Name=Dave,|popupslider:Age,colorchip:Color,checkbox:Delete,checkbox:Amend,title:This is a dialog,width:100');
+					var settings = XUL.create('listbox:Names=[1,2,3,4],xcolorchip:Color,button:Hello,Some Value');
+					//var settings = XUL.create('My Name=Dave,|popupslider:Age=0,colorchip:Color,checkbox:Delete,checkbox:Amend,title:This is a dialog,width:100');
 					
 					/*
 					var ui = XUL.factory()

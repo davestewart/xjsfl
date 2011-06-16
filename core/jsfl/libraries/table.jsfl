@@ -225,7 +225,7 @@
 										{
 											temp = temp.concat(xjsfl.utils.getKeys(this.rows[y]));
 										}
-										temp = xjsfl.utils.unique(temp);
+										temp = xjsfl.utils.toUniqueArray(temp);
 									
 									// alphapetical-order
 										if(keys === Table.ORDER_ALPHA)
@@ -495,7 +495,7 @@
 						
 					// convert the the array to a string, then to an array, then make unique
 						keys	= keys.join(',').split(',');
-						keys	= xjsfl.utils.unique(keys);
+						keys	= xjsfl.utils.toUniqueArray(keys);
 						
 					// return
 						return keys;

@@ -37,7 +37,7 @@
 					}
 				
 				// ensure items are unique
-					items = xjsfl.utils.unique(items);
+					items = xjsfl.utils.toUniqueArray(items);
 					
 				// return
 					return new ItemCollection(items);
@@ -80,6 +80,12 @@
 					contains:function(selector)
 					{
 						
+					},
+					
+					//TODO nth()
+					nth:function(selector)
+					{
+						
 					}
 				
 				},
@@ -100,7 +106,7 @@
 						return rxPath.test(itemPath);
 					},
 					
-					//TODO Add package filter and RegExp
+					//TODO Add package filter and RegExp, also look at class filtering & selection in general
 					package:function(item, package, rxPackage)
 					{
 						return true;
@@ -189,7 +195,7 @@
 							}
 							
 						// make array unique
-							paths = xjsfl.utils.unique(paths);
+							paths = xjsfl.utils.toUniqueArray(paths);
 							
 						// grab folders from library
 							var index, temp = [];
@@ -256,6 +262,8 @@
 						return item.linkageExportForAS == true;
 					},
 					
+					//TODO Add :empty functionality for folders, including folders that have only folders in them
+					//TODO Add :tip functionality for folders that have no sub-folders
 					empty:function(item)
 					{
 						if(item['timeline'])
@@ -436,7 +444,7 @@
 						{
 							params		= [items].concat(test.params);
 							items		= selector.apply(this, params);
-							items		= xjsfl.utils.unique(items);
+							items		= xjsfl.utils.toUniqueArray(items);
 						}
 						
 					// filter items with one test per item
