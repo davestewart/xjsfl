@@ -192,7 +192,7 @@
 		 * Newline character depending on PC or Mac
 		 * @type {String} 
 		 */
-		newLine:fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n',
+		newLine:fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n'
 		
 			
 	}
@@ -476,7 +476,7 @@
 		 * @returns			{Array}		A unique array
 		 * @author	Dave Stewart	
 		 */
-		unique:function(arr)
+		toUniqueArray:function(arr)
 		{
 			var arrOut	= [];
 			var i		= -1;
@@ -491,7 +491,7 @@
 		},
 		
 		/**
-		 * Collect child values from an Array of Objects into a new Array
+		 * Get an Array of values from an Object, or an Array of Arrays/Objects from an Array of Objects
 		 * 
 		 * @param	input	{Array}		An Object or an array of Objects
 		 * @param	prop	{String}	The name of a property to collect
@@ -500,7 +500,7 @@
 		 * @param	option	{Boolean}	If passing and returning a single object, pass true to make it unique. If returning a 2D array, pass true to return Objects
 		 * @returns			{Array}		A new 1D or 2D Array
 		 */
-		collect:function(input, prop, option)
+		getValues:function(input, prop, option)
 		{
 			// variables
 				var output	= [];
@@ -633,6 +633,23 @@
 			}
 	
 			return undefined;
+		},
+		
+		/**
+		 * Returns the named SWF panel if it exists
+		 * @param	name	{String}	The panel name
+		 * @returns			{SWFPanel}	An SWFPanel object
+		 */
+		getPanel:function(name)
+		{
+			for(var i = 0; i < fl.swfPanels.length; i++)
+			{
+				if(fl.swfPanels[i].name == name)
+				{
+					return fl.swfPanels[i];
+				}
+			}
+			return null;
 		},
 		
 		/**
