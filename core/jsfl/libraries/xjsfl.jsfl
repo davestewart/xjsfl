@@ -19,63 +19,81 @@
 	 *
 	 */
 
-	// temp variables for framework setup
-		xjsflPath		= FLfile.uriToPlatformPath(xjsfl.uri).replace(/\\/g, '/');
-		
-	// temp output object, needed before libraries are loaded
-		if(!xjsfl.settings)
-		{
-			xjsfl.settings	= {debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)};
-			xjsfl.output =
+	// --------------------------------------------------------------------------------
+	// setup
+	
+		// temp variables for framework setup
+			xjsflPath		= FLfile.uriToPlatformPath(xjsfl.uri).replace(/\\/g, '/');
+			
+		// temp output object, needed before libraries are loaded
+			if(!xjsfl.settings)
 			{
-				trace: function(message){ if(xjsfl.settings.debugLevel > 0)fl.trace('> xjsfl: ' + message); },
-				error: function(message){ fl.trace('> xjsfl: << ' + message + ' >>'); }
-			}
-		}
-
-	 // if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
-		if( ! FLfile['platformPathToURI'] )
-		{
-			var path = 'core/jsfl/libraries/flfile.jsfl';
-			xjsfl.output.trace('Loading "<xJSFL>/' +path+ '"');
-			fl.runScript(xjsfl.uri + path);
-		}
-		
-	// toString function
-		xjsfl.toString = function()
-		{
-			return '[class xJSFL]';
-		}
-		
-	// document check function
-		xjsfl.__defineGetter__
-		(
-			'dom',
-			function()
-			{
-				var dom = fl.getDocumentDOM();
-				if(dom)
+				xjsfl.settings	= {debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)};
+				xjsfl.output =
 				{
-					return dom;
-				}
-				else
-				{
-					alert('A document (.fla) needs to be open before running this command.');
-					return false;
+					trace: function(message){ if(xjsfl.settings.debugLevel > 0)fl.trace('> xjsfl: ' + message); },
+					error: function(message){ fl.trace('> xjsfl: << ' + message + ' >>'); }
 				}
 			}
-		)
-		
-	// currently-running script dir
-		xjsfl.__defineGetter__
-		(
-			'scriptDir',
-			function()
+	
+		 // if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
+			if( ! FLfile['platformPathToURI'] )
 			{
-				var stack = xjsfl.utils.getStack();
-				return xjsfl.utils.makeURI(stack[1].path)
+				var path = 'core/jsfl/libraries/flfile.jsfl';
+				xjsfl.output.trace('Loading "<xJSFL>/' +path+ '"');
+				fl.runScript(xjsfl.uri + path);
 			}
-		)
+			
+	// --------------------------------------------------------------------------------
+	// methods
+	
+		// toString function
+			xjsfl.toString = function()
+			{
+				return '[class xJSFL]';
+			}
+			
+		// reload
+			/**
+			 * Re-runs the xJSFL loader to reload all classes from disk
+			 */
+			xjsfl.reload = function()
+			{
+				if( ! xjsfl.loading)
+				{
+					fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
+				}
+			}
+	
+		// document check function
+			xjsfl.__defineGetter__
+			(
+				'dom',
+				function()
+				{
+					var dom = fl.getDocumentDOM();
+					if(dom)
+					{
+						return dom;
+					}
+					else
+					{
+						alert('A document (.fla) needs to be open before running this command.');
+						return false;
+					}
+				}
+			)
+			
+		// currently-running script dir
+			xjsfl.__defineGetter__
+			(
+				'scriptDir',
+				function()
+				{
+					var stack = xjsfl.utils.getStack();
+					return xjsfl.utils.makeURI(stack[1].path)
+				}
+			)
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -689,6 +707,51 @@
 		},
 		
 		/**
+		 * Parse any string into a real datatype
+		 * @param	value	{String}	The input value, usually a string
+		 * @param	trim	{Boolean}	An optional flag to trim the string, on by default
+		 * @returns		
+		 */
+		parseValue:function(value, trim)
+		{
+			// trim
+				if(trim !== false)
+				{
+					value = xjsfl.utils.trim(value);
+				}
+				
+			// number
+				if(/^[\d\.]+$/.test(value))
+				{
+					return parseFloat(value);
+				}
+				
+			// boolean
+				else if(/^true|false$/.test(value))
+				{
+					return value === 'true' ? true : false;
+				}
+				
+			// XML
+				else if(/^<(\w+)[\s\S]+<\/\1>$/g.test(value))
+				{
+					return new XML(value);
+				}
+				
+			// array notation
+				else if(/^\[.+\]$/g.test(value))
+				{
+					return eval(value);
+				}
+				
+			// json
+				//TODO include a JSON library and add support here
+				
+			// default
+				return value;
+		},
+		
+		/**
 		 * Tests a callback and outputs the error stack if the call fails
 		 * @param	fn	
 		 * @returns		
@@ -703,17 +766,6 @@
 			catch(err)
 			{
 				xjsfl.output.error(err);
-			}
-		},
-		
-		/**
-		 * Re-runs the xJSFL loader to reload all classes from disk
-		 */
-		reload:function()
-		{
-			if( ! xjsfl.loading)
-			{
-				fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
 			}
 		}
 		
@@ -1520,31 +1572,34 @@
 	 */
 	xjsfl.init = function(scope, force)
 	{
-		// initialize only if xJSFL variable is not yet defined, or force is set as true
-		if( ! scope.xJSFL || force)
-		{
-		
-			// debug
-				//xjsfl.output.trace('setting environment variables...');
+		// default to window
+			scope = scope || window;
 			
-			// variables
-				scope.dom			= fl.getDocumentDOM();
+		// initialize only if xJSFL variable is not yet defined, or force is set as true
+			if( ! scope.xJSFL || force)
+			{
+				// debug
+					//xjsfl.output.trace('setting environment variables...');
 				
-			// functions
-				scope.trace			= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
-				scope.clear			= fl.outputPanel.clear;
-				
-			// methods
-				xjsfl.trace			= xjsfl.output.trace;
-				
-			// classes
-				xjsfl.classes.restore(scope);
-				
-			// flag xJSFL initialized by setting a scope-level variable
-				scope.xJSFL = xjsfl;
-		}
-		else
-		{
-			//xjsfl.output.trace('already initialized...');
-		}
+				// variables
+					scope.dom		= fl.getDocumentDOM();
+					
+				// functions
+					scope.trace		= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
+					scope.clear		= fl.outputPanel.clear;
+					
+				// methods
+					xjsfl.trace		= xjsfl.output.trace;
+					
+				// classes
+					xjsfl.classes.restore(scope);
+					
+				// flag xJSFL initialized by setting a scope-level variable
+					scope.xJSFL		= xjsfl;
+			}
+			else
+			{
+				//xjsfl.output.trace('already initialized...');
+			}
 	}
+	
