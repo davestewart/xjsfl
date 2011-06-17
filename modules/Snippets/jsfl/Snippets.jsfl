@@ -7,6 +7,7 @@ var snippets =
 	
 		init:function()
 		{
+			// always refresh when instantiating
 			this.saveData();
 		},
 		
@@ -101,14 +102,18 @@ var snippets =
 				}
 				
 			// path
-				var path		= new Folder(xjsfl.uri + 'user/jsfl/scripts').path + '/';
+				var path		= new Folder(xjsfl.uri + 'user/jsfl/snippets').path + '/';
+				
+			// debug
+				//fl.trace('Saving from "' +path+ '"');
+				//fl.trace('Saving from to "' +this.data.uri+ '"');
 				
 			// generate xml
 				var items		= new XML('<files type="folder" label="scripts" />');
 				
 			// icon url
 				items.@path		= path;
-				items.@iconsURI	= xjsfl.uri + 'modules/Snippets/assets/icons/16x16/';
+				//items.@iconsURI	= xjsfl.uri + 'modules/Snippets/assets/icons/16x16/';
 				
 			// grab files
 				recurse(new Folder(path), callback, function(e){return e instanceof Folder && e.name.substr(0, 1) != '_'})
@@ -144,15 +149,15 @@ var snippets =
 		deleteFile:function(path)
 		{
 			var file = new File(path);
-			file.remove()
-			return ! file.exists();
+			file.remove();
+			return ! file.exists;
 		},
 	
 		deleteFolder:function(path)
 		{
 			var folder = new Folder(path);
 			folder.remove()
-			return ! folder.exists();
+			return ! folder.exists;
 		},
 		
 		createCommand:function(name, path)
@@ -160,13 +165,13 @@ var snippets =
 			var jsfl	= 'fl.runScript("' +FLfile.platformPathToURI(path)+ '");';
 			var file	= new File(fl.configURI + 'Commands/' + name + '.jsfl', jsfl);
 			file.save();
-			if( ! file.exists)
+			if(file.exists)
 			{
-				alert('Command "' +name+ '"created OK');
+				alert('Command "' +name+ '" created OK.');
 			}
 			else
 			{
-				if(confirm('There was a problem creating the command. Would you like to open the commands folder?'))
+				if(confirm('There was a problem creating the command "' +name+ '". Would you like to open the commands folder?'))
 				{
 					file.parent.open();
 				};
@@ -181,6 +186,7 @@ var snippets =
 			return folder.exists();
 		},
 		
+		//TODO update to use Template class
 		makeFile:function(path, contents, desc, icon, version, author)
 		{
 			// debug
@@ -215,7 +221,7 @@ var snippets =
 				}
 	
 			// update contents
-				contents	= docs + '\n\n' + (contents || stub);
+				contents		= docs + '\n\n' + (contents || stub);
 				
 			// save file
 				var file		= new File(path, contents)
@@ -232,9 +238,10 @@ var snippets =
 
 // ------------------------------------------------------------------------------------------------
 // create module
-
+	
+	//xjsfl.reload();
 	//xjsfl.init(this);
-	var module = new Module('Snippets', snippets)
+	var module = new Module('Snippets', snippets);
 	
 	//module.createCommand('test', 'this is a test');
 	
