@@ -15,11 +15,9 @@
 	
 	<scripts id="scripts">
 		
-		<script id="scriptUser">
-	
-		</script>
+		<script id="userscripts" />
 		
-		<script id="scriptInitialize">
+		<script>
 			xjsfl.ui.current.handleEvent('initialize');
 		</script>
 		
