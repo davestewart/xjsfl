@@ -23,14 +23,6 @@
 		 */
 		function XUL(title)
 		{
-			/*
-				Arguments:
-				Object, accept, fail	- build controls from object
-				Array, accept, fail		- build controls from array, get labels from accept
-				String, accept, fail	- get labels from string
-				accept, fail			- get labels from accept
-			*/
-		
 			// check for dom
 				var dom = fl.getDocumentDOM();
 				if( ! dom)
@@ -60,7 +52,7 @@
 						this.rules		= {};
 						this.widths		= {left:80, right:150}, 
 						this.error		= null;
-						//TODO implement right widths, and ensure (some) elements flex to fill
+						//TODO implement right widths, and ensure appropriate elements flex to fill
 						
 					// set title if provided
 						this.setTitle(title || 'xJSFL');
@@ -71,176 +63,84 @@
 		
 		}
 		
-	// ------------------------------------------------------------------------------------------------
-	// Supporting classes
-	
-		/**
-		 * Control class to hold information about instantiated control elements
-		 * @param	type	{String}	The type (tag name) of the control item
-		 * @param	value	{Value}		The original value the control contains
-		 * @param	xml		{XML}		The XML of the control, that will be added to the UI
-		 * @returns		
-		 */
-		function Control(id, type, value, xml)
-		{
-			// properties
-				this.id			= id;
-				this.type		= type;
-				this.value		= value;
-				
-			// flags
-				this.enumerable	= ! /^button|flash$/.test(type);
-		}
-		
-		Control.prototype = 
-		{
-			// properties
-				id:				'',
-				type:			'',
-				value:			'',
-				xml:			null,
-				
-			// flags
-				enumerable:		true,
-				
-			// getters / setters
-				getValue:function(settings)
-				{
-					// grab the current (String) value for the control
-						var value = settings[this.id];
-						
-					// parse to a real value
-						switch(this.type)
-						{
-							case 'checkboxgroup':
-								var arr		= [];
-								var items	= this.xml..checkbox;
-								for each(var item in items)
-								{
-									var id		= item.@id.toString();
-									var value	= xjsfl.utils.parseValue(item.@value.toString());
-									if(settings[id] == 'true')
-									{
-										arr.push(value)
-									}
-								}
-								return arr;
-							break;
-						
-							case 'colorchip':
-								return value.substr(0,2) == '0x' ? parseInt(value, 16) : value.substr(1);
-							break;
-						
-							case 'popupslider':
-								return parseInt(value);
-							break;
-						
-							case 'checkbox':
-							case 'textbox':
-							case 'targetlist':
-								return xjsfl.utils.parseValue(value);
-							break;
-						
-							default:
-								value = xjsfl.utils.parseValue(value);
-						}
-						
-					// return
-						return value == '' ? null : value;
-				},
-				
-				//TODO Implement proper validation using rules, and the Validation class
-				validate:function(settings)
-				{
-					var value = this.getValue(settings);
-					switch(this.type)
-					{
-						case 'textbox':
-						case 'expression':
-						case 'popupslider':
-						case 'colorchip':
-							return value == null ? 'Field "' +this.id+ '" is required' : null;
-						break;
-					}
-					return null;
-				},
-				
-				toString:function()
-				{
-					return '[object Control id:"'+this.id+'" type:"'+this.type+'"]';
-				}
-				
-		}
-		
 		
 	// ------------------------------------------------------------------------------------------------
 	// XUL static methods & properties
 	
 		/**
+		 * Static convenience method to instantiate and return a new chainable XUL instance
+		 * @param	props	{String}	
+		 * @param	props	{Function}	
+		 * @returns			{XUL}		
+		 */
+		XUL.factory = function(props)
+		{
+			/*
+				Arguments:
+				String, accept, fail	- get controls, labels and values from string @see XUL.add()
+				accept, fail			- build controls from function params
+				Object, accept, fail	- build controls from object (not yet implemented)
+				//TODO implement building from Object
+			*/
+		
+			// build new XUL
+				var xul = new XUL();
+				
+			// populate
+				if(xul.xml && props && props != null && typeof props != 'undefined')
+				{
+					// if props is a function, set the dialog title to the function name, and create textfields per function argument
+						if(typeof props == 'function')
+						{
+							// assign properties
+								cancel = accept;
+								accept = props;
+								
+							// parse and assign controls
+								props = this._parseFunction(props);
+								for each(var prop in props.params)
+								{
+									xul.addTextbox(prop);
+								}
+								
+							// title
+								xul.setTitle('Dialog for "' + props.name + '"');
+						}
+						
+					// props is a string, use shorthand notation to create controls
+						else if(typeof props == 'string')
+						{
+							xul.add(props);
+						}
+				// return
+					return xul;				
+			}
+			return null;
+		}
+		
+		/**
 		 * Static convenience method to create and show interface in one call
-		 * @param	props	
-		 * @param	accept	
-		 * @param	cancel	
-		 * @returns			{Object}
+		 * @param	props	{String}	
+		 * @param	props	{Function}	
+		 * @param	props	{Object}	
+		 * @param	accept	{Function}	
+		 * @param	cancel	{Function}	
+		 * @returns			{Object}	
 		 */
 		XUL.create = function(props, accept, cancel)
 		{
 			// build new XUL
-				var xul = new XUL();
+				var xul = XUL.factory(props)
 				
-			// populate if a document is open
-				if(fl.getDocumentDOM())
+			// show
+				if(xul && xjsfl.utils.getKeys(xul.controls).length > 0)
 				{
-					// instantiate
-						if(props && props != null && typeof props != 'undefined')
-						{
-							// if props is a function, set the dialog title to the function name, and create textfields per function argument
-								if(typeof props == 'function')
-								{
-									// assign properties
-										cancel = accept;
-										accept = props;
-										
-									// parse and assign controls
-										props = this._parseFunction(props);
-										for each(var prop in props.params)
-										{
-											xul.addTextbox(prop);
-										}
-										
-									// title
-										xul.setTitle('Dialog for "' + props.name + '"');
-								}
-								
-							// props is a string, use shorthand notation to create controls
-								else if(typeof props == 'string')
-								{
-									xul.add(props);
-								}
-						}
-		
-					// if controls were created, show
-						if(xjsfl.utils.getKeys(xul.controls).length > 0)
-						{
-							xul.show(accept, cancel);
-						}
+					xul.show(accept, cancel);
+					return xul.values;
 				}
 
 			// return
-				return xul.settings ? xul.values : null;					
-
-		}
-		
-		/**
-		 * Static convenience method to instantiate and return a new chainable instance
-		 * @param	props	
-		 * @param	accept	
-		 * @param	cancel	
-		 * @returns			{XUL}
-		 */
-		XUL.factory = function(props, accept, cancel)
-		{
-			return new XUL(props, accept, cancel);
+				return null;
 		}
 		
 		XUL.toString = function()
@@ -277,7 +177,15 @@
 					content:	'',
 					separator:	'</rows></grid><separator /><grid><columns><column flex="1" /><column flex="2" /></columns><rows>',
 					
-				// values getter
+				// last error message
+					error:		null,
+					
+			// --------------------------------------------------------------------------------
+			// accessors
+			
+					/**
+					 * values getter
+					 */
 					get values()
 					{
 						var values = {};
@@ -292,9 +200,6 @@
 						}
 						return values;
 					},
-					
-				// flags
-					error:		null,
 					
 			// --------------------------------------------------------------------------------
 			// methods
@@ -346,7 +251,7 @@
 								{
 									if(name == 'value')
 									{
-										// need to add / set values using JavaScript (rather than in XML) or else the field can't be cleared when being re-shown
+										// need to add / set values using JavaScript (rather than in XML) or else the field will always show initial values when being re-shown
 										this.settings[id] = attributes[name];
 									}
 									else
@@ -435,7 +340,7 @@
 							type = type.replace('group', '');
 						
 						// events
-							var controls =
+							var types =
 							{
 								button:			'create command',
 								checkbox:		'create',
@@ -452,12 +357,11 @@
 							};
 							
 						// add xml under a temp root node, so we can find any top-level control nodes passed in
-							var temp		= <temp />;
-							temp.*			+= xml;
+							xml = new XML('<temp>' + xml.toXMLString() + '</temp>');
 							
 						// variables
-							var events		= controls[type].split(/ /g);
-							var nodes		= temp.find(type, true);
+							var events		= types[type].split(/ /g);
+							var nodes		= xml.find(type, true);
 							
 						// for each node
 							for each(var node in nodes)
@@ -473,7 +377,47 @@
 							}
 							
 						// return the original node
-							return temp.children();
+							return xml.children();
+					},
+					
+					_parseUserXML:function(xml)
+					{
+						// add xml under a temp root node, so we can find any top-level control nodes passed in
+							xml = new XML('<temp>' + xml.toXMLString() + '</temp>');
+							
+						// loop through control types, and attempt to find and add to controls array
+							var types	= 'button,checkbox,colorchip,listbox,menulist,popupslider,targetlist,textbox'.split(',');
+							for each(var type in types)
+							{
+								var control = xml.find(type, true);
+								if(control.length() == 1)
+								{
+									// variables
+										var id				= control[0].@id.toString();
+										var value			= control[0].@value.toString();
+										var controlXML		= control[0].toXMLString();
+										
+									// check that id is not already in use
+										if(this.controls[id])
+										{
+											throw new Error('XUL: Cannot add <' +type+ '> control - duplicate id "' +id+ '"');
+										}
+										
+									// store then clear value, otherwise it will always re-appear when the textbox is reshown
+										this.settings[id]	= value.toString();
+										control.@value		= '';
+										
+									// add control
+										this.controls[id]	= new Control(id, type, value, controlXML);
+									
+									// add any event handlers
+										xml					= this._addHandlers(type, xml);
+								}
+							}
+							
+						// xml
+							return xml.children();
+
 					},
 					
 				// --------------------------------------------------------------------------------
@@ -873,42 +817,7 @@
 						// Parse XML for new controls, and if found, add event handlers, and add to Control array for validation
 							if(dontParse !== true)
 							{
-								// build temp XML to parse
-									xml = new XML('<temp>' + xml.toXMLString() + '</temp>');
-									
-								// loop through control types and add to controls array
-									var types	= 'button,checkbox,colorchip,listbox,menulist,popupslider,targetlist,textbox'.split(',');
-									for each(var type in types)
-									{
-										var control = xml.find(type, true);
-										if(control.length() == 1)
-										{
-											// variables
-												var id				= control[0].@id.toString();
-												var value			= control[0].@value.toString();
-												var controlXML		= control[0].toXMLString();
-												
-											// check that id is not already in use
-												if(this.controls[id])
-												{
-													throw new Error('XUL: Cannot add <' +type+ '> control - duplicate id "' +id+ '"');
-												}
-												
-											// store then clear value, otherwise it will always re-appear when the textbox is reshown
-												this.settings[id]	= value.toString();
-												control.@value		= '';
-												
-											// add control
-												this.controls[id]	= new Control(id, type, value, controlXML);
-											
-											// add any event handlers
-												xml					= this._addHandlers(type, xml);
-										}
-									}
-									
-								// xml
-									xml = xml.children();
-									
+								xml = this._parseUserXML(xml);
 							}
 						
 						// handle non-row XML
@@ -1304,9 +1213,10 @@
 							// build panel
 								if(this.built == false)
 								{
-									// build XML
-										var xml		= this.xml.toXMLString().replace('<rows id="controls"></rows>', '<rows id="controls">' +this.content+ '</rows>')
-										this.xml	= new XML(xml);
+									// find #controls node and add content 
+										var controls	= this.xml.find('#controls', true);
+										var content		= new XMLList(this.content);
+										controls.row	+= content;
 
 									// set column widths
 										for each(var label in this.xml..label)
@@ -1371,7 +1281,6 @@
 								if(accept || cancel)
 								{
 									var args = xjsfl.utils.getValues(this.values);
-									Output.inspect(args)
 								}
 	
 							// test for validation
@@ -1457,6 +1366,107 @@
 		}
 		
 		
+	// ------------------------------------------------------------------------------------------------
+	// Supporting classes
+	
+		/**
+		 * Control class to hold information about instantiated control elements
+		 * @param	type	{String}	The type (tag name) of the control item
+		 * @param	value	{Value}		The original value the control contains
+		 * @param	xml		{XML}		The XML of the control, that will be added to the UI
+		 * @returns		
+		 */
+		function Control(id, type, value, xml)
+		{
+			// properties
+				this.id			= id;
+				this.type		= type;
+				this.value		= value;
+				
+			// flags
+				this.enumerable	= ! /^button|flash$/.test(type);
+		}
+		
+		Control.prototype = 
+		{
+			// properties
+				id:				'',
+				type:			'',
+				value:			'',
+				xml:			null,
+				
+			// flags
+				enumerable:		true,
+				
+			// getters / setters
+				getValue:function(settings)
+				{
+					// grab the current (String) value for the control
+						var value = settings[this.id];
+						
+					// parse to a real value
+						switch(this.type)
+						{
+							case 'checkboxgroup':
+								var arr		= [];
+								var items	= this.xml..checkbox;
+								for each(var item in items)
+								{
+									var id		= item.@id.toString();
+									var value	= xjsfl.utils.parseValue(item.@value.toString());
+									if(settings[id] == 'true')
+									{
+										arr.push(value)
+									}
+								}
+								return arr;
+							break;
+						
+							case 'colorchip':
+								return value.substr(0,2) == '0x' ? parseInt(value, 16) : value.substr(1);
+							break;
+						
+							case 'popupslider':
+								return parseInt(value);
+							break;
+						
+							case 'checkbox':
+							case 'textbox':
+							case 'targetlist':
+								return xjsfl.utils.parseValue(value);
+							break;
+						
+							default:
+								value = xjsfl.utils.parseValue(value);
+						}
+						
+					// return
+						return value == '' ? null : value;
+				},
+				
+				//TODO Implement proper validation using rules, and the Validation class
+				validate:function(settings)
+				{
+					var value = this.getValue(settings);
+					switch(this.type)
+					{
+						case 'textbox':
+						case 'expression':
+						case 'popupslider':
+						case 'colorchip':
+							return value == null ? 'Field "' +this.id+ '" is required' : null;
+						break;
+					}
+					return null;
+				},
+				
+				toString:function()
+				{
+					return '[object Control id:"'+this.id+'" type:"'+this.type+'"]';
+				}
+				
+		}
+		
 	// ---------------------------------------------------------------------------------------------------------------
 	// register
 	
@@ -1520,9 +1530,10 @@
 			
 			function accept(settings)
 			{
-				Output.inspect(Array.concat.apply(this, arguments), 'Accept')
+				//Output.inspect(xjsfl.utils.getArguments(arguments), 'Accept')
 			}
 			
+			xjsfl.reload();
 			
 			/*
 			var results = XUL()
@@ -1585,13 +1596,14 @@
 					.show();
 					*/
 				
-				XUL.create('numeric:Size (%), numeric:Width (%), numeric:Alpha (%),title:Something', accept, fail)
+				var values = XUL.create('numeric:Size (%), numeric:Width (%), numeric:Alpha (%),title:Something');
+				Output.inspect(values);
 				
 				//XUL.create('numeric:Red=[0,0,255], numeric:Green=[0,0,255], numeric:Blue=[0,0,255], title:Mixer', color)
 				
 				//var settings = XUL.create('color:Color 1=0xFF0000, color:Color 2=#00FF00, color:Color 3=0000FF, title:Mixer', color)
 				
-				Output.inspect(window.xul ? window.xul.values : window.settings)
+				//Output.inspect(window.xul ? window.xul.values : window.settings)
 				
 				/*
 				if(xul)
