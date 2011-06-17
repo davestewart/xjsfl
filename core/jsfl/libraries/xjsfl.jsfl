@@ -592,6 +592,18 @@
 			}
 			return keys;
 		},
+		
+		/**
+		 * Get the arguments of a function as an Array
+		 * @param	args		{Arguments}		An arguments object
+		 * @param	startIndex	{Number}		Optional index of the argument from which to start from
+		 * @param	endIndex	{Number}		Optional index of the argument at which to end
+		 * @returns				{Array}			An Array of parameters
+		 */
+		getArguments:function(args, startIndex, endIndex)
+		{
+			return params = Array.slice.apply(this, [args, startIndex || 0, endIndex || args.length]);
+		},
 
 		/**
 		 * Get the class of an object as a string
@@ -686,7 +698,7 @@
 						code:parts[1] || '',
 						line:parseInt(parts[4]) || '',
 						file:parts[3] || '',
-						path:(shorten ? path.replace(xjsflPath, '<xjsfl>/') : path).replace(/\\/g, '/')
+						path:(this.makePath(path, shorten))
 					};
 				}
 				
@@ -756,7 +768,6 @@
 		 */
 		test:function(fn)
 		{
-			//TODO Check that the stack outputs the line of the ORIGINAL error
 			try
 			{
 				fn();
@@ -790,16 +801,22 @@
 	xjsfl.output =
 	{
 		/**
-		 * Upgraded trace function that takes multiple arguments
-		 * 
-		 * @param args {Object} Multiple arguments
+		 * Framework-only output function
 		 */
 		trace:function()
 		{
-			//trace('>>' + xjsfl.settings.debugLevel)
+			fl.trace('> xjsfl: ' + Array.prototype.slice.call(arguments).join(', '));
+		},
+		
+		/**
+		 * Logging function
+		 */
+		log:function(type, message)
+		{
+			//TODO Connect this to user / framework settings, so messages are only logged if the setting allows it
 			if(xjsfl.settings.debugLevel > 0)
 			{
-				fl.trace('> xjsfl: ' + Array.prototype.slice.call(arguments).join(', '));
+				this.trace(message);
 			}
 		},
 		
@@ -1286,7 +1303,10 @@
 								var ext		= uri.match(/(\w+)$/)[1];
 	
 							// debug
-								xjsfl.output.trace('loading "' + path + '"');
+								if(xjsfl.loading)
+								{
+									xjsfl.output.log('xjsfl.file.load', 'loading "' + path + '"');
+								}
 								
 							// flag
 								xjsfl.file.stack.push(uri);
@@ -1588,8 +1608,8 @@
 				// debug
 					//xjsfl.output.trace('setting environment variables...');
 				
-				// variables
-					scope.dom		= fl.getDocumentDOM();
+				// dom getter
+					scope.__defineGetter__( 'dom', function(){ return fl.getDocumentDOM(); } );
 					
 				// functions
 					scope.trace		= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
@@ -1601,7 +1621,7 @@
 				// classes
 					xjsfl.classes.restore(scope);
 					
-				// flag xJSFL initialized by setting a scope-level variable
+				// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 					scope.xJSFL		= xjsfl;
 			}
 			
