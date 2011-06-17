@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <dialog id="dialog" title="" buttons="accept,cancel">
 	
 	<grid>
@@ -16,16 +15,14 @@
 	
 	<scripts id="scripts">
 		
-		<script id="scriptInitialize">
-			
-		</script>
-		
 		<script id="scriptUser">
 	
 		</script>
 		
+		<script id="scriptInitialize">
+			xjsfl.ui.current.handleEvent('initialize');
+		</script>
+		
 	</scripts>
 	
-	<!--<separator />-->
-
 </dialog>
