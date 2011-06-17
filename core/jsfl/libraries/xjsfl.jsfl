@@ -52,18 +52,6 @@
 			{
 				return '[class xJSFL]';
 			}
-			
-		// reload
-			/**
-			 * Re-runs the xJSFL loader to reload all classes from disk
-			 */
-			xjsfl.reload = function()
-			{
-				if( ! xjsfl.loading)
-				{
-					fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
-				}
-			}
 	
 		// document check function
 			xjsfl.__defineGetter__
@@ -707,7 +695,7 @@
 		},
 		
 		/**
-		 * Parse any string into a real datatype
+		 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, Array notation, Object notation, JSON, Date, undefined, null
 		 * @param	value	{String}	The input value, usually a string
 		 * @param	trim	{Boolean}	An optional flag to trim the string, on by default
 		 * @returns		
@@ -715,39 +703,49 @@
 		parseValue:function(value, trim)
 		{
 			// trim
-				if(trim !== false)
-				{
-					value = xjsfl.utils.trim(value);
-				}
+				value = trim !== false ? xjsfl.utils.trim(value) : value;
 				
-			// number
-				if(/^[\d\.]+$/.test(value))
-				{
+			// undefined
+				if(value == 'undefined')
+					return undefined;
+				
+			// null
+				if(value == 'null' || value == '')
+					return null;
+				
+			// Number
+				if(/^(\d+|\d+\.\d+|\.\d+)$/.test(value))
 					return parseFloat(value);
-				}
 				
-			// boolean
-				else if(/^true|false$/.test(value))
-				{
+			// Boolean
+				if(/^true|false$/i.test(value))
 					return value === 'true' ? true : false;
-				}
+				
+			// Hexadecimal String / Number
+				if(/^(#|0x)[0-9A-F]{6}$/i.test(value))
+					return parseInt(value[0] == '#' ? value.substr(1) : value, 16);
 				
 			// XML
-				else if(/^<(\w+)[\s\S]+<\/\1>$/g.test(value))
-				{
+				if(/^<(\w+)\b[\s\S]*(<\/\1>|\/>)$/.test(value))
 					return new XML(value);
-				}
 				
-			// array notation
-				else if(/^\[.+\]$/g.test(value))
-				{
+			// Array notation
+				if(/^\[.+\]$/.test(value))
 					return eval(value);
-				}
 				
-			// json
-				//TODO include a JSON library and add support here
+			// Object notation
+				if(/^{[a-z]\w*:.+}$/i.test(value))
+					return eval('(' + value + ')');
 				
-			// default
+			// JSON
+				if(/^{"[a-z]\w*":.+}$/i.test(value))
+					return JSON.parse(value);
+				
+			// Date
+				if( ! isNaN(Date.parse(value)))
+					return new Date(value);
+					
+			// String
 				return value;
 		},
 		
@@ -1548,8 +1546,6 @@
 		}
 	}
 	
-	xjsfl.ui.clear();
-
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -1565,9 +1561,20 @@
 // Initialize
 	
 	/**
-	 * Extracts key variables / objects / functions to global scope for convenience
-	 * @param	scope	{Object}	The scope into which teh framework shoudl be extracted
-	 * @param	force	{Boolean}	An optional Boolean to re-extract the framework, even if already extracted
+	 * Reload the framework from disk
+	 */
+	xjsfl.reload = function()
+	{
+		if( ! xjsfl.loading)
+		{
+			fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
+		}
+	}
+
+	/**
+	 * Initialize the environment by extracting variables / objects / functions to global scope
+	 * @param	scope	{Object}	The scope into which the framework should be extracted
+	 * @param	force	{Boolean}	An optional Boolean to force extraction of the framework, even if already extracted
 	 * @returns		
 	 */
 	xjsfl.init = function(scope, force)
@@ -1575,7 +1582,7 @@
 		// default to window
 			scope = scope || window;
 			
-		// initialize only if xJSFL variable is not yet defined, or force is set as true
+		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined, or force is set as true
 			if( ! scope.xJSFL || force)
 			{
 				// debug
@@ -1597,9 +1604,10 @@
 				// flag xJSFL initialized by setting a scope-level variable
 					scope.xJSFL		= xjsfl;
 			}
+			
+		// debug
 			else
 			{
 				//xjsfl.output.trace('already initialized...');
 			}
 	}
-	
