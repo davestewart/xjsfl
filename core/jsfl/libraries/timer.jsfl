@@ -48,12 +48,12 @@
 				
 				start:function(name)
 				{
-					Timer.instance = new Timer(name).start();
+					Timer.instance = new Timer(name || 'Default').start();
 				},
 				
-				stop:function(print)
+				stop:function()
 				{
-					Timer.instance.stop(print);
+					Timer.instance.stop(true);
 				},
 				
 				format:function(ms, precision)
