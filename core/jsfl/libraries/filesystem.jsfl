@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██ ██       ██████              ██                  ██████ ██    ██              ██   
 //  ██        ██       ██                  ██                  ██  ██ ██                    ██   
@@ -10,10 +10,10 @@
 //                               ██                                         ██                   
 //                            █████                                       ████                   
 //
-// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // FileSystemObject - Base FileSystem class for Folder and File classes
 
-	// -----------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------
 	// constructor and inheritance
 
 		/**
@@ -38,22 +38,21 @@
 		}
 		
 	
-	// -----------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------
 	// prototype
 
 		FileSystemObject.prototype =
 		{
 			
-			// -----------------------------------------------------------------------------------------------
+			// -------------------------------------------------------------------------------------------------------------------
 			// properties
 
 				/**
 				 * @type {String} The uri-formatted string to the item
 				 */
 				uri:null,
-				
 			
-			// -----------------------------------------------------------------------------------------------
+			// -------------------------------------------------------------------------------------------------------------------
 			// methods
 		
 				/**
@@ -107,7 +106,7 @@
 				},
 				
 				
-			// -----------------------------------------------------------------------------------------------
+			// -------------------------------------------------------------------------------------------------------------------
 			// accessors
 		
 				/**
@@ -125,12 +124,12 @@
 				/**
 				 * @type {Number} The number of seconds that have elapsed between January 1, 1970 and the time the file or folder was created, or "00000000" if the file or folder doesn’t exist
 				 */
-				get created(){ return parseInt(FLfile.getCreationDate(this.uri), 16) },
+				get created(){ var num = parseInt(FLfile.getCreationDate(this.uri), 16); return num ? num : null; },
 		
 				/**
 				 * @type {Number} The number of seconds that have elapsed between January 1, 1970 and the time the file or folder was last modified, or "00000000" if the file or folder doesn’t exist
 				 */
-				get modified(){ return parseInt(FLfile.getModificationDate(this.uri), 16) },
+				get modified(){ var num = parseInt(FLfile.getModificationDate(this.uri), 16); return num ? num : null; },
 				
 		
 				/**
@@ -174,7 +173,7 @@
 
 			
 	
-// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██    ██            
 //  ██           ██    ██            
@@ -184,11 +183,11 @@
 //  ██     ██ ██ ██ ██ ██ ██    ██   
 //  ██     █████ ██ █████ █████ ██   
 //
-// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Folder - JSFL OO representation of operating system folders
 
-	// -----------------------------------------------------------------------------------------------
-	// constructor and inheritance
+	// -------------------------------------------------------------------------------------------------------------------
+	// constructor
 
 		/**
 		 * Folder class
@@ -203,7 +202,7 @@
 				FileSystemObject.apply(this, [pathOrUri]);
 				if( ! this.exists && create)
 				{
-					FLfile.createFolder(this.uri);
+					this.create();
 				}
 		}
 		
@@ -212,161 +211,173 @@
 			return '[class Folder]';
 		}
 		
-		/**
-		 * Inheritance
-		 */
-		Folder.prototype = new FileSystemObject;
-		
-	// -----------------------------------------------------------------------------------------------
-	// methods
+	// -------------------------------------------------------------------------------------------------------------------
+	// prototype members
 
-
-		/**
-		 * reset constructor
-		 */
-		Folder.prototype.constructor = Folder;
-	
-		/**
-		 * Opens the folder in the Explorer / Finder
-		 * @returns {File} The original file
-		 */
-		Folder.prototype.open = function()
+		folder =
 		{
-			var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
-			var exec = command + " \"\" \"" +this.path+ "\""
-			FLfile.runCommandLine(exec);
-			return this;
-		}
+			
+			// -------------------------------------------------------------------------------------------------------------------
+			// methods
 		
-		/**
-		 * alias for open()
-		 */
-		Folder.prototype.reveal = Folder.prototype.open;
-		
-		/**
-		 * Calls a function on each element in the collection
-		 * @param callback {Function} A callback function to fire on each iteraction
-		 * @param itemType {String} Optionally limit the iteration to files or folders. Leave blank for all content
-		 * @returns {Array} An array of Files and/or Folders
-		 */
-		Folder.prototype.each = function(callback, scope, itemType)
-		{
-			scope = scope || window;
-			itemType = itemType || 'contents';
-			if(itemType.match(/(files|folders|contents)/))
-			{
-				var items = this[itemType];
-				if(items)
+				/**
+				 * reset constructor
+				 */
+				constructor:Folder,
+				
+				create:function()
 				{
+					FLfile.createFolder(this.uri);
+					return this;
+				},
+			
+				/**
+				 * Opens the folder in the Explorer / Finder
+				 * @returns {File} The original file
+				 */
+				open:function()
+				{
+					var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
+					var exec = command + " \"\" \"" +this.path+ "\""
+					FLfile.runCommandLine(exec);
+					return this;
+				},
+				
+				/**
+				 * alias for open()
+				 */
+				reveal:Folder.prototype.open,
+				
+				/**
+				 * Copy the folder to a new uri
+				 * @param	toUri	{String}
+				 * @returns		
+				 */
+				copy:function(toUri)
+				{
+					//TODO implemement xcopy on windows or the equivilent on a mac
+				},
+				
+				/**
+				 * Calls a function on each element in the collection
+				 * @param callback	{Function}	A callback function to fire on each iteraction
+				 * @param itemType	{String}	Optionally limit the iteration to files or folders. Leave blank for all content
+				 * @returns			{Array}		An array of Files and/or Folders
+				 */
+				each:function(callback, scope, itemType)
+				{
+					scope		= scope || window;
+					itemType	= itemType || 'contents';
+					if(itemType.match(/(files|folders|contents)/))
+					{
+						var items = this[itemType];
+						if(items)
+						{
+							for(var i = 0; i < items.length; i++)
+							{
+								callback.apply(scope, [items[i], i]);
+							}
+						}
+					}
+					else
+					{
+						fl.trace('Unknown FileSystemItem type!')
+					}
+				},
+				
+				/**
+				 * Return a filtered array of the folder's contents, matching against the filenames
+				 * @param	rx	{RegExp}	A Regular Expression or string, wildcards allowed
+				 * @returns		{Array}		An array of Filesystem objects
+				 */
+				filter:function(rx)
+				{
+					if(typeof rx === 'string')
+					{
+						rx = new RegExp(rx.replace(/\*/g, '.*'));
+					}
+					if(rx instanceof RegExp)
+					{
+						return this.contents.filter(function(e){ return rx.test(e.name); });
+					}
+					return [];
+				},
+				
+				/**
+				 * A string representation of the folder name and number of items
+				 * @returns {String} A string representation of the folder
+				 */
+				toString:function(path)
+				{
+					var num = this.contents.length;
+					return '[object Folder "' +(path ? this.path : this.name)+ '" contains ' +num+ ' item' +(num == 1 ? '' : 's' )+ ']';
+				},
+					
+			// -------------------------------------------------------------------------------------------------------------------
+			// accessors
+		
+				/**
+				 * @type {Number} The number of items in the folder
+				 */
+				get items (){ return FLfile.listFolder(this.uri).length; },
+					
+				/**
+				 * @type {Number} Synonym for items
+				 */
+				get length (){ return this.items; },
+					
+				/**
+				 * @type {Array} The folder's files and folders
+				 */
+				get contents ()
+				{
+					var uri;
+					var items = FLfile.listFolder(this.uri);
 					for(var i = 0; i < items.length; i++)
 					{
-						callback.apply(scope, [items[i], i]);
+						uri = this.uri + '/' + encodeURI(items[i]);
+						items[i] = items[i].match(/\.[^\/]+$/) ? new File(uri) : new Folder(uri);
 					}
+					return items;
+				},
+				
+				/**
+				 * @type {Array} The folder's subfolders
+				 */
+				get folders ()
+				{
+					var items = FLfile.listFolder(this.uri, "directories");
+					for(var i = 0; i < items.length; i++)
+					{
+						uri = this.uri + '/' + encodeURI(items[i]);
+						items[i] = new Folder(uri);
+					}
+					return items;
+				},
+				
+				/**
+				 * @type {Array} The folder's files
+				 */
+				get files ()
+				{
+					var items = FLfile.listFolder(this.uri, "files");
+					for(var i = 0; i < items.length; i++)
+					{
+						uri = this.uri + '/' + encodeURI(items[i]);
+						items[i] = new File(uri);
+					}
+					return items;
 				}
-			}
-			else
-			{
-				fl.trace('Unknown FileSystemItem type!')
-			}
 		}
-		
-		/**
-		 * Return a filtered array of the folder's contents, matching against the filenames
-		 * @param	rx	{RegExp}	A Regular Expression or string, wildcards allowed
-		 * @returns		{Array}		An array of Filesystem objects
-		 */
-		Folder.prototype.filter = function(rx)
-		{
-			if(typeof rx === 'string')
-			{
-				rx = new RegExp(rx.replace(/\*/g, '.*'));
-			}
-			if(rx instanceof RegExp)
-			{
-				return this.contents.filter(function(e){ return rx.test(e.name); });
-			}
-			return [];
-		}
-		
-		/**
-		 * A string representation of the folder name and number of items
-		 * @returns {String} A string representation of the folder
-		 */
-		Folder.prototype.toString = function(path)
-		{
-			return '[object Folder "' +(path ? this.path : this.name)+ '" contains ' +this.contents.length+ ' items]';
-		}
-			
-	// -----------------------------------------------------------------------------------------------
-	// getters
 
-		/**
-		 * @type {Number} The number of items in the folder
-		 */
-		Folder.prototype.__defineGetter__('items', function (){ return FLfile.listFolder(this.uri).length; } );
-			
-		/**
-		 * @type {Number} Synonym for items
-		 */
-		Folder.prototype.__defineGetter__('length', function (){ return this.items; } );
-			
-		/**
-		 * @type {Array} The folder's files and folders
-		 */
-		Folder.prototype.__defineGetter__
-		(
-			'contents',
-			function ()
-			{
-				var uri;
-				var items = FLfile.listFolder(this.uri);
-				for(var i = 0; i < items.length; i++)
-				{
-					uri = this.uri + '/' + encodeURI(items[i]);
-					items[i] = items[i].match(/\.[^\/]+$/) ? new File(uri) : new Folder(uri);
-				}
-				return items;
-			}
-		);
-		
-		/**
-		 * @type {Array} The folder's subfolders
-		 */
-		Folder.prototype.__defineGetter__
-		(
-			'folders',
-			function ()
-			{
-				var items = FLfile.listFolder(this.uri, "directories");
-				for(var i = 0; i < items.length; i++)
-				{
-					uri = this.uri + '/' + encodeURI(items[i]);
-					items[i] = new Folder(uri);
-				}
-				return items;
-			}
-		);
-		
-		/**
-		 * @type {Array} The folder's files
-		 */
-		Folder.prototype.__defineGetter__
-		(
-			'files',
-			function ()
-			{
-				var items = FLfile.listFolder(this.uri, "files");
-				for(var i = 0; i < items.length; i++)
-				{
-					uri = this.uri + '/' + encodeURI(items[i]);
-					items[i] = new File(uri);
-				}
-				return items;
-			}
-		);
+	// -------------------------------------------------------------------------------------------------------------------
+	// inheritance & assign methods
+
+		Folder.prototype = new FileSystemObject;
+		xjsfl.utils.extend(Folder.prototype, folder);
 			
 
-// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██ ██       
 //  ██        ██       
@@ -376,25 +387,24 @@
 //  ██     ██ ██ ██    
 //  ██     ██ ██ █████ 
 //
-// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // File - JSFL OO representation of operating system files
 
 
-	// -----------------------------------------------------------------------------------------------
-	// constructor and inheritance
+	// -------------------------------------------------------------------------------------------------------------------
+	// constructor
 
 		/**
 		 * File class
-		 * @param pathOrUri {String} The uri or path to the object
+		 * @param pathOrUri	{String}	The uri or path to the object
+		 * @param contents	{String}	The string contents of the file
+		 * @param create	{Boolean}	A flag to create the file immediately
 		 */
 		File = function(pathOrUri, contents, create)
 		{
 			// constructor
 				FileSystemObject.apply(this, [pathOrUri]);
 			
-			// extension
-				this.extension = this.uri.substr(this.uri.lastIndexOf('.') + 1);
-
 			// if create is specified, ensure the folder exists
 				if(create)
 				{
@@ -407,7 +417,7 @@
 				{
 					this.contents = contents;
 				}
-				else if(this.extension == 'fla' && !this.exists)
+				else if(this.extension == 'fla' && ! this.exists)
 				{
 					this.save();
 				}
@@ -418,180 +428,243 @@
 			return '[class File]';
 		}
 		
-		/**
-		 * Inheritance
-		 */
-		File.prototype = new FileSystemObject;
 		
-	// -----------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------
 	// properties
 	
-		/** 
-		 * @type {String} The file extension of the file
-		 */
-		File.prototype.extension = '';
-
-	
-	// -----------------------------------------------------------------------------------------------
-	// methods
-	
-		/**
-		 * reset constructor
-		 */
-		File.prototype.constructor = File;
-	
-		/**
-		 * Opens the file in the Flash authoring environment
-		 * @returns {File} The original file
-		 */
-		File.prototype.open = function()
+		file =
 		{
-			switch(this.extension)
-			{
-				case 'fla':
-					fl.openDocument(this.uri);
-				break;
 			
-				case 'jsfl':
-					fl.openScript(this.uri);
-				break;
+			// -------------------------------------------------------------------------------------------------------------------
+			// methods
 			
-				default:
-					// osascript -e 'tell application "flash" to open alias "Mac OS X:Users:user:myTestFile.jsfl" '
-					var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
-					var exec = command + " \"\" \"" +this.path+ "\""
-					FLfile.runCommandLine(exec);
-
-			}
-			//fl[this.extension == 'fla' ? 'openDocument' : 'openScript'](this.uri);
-			return this;
-		}
+				/**
+				 * reset constructor
+				 */
+				constructor:File,
+			
+				/**
+				 * Opens the file in the Flash authoring environment
+				 * @returns {File} The original file
+				 */
+				open:function()
+				{
+					switch(this.extension)
+					{
+						case 'fla':
+							fl.openDocument(this.uri);
+						break;
+					
+						case 'jsfl':
+							fl.openScript(this.uri);
+						break;
+					
+						default:
+							// osascript -e 'tell application "flash" to open alias "Mac OS X:Users:user:myTestFile.jsfl" '
+							var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
+							var exec = command + " \"\" \"" +this.path+ "\""
+							FLfile.runCommandLine(exec);
 		
-		/**
-		 * executes any JSFL file, or Attempts to run the file via the operating system command line if not
-		 * @returns {File} The original file
-		 */
-		File.prototype.run = function()
-		{
-			if(this.exists)
-			{
-				if(this.extension == 'jsfl')
-				{
-					fl.runScript(this.uri);
-				}
-				else
-				{
-					var path = '"' + FLfile.uriToPlatformPath(this.uri) + '"';
-					var exec = fl.version.match(/\bMAC\b/i) ? 'exec ' + path : path;
-					FLfile.runCommandLine(exec);
-				}
-				return this;
-			}
-			else
-			{
-				return undefined;
-			}
-		}
-		
-		/**
-		 * Copies the file to a new location
-		 * @param uriCopy {String} The new uri to copy the file to
-		 * @param overWrite {Boolean} Optional Boolean indicating whether the target file should be overwritten if it exists
-		 * @returns {File} A new File object
-		 */
-		File.prototype.copy = function(uriCopy, overWrite)
-		{
-			// if the path doesn't have a filename, use the existing filename
-				var rx			= /[^\/]+\.[a-z0-9]+$/i;
-				var matches		= uriCopy.match(rx);
-				var filename	= matches ? matches[0] : null;
-				if(filename == null)
-				{
-					uriCopy = uriCopy.replace(/\/*$/, '/') + this.name;
-				}
+					}
+					//fl[this.extension == 'fla' ? 'openDocument' : 'openScript'](this.uri);
+					return this;
+				},
 				
-			// remove target if file should oevrwrite
-				if(overWrite)
+				/**
+				 * executes any JSFL file, or Attempts to run the file via the operating system command line if not
+				 * @returns {File} The original file
+				 */
+				run:function()
 				{
-					FLfile.remove(uriCopy);
-				}
+					if(this.exists)
+					{
+						if(this.extension == 'jsfl')
+						{
+							fl.runScript(this.uri);
+						}
+						else
+						{
+							var path = '"' + FLfile.uriToPlatformPath(this.uri) + '"';
+							var exec = fl.version.match(/\bMAC\b/i) ? 'exec ' + path : path;
+							FLfile.runCommandLine(exec);
+						}
+						return this;
+					}
+					else
+					{
+						return undefined;
+					}
+				},
 				
-			// copy
-				if(FLfile.copy(this.uri, this.getUri(uriCopy)))
+				/**
+				 * Copies the file to a new location
+				 * @param uriCopy	{String}	The new uri to copy the file to. Can be a folder or file.
+				 * @param overWrite	{Boolean}	Optional Boolean indicating whether the target file should be overwritten if it exists
+				 * @returns			{File}		A new File object
+				 */
+				copy:function(uriCopy, overWrite)
 				{
-					return new File(uriCopy);
-				}
-				return this;
-		}
-		
-		/**
-		 * Append data to the file
-		 * @param data {String} The data to append to the file
-		 * @returns {File} The original file
-		 */
-		File.prototype.write = function(data, append)
-		{
-			FLfile.write(this.uri, (data || ''), append ? 'append' : null);
-			return this;
-		}
-		
-		/**
-		 * Saves the file
-		 * @returns {File} The original file
-		 */
-		File.prototype.save = function()
-		{
-			this.write();
-			return this;
-		}
-		
-		/**
-		 * Reveals the file, selected, in the Explorer or Finder
-		 */
-		File.prototype.reveal = function()
-		{
-			if(fl.version.indexOf('WIN') != -1)
-			{
-				var exec	= 'start %SystemRoot%\\explorer.exe /select, "' +this.path.replace(/\//g, '\\') + '"'
-			}
-			else
-			{
-				var exec = 'reveal "' +this.path+ '"';
-			}
-			FLfile.runCommandLine(exec);
-			return this;
-		}
-		
-		/**
-		 * A string representation of the file
-		 * @returns {File} A string containing the class and filename
-		 */
-		File.prototype.toString = function(path)
-		{
-			return '[object File "' +(path ? this.path : this.name)+ '"]';
-		}
+					// if the path doesn't have a filename, use the existing filename
+						var rx			= /[^\/]+\.[a-z0-9]+$/i;
+						var matches		= uriCopy.match(rx);
+						var filename	= matches ? matches[0] : null;
+						if(filename == null)
+						{
+							uriCopy = uriCopy.replace(/\/*$/, '/') + this.name;
+						}
+						uriCopy = this.getUri(uriCopy);
+						
+					// remove target if file should overwrite
+						if(overWrite)
+						{
+							FLfile.remove(uriCopy);
+						}
+						
+					// make sure the target folder exists
+						var targetFolder = new Folder(uriCopy.replace(/[^\/]+$/, ''));
+						if( ! targetFolder.exists )
+						{
+							targetFolder.create();
+						}
+						
+					// if the file exists, copy it
+						if(this.exists)
+						{
+							if(FLfile.copy(this.uri, uriCopy))
+							{
+								return new File(uriCopy);
+							}
+						}
+						
+					// if not, just write the contents of this file to the new file
+						else
+						{
+							throw new Error('The file "' +this.name+ '" must be saved before copying');
+						}
+						return this;
+				},
+				
+				/**
+				 * Append data to the file
+				 * @param data {String} The data to append to the file
+				 * @returns {File} The original file
+				 */
+				write:function(data, append)
+				{
+					FLfile.write(this.uri, (data || ''), append ? 'append' : null);
+					return this;
+				},
+				
+				/**
+				 * Saves the file
+				 * @returns {File} The original file
+				 */
+				save:function()
+				{
+					this.write();
+					return this;
+				},
+				
+				/**
+				 * Reveals the file, selected, in the Explorer or Finder
+				 * @returns {File} The original file
+				 */
+				reveal:function()
+				{
+					if(fl.version.indexOf('WIN') != -1)
+					{
+						var exec	= 'start %SystemRoot%\\explorer.exe /select, "' +this.path.replace(/\//g, '\\') + '"'
+					}
+					else
+					{
+						var exec = 'reveal "' +this.path+ '"';
+					}
+					FLfile.runCommandLine(exec);
+					return this;
+				},
+				
+				/**
+				 * Rename the file. You can optionally omit the name and just provide an extension to only rename the extension
+				 * @param	name		{String}	The new name for the file (you can omit the extension)
+				 * @param	extension	{String}	The new etension for the file
+				 * @param	overwrite	{Boolean}	
+				 * @returns				{File}		The original file
+				 */
+				rename:function(name, extension, overwrite)
+				{
+					// rename only the extension
+						if(name == null && typeof extension == 'string')
+						{
+							name = this.name.replace(/\w+$/, extension);
+						}
+						
+					// otherwise, rename the whole file
+						else if(/\.\w+$/.test(name))
+						{
+							
+						}
+						
+					// rename by making a copy, then deleting the original file
+						if(name != this.name)
+						{
+							
+						}
+				},
+				
+				/**
+				 * A string representation of the file
+				 * @param	path	{Boolean}		A flag to show the full path, not just the name
+				 * @returns {File} A string containing the class and filename
+				 */
+				toString:function(path)
+				{
+					return '[object File "' +(path ? this.path : this.name)+ '"]';
+				},
+				
+			// -------------------------------------------------------------------------------------------------------------------
+			// accessors
 			
-	// -----------------------------------------------------------------------------------------------
-	// getters
-	
-		/** 
-		 * @type {String} Get the extension of the file
-		 */
-		File.prototype.__defineGetter__('size', function (){ return FLfile.getSize(this.uri) } );
+				/** 
+				 * @type {Number} Get the size of the file
+				 */
+				get size (){ return FLfile.getSize(this.uri) },
+				
+				/** 
+				 * @type {String} get the contents of the file
+				 */
+				get contents (){ return FLfile.read(this.uri).replace(/\r\n/g, '\n') },
+				
+				/** 
+				 * @type {String} Set the contents of the file
+				 */
+				set contents (data){ return FLfile.write(this.uri, data) },
+				/** 
+				 * @type {String} The file extension of the file
+				 */
+				
+				get extension()
+				{
+					return this.uri.substr(this.uri.lastIndexOf('.') + 1);
+				},
 		
-		/** 
-		 * @type {String} get the contents of the file
-		 */
-		File.prototype.__defineGetter__('contents', function (){ return FLfile.read(this.uri).replace(/\r\n/g, '\n') } );
-		
-		/** 
-		 * @type {String} Set the contents of the file
-		 */
-		File.prototype.__defineSetter__('contents', function (data){ return FLfile.write(this.uri, data) } );
+				/** 
+				 * @type {String} The file extension of the file
+				 */
+				set extension(value)
+				{
+					return this.uri.substr(this.uri.lastIndexOf('.') + 1);
+				}
+					
+			}
+	
+	// -------------------------------------------------------------------------------------------------------------------
+	// inheritance & assign methods
+
+		File.prototype = new FileSystemObject;
+		xjsfl.utils.extend(File.prototype, file);
 	
 	
-	
-// ---------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------
 // register classes with xjsfl
 	
 	xjsfl.classes.register('FileSystemObject', FileSystemObject);
@@ -599,181 +672,186 @@
 	xjsfl.classes.register('File', File);
 
 
-// ---------------------------------------------------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------------------------------------------------------------------
 // Test code
 	
-	if( ! xjsfl.file.loading)
+	if( ! xjsfl.loading )
 	{
-		//var file = new File('c:/temp/temp.txt')
+		// initialize
 		
+			xjsfl.init(this);
+			clear();
 		
-		//alert(file.parent.name)
-			
-		/*
-			
+		// --------------------------------------------------------------------------------
+		// create a new file and inspect its properties
 		
-		//var folder = new Folder('c:/temp/this/is/a/new/folder/', true);
-		//var folder = new Folder('c:');
-		
-		var file = new File('c:/temp/this/is/a/new/file.jsfl', 'Hello!', true)
-		
-		fl.trace(folder)
-		fl.trace(folder.parent)
-		
-		fl.trace(file)
-		fl.trace(file.parent)
-		
-		//folder.remove();
-		//fl.trace(folder.uri)
-		*/
-			
-			
-		//alert(new Date(new File('c:/temp/test.jsfl').modified))
-		
-		new File('c:/temp/test.jsfl').copy('c:/temp/this')
-	}
-	
-		
-	if( ! xjsfl.file.loading)
-	{
-		
-		fl.outputPanel.clear();
-		trace = fl.trace	
-	
-	
-		trace = fl.trace
-		clear = fl.outputPanel.clear
-		clear();
-		
-		//var folder = new Folder('c:/temp/a new folder');
-		//var file = new File('c:/temp/some file.as', 'What\'s going on?!').open();
-		
-		
-		var file = new File('z:/test.fla').open();
-		/*
-		var file = new File('z:/test.txt', 'Some content')
-			.copy('z:/test2.as')
-			.write(' and some more', true)
-			.open();
-			
-		 */
-		/*
-		var indent = '';
-		function list(e, i)
-		{
-			trace(indent + '/' + e.name);
-			if(e instanceof Folder)
+			if(0)
 			{
-				folders ++;
-				indent += '	';
-				e.each(list);
-				indent = indent.substring(1);
+				var file	= new File('c:/temp/this/is/a/new/file.jsfl', 'Hello!', true)
+				var folder	= file.parent;
+				
+				fl.trace('file: ' + file.toString(true))
+				fl.trace('file contents: ' + file.contents)
+				
+				fl.trace('parent: ' + folder)
+				fl.trace('grandparent: ' + folder.parent)
+				
+				//folder.remove();
+				//fl.trace(folder.uri)
 			}
-			else
+		
+		// --------------------------------------------------------------------------------
+		// create a new file, copy it, and inspect creation dates
+		
+			if(0)
 			{
-				files ++;
+				var file	= new File('c:/temp/test.jsfl').save()
+				var copy	= file.copy('c:/temp/a/new/folder/')
+				
+				fl.trace('file: ' + file.createdDate);
+				fl.trace('copy: ' + copy.createdDate);
 			}
-		}
 		
-		$.output.recurse(root, function(e){trace(e)}, function(e){return e instanceof Folder})
+		// --------------------------------------------------------------------------------
+		// create and open a new AS file
 		
-		var files = 0;
-		var folders = 0;
-		var d = new Date;
-		
-		var folder = new Folder('c:/temp');
-		//folder = new Folder('C:/ProgramData/Adobe');
-		list(folder)
-		
-		trace([folders, files, new Date - d])
-		*/
-		
-		
-		/*
-		$$ =
-		{
-			output:
+			if(0)
 			{
-				hier:indent = function(value, level)
+				var file = new File('c:/temp/test.fla').open();
+				var file = new File('c:/temp/some file.as', '// this is a new AS file').open();
+			}
+		
+		// --------------------------------------------------------------------------------
+		// create, copy, write to and open a text file
+		
+			if(0)
+			{
+				var file = new File('c:/temp/test.txt', 'Some content')
+					.copy('c:/temp/test copy.txt')
+					.write(' and some more', true)
+					.open();
+			}
+		
+		// --------------------------------------------------------------------------------
+		// open / create a word document
+		
+			if(0)
+			{
+				var file = new File('c:/temp/document.doc', 'Hello!', true).open();
+			}
+		
+		// --------------------------------------------------------------------------------
+		// list the contents of folder
+		
+			if(0)
+			{
+				var folder		= new Folder('c:/temp');
+				for each(var item in folder.contents)
 				{
-					fl.trace(Array(level + 1).join('\t') + value);
+					trace(item)
 				}
 			}
-		}
-	
-		function list(e)
-		{
-			indent(e.name, i)
-			if(e instanceof Folder)
-			{
-				i++;
-				e.each(list);
-				i--;
-			}
-		}
 		
-		var i = 0;
-		list(new Folder('c:/temp'))
-	
-		//alert(folder.name)
-		*/
+		// --------------------------------------------------------------------------------
+		// list the filtered contents of folder
+		
+			if(0)
+			{
+				var files = new Folder('c:/temp').filter(/\.txt$/)
+				for each(var item in files)
+				{
+					trace(item);
+				}
+			}
+		
+		// --------------------------------------------------------------------------------
+		// iterate over the contents of a folder
+		
+			if(0)
+			{
+				new Folder('c:/temp').each(function(e, i){trace(i, e)});
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Recursively list the contents of a folder
+		
+			if(0)
+			{
+				// variables
+					var indent = '';
 					
-		//function l(e){indent(e.name,i);if(e instanceof Folder){i++;e.each(l);i--}}var i=0;l(new Folder('c:/temp/'))
-		//function l(e){$$.output.hier(e.name,i);if(e.isFolder){i++;e.each(l);i--}}i=0;l(new Folder('c:/temp'))
-		
-		/*
-		var folder = new Folder('file:///c|/temp/hello/there/mr');
-		
-		//f.contents = 'Have a nice day!';
-		//alert(folder.contents)
-		//f.remove(true)
-		
-		file.open()
-		*/
-	
-	
-		//var n='\t';function l(e){trace(n+'/'+e.name);if(e instanceof Folder){ n+='\t';e.each(l);n=n.substr(1);}}var f=new Folder('c:/temp');l(f)
-		
-	}
-	
-	/*
-		function recurse(root, fnChild, fnTestChildren)
-		{
-			var indent = '';
-			var level = 0;
-			
-			function list(e, i)
-			{
-				fnChild(e, i, level, indent);
-				if(fnTestChildren ? fnTestChildren(e, level) : e.length)
-				{
-					level ++;
-					indent += '	';
-					e.each(list);
-					indent = indent.substring(1);
-					level--;
-				}
+				// function
+					function list(e, i)
+					{
+						trace(indent + '/' + e.name);
+						if(e instanceof Folder)
+						{
+							folders ++;
+							indent += '	';
+							e.each(list);
+							indent = indent.substring(1);
+						}
+						else
+						{
+							files ++;
+						}
+					}
+					
+				// do it!
 			}
-			
-			list(root);
-			
-		}
 		
-		recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
-		recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)})
-	*/
+		// --------------------------------------------------------------------------------
+		// recursively list the contents of a folder
 		
-	/*	
-	var file = new File('c:/temp/document.doc');
-	
-	file.open()
+			if(0)
+			{
+				function recurse(root, fnChild, fnTestChildren)
+				{
+					var indent = '';
+					var level = 0;
+					
+					function list(e, i)
+					{
+						fnChild(e, i, level, indent);
+						if(fnTestChildren ? fnTestChildren(e, level) : e.length)
+						{
+							level ++;
+							indent += '	';
+							e.each(list);
+							indent = indent.substring(1);
+							level--;
+						}
+					}
+					
+					list(root);
+					
+				}
+				
+				recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
+			}
+				
+		// --------------------------------------------------------------------------------
+		// Same function, but tweetable (136 characters)
 		
-	var n = '\t';function l(e){ trace(n+'/'+e.name); if(e instanceof Folder){ n+= '\t'; e.each(l); n = n.substr(1);} } var f = new Folder('E:/02 - Current Jobs/xJSFL/xJSFL/user/jsfl/scripts');l(f)
-	
-	var f = new Folder('c:/temp/');
-	trace(f)
-	
-	var f = new File('c:/temp/test.txt');
-	trace(f)
-	*/
+			if(0)
+			{
+				var n='\t';function l(e){trace(n+'/'+e.name);if(e instanceof Folder){ n+='\t';e.each(l);n=n.substr(1);}}var f=new Folder('c:/temp');l(f)
+			}
 
+		// --------------------------------------------------------------------------------
+		// Same function, but using the Data library
+		
+			//TODO - implemement Data.recurse properly!
+		
+			if(0)
+			{
+				var folder			= new Folder('c:/temp');
+				var fileCallback	= function(e){ trace(e) };
+				var folderCallback	= function(e){ return e instanceof Folder };
+				
+				Data.recurse(folder, fileCallback, folderCallback);
+			}
+
+			
+	}
