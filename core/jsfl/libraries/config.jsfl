@@ -29,7 +29,7 @@
 			// uri
 				type		= type || 'settings';
 				path		= path || xjsfl.uri + 'user/config/';
-				this.uri	= path + escape(type + '/' + name) + '.xml';
+				this.uri	= path + escape(type.toLowerCase() + '/' + name.toLowerCase()) + '.xml';
 				
 			// xml
 				this.xml	= new XML('<' +type+ '/>');
