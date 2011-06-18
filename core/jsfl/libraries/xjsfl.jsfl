@@ -578,19 +578,26 @@
 		},
 		
 		/**
-		 * Get an object's keys
+		 * Get an object's keys, or all the keys from an Array of Objects
 		 * 
-		 * @param	obj	{Object}	Any object with iterable properties
+		 * @param	obj	{Object}	Any object with iterable properties, or an Array of objects
 		 * @returns		{Array}		An array of key names
 		 */
 		getKeys:function(obj)
 		{
-			var keys = [];
-			for(var i in obj)
+			var keys	= [];
+			var arr		= obj.constructor === Array ? obj : [obj];
+			for(var i = 0; i < arr.length; i++)
 			{
-				keys.push(i);
+				for(var key in arr[i])
+				{
+					if(keys.indexOf(key) == -1)
+					{
+						keys.push(key);
+					}
+				}
 			}
-			return keys;
+			return keys
 		},
 		
 		/**
@@ -1098,7 +1105,7 @@
 							return FLfile.exists(uri) ? uri : null;
 						break;
 							
-						// for scripts, return the last file found, from: core, mods, user (jsfl)
+						// for scripts, return the last file found, from: core, modules, user (jsfl)
 						case 'script':
 						case 'scripts':
 						case 'jsfl':
@@ -1107,7 +1114,7 @@
 							which	= -1;
 						break;
 						
-						// for libraries, return all found files, in order: core, mods, user (jsfl)
+						// for libraries, return all found files, in order: core, modules, user (jsfl)
 						case 'lib':
 						case 'libs':
 						case 'library':
@@ -1117,7 +1124,7 @@
 							which	= 0;
 						break;
 						
-						// for data or settings, return the last file found, from: core, mods, user (xml)
+						// for data or settings, return the last file found, from: core, modules, user (xml)
 						case 'data':
 						case 'settings':
 							path	= 'config/' + type + '/' + name;
@@ -1125,14 +1132,14 @@
 							which	= -1;
 						break;
 						
-						// for templates, return the last file found, from: core, mods, user (txt, or supplied extension)
+						// for templates, return the last file found, from: core, modules, user (txt, or supplied extension)
 						case 'template':
 							path	= 'config/templates/' + name;
 							ext		= '.txt';
 							which	= -1;
 						break;
 					
-						// otherwise, return all files found, from: core, mods, user
+						// otherwise, return all files found, from: core, modules, user
 						default:
 							path	= type.replace(/\/+$/g, '') + '/' + name;
 							ext		= '';
@@ -1606,7 +1613,7 @@
 			if( ! scope.xJSFL || force)
 			{
 				// debug
-					//xjsfl.output.trace('setting environment variables...');
+					xjsfl.output.trace('setting environment variables...');
 				
 				// dom getter
 					scope.__defineGetter__( 'dom', function(){ return fl.getDocumentDOM(); } );
@@ -1631,3 +1638,4 @@
 				//xjsfl.output.trace('already initialized...');
 			}
 	}
+
