@@ -682,13 +682,15 @@
 		
 			xjsfl.init(this);
 			clear();
+			
+			var temp = 'c:/temp/';	// Mac users, change this!
 		
 		// --------------------------------------------------------------------------------
 		// create a new file and inspect its properties
 		
 			if(0)
 			{
-				var file	= new File('c:/temp/this/is/a/new/file.jsfl', 'Hello!', true)
+				var file	= new File(temp + 'this/is/a/new/file.jsfl', 'Hello!', true)
 				var folder	= file.parent;
 				
 				fl.trace('file: ' + file.toString(true))
@@ -706,8 +708,8 @@
 		
 			if(0)
 			{
-				var file	= new File('c:/temp/test.jsfl').save()
-				var copy	= file.copy('c:/temp/a/new/folder/')
+				var file	= new File(temp + 'test.jsfl').save()
+				var copy	= file.copy(temp + 'a/new/folder/')
 				
 				fl.trace('file: ' + file.createdDate);
 				fl.trace('copy: ' + copy.createdDate);
@@ -718,8 +720,8 @@
 		
 			if(0)
 			{
-				var file = new File('c:/temp/test.fla').open();
-				var file = new File('c:/temp/some file.as', '// this is a new AS file').open();
+				var file = new File(temp + 'test.fla').open();
+				var file = new File(temp + 'some file.as', '// this is a new AS file').open();
 			}
 		
 		// --------------------------------------------------------------------------------
@@ -727,8 +729,8 @@
 		
 			if(0)
 			{
-				var file = new File('c:/temp/test.txt', 'Some content')
-					.copy('c:/temp/test copy.txt')
+				var file = new File(temp + 'test.txt', 'Some content')
+					.copy(temp + 'test copy.txt')
 					.write(' and some more', true)
 					.open();
 			}
@@ -738,7 +740,7 @@
 		
 			if(0)
 			{
-				var file = new File('c:/temp/document.doc', 'Hello!', true).open();
+				var file = new File(temp + 'document.doc', 'Hello!', true).open();
 			}
 		
 		// --------------------------------------------------------------------------------
@@ -828,7 +830,7 @@
 					
 				}
 				
-				recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
+				recurse(new Folder(temp), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
 			}
 				
 		// --------------------------------------------------------------------------------
