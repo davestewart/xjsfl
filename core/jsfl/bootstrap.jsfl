@@ -26,7 +26,10 @@
 					'output',
 					'class',
 					'filesystem',
+					
+				// datatypes
 					'xml',
+					//'json',
 					
 				// elements
 					'collections',
