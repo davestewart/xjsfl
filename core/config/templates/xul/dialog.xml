@@ -4,7 +4,7 @@
 		
 		<grid>
 			
-			<columns>
+			<columns id="columns">
 				<column flex="1" />
 				<column flex="2" />
 			</columns>
