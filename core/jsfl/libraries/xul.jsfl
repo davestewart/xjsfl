@@ -16,13 +16,13 @@
 
 		/**
 		 * XUL constructor
-		 * @param	props	
-		 * @param	accept	
-		 * @param	cancel	
+		 * @param	title	{String}	
 		 * @returns		
 		 */
 		function XUL(title)
 		{
+			//TODO Allow a file: uri to be passed into the constructor
+			
 			// check for dom
 				var dom = fl.getDocumentDOM();
 				if( ! dom)
@@ -45,13 +45,13 @@
 						}
 						
 					// properties
-						this.controls	= [];
+						this.controls	= {};
 						this.settings	= {};
 						this.events		= {};
 						this.rules		= {};
-						this.widths		= {left:80, right:150}, 
+						this.columns	= [80, 150], 
 						this.error		= null;
-						//TODO implement right widths, and ensure appropriate elements flex to fill
+						//TODO columns flex properly, and ensure appropriate elements flex to fill
 						
 					// set title if provided
 						this.setTitle(title || 'xJSFL');
@@ -68,8 +68,8 @@
 	
 		/**
 		 * Static convenience method to instantiate and return a new chainable XUL instance
-		 * @param	props	{String}	
-		 * @param	props	{Function}	
+		 * @param	props	{String}	An optional shorthand String
+		 * @param	props	{Function}	An optional Function
 		 * @returns			{XUL}		
 		 */
 		XUL.factory = function(props)
@@ -86,7 +86,7 @@
 				var xul = new XUL();
 				
 			// populate
-				if(xul.xml && props && props != null && typeof props != 'undefined')
+				if(xul.xml && props)
 				{
 					// if props is a function, set the dialog title to the function name, and create textfields per function argument
 						if(typeof props == 'function')
@@ -111,14 +111,17 @@
 						{
 							xul.add(props);
 						}
-				// return
-					return xul;				
-			}
-			return null;
+						
+					// return
+						return xul;				
+				}
+				
+			// return
+				return xul;
 		}
 		
 		/**
-		 * Static convenience method to create and show interface in one call
+		 * Static convenience method to create and show interface in one call, returning any submitted values
 		 * @param	props	{String}	
 		 * @param	props	{Function}	
 		 * @param	props	{Object}	
@@ -129,7 +132,7 @@
 		XUL.create = function(props, accept, cancel)
 		{
 			// build new XUL
-				var xul = XUL.factory(props)
+				var xul = XUL.factory(props);
 				
 			// show
 				if(xul && xjsfl.utils.getKeys(xul.controls).length > 0)
@@ -166,11 +169,11 @@
 					built:		false,
 					
 				// properties
-					controls:	[],
+					controls:	{},
 					settings:	{},
 					events:		{},
 					rules:		{},
-					widths:		{left:100, right:200},
+					columns:	[100, 200],
 					
 				// template
 					content:	'',
@@ -193,8 +196,7 @@
 							var control = this.controls[id];
 							if(control.enumerable)
 							{
-								var value = control.getValue(this.settings);
-								values[id] = value;
+								values[id] = control.value;
 							}
 						}
 						return values;
@@ -230,7 +232,7 @@
 							var element			= xml[type][0];
 							
 						// label
-							id					= id || label.toLowerCase().replace(/[^a-z0-9]/g, '');
+							id					= id || label.split(/[^\d\w ]/)[0].toLowerCase().replace(/[^a-z0-9]/g, '');
 							if(xml.label.length())
 							{
 								xml.label.@value = label ? label + ':' : '';
@@ -271,12 +273,12 @@
 							{
 								this._addEvents(id, events);
 							}
-
+							
 						// add handler proxies
 							xml = this._addHandlers(type, xml);
 								
 						// set control
-							this.controls[id] = new Control(id, type, attributes ? attributes.value : '', xml);
+							this.controls[id] = new Control(id, type, this, xml); // attributes ? attributes.value : ''
 							this.addXML(xml, false, true);
 							
 						// debug
@@ -770,7 +772,8 @@
 					{
 						// build xml
 							var xml				= XUL.templates.label.copy();
-							xml.@width			= this.widths.left + this.widths.right;
+							var sum				= 0; this.columns.forEach( function(e){sum += e} );
+							xml.@width			= sum;
 							
 						// add xml
 							this.addXML(xml);
@@ -849,18 +852,34 @@
 					/**
 					 * Add (or actually, set) a event callback for an id
 					 * @param	id			{String}	The id of the element to register the callback for
-					 * @param	type		{String}	The type of callback. Values can be create, change, setfocus, command
+					 * @param	type		{String}	The type of callback. Values can be create, change, setfocus, command. Separate multiple types with spaces or commas if required
 					 * @param	callback	{Function}	The callback to call. Format must be function(xmlui, xul, object, value, type, id){ ... }
 					 * @returns		
 					 */
 					addEvent:function(id, type, callback)
 					{
-						// add event
-							if(this.events[type] == null)
+						// trim
+							type = xjsfl.utils.trim(type);
+						
+						// handle multiple events
+							if(/\W+/.test(type))
 							{
-								this.events[type] = {};
+								var types = type.split(/\W+/g);
+								for each(type in types)
+								{
+									this.addEvent(id, type, callback);
+								}
 							}
-							this.events[type][id] = callback;
+							
+						// add event
+							else
+							{
+								if(this.events[type] == null)
+								{
+									this.events[type] = {};
+								}
+								this.events[type][id] = callback;								
+							}
 							
 						// return
 							return this;
@@ -924,6 +943,10 @@
 												control = control.substring(0, matches[1].length - 1);
 											}
 											
+										//TODO update this to work with xjsfl.utils.parseValue
+											
+											// Output.inspect([control, label, value])
+											
 										// compound value
 											if(/^[\[{]/.test(value))
 											{
@@ -960,6 +983,8 @@
 												// re-assign values
 													value = values;
 											}
+											
+											//Output.inspect(label, control)
 											
 										// add control
 											switch(control)
@@ -1052,8 +1077,8 @@
 														this.setWidths(parseInt(label));
 													break;
 											
-													case 'widths':
-														//this.setWidths(parseInt(label));
+													case 'columns':
+														this.setColumns(xjsfl.utils.parseValue(label));
 													break;
 											
 											default:
@@ -1078,7 +1103,7 @@
 				{
 					delete this.xml..content.*
 					this.xml..content.@id = 'controls'
-					this.content = xml;
+					this.content = this._parseUserXML(new XMLList(xml));
 					return this;
 				},
 			
@@ -1091,16 +1116,14 @@
 					return this;
 				},
 				
-				setWidths:function(left, right)
+				/**
+				 * 
+				 * @param	columns	
+				 * @returns		
+				 */
+				setColumns:function(columns)
 				{
-					if(right == null)
-					{
-						this.widths.right = left;
-					}
-					else
-					{
-						this.widths = {left:left, right:right};
-					}
+					this.columns = columns;
 					return this;
 				},
 				
@@ -1173,17 +1196,26 @@
 									}
 								break;
 							
-							// set default / restore last value
+							// create
 								case 'create':
-									if(this.settings)
-									{
-										var value = this.settings[id];
-										if(value !== undefined)
+									
+									// assign element to original control on creation
+										var control = this.controls[id];
+										if(control.element == null)
 										{
-											fl.xmlui.set(id, value);
+											control.element = fl.xmlui.getControlItemElement(id);
 										}
-									}
-								//break;
+
+									// set default / restore last value
+										if(this.settings)
+										{
+											var value = this.settings[id];
+											if(value !== undefined)
+											{
+												control.value = value;
+												//fl.xmlui.set(id, value);
+											}
+										}
 							
 							// change, command, setfocus
 								case 'change':
@@ -1197,7 +1229,7 @@
 											//TODO Fix problem of colors disappearing when these commands are outside of this if() & check if adding callbacks screws it up too
 											object	= fl.xmlui.getControlItemElement(id);
 											value	= fl.xmlui.get(id);
-											callback(fl.xmlui, this, object, value, id, type)
+											callback(this.controls[id], this, fl.xmlui, type)
 										}
 									}
 								break;
@@ -1243,7 +1275,7 @@
 									// set column widths
 										for each(var label in this.xml..row.label)
 										{
-											label.@width = this.widths.left;
+											label.@width = this.columns[0];
 										}
 			
 									// replace separators
@@ -1319,7 +1351,7 @@
 										// loop over controls and request validation
 											for each(var control in this.controls)
 											{
-												var error = control.validate(this.settings);
+												var error = control.validate();
 												if(error != null)
 												{
 													this.error = error;
@@ -1380,13 +1412,13 @@
 				},
 				
 				/**
-				 * Returns the String representation of the Template
+				 * Returns a String representation of the dialog
 				 * @returns		
 				 * @author	Dave Stewart	
 				 */
 				toString:function()
 				{
-					return '[object XUL]';
+					return '[object XUL controls:' +xjsfl.utils.getKeys(this.controls).length+ ']';
 				}
 		}
 		
@@ -1395,18 +1427,28 @@
 	// Supporting classes
 	
 		/**
-		 * Control class to hold information about instantiated control elements
+		 * An OO wrapper for XMLUI UI elements
 		 * @param	type	{String}	The type (tag name) of the control item
 		 * @param	value	{Value}		The original value the control contains
 		 * @param	xml		{XML}		The XML of the control, that will be added to the UI
 		 * @returns		
 		 */
-		function Control(id, type, value, xml)
+		function Control(id, type, xul, xml)
 		{
 			// properties
 				this.id			= id;
 				this.type		= type;
-				this.value		= value;
+				
+			// priviliged method to get XUL, so we don't suffer from recursion
+				this.getXUL = function()
+				{
+					return xul;
+				}
+				
+				this.getXML = function()
+				{
+					return xml;
+				}
 				
 			// flags
 				this.enumerable	= ! /^button|flash$/.test(type);
@@ -1417,24 +1459,24 @@
 			// properties
 				id:				'',
 				type:			'',
-				value:			'',
-				xml:			null,
 				
 			// flags
 				enumerable:		true,
 				
-			// getters / setters
-				getValue:function(settings)
+			// accessors
+			
+				get value()
 				{
 					// grab the current (String) value for the control
-						var value = settings[this.id];
+						var settings	= this.getXUL().settings;
+						var value		= settings[this.id];
 						
 					// parse to a real value
 						switch(this.type)
 						{
 							case 'checkboxgroup':
 								var arr		= [];
-								var items	= this.xml..checkbox;
+								var items	= this.getXML()..checkbox;
 								for each(var item in items)
 								{
 									var id		= item.@id.toString();
@@ -1469,10 +1511,27 @@
 						return value == '' ? null : value;
 				},
 				
-				//TODO Implement proper validation using rules, and the Validation class
-				validate:function(settings)
+				set value(value)
 				{
-					var value = this.getValue(settings);
+					fl.xmlui.set(this.id, value);
+				},
+				
+				get currentValue()
+				{
+					return xjsfl.utils.parseValue(fl.xmlui.get(this.id));
+				},
+				
+				get element()
+				{
+					return fl.xmlui.getControlItemElement(this.id);
+				},
+				
+			// validation
+			
+				//TODO Implement proper validation using rules, and the Validation class
+				validate:function()
+				{
+					var value = this.value;
 					switch(this.type)
 					{
 						case 'textbox':
@@ -1487,7 +1546,7 @@
 				
 				toString:function()
 				{
-					return '[object Control id:"'+this.id+'" type:"'+this.type+'"]';
+					return '[object Control id:"'+this.id+'" type:"'+this.type+'" value="' +this.value+ '"]';
 				}
 				
 		}
@@ -1498,157 +1557,221 @@
 		xjsfl.classes.register('XUL', XUL);
 		
 
-// ---------------------------------------------------------------------------------------------------------------
-// test code
-	
+
+
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Test code
 	
 	if( ! xjsfl.loading )
 	{
 		// initialize
 		
-			xjsfl.init(this)
+			xjsfl.init(this);
 			clear();
-			
-			function callback(xmlui, xul, element, value, id, type){Output.inspect({id:id, type:type, value:value}, 'Callback')}
-			
-			/*
-			var xul = XUL.factory();//'button:export=Export,button:import=Import,xml:<hbox><spacer /><button /><checkbox /></hbox>');
-			xul
-				//.addButton('Import', null, null, {command:callback})
-				//.addButton('Export', null, null, {command:callback})
-				//.addButton('Test', null, null, {command:callback})
-				//.addXML('<spacer /><textbox id="text" width="300" value="This is some text" />')
-				//.addTextbox('Temp', 'text', {value:'Test', multiline:true})
-				.addXML('<spacer /><textbox id="text" width="300" value="This is some text" />')
-				.addTextbox('Temp', 'temp', {value:'Test', multiline:true})
+			try{
+		
+		// --------------------------------------------------------------------------------
+		// A basic dialog, with basic validation
+		
+			if(0)
+			{
+				var xul = new XUL('Basic dialog');
+				xul
+					.addTextbox('Prompt')
+					.show();
+			}
+		
+		// --------------------------------------------------------------------------------
+		// XUL.factory() syntax
+		
+			if(0)
+			{
+				XUL.factory()
+					.setTitle('XUL.factory()')
+					.addTextbox('Prompt')
+					.show();
+			}
+		// --------------------------------------------------------------------------------
+		// A basic dialog with an accept and cancel callback
+		
+			if(0)
+			{
+				function accept(a, b)
+				{
+					trace('The product of the values is ' + a * b);
+				}
 				
-				//.addEvent('text', 'change', callback)
-				//.addEvent('text', 'create', callback)
-				//.addEvent('temp', 'change', callback)
+				function cancel()
+				{
+					trace('We will never know the sum of those numbers!')
+				}
 				
-				.show()
-				*/
+				XUL.factory()
+					.setTitle('Callbacks')
+					.addPopupslider('Value 1', 'value1', Math.floor(Math.random() * 100))
+					.addPopupslider('Value 2', 'value2', Math.floor(Math.random() * 100))
+					.show(accept, cancel);
+			}
+		
+		
+		// --------------------------------------------------------------------------------
+		// Static create method using shorthand declaration
+		
+			if(0)
+			{
+				function accept(a, b, c)
+				{
+					trace([a,b,c]);
+				}
+				
+				XUL.create('One,Two,Three', accept);
 
+			}
 		
-		// callback functions
+		// --------------------------------------------------------------------------------
+		// Static create method with advanced shorthand declaration
 		
-			function test(x, y, z)
+			if(0)
 			{
-				trace(x * y * z)
-			}
-			
-			function color(r, g, b)
-			{
-				trace('#' + r.toString(16) + g.toString(16) + b.toString(16))
-			}
-			
-			function fail()
-			{
-				alert('Oh dear!')
-			}
-			
-			function check()
-			{
-				alert('Hello!')
-				return true;
-			}
-			
-			function accept(settings)
-			{
-				//Output.inspect(xjsfl.utils.getArguments(arguments), 'Accept')
-			}
-			
-			xjsfl.reload();
-			
-			/*
-			var results = XUL()
-				.add({name:'String', age:'Number', options:[null,1,2,3,4,5], params:{name:'Dave'}})
-				.addTextfield('name', {required:true, label:'Enter your name', prompt:'Name', oncreate:check})
-				.show(test, fail)
-				.settings
-				*/
+				function accept(prompt, values, pick)
+				{
+					Output.inspect([prompt, values, pick])
+				}
 				
-			//var results = XUL.create({name:'String', age:'Number', options:[null,1,2,3,4,5], params:{name:'Dave'}})
-			
-		// demo function
+				XUL.factory('textbox:Prompt=I am  a default prompt,dropdown:Picker={One:1,Two:2,Three:3},title:Advanced shorthand declaration')
+					.show(accept);
+			}
 		
-			function demo()
+		// --------------------------------------------------------------------------------
+		// Checkbox groups (values returned as an array)
+		
+			if(0)
 			{
-				//var results = XUL.create('One,Two,Three', test);
-				//var settings = XUL.create('listbox:Names=[1,2,3,4],xcolorchip:Color,button:Hello,Some Value');
-				//var settings = XUL.create('My Name=Dave,|popupslider:Age=0,colorchip:Color,checkbox:Delete,checkbox:Amend,title:This is a dialog,width:100');
-				
-				/*
-				var ui = XUL.factory()
-							.addButton('button', null, null, null, {command:function(ui, object, value, id, type){ui.set('y', '0xFF0000'); ui.setControlItemElement('list', {label:'dave', value:'asas'})}})
-							.addTextbox('X', null, null, null, {change:function(ui, object, value, id, type){ui.set('y', value)}})
-							.addPopupslider('Y')
-							.addListbox('list')
-							.setTitle('Some dialog')
-							.show(test)
-				*/
-				
-				
-				//var settings = XUL.create('Name,|,checkboxgroup:Items=[Movieclips,Graphics,Buttons,Classes], menulist:Y=[1,2,3,4],title:Some dialog', test);
-				
-				var text = <text><![CDATA[
+				var values = XUL.create('checkboxgroup:Items=[Movieclips,Graphics,Buttons,Classes]');
+				Output.inspect(values)
+			}
+			
+		// --------------------------------------------------------------------------------
+		// Automatic parsing of settings
+		
+			if(0)
+			{
+				var options = <text><![CDATA[
+					title:This is a HUGE dialog!,
 					button:Click me now!,
 					checkbox:Delete,
-					checkboxgroup:Classes=[movieclip,graphic,button,font,video],
 					radiogroup:Pick=[1,2,3,4],
+					checkboxgroup:Classes=[movieclip,graphic,button,font,video],
 					colorchip:Color=0xABCDEF,
-					expressionExpression=3 + 4,
-					flash:Splash=swf/splash.swf,
+					flash:Flash=swf/splash.swf,
 					label:This is a label,
 					listbox:Values={one:1,two:2,three:3,four:4},
-					menulist:More Values={one:1,two:2,three:3,four:4},
+					menulist:More Values={one:One,two:Two,three:Three,four:Four},
 					popupslider:Slider=[100,0,1000],
 					targetlist:Instance,
 					textbox:Text=Hello there I am text,
 					property:test1,
-					property:test2,
+					property:test2
 					]]>
-				</text>
+				</text>.toString()
 				
-				//var str = "button:Click me now!,checkbox:Delete,checkboxgroup:Indices=[1,2,3,4],colorchip:Color=0xFF0000,expression:Expression=3 + 4,flash:Instance,label:This is a label,listbox:Values={one:1,two:2,three:3,four:4},menulist:More Values={one:1,two:2,three:3,four:4},popupslider:Slider=45,targetlist:Pick an item,textbox:Text=Hello there I am text";
-				
-				/*
-				var xul = XUL
-					.factory(text.toString())
-					.addEvent('name', 'change', function(xmlui, xul, control, value, id, type){ alert(value)})
-					.setTitle('This is a custom dialog')
-					.saveAs('user/ui/test.xml')
-					.show();
-					*/
-				
-				var values = XUL.create('numeric:Size (%), numeric:Width (%), numeric:Alpha (%),title:Something');
-				Output.inspect(values);
-				
-				//XUL.create('numeric:Red=[0,0,255], numeric:Green=[0,0,255], numeric:Blue=[0,0,255], title:Mixer', color)
-				
-				//var settings = XUL.create('color:Color 1=0xFF0000, color:Color 2=#00FF00, color:Color 3=0000FF, title:Mixer', color)
-				
-				//Output.inspect(window.xul ? window.xul.values : window.settings)
-				
-				/*
-				if(xul)
-				{
-					Output.inspect(xul.values);
-					//trace(results);
-				}
-				*/
+				var values = XUL.create(options);
+				Output.inspect(values, 'Automatic parsing of settings');
 			}
 			
-			
-			
-			// test
-			
-			xjsfl.utils.test(demo);
-				
-			//Output.inspect(results);
-			
-			//xjsfl.classes.register('XUL', XUL);
+		// --------------------------------------------------------------------------------
+		// Ranges
+		
+			if(0)
+			{
+				function color(r, g, b)
+				{
+					trace('#' + r.toString(16) + g.toString(16) + b.toString(16))
+				}
 
+				XUL.create('numeric:Red=[0,0,255], numeric:Green=[0,0,255], numeric:Blue=[0,0,255], title:Mixer', color)
+			}
+			
+		// --------------------------------------------------------------------------------
+		// Smart parsing of labels as ids
+		
+			if(0)
+			{
+				var values = XUL.create('numeric:Size (pixels), numeric:Width (pixels), numeric:Alpha (%),title:Something');
+				Output.inspect(values);
+			}
+
+		// --------------------------------------------------------------------------------
+		// Custom XML
+		
+			if(0)
+			{
+				XUL
+					.factory()
+					.setTitle('Custom XML')
+					.setXML(<xml><textbox width="300" value="I am a textbox" /> <button id="button" label="...and I am a mighty button!" width="300" /></xml>)
+					.addEvent('button', 'command', function(){alert('But I can still have events assigned :)')})
+					.show()
+					
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Events, callbacks, and OO control of UI elements
+		
+			if(0)
+			{
+				// callback
+					//function callback(xmlui, xul, element, control, value, id, type)
+					function callback(control, xul, xmlui, type)
+					{
+						// output
+							clear();
+							
+						// inspect parameters
+							Output.inspect({ control:control, xul:xul.toString(), xmlui:xmlui, type:type }, 'Callback parameters');
+							
+						// if the id is the textbox, update the other textbox
+							if(control.id == 'textbox1')
+							{
+								// Note that this is OO! : "control.value" NOT "fl.xmlui.set(id, value)"
+									xul.controls.textbox2.value = control.currentValue.split('').reverse().join('');
+							}
+							
+							if(control.id == 'button')
+							{
+								Output.inspect(xul.events)
+							}
+					}
+					
+				// controls
+					var options = <text><![CDATA[
+						button:button=Click me!,
+						colorchip:Color=0xABCDEF,
+						listbox:Listbox={one:1,two:2,three:3,four:4},
+						menulist:Menulist={one:1,two:2,three:3,four:4},
+						popupslider:Slider=[100,0,1000],
+						textbox:Textbox 1=Hello there I am text,
+						textbox:Textbox 2,
+						]]>
+					</text>.toString()
+					
+				// create
+					XUL
+						.factory(options)
+						.setTitle('Dialog with events')
+						.addEvent('button', 'command', callback)
+						.addEvent('color', 'change', callback)
+						.addEvent('listbox', 'change setfocus', callback)
+						.addEvent('menulist', 'change setfocus', callback)
+						.addEvent('popupslider', 'change', callback)
+						.addEvent('textbox1', 'change', callback)
+						.show();
+			}
+		
+
+		// catch
+			}catch(err){xjsfl.output.error(err);}
+		
 	}
-
+		
 
