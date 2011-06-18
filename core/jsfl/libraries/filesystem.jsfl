@@ -776,34 +776,6 @@
 			}
 		
 		// --------------------------------------------------------------------------------
-		// Recursively list the contents of a folder
-		
-			if(0)
-			{
-				// variables
-					var indent = '';
-					
-				// function
-					function list(e, i)
-					{
-						trace(indent + '/' + e.name);
-						if(e instanceof Folder)
-						{
-							folders ++;
-							indent += '	';
-							e.each(list);
-							indent = indent.substring(1);
-						}
-						else
-						{
-							files ++;
-						}
-					}
-					
-				// do it!
-			}
-		
-		// --------------------------------------------------------------------------------
 		// recursively list the contents of a folder
 		
 			if(0)
