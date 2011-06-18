@@ -31,7 +31,6 @@
 					return null;
 				}
 				
-
 			// initialize and build
 				else
 				{
@@ -389,29 +388,33 @@
 							var types	= 'button,checkbox,colorchip,listbox,menulist,popupslider,targetlist,textbox'.split(',');
 							for each(var type in types)
 							{
-								var control = xml.find(type, true);
-								if(control.length() == 1)
+								var controls = xml.find(type, true);
+								
+								if(controls.length() > 0)
 								{
-									// variables
-										var id				= control[0].@id.toString();
-										var value			= control[0].@value.toString();
-										var controlXML		= control[0].toXMLString();
+									for each(var control in controls)
+									{
+										// variables
+											var id				= control.@id.toString();
+											var value			= control.@value.toString();
+											var controlXML		= control.toXMLString();
+											
+										// check that id is not already in use
+											if(this.controls[id])
+											{
+												throw new Error('XUL: Cannot add <' +type+ '> control - duplicate id "' +id+ '"');
+											}
+											
+										// store then clear value, otherwise it will always re-appear when the textbox is reshown
+											this.settings[id]	= value.toString();
+											control.@value		= '';
+											
+										// add control
+											this.controls[id]	= new Control(id, type, value, controlXML);
 										
-									// check that id is not already in use
-										if(this.controls[id])
-										{
-											throw new Error('XUL: Cannot add <' +type+ '> control - duplicate id "' +id+ '"');
-										}
-										
-									// store then clear value, otherwise it will always re-appear when the textbox is reshown
-										this.settings[id]	= value.toString();
-										control.@value		= '';
-										
-									// add control
-										this.controls[id]	= new Control(id, type, value, controlXML);
-									
-									// add any event handlers
-										xml					= this._addHandlers(type, xml);
+										// add any event handlers
+											xml					= this._addHandlers(type, xml);
+									}
 								}
 							}
 							
@@ -496,7 +499,7 @@
 									attributes.value = '#' + value;
 								}
 							}
-							Output.inspect(attributes)
+							//Output.inspect(attributes)
 						
 						// add control
 							return this._addControl('colorchip', id, label, xml, attributes, validation, events);
@@ -874,6 +877,8 @@
 					 */
 					add:function(str)
 					{
+						//TODO Add xml:<xml attr="value"> functionality
+						
 						// variables
 							var chunker		= /\s*(\||\w*:)?([^,=]+)=?(\[[^\]]+\]|{[^}]+}|[^,]*)/g
 							var rxObj		= /([^:,]+):([^,]+)/;
@@ -1069,6 +1074,14 @@
 			// --------------------------------------------------------------------------------
 			// Set methods
 			
+				setXML:function(xml)
+				{
+					delete this.xml..content.*
+					this.xml..content.@id = 'controls'
+					this.content = xml;
+					return this;
+				},
+			
 				setTitle:function(title)
 				{
 					if(this.xml)
@@ -1213,13 +1226,22 @@
 							// build panel
 								if(this.built == false)
 								{
-									// find #controls node and add content 
-										var controls	= this.xml.find('#controls', true);
-										var content		= new XMLList(this.content);
-										controls.row	+= content;
-
+									// find #controls node and add content
+										if(true)
+										{
+											var controls	= this.xml.find('#controls', true);
+											var content		= new XMLList(this.content);
+											controls.row	+= content;
+										}
+										else
+										{
+											var xml			= this.xml.toXMLString();
+											xml				= xml.replace(/<(\w+) id="controls"(>\/\\1>|\/>)/, '<$1 id="controls">' +this.content+ '</$1>');
+											this.xml		= new XML(xml);
+										}
+										
 									// set column widths
-										for each(var label in this.xml..label)
+										for each(var label in this.xml..row.label)
 										{
 											label.@width = this.widths.left;
 										}
@@ -1227,6 +1249,9 @@
 									// replace separators
 										var str		= this.xml.toXMLString().replace(/<row template="separator"\/>/g, this.separator);
 										this.xml	= new XML(str);
+										
+									// debug
+										//trace(this.xml.toXMLString())
 								
 									// flag as built
 										this.built = true;

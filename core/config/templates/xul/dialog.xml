@@ -1,17 +1,21 @@
 <dialog id="dialog" title="" buttons="accept,cancel">
 	
-	<grid>
+	<content>
 		
-		<columns>
-			<column flex="1" />
-			<column flex="2" />
-		</columns>
-		
-		<rows id="controls">
+		<grid>
 			
-		</rows>
+			<columns>
+				<column flex="1" />
+				<column flex="2" />
+			</columns>
+			
+			<rows id="controls">
+				
+			</rows>
+			
+		</grid>
 		
-	</grid>
+	</content>
 	
 	<scripts id="scripts">
 		
