@@ -1,4 +1,6 @@
-var dom				= fl.getDocumentDOM();
+/**
+ * Recursively converts all movieclips to graphics on all timelines
+ */
 var lib				= dom.library
 
 function setAsGraphic(item)

@@ -4,8 +4,7 @@
  */
 
 var varName = prompt("Enter a variable name");
-if(varName != undefined)
+if(window[varName])
 {
-	//fl.trace(varName + ':' + window[varName])
 	Output.inspect(window[varName]);
 }

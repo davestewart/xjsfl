@@ -1,14 +1,7 @@
-/**
- * Declare Stage Instances
+ï»¿/**
  * Generates AS3 class declarations for stage instances
  * 
  * @author      Dave Stewart
- * @usage       Copy to Flash Commands folder and run from the Commands menu inside Flash
- * 
- *              Windows® Vista   <DRIVE>:\Users\<USER>\AppData\Local\Adobe\Flash CS4\<LANGUAGE>\Configuration\Commands\
- *              Windows XP       <DRIVE>:\Documents and Settings\<USER>\Local Settings\Application Data\Adobe\Flash CS4\<LANGUAGE>\Configuration\Commands\
- *              Macintosh        HD/Users/<USER>/Library/Application Support/Adobe/Flash CS4/<LANGUAGE>/Configuration/Commands/
- *
  * @icon		{iconsURI}FileSystem/file/file_actionscript.png
  */
 
