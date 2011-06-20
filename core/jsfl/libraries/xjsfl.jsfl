@@ -112,18 +112,19 @@
 			// Apple: "mac" | Windows: "win"
 				platform:	fl.version.substr(0, 3).toLowerCase(),
 				
+			// the product name of flash, i.e. CS4
+				name:		(function(){
+								var version = fl.version.match(/\w+ (\d+)/)[1];
+								var name = {'9':'CS3', '10':'CS4', '11':'CS5', '12':'CS6'};
+								return name[version] || 'Unknown';
+							})(),
+				
 			// the integer version of Flash
 				version:	parseInt(fl.version.match(/\w+ (\d+)/)[1]),
 				
-			// the product name of flash, i.e. CS4
-				name:		(
-								function()
-								{
-									var version = fl.version.match(/\w+ (\d+)/)[1];
-									var name = {'7':'MX2004','8':'8', '9':'CS3','10':'CS4', '11':'CS5', '12':'CS6'};
-									return name[version] || 'Unknown';
-								}
-							)()
+			// the CS version of Flash
+				csVersion:	parseInt(fl.version.match(/\w+ (\d+)/)[1]) - 6
+				
 		},
 	
 		/**
@@ -199,7 +200,6 @@
 		 * @type {String} 
 		 */
 		newLine:fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n'
-		
 			
 	}
 	
