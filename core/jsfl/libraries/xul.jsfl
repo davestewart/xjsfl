@@ -346,6 +346,7 @@
 								button:			'create command',
 								checkbox:		'create',
 								radio:			'create',
+								choosefile:		'create',
 								colorchip:		'create change',
 								expression:		'create change',
 								flash:			'create',
@@ -387,7 +388,7 @@
 							xml = new XML('<temp>' + xml.toXMLString() + '</temp>');
 							
 						// loop through control types, and attempt to find and add to controls array
-							var types	= 'button,checkbox,colorchip,listbox,menulist,popupslider,targetlist,textbox'.split(',');
+							var types	= 'button,checkbox,colorchip,choosefile,listbox,menulist,popupslider,targetlist,textbox'.split(',');
 							for each(var type in types)
 							{
 								var controls = xml.find(type, true);
@@ -505,6 +506,25 @@
 						
 						// add control
 							return this._addControl('colorchip', id, label, xml, attributes, validation, events);
+					},
+
+					/**
+					 * Add a Choosefile control to the UI
+					 * @param	label		{String}	A label for the UI item
+					 * @param	id			{String}	An optional id, otherwise derived from the label
+					 * @param	attributes	{Object}	Optional attributes
+					 * @param	validation	{Object}	Optional validation properties
+					 * @param	events		{Object}	Optional event callbacks
+					 * @returns				{XUL}		
+					 */
+					addChoosefile:function(label, id, attributes, validation, events)
+					{
+						// build xml
+							var xml				= XUL.templates.choosefile.copy();
+							Output.inspect(attributes, 'Attributes')
+							
+						// add control
+							return this._addControl('choosefile', id, label, xml, attributes, validation, events);
 					},
 
 					/**
@@ -638,7 +658,7 @@
 							var xml				= XUL.templates.checkboxgroup.copy();
 						
 						// add child items
-							var parent			= xml..vbox;
+							var parent			= xml..radiogroup;
 							this._addChildren(parent, values, id || label.toLowerCase());
 						
 						// add control
@@ -984,7 +1004,7 @@
 													value = values;
 											}
 											
-											//Output.inspect(label, control)
+											Output.inspect(label, control)
 											
 										// add control
 											switch(control)
@@ -1007,6 +1027,17 @@
 												
 													case 'expression':
 														this.addExpression(label, null, {value:value});
+													break;
+	
+													case 'choosefile':
+													case 'openfile':
+													case 'file':
+														this.addChoosefile(label, null);
+													break;
+	
+													case 'savefile':
+													case 'save':
+														this.addChoosefile(label, null, {value:'', type:'save'});
 													break;
 	
 													case 'flash':
@@ -1156,7 +1187,7 @@
 					// check file is an XML file
 						if( ! /\/[^\/]+\.xml/.test(uri))
 						{
-							throw new Error('XUL saveAs uri must end with ".xml"');
+							throw new Error('XUL:saveAs() uri must end with ".xml"');
 						}
 						
 					// make URI
@@ -1513,7 +1544,14 @@
 				
 				set value(value)
 				{
-					fl.xmlui.set(this.id, value);
+					if(this.type == 'choosefile' && value == '')
+					{
+						
+					}
+					else
+					{
+						fl.xmlui.set(this.id, value);
+					}
 				},
 				
 				get currentValue()
@@ -1566,7 +1604,7 @@
 	{
 		// initialize
 		
-			xjsfl.init(this);
+			xjsfl.reload(this);
 			clear();
 			try{
 		
@@ -1647,12 +1685,12 @@
 		
 			if(0)
 			{
-				var values = XUL.create('checkboxgroup:Items=[Movieclips,Graphics,Buttons,Classes]');
+				var values = XUL.create('checkboxgroup:Items=[Movieclips,Graphics,Buttons,Classes],title:Checkbox Group');
 				Output.inspect(values)
 			}
 			
 		// --------------------------------------------------------------------------------
-		// Automatic parsing of settings
+		// Automatic parsing of settings to correct datatypes
 		
 			if(0)
 			{
@@ -1663,6 +1701,8 @@
 					radiogroup:Pick=[1,2,3,4],
 					checkboxgroup:Classes=[movieclip,graphic,button,font,video],
 					colorchip:Color=0xABCDEF,
+					file:Open file,
+					save:Save file,
 					flash:Flash=swf/splash.swf,
 					label:This is a label,
 					listbox:Values={one:1,two:2,three:3,four:4},
@@ -1693,6 +1733,15 @@
 			}
 			
 		// --------------------------------------------------------------------------------
+		// File
+		
+			if(0)
+			{
+				var settings = XUL.create('file:Open file,save:Save file');
+				Output.inspect(settings);
+			}
+			
+		// --------------------------------------------------------------------------------
 		// Smart parsing of labels as ids
 		
 			if(0)
@@ -1718,7 +1767,7 @@
 		// --------------------------------------------------------------------------------
 		// Events, callbacks, and OO control of UI elements
 		
-			if(0)
+			if(1)
 			{
 				// callback
 					//function callback(xmlui, xul, element, control, value, id, type)

@@ -25,11 +25,11 @@
 			
 			<row template="checkboxgroup">
 				<label value="Checkbox Group:" />
-				<vbox>
+				<radiogroup class="control" tabindex="" groupbox="true">
 					<checkbox class="control" id="checkbox[0]" label="Checkbox 1" checked="true" tabindex="" acceskey="" />
 					<checkbox class="control" id="checkbox[1]" label="Checkbox 2" checked="true" tabindex="" acceskey="" />
 					<checkbox class="control" id="checkbox[2]" label="Checkbox 3" checked="true" tabindex="" acceskey="" />
-				</vbox>
+				</radiogroup>
 			</row>
 			
 			<row template="colorchip">
@@ -40,6 +40,12 @@
 			<!--
 				format:	hex|string
 			-->
+			
+			<row template="choosefile">
+				<label value="Choose File:" align="" control="" />
+				<choosefile id="choosefile" literal="false" pathtype="" required="" size="" type="" width="" flex="1" tabindex="" />
+			</row>
+			<!-- https://developer.mozilla.org/en/XUL/button -->
 			
 			<!--
 			<row template="expression">
@@ -55,6 +61,8 @@
 			</row>
 			<!-- https://developer.mozilla.org/en/XUL/flash -->
 			<!-- https://developer.mozilla.org/en/XUL/property -->
+			<!-- http://www.webdesign.org/flash-swish/flash-tutorials/communicating-between-actionscript-and-jsfl.8608.html -->
+			
 			
 			<row template="listbox">
 				<label value="Listbox:" />
@@ -89,7 +97,7 @@
 			
 			<row template="radiogroup">
 				<label value="Radiogroup:" />
-				<radiogroup class="control" id="radiogroup" tabindex="">
+				<radiogroup class="control" id="radiogroup" tabindex="" groupbox="true">
 					<radio label="Radio 1" selected="" acceskey="" />
 					<radio label="Radio 2" selected="" acceskey="" />
 					<radio label="Radio 3" selected="" acceskey="" />
@@ -100,20 +108,20 @@
 			
 			<row template="targetlist">
 				<label value="Targetlist:" />
-				<targetlist id="targetlist" class="" width="100" height="" flex="1" />
+				<targetlist id="targetlist" class="" width="100" height="" flex="1" pathtype="absolute" />
 				<property id="targetlist" />
 			</row>
 			<!-- https://developer.mozilla.org/en/XUL/targetlist -->
 			
 			<row template="textbox">
 				<label value="Textbox:" />
-				<textbox class="control" id="textbox" value="" prompt="" size="" multiline="false" width="" flex="1" />
+				<textbox class="control" id="textbox" value="" maxlength="" prompt="" size="" multiline="false" width="" flex="1" />
 			</row>
 			<!-- https://developer.mozilla.org/en/XUL/textbox -->
 			<!-- size="20" wrap="on" scroll="true" rows="3" wraparound="true" -->
 			
 			<row template="label">
-				<label value="Label" />
+				<label value="Label" align="" />
 			</row>
 			
 			<row template="separator" />
