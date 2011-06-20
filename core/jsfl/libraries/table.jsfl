@@ -43,7 +43,15 @@
 					{
 						for(var x = 0; x < this.keys.length; x++)
 						{
-							this.setMax(y, x, this.rows[y][this.keys[x]]);
+							// filter cell data for newlines
+								var value = String(this.rows[y][this.keys[x]]);
+								if(/[\r\n]/.test(value))
+								{
+									this.rows[y][this.keys[x]] = value.split(/[\r\n]/).shift() + '...';
+								}
+							
+							// set widths
+								this.setMax(y, x, this.rows[y][this.keys[x]]);
 						}
 					}
 					
@@ -190,6 +198,11 @@
 				
 					// return
 						return this.output;
+				},
+				
+				toString:function()
+				{
+					return '[object Table rows:' +this.rows.length+ ']';
 				},
 			
 			// ---------------------------------------------------------------------------------------------------------------
@@ -508,20 +521,73 @@
 		xjsfl.classes.register('Table', Table);
 		
 		
-	// ---------------------------------------------------------------------------------------------------------------
-	// test code
-		
-		if( ! xjsfl.file.loading)
-		{
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Test code
+	
+	if( ! xjsfl.loading )
+	{
+		// initialize
 			xjsfl.init(this);
 			clear();
-			
+			try
+			{
+				
+		// sample data
 			var data =
 			[
 				{name:'Folder 1', value:200, symbol:'folder'},
 				{name:'Folder 1/Folder 2', value:50, symbol:'folder'},
-				{age:'Folder 1/Folder 2/Movieclip 1', value:-7, symbol:'movie clip'},
+				{path:'Folder 1/Folder 2/Movieclip 1', value:-7, symbol:'movie clip'},
 			]
+		
+		// --------------------------------------------------------------------------------
+		// Table instance
+		
+			if(0)
+			{
+				var table = new Table(data);
+				trace(table.render());
+			}
 			
-			Table.print(data, 'name              | value | symbol ');
-		}
+		
+		// --------------------------------------------------------------------------------
+		// Static Table.print() method
+		
+			if(0)
+			{
+				Table.print(data);
+			}
+			
+		
+		// --------------------------------------------------------------------------------
+		// Limit column widths
+		
+			if(0)
+			{
+				Table.print(data, null, 10);
+			}
+		
+		
+		// --------------------------------------------------------------------------------
+		// Selected library items
+		
+			if(0)
+			{
+				Table.print($$(':selected').elements);
+			}
+		
+		
+		// --------------------------------------------------------------------------------
+		// Animation presets
+		
+			if(0)
+			{
+				Table.print(flash.presetPanel.items);
+			}
+		
+		
+		// catch
+			}catch(err){xjsfl.output.error(err);}
+	}
+		
+
