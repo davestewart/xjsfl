@@ -30,8 +30,10 @@
 				// datatypes
 					'xml',
 					//'json',
+					'geom',
 					
 				// elements
+					'context',
 					'collections',
 					'library',
 					'stage',
