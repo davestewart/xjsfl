@@ -339,7 +339,7 @@
 				// add function
 					function addTest(type, method, params)
 					{
-						params = Array.slice.apply(this, [arguments, 2]);
+						params = xjsfl.utils.getArguments(arguments, 2);
 						tests.push({selector:exec[0], type:type, method:method, params:params});
 					}
 					
@@ -497,3 +497,28 @@
 	}
 
 	xjsfl.classes.register('$$', $$);
+	
+
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Test code
+	
+	if( ! xjsfl.loading )
+	{
+		// initialize
+			xjsfl.init(this);
+			clear();
+			try
+			{
+		
+		// --------------------------------------------------------------------------------
+		// Test
+		
+			if(0)
+			{
+				
+			}
+		
+		// catch
+			}catch(err){xjsfl.output.error(err);}
+	}
+		
