@@ -46,12 +46,365 @@
 		 */
 		Context = function(dom, timeline, layer, frame, element)
 		{
-			this.setDOM(dom);
-			this.setTimeline(timeline);
-			this.setLayer(layer);
-			this.setFrame(frame);
-			this.setElement(element);
-			return this;
+			// --------------------------------------------------------------------------------
+			// dom
+			
+				// private variable
+				var _dom;
+			
+				this.__defineSetter__('dom', 
+				/**
+				 * Set the DOM of the Context object
+				 * @param	value	{Context}	A Context object with a valid dom property
+				 * @param	value	{Boolean}	Pass true to grab the current Document DOM
+				 * @param	value	{Document}	A Document
+				 * @returns		
+				 */
+				function(value)
+				{
+					// true
+						if(value === true)
+						{
+							_dom = fl.getDocumentDOM();
+						}
+					// Document
+						else if(value instanceof Document)
+						{
+							_dom = value;
+						}
+					// Context
+						else if(value instanceof Context)
+						{
+							_dom = value.dom;
+						}
+					// return
+						return this;
+				});
+			
+				this.__defineGetter__('dom', 
+				function()
+				{
+					return _dom;
+				});
+			
+			// --------------------------------------------------------------------------------
+			// timeline
+			
+				// private variable
+				var _timeline;
+			
+				this.__defineSetter__('timeline', 
+				/**
+				 * Set the Timeline of the Context object
+				 * @param	value	{Boolean}			Pass true to grab the current timeline
+				 * @param	value	{Context}			A Context object with a valid timline property
+				 * @param	value	{SymbolItem}		A SymbolItem
+				 * @param	value	{SymbolInstance}	A Symbol Instance
+				 * @param	value	{Timeline}			A Symbol's timeline reference
+				 * @returns		
+				 */
+				function(value)
+				{
+					// exit early if no dom
+						if( ! _dom )
+						{
+							return this;
+						}
+					// Timeline or true
+						if(value instanceof Timeline || value === true)
+						{
+							_timeline = value === true ? _dom.getTimeline() : value;
+							for each(var item in _dom.library.items)
+							{
+								if(item instanceof SymbolItem && item.timeline === _timeline)
+								{
+									_item = item;
+									break;
+								}
+							}
+						}
+					// Library item
+						else if(value instanceof SymbolItem)
+						{
+							_item		= value;
+							_timeline	= _item.timeline;
+						}
+					// Stage instace
+						else if(value instanceof SymbolInstance)
+						{
+							_item		= value.libraryItem;
+							_timeline	= _item.timeline;
+						}
+					// Context
+						else if(value instanceof Context)
+						{
+							_timeline = value.timeline;
+						}
+					// return
+						return this;
+				});
+			
+				this.__defineGetter__('timeline', 
+				function()
+				{
+					return _timeline;
+				});
+			
+			// --------------------------------------------------------------------------------
+			// layer
+			
+				// private variable
+				var _layer;
+			
+				this.__defineSetter__('layer', 
+				/**
+				 * Set the Layer of the Context object
+				 * @param	value	{Context}	A Context object with a valid layer property
+				 * @param	value	{Boolean}	Pass true to grab the curent layer
+				 * @param	value	{String}	The name of the layer
+				 * @param	value	{Number}	The 0-based index of the layer
+				 * @param	value	{Layer}		A Layer
+				 * @returns		
+				 */
+				function(value)
+				{
+					// exit early if no timeline
+						if( ! _timeline )
+						{
+							return this;
+						}
+					// Layer index or Layer name
+						if(typeof value === 'string' || typeof value === 'number')
+						{
+							// variables
+								var index	= typeof context == 'string' ? timeline.findLayerIndex(value) || -1 : value;
+								var layer	= _timeline.layers[index];
+								
+							// grab layer
+								if(layer)
+								{
+									_layer = layer;
+								}
+								else
+								{
+									throw new Error('xjsfl.iterators.frames(): Invalid Layer reference ' +value);
+								}
+						}
+					// true
+						else if(value === true)
+						{
+							_layer = _timeline.layers[_timeline.currentLayer];
+						}
+					// Layer
+						else if(value instanceof Layer)
+						{
+							_layer = value;
+						}
+					// Context
+						else if(value instanceof Context)
+						{
+							_layer = value.layer;
+						}
+					// return
+						return this;
+				});
+			
+				this.__defineGetter__('layer', 
+				function()
+				{
+					return _layer;
+				});
+			
+			// --------------------------------------------------------------------------------
+			// frame
+			
+				// private variable
+				var _frame;
+			
+				this.__defineSetter__('frame', 
+				/**
+				 * Set the Frame of the Context object
+				 * @param	value		{Context}	A Context object with a valid frame property
+				 * @param	value		{Boolean}	Pass true to grab the current frame
+				 * @param	value		{String}	The name of the frame
+				 * @param	value		{Number}	The 0-based index of the frame
+				 * @param	value		{Frame}		A Frame
+				 * @param	allLayers	{Boolean}	Optionally search all layers, when specifying a named frame
+				 * @returns		
+				 */
+				function(value)
+				{
+					// exit early if no layer
+						if( ! _layer )
+						{
+							return this;
+						}
+					// Frame index
+						if(typeof value === 'number')
+						{
+							if(value > 0 && value < _layer.frameCount)
+							{
+								_frame = _layer.frames[value];
+							}
+						}
+					// true
+						else if(value === true)
+						{
+							_frame = _layer.frames[_timeline.currentFrame];
+						}
+					// Frame
+						else if(value instanceof Frame)
+						{
+							_frame = value;
+						}
+					// Context
+						else if(value instanceof Context)
+						{
+							_frame = value.frame;
+						}
+					// Frame name
+						else if(typeof value === 'string')
+						{
+							var index = 0;
+							while(index++ < _layer.frameCount)
+							{
+								if(_layer.frames[index].name == value)
+								{
+									_frame = _layer.frames[index];
+									return this;
+								}
+							}
+						}
+					// return
+						return this;
+				});
+			
+				this.__defineGetter__('frame', 
+				function()
+				{
+					return _frame;
+				});
+			
+			// --------------------------------------------------------------------------------
+			// keyframe
+			
+				// private variable
+				var _keyframe;
+			
+				this.__defineSetter__('keyframe', 
+				/**
+				 * Set the Keyframe of the Context object
+				 * @param	keyframe	{Number}		The 0-based keyframe index of the frame you want to target (e.g. passing a value of 1 might select the 2nd keyframe, on frame 12)
+				 * @param	layer		{Context}		A Context object with a valid layer property
+				 * @param	layer		{Boolean}		Pass true to grab the curent layer
+				 * @param	layer		{String}		The name of the layer
+				 * @param	layer		{Number}		The 0-based index of the layer
+				 * @param	layer		{Layer}			A Layer
+				 * @returns		
+				 */
+				function(value)
+				{
+					// update the layer, if supplied
+						if(layer)
+						{
+							this.layer = layer;
+						}
+					// exit early if no timeline
+						if( ! _timeline )
+						{
+							return this;
+						}
+					// find the keyframe
+						var index		= 0;
+						var keyIndex	= 0;
+						while(index < _layer.frameCount)
+						{
+							if(_layer.frames[index].startFrame == index)
+							{
+								if(keyIndex == keyframe)
+								{
+									this.frame = index;
+									return this;
+								}
+								keyIndex++
+							}
+							index++;
+						}
+					// return
+						return this;
+				});
+			
+				this.__defineGetter__('keyframe', 
+				function()
+				{
+					return _keyframe;
+				});
+
+			// --------------------------------------------------------------------------------
+			// element
+			
+				// private variable
+				var _element;
+			
+				this.__defineSetter__('element', 
+				/**
+				 * Set the Element of the Context object
+				 * @param	value	{Context}		A Context object with a valid element property
+				 * @param	value	{String}		The name of the element
+				 * @param	value	{Number}		The 0-based index of the element
+				 * @param	value	{Element}		An element
+				 * @returns		
+				 */
+				function(value)
+				{
+					// exit early if no frame
+						if( ! _frame )
+						{
+							return this;
+						}
+					// Element
+						if(value instanceof Element)
+						{
+							_element = value;
+						}
+					// Element index
+						else if(typeof value === 'number')
+						{
+							_element = _frame.elements[value];
+						}
+					// Element name
+						if(typeof value === 'string')
+						{
+							var i = 0;
+							_element = null;
+							while(i < _frame.elements.length)
+							{
+								if(_frame.elements[i]['name'] == value)
+								{
+									_element = _frame.elements[i];
+									break;
+								}
+							}
+						}
+					// return
+						return this;
+				});
+			
+				this.__defineGetter__('element', 
+				function()
+				{
+					return _element;
+				});
+			
+			// initialize
+				this.dom		= dom;
+				this.timeline	= timeline;
+				this.layer		= layer;
+				this.frame		= frame;
+				this.element	= element;
+				
+			// return
+				return this;
 		}
 		
 	// --------------------------------------------------------------------------------
@@ -125,282 +478,6 @@
 				 * @type {Element}
 				 */
 				element:null,
-			
-			// --------------------------------------------------------------------------------
-			// setters
-			
-				/**
-				 * Set the DOM of the Context object
-				 * @param	value	{Context}	A Context object with a valid dom property
-				 * @param	value	{Boolean}	Pass true to grab the current Document DOM
-				 * @param	value	{Document}	A Document
-				 * @returns		
-				 */
-				setDOM:function(value)
-				{
-					// true
-						if(value === true)
-						{
-							this.dom = fl.getDocumentDOM();
-						}
-					// Document
-						else if(value instanceof Document)
-						{
-							this.dom = value;
-						}
-					// Context
-						else if(value instanceof Context)
-						{
-							this.dom = value.dom;
-						}
-					// return
-						return this;
-				},
-				
-
-				/**
-				 * Set the Timeline of the Context object
-				 * @param	value	{Boolean}			Pass true to grab the current timeline
-				 * @param	value	{Context}			A Context object with a valid timline property
-				 * @param	value	{SymbolItem}		A SymbolItem
-				 * @param	value	{SymbolInstance}	A Symbol Instance
-				 * @param	value	{Timeline}			A Symbol's timeline reference
-				 * @returns		
-				 */
-				setTimeline:function(value)
-				{
-					// exit early if no dom
-						if( ! this.dom )
-						{
-							return this;
-						}
-					// Timeline or true
-						if(value instanceof Timeline || value === true)
-						{
-							this.timeline = value === true ? this.dom.getTimeline() : value;
-							for each(var item in this.dom.library.items)
-							{
-								if(item instanceof SymbolItem && item.timeline === this.timeline)
-								{
-									this.item = item;
-									break;
-								}
-							}
-						}
-					// Library item
-						else if(value instanceof SymbolItem)
-						{
-							this.item		= value;
-							this.timeline	= this.item.timeline;
-						}
-					// Stage instace
-						else if(value instanceof SymbolInstance)
-						{
-							this.item		= value.libraryItem;
-							this.timeline	= this.item.timeline;
-						}
-					// Context
-						else if(value instanceof Context)
-						{
-							this.timeline = value.timeline;
-						}
-					// return
-						return this;
-				},
-				
-				/**
-				 * Set the Layer of the Context object
-				 * @param	value	{Context}	A Context object with a valid layer property
-				 * @param	value	{Boolean}	Pass true to grab the curent layer
-				 * @param	value	{String}	The name of the layer
-				 * @param	value	{Number}	The 0-based index of the layer
-				 * @param	value	{Layer}		A Layer
-				 * @returns		
-				 */
-				setLayer:function(value)
-				{
-					// exit early if no timeline
-						if( ! this.timeline )
-						{
-							return this;
-						}
-					// Layer index or Layer name
-						if(typeof value === 'string' || typeof value === 'number')
-						{
-							// variables
-								var index	= typeof context == 'string' ? timeline.findLayerIndex(value) || -1 : value;
-								var layer	= this.timeline.layers[index];
-								
-							// grab layer
-								if(layer)
-								{
-									this.layer = layer;
-								}
-								else
-								{
-									throw new Error('xjsfl.iterators.frames(): Invalid Layer reference ' +value);
-								}
-						}
-					// true
-						else if(value === true)
-						{
-							this.layer = this.timeline.layers[this.timeline.currentLayer];
-						}
-					// Layer
-						else if(value instanceof Layer)
-						{
-							this.layer = value;
-						}
-					// Context
-						else if(value instanceof Context)
-						{
-							this.layer = value.layer;
-						}
-					// return
-						return this;
-				},
-				
-				/**
-				 * Set the Frame of the Context object
-				 * @param	value		{Context}	A Context object with a valid frame property
-				 * @param	value		{Boolean}	Pass true to grab the current frame
-				 * @param	value		{String}	The name of the frame
-				 * @param	value		{Number}	The 0-based index of the frame
-				 * @param	value		{Frame}		A Frame
-				 * @param	allLayers	{Boolean}	Optionally search all layers, when specifying a named frame
-				 * @returns		
-				 */
-				setFrame:function(value, allLayers)
-				{
-					// exit early if no layer
-						if( ! this.layer )
-						{
-							return this;
-						}
-					// Frame index
-						if(typeof value === 'number')
-						{
-							if(value > 0 && value < this.layer.frameCount)
-							{
-								this.frame = this.layer.frames[value];
-							}
-						}
-					// true
-						else if(value === true)
-						{
-							this.frame = this.layer.frames[this.timeline.currentFrame];
-						}
-					// Frame
-						else if(value instanceof Frame)
-						{
-							this.frame = value;
-						}
-					// Context
-						else if(value instanceof Context)
-						{
-							this.frame = value.frame;
-						}
-					// Frame name
-						else if(typeof value === 'string')
-						{
-							var index = 0;
-							while(index++ < this.layer.frameCount)
-							{
-								if(this.layer.frames[index].name == value)
-								{
-									this.frame = this.layer.frames[index];
-									return this;
-								}
-							}
-						}
-					// return
-						return this;
-				},
-				
-				/**
-				 * Set the Keyframe of the Context object
-				 * @param	keyframe	{Number}		The 0-based keyframe index of the frame you want to target (e.g. passing a value of 1 might select the 2nd keyframe, on frame 12)
-				 * @param	layer		{Context}		A Context object with a valid layer property
-				 * @param	layer		{Boolean}		Pass true to grab the curent layer
-				 * @param	layer		{String}		The name of the layer
-				 * @param	layer		{Number}		The 0-based index of the layer
-				 * @param	layer		{Layer}			A Layer
-				 * @returns		
-				 */
-				setKeyframe:function(keyframe, layer)
-				{
-					// update the layer, if supplied
-						if(layer)
-						{
-							this.setLayer(layer);
-						}
-					// exit early if no timeline
-						if( ! this.timeline )
-						{
-							return this;
-						}
-					// find the keyframe
-						var index		= 0;
-						var keyIndex	= 0;
-						while(index < this.layer.frameCount)
-						{
-							if(this.layer.frames[index].startFrame == index)
-							{
-								if(keyIndex == keyframe)
-								{
-									return this.setFrame(index);
-								}
-								keyIndex++
-							}
-							index++;
-						}
-					// return
-						return this;
-				},
-				
-				/**
-				 * Set the Element of the Context object
-				 * @param	value	{Context}		A Context object with a valid element property
-				 * @param	value	{String}		The name of the element
-				 * @param	value	{Number}		The 0-based index of the element
-				 * @param	value	{Element}		An element
-				 * @returns		
-				 */
-				setElement:function(value)
-				{
-					// exit early if no frame
-						if( ! this.frame )
-						{
-							return this;
-						}
-					// Element
-						if(value instanceof Element)
-						{
-							this.element = value;
-						}
-					// Element index
-						else if(typeof value === 'number')
-						{
-							this.element = this.frame.elements[value];
-						}
-					// Element name
-						if(typeof value === 'string')
-						{
-							var i = 0;
-							this.element = null;
-							while(i < this.frame.elements.length)
-							{
-								if(this.frame.elements[i]['name'] == value)
-								{
-									this.element = this.frame.elements[i];
-									break;
-								}
-							}
-						}
-					// return
-						return this;
-				},
-				
 			
 			// --------------------------------------------------------------------------------
 			// methods
@@ -525,7 +602,12 @@
 		
 			if(1)
 			{
-				var context = Context.create();
+				Timer.start();
+				for(var i = 0; i < 10000; i++)
+				{
+					var context = Context.create();
+				}
+				Timer.stop();
 				if(context)
 				{
 					for(var i = 0; i < context.timeline.layerCount; i+=2)
