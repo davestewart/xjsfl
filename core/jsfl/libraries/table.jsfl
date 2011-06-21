@@ -23,6 +23,8 @@
 		 */
 		function Table(rows, keys, maxColWidth, maxRowHeight)
 		{
+			//TODO Add option to automatically skip functions, including constructors
+			
 			if(rows instanceof Array && rows.length > 0)
 			{
 				// variables
