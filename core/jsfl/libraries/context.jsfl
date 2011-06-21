@@ -47,7 +47,7 @@
 		Context = function(dom, timeline, layer, frame, element)
 		{
 			this.setDOM(dom);
-			this.setIimeline(timeline);
+			this.setTimeline(timeline);
 			this.setLayer(layer);
 			this.setFrame(frame);
 			this.setElement(element);
@@ -76,14 +76,16 @@
 					frame === false ? false : true
 				);
 				
-			// update the stage
+			// update the stage & return
 				if(context.dom)
 				{
 					context.dom.livePreview = true;
+					return context;
 				}
-				
-			// return
-				return context;
+				else
+				{
+					return null;
+				}
 		}	
 	
 	// --------------------------------------------------------------------------------
@@ -165,8 +167,13 @@
 				 * @param	value	{Timeline}			A Symbol's timeline reference
 				 * @returns		
 				 */
-				setIimeline:function(value)
+				setTimeline:function(value)
 				{
+					// exit early if no dom
+						if( ! this.dom )
+						{
+							return this;
+						}
 					// Timeline or true
 						if(value instanceof Timeline || value === true)
 						{
@@ -212,6 +219,11 @@
 				 */
 				setLayer:function(value)
 				{
+					// exit early if no timeline
+						if( ! this.timeline )
+						{
+							return this;
+						}
 					// Layer index or Layer name
 						if(typeof value === 'string' || typeof value === 'number')
 						{
@@ -260,6 +272,11 @@
 				 */
 				setFrame:function(value, allLayers)
 				{
+					// exit early if no layer
+						if( ! this.layer )
+						{
+							return this;
+						}
 					// Frame index
 						if(typeof value === 'number')
 						{
@@ -317,7 +334,12 @@
 						{
 							this.setLayer(layer);
 						}
-					// find the keyframe					
+					// exit early if no timeline
+						if( ! this.timeline )
+						{
+							return this;
+						}
+					// find the keyframe
 						var index		= 0;
 						var keyIndex	= 0;
 						while(index < this.layer.frameCount)
@@ -346,6 +368,11 @@
 				 */
 				setElement:function(value)
 				{
+					// exit early if no frame
+						if( ! this.frame )
+						{
+							return this;
+						}
 					// Element
 						if(value instanceof Element)
 						{
@@ -378,34 +405,6 @@
 			// --------------------------------------------------------------------------------
 			// methods
 			
-				/**
-				 * Returns a copy of the Context object
-				 * @returns	{Context}
-				 */
-				clone:function()
-				{
-					return new Context(this.dom, this.timeline, this.layer, this.frame, this.element);
-				},
-				
-				/**
-				 * Updates all parameters of the Context Object with the current UI values
-				 * @param		
-				 * @returns		
-				 */
-				update:function()
-				{
-					this.constructor.call(true, true, true, true, 0);
-				},
-				
-				/**
-				 * Get a copy of the context Object as a string
-				 * @returns		{String}
-				 */
-				get:function()
-				{
-					return this.toString();
-				},
-				
 				/**
 				 * If the Context object has an item, edit it
 				 * @returns		{Context}
@@ -458,6 +457,37 @@
 					return this;
 				},
 				
+			// --------------------------------------------------------------------------------
+			// utilities
+			
+				/**
+				 * Manual method to get context when being used as a scope object in callbacks
+				 * @returns		{Context}
+				 */
+				getContext:function()
+				{
+					return this;
+				},
+				
+				/**
+				 * Updates all parameters of the Context Object with the current UI values
+				 * @param		
+				 * @returns		
+				 */
+				update:function()
+				{
+					this.constructor.call(true, true, true, true, 0);
+				},
+				
+				/**
+				 * Returns a copy of the Context object
+				 * @returns	{Context}
+				 */
+				clone:function()
+				{
+					return new Context(this.dom, this.timeline, this.layer, this.frame, this.element);
+				},
+				
 				/**
 				 * Return a String representation of the Context object
 				 * @returns		{String}
@@ -493,20 +523,24 @@
 		// --------------------------------------------------------------------------------
 		// Select a layer
 		
-			if(0)
+			if(1)
 			{
 				var context = Context.create();
-				for(var i = 0; i < context.timeline.layerCount; i+=2)
+				if(context)
 				{
-					//context.setLayer(i).selectLayer(true)
-					//trace(context)
-					//var layer = context.timeline.layers[i];
-					//trace(layer.name)
+					for(var i = 0; i < context.timeline.layerCount; i+=2)
+					{
+						//context.setLayer(i).selectLayer(true)
+						//trace(context)
+						//var layer = context.timeline.layers[i];
+						//trace(layer.name)
+					}
+						context.timeline.setSelectedLayers(0);
+						trace(context);
+		
+						Output.inspect(context, 1, 'Help!')
+					
 				}
-					context.timeline.setSelectedLayers(0);
-					trace(context);
-	
-					Output.inspect(context, 1, 'Help!')
 			}
 		
 			if(0)
