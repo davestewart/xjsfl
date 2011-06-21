@@ -390,6 +390,7 @@
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // File - JSFL OO representation of operating system files
 
+	//BUG Fix File so it doesn't write when you access a setter by mistake. Iterating through files using Table.print(folder.contents) overwrote all files with garbage!
 
 	// -------------------------------------------------------------------------------------------------------------------
 	// constructor
@@ -667,7 +668,7 @@
 // -----------------------------------------------------------------------------------------------------------------------------------------
 // register classes with xjsfl
 	
-	xjsfl.classes.register('FileSystemObject', FileSystemObject);
+	//xjsfl.classes.register('FileSystemObject', FileSystemObject);
 	xjsfl.classes.register('Folder', Folder);
 	xjsfl.classes.register('File', File);
 
@@ -680,7 +681,7 @@
 	{
 		// initialize
 		
-			xjsfl.init(this);
+			xjsfl.reload();
 			clear();
 			
 			// Mac users - do a find and replace on c:/temp/ for your temp folder!
@@ -698,9 +699,6 @@
 				
 				fl.trace('parent: ' + folder)
 				fl.trace('grandparent: ' + folder.parent)
-				
-				//folder.remove();
-				//fl.trace(folder.uri)
 			}
 		
 		// --------------------------------------------------------------------------------
@@ -778,54 +776,61 @@
 		// --------------------------------------------------------------------------------
 		// recursively list the contents of a folder
 		
-			if(0)
-			{
-				function recurse(root, fnChild, fnTestChildren)
+			// base function
+			
+				if(0)
 				{
-					var indent = '';
-					var level = 0;
-					
-					function list(e, i)
+					function recurse(root, fnChild, fnTestChildren)
 					{
-						fnChild(e, i, level, indent);
-						if(fnTestChildren ? fnTestChildren(e, level) : e.length)
+						var indent = '';
+						var level = 0;
+						
+						function list(e, i)
 						{
-							level ++;
-							indent += '	';
-							e.each(list);
-							indent = indent.substring(1);
-							level--;
+							fnChild(e, i, level, indent);
+							if(fnTestChildren ? fnTestChildren(e, level) : e.length)
+							{
+								level ++;
+								indent += '	';
+								e.each(list);
+								indent = indent.substring(1);
+								level--;
+							}
 						}
+						
+						list(root);
+						
 					}
 					
-					list(root);
-					
+					recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
 				}
-				
-				recurse(new Folder('c:/temp/'), function(e, i, l, indent){fl.trace(indent + '/' +  e.name)}, function(e){return e instanceof Folder})
-			}
-				
-		// --------------------------------------------------------------------------------
-		// Same function, but tweetable (136 characters)
-		
-			if(0)
-			{
-				var n='\t';function l(e){trace(n+'/'+e.name);if(e instanceof Folder){ n+='\t';e.each(l);n=n.substr(1);}}var f=new Folder('c:/temp');l(f)
-			}
-
-		// --------------------------------------------------------------------------------
-		// Same function, but using the Data library
-		
-			//TODO - implemement Data.recurse properly!
-		
-			if(0)
-			{
-				var folder			= new Folder('c:/temp');
-				var fileCallback	= function(e){ trace(e) };
-				var folderCallback	= function(e){ return e instanceof Folder };
-				
-				Data.recurse(folder, fileCallback, folderCallback);
-			}
+					
+			// Same function, but tweetable (136 characters)
+			
+				if(0)
+				{
+					var n='\t';function l(e){trace(n+'/'+e.name);if(e instanceof Folder){ n+='\t';e.each(l);n=n.substr(1);}}var f=new Folder('c:/temp');l(f)
+				}
+	
+			// Same function, but using the Output library
+			
+				if(0)
+				{
+					Output.folder('c:/temp', 3);
+				}
+	
+			// Same function, but using the Data library
+			
+				//TODO - implemement Data.recurse properly!
+			
+				if(0)
+				{
+					var folder			= new Folder('c:/temp');
+					var fileCallback	= function(e){ trace(e) };
+					var folderCallback	= function(e){ return e instanceof Folder };
+					
+					Data.recurse(folder, fileCallback, folderCallback);
+				}
 
 			
 	}
