@@ -26,56 +26,36 @@
 		},
 		
 		/**
-		 * Print the content to the listener as a formatted list
-		 * @param	content		The content to be output
-		 * @param	title		The title of the print
-		 * @param	output		An optional Boolean specifying whether to print to the Output Panel, defualts to true
-		 * @return	The String result of the print
+		 * 
+		 * @param	arrIn	
+		 * @param	property	
+		 * @param	label	
+		 * @param	output	
+		 * @returns		
 		 */
-		print:function(content, title, output)
+		list:function(arr, properties, label, output)
 		{
 			// variables
-				output		= output == undefined ? true : false;
-				var result	= '';
-				result		+= '\n\t' +title + '\n\t----------------------------------------------------------------------------------------------------\n';
-				result		+= '\t' + String(content).replace(/\n/g, '\n\t') + '\n';
+				properties	= properties || 'name';
+				label		= label || 'List';
+				output		= output || true;
+				arr			= xjsfl.utils.getValues(arr, properties);
 				
 			// trace
-				if (output)
-				{
-					Output.trace(result);
-				}
-				
-			// return
-				return result;
-		},
-		
-		list:function(arrIn, property, label, output)
-		{
-			// variables
-				property	= property || 'name';
-				label		= label || 'List'
-				
-			// parse
-				var arrOut = [];
-				for(var i = 0; i < arrIn.length; i++)
-				{
-					arrOut[i] = arrIn[i][property];
-				}
-				
-			// trace
-				return Output.inspect(arrOut, label, 1, output)
+				return Output.inspect(arr, label, properties instanceof Array ? 2 : 1, output)
 		},
 		
 		/**
 		 * Output object in hierarchical format
-		 * @param obj		Object	Any Object
-		 * @param label		String	If an optional is passed, the result will immediately be printed to the Output panel
-		 * @param maxDepth	uint	An optional uint specifying a max depth to recurse to. Needed to limit recursive objects
+		 * @param obj		{Object}		Any Object or value
+		 * @param arg		{String}		An optional String label (defaults to "Inspect")
+		 * @param arg		{Number}		An optional max depth to recurse to (defaults to 3)
+		 * @param arg		{Boolean}		An optional boolean to indicate outputting or not (defaults to true)
 		 */
-		inspect:function(obj, label, maxDepth, print)
+		inspect:function(obj, arg1, arg2, arg3)
 		{
-				
+			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
+			
 			// ---------------------------------------------------------------------------------------------------------------------
 			// methods
 			
@@ -358,10 +338,21 @@
 				 * @param maxDepth	uint	An optional uint specifying a max depth to recurse to (needed to limit recursive objects)
 				 */
 				
-				// reset
-					label				= label || 'Inspect';
-					maxDepth			= maxDepth < 0 ? 100 : maxDepth || 4;
-					print				= typeof print == 'undefined' ? 2 : print;
+				// variables
+					var label		= 'Inspect';
+					var maxDepth	= 4;
+					var print		= true;
+					
+				// variables
+					for each(var arg in [arg1, arg2, arg3])
+					{
+						if(typeof arg === 'number')
+							maxDepth = arg;
+						else if(typeof arg === 'string')
+							label = arg;
+						else if(typeof arg === 'boolean')
+							print = arg;
+					}
 					
 				// recursion detection
 					var stack			= [];
@@ -400,13 +391,13 @@
 					{
 						// do nothing
 					}
-					else if(print == 1)
+					else if(print == 1 | print == true)
 					{
-						Output.print('objects:  ' +stats.objects+ '\nvalues: ' +stats.values + '\ntime:   ' + stats.time, 'Inspect: ' + (label || className));
+						Output.print(strOutput, label + ': ' + className + ' (depth:' +maxDepth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')');
 					}
 					else
 					{
-						Output.print(strOutput, label + ': ' + className + ' (objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')');
+						Output.print('objects:  ' +stats.objects+ '\nvalues: ' +stats.values + '\ntime:   ' + stats.time, 'Inspect: ' + (label || className));
 					}
 					
 				// return
@@ -414,14 +405,112 @@
 				
 		},
 		
+		table:function(arr)
+		{
+			Table.print(arr);
+		},		
 			
 		/**
-		 * Trace hierarchy function... utility for Filesystem?
+		 * View the hierarchy of a folder
 		 */
-		traceHierarchy:function(rootElement)
+		folder:function(value, arg1, arg2)
 		{
-			//var values = Array.slice.call(this, arguments).join(', ')
-			//fl.trace(values);
+			// functions
+				function fnChild(element, index, level, indent)
+				{
+					if(hierarchical)
+					{
+						fl.trace(indent + '/' +  element.name);
+					}
+					else
+					{
+						fl.trace(element.path);
+					}
+				}
+				
+				function fnFolder(element, level)
+				{
+					return element instanceof Folder && level < maxDepth;
+				}
+			
+				function recurse(root, fnChild, fnTestChildren)
+				{
+					var indent = '';
+					var level = 0;
+					
+					function list(e, i)
+					{
+						fnChild(e, i, level, indent);
+						if(fnTestChildren ? fnTestChildren(e, level) : e.length)
+						{
+							level ++;
+							indent += '	';
+							e.each(list);
+							indent = indent.substring(1);
+							level--;
+						}
+					}
+					
+					list(root);
+					
+				}
+				
+			// parse value
+				if(typeof value === 'string')
+				{
+					var folder = new Folder(value);
+				}
+				else if(value instanceof Folder)
+				{
+					// do nothing
+				}
+				else if(value instanceof File)
+				{
+					var folder = value.parent;
+				}
+			
+			// parse maxDepth and hierarchical
+				var maxDepth 		= 100;
+				var hierarchical	= true;
+				for each(var arg in [arg1, arg2])
+				{
+					if(typeof arg === 'number')
+						maxDepth = arg;
+					if(typeof arg === 'boolean')
+						hierarchical = arg;
+				}
+				
+			// do it
+				if(folder.exists)
+				{
+					recurse(folder, fnChild, fnFolder);
+				}
+
+		},
+		
+		/**
+		 * Print the content to the listener as a formatted list. Normally this is only called by the other Output functions!
+		 * @param	content		The content to be output
+		 * @param	title		The title of the print
+		 * @param	output		An optional Boolean specifying whether to print to the Output Panel, defualts to true
+		 * @return	The String result of the print
+		 */
+		print:function(content, title, output)
+		{
+			// variables
+				output		= output == undefined ? true : false;
+				var result	= '';
+				result		+= '\n\t' +title + '\n\t----------------------------------------------------------------------------------------------------\n';
+				result		+= '\t' + String(content).replace(/\n/g, '\n\t') + '\n';
+				
+			// trace
+				if (output)
+				{
+					Output.trace(result);
+				}
+				
+			// return
+				return result;
 		},
 		
 		toString:function()
@@ -436,40 +525,88 @@
 	// register class with xjsfl
 		
 		xjsfl.classes.register('Output', Output);
+
 	
-		//Output.inspect(window.app.presetPanel, null, 4);
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Demo code
 	
-	// ---------------------------------------------------------------------------------------------------------------------
-	// code
+	if( ! xjsfl.loading )
+	{
+		// initialize
+			xjsfl.init(this);
+			clear();
+			try
+			{
 		
-		if( ! xjsfl.file.loading)
-		{
-			
-			
-			xjsfl.classes.restore('Folder', this)
-			
-			Output.inspect(<xml>This is a <a>node</a></xml>, 'Window', 5, 2);
+		// --------------------------------------------------------------------------------
+		// List items
 		
+			// straight list, defaulting to the property "name"
+				if(0)
+				{
+					Output.list(dom.library.items)
+				}
+				
+			// using a custom property
+				if(0)
+				{
+					Output.list(dom.library.items, 'itemType')
+				}
+				
+			// supplying several properties
+				if(0)
+				{
+					Output.list(dom.library.items, ['name', 'timeline', 'itemType'])
+				}
 			
-			var folder = new Folder('c:/temp/fiaw');
-			
-			Output.inspect(folder, null, 3, 1);
-			
-			
-			//Output.inspect(folder, 'Folder');
-			
-			fl.trace(folder)
-			/*
-	
-			*/
+		// --------------------------------------------------------------------------------
+		// Inspect items
 		
-			fl.outputPanel.clear()
-			var obj = {a:1, b:2, c:[0,1,2,3,4, {hello:'hello'}]}
+			// in a hierchical format
+				if(0)
+				{
+					var obj = {a:1, b:2, c:[0,1,2,3,4, {hello:'hello'}]}
+					Output.inspect(obj)
+				}
 			
-			//var selection = fl.getDocumentDOM().selection;
-			//Output.inspect(selection[0], 'Symbol Instance');
-			
-			Output.inspect(obj, 'Some Array');
+			// in a hierarchical format, adding a custom label and recursion depth
+				if(0)
+				{
+					Output.inspect(dom.library.items, 'Library items', 2) // 2nd + arguments can go in any order
+				}
 		
-		}
+		// --------------------------------------------------------------------------------
+		// Table format (this is just a shortcut to Table.print)
+		
+			// Selection
+				if(0)
+				{
+					Output.table(dom.selection)
+				}
+		
+			// The preset panel
+				if(0)
+				{
+					Output.table(app.presetPanel.items)
+				}
+		
+		// --------------------------------------------------------------------------------
+		// Inspect a hierarchy of folders
+		
+			// hierarchically
+				if(0)
+				{
+					Output.folder('c:/temp/', 4)
+				}
+			
+			// show full paths
+				if(0)
+				{
+					Output.folder('c:/temp/', 4, false)
+				}
+		
+		// catch
+			}catch(err){xjsfl.output.error(err);}
+	}
+		
 
