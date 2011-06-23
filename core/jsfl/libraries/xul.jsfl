@@ -23,6 +23,9 @@
 		{
 			//TODO Allow a file: uri to be passed into the constructor
 			
+			//TODO Consider making XUL driver-based, so basic controls are constructed using the core, but can be wrapped with additional driver-based methods
+			//TODO Alternatively, have an additional XULBuilder class, so code and presentation are kept separate 
+			
 			// check for dom
 				var dom = fl.getDocumentDOM();
 				if( ! dom)
@@ -908,11 +911,20 @@
 							{
 								for each(var type in types)
 								{
-									if(this.events[type] == null)
-									{
-										this.events[type] = {};
-									}
-									this.events[type][id] = callback;								
+									// check types are valid
+										if( ! /^command|change|setfocus|create$/.test(type))
+										{
+											throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
+										}
+									
+									// build hash if not  yest exists
+										if(this.events[type] == null)
+										{
+											this.events[type] = {};
+										}
+										
+									// assign command
+										this.events[type][id] = callback;								
 								}
 							}
 							
@@ -1228,6 +1240,7 @@
 					// handle event
 						switch(type)
 						{
+							//TODO Implement these events, and add checks to addEvent()
 							// initialized
 								case 'initialized':
 								case 'prevalidation':
@@ -1297,6 +1310,8 @@
 					{
 						// --------------------------------------------------------------------------------
 						// build panel
+						
+							//TODO Onfirst build, if there's no fl.xmlui, call xjsfl.ui.clear()
 
 							// update checkboxes, as they can't seem to be updated via JSFL (prove me wrong, someone!)
 								/*
