@@ -16,6 +16,8 @@
 	
 		Data =
 		{
+			//TODO review recursive function signatures & implementation, & provide default callbacks if appropriate. @see Data#recurseFolder
+			
 			/**
 			 * Utility function to recurse / walk hierarchical structures calling user-supplied calllbacks on traversed elements
 			 */
@@ -68,9 +70,69 @@
 				process(rootElement, 0);
 			},
 			
-			functions:
+			/**
+			 * Recursively trawl a folder's contents, optionally calling a callback per element
+			 * @param	folder		{String}	The path or uri to a valid folder
+			 * @param	folder		{Folder}	A valid Folder object
+			 * @param	depth		{Number}	An optional max depth to recurse to, defaults to 100 
+			 * @param	callback	{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element
+			 * @returns				(Array}		An array of paths
+			 */
+			recurseFolder:function(folder, depth, callback)
 			{
+				// ------------------------------------------------------------
+				// functions
 				
+					function process(element, index)
+					{
+						//BUG Errors when file URIs go beyond 260 chars. @see FileSystem for more info
+						
+						// callback
+							var state = callback ? callback(element, index, level, indent) : true;
+							
+						// process
+							if(state !== false)
+							{
+								// path
+									paths.push(element.path);
+									
+								// children
+									if(element instanceof Folder && level < depth)
+									{
+										level ++;
+										indent += '	';
+										element.each(process);
+										indent = indent.substring(1);
+										level--;
+									}
+							}
+					}
+					
+				// ------------------------------------------------------------
+				// code
+				
+					// defaults
+						depth	 		= depth || 100;
+					
+					// folder
+						if(typeof folder === 'string')
+						{
+							folder = new Folder(folder);
+						}
+						
+					// variables
+						var paths		= [];
+						var indent		= '';
+						var level		= 0;
+						
+					// process
+						if(folder instanceof Folder && folder.exists)
+						{
+							process(folder);
+						}
+					
+				// return
+					return paths;
 			},
 			
 			toString:function()
@@ -84,87 +146,104 @@
 		xjsfl.classes.register('Data', Data);
 	
 		
-	// ---------------------------------------------------------------------------------------------------------------------
-	// code
+		
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Demo code
 	
-		if( ! xjsfl.file.loading )
-		{
+	if( ! xjsfl.loading )
+	{
+		// initialize
 			xjsfl.init(this);
-		 
-			//Data.recurse (new Folder('c:/temp/'))
-					 
-			function traceElement(element, index, level)
+			clear();
+			try
 			{
-				var indent = Array(level).join('\t')
-				fl.trace (indent + '/' + element.name);
-			}
-			
-			function testFolder(element)
-			{
-				return element instanceof Folder;
-			}
-			
-				
-			Data.recurse (new Folder ('c:/temp/'), traceElement, testFolder)
-			
-			
-		/*
-		*/
 		
-		/*
-			// object & scope example
-			
-			fl.outputPanel.clear();
-			
-			var obj =
-			{
-				str:'',
-				
-				arr:[1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7],
-			
-				traceElement:function(element, index, level)
-				{
-					var indent = new Array(level + 1).join('\t');
-					var str = indent + level + ' : ' + element + '\n';
-					this.str += str;
-				},
-				
-				testElement:function(element, level, index)
-				{
-					return element instanceof Array;
-				},
-				
-				start:function()
-				{
-					Data.recurse(this.arr, this.traceElement, this.testElement, this)
-				}
-				
-			}
-			
-			//obj.start();
-			//fl.trace(obj.str);
-		*/
+		// --------------------------------------------------------------------------------
+		// Test
 		
-		/*
-			// function example
-			
-			function traceElement(element, index, level)
+			if(0)
 			{
-				var indent = new Array(level + 1).join('\t');
-				fl.trace (indent + level + ' : ' + element);
+				// stuff
+					//Data.recurse (new Folder('c:/temp/'))
+							 
+					function traceElement(element, index, level)
+					{
+						var indent = Array(level).join('\t')
+						fl.trace (indent + '/' + element.name);
+					}
+					
+					function testFolder(element)
+					{
+						return element instanceof Folder;
+					}
+					
+						
+					Data.recurse (new Folder ('c:/temp/'), traceElement, testFolder)
+					
+					
+				/*
+				*/
+				
+				/*
+					// object & scope example
+					
+					fl.outputPanel.clear();
+					
+					var obj =
+					{
+						str:'',
+						
+						arr:[1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7],
+					
+						traceElement:function(element, index, level)
+						{
+							var indent = new Array(level + 1).join('\t');
+							var str = indent + level + ' : ' + element + '\n';
+							this.str += str;
+						},
+						
+						testElement:function(element, level, index)
+						{
+							return element instanceof Array;
+						},
+						
+						start:function()
+						{
+							Data.recurse(this.arr, this.traceElement, this.testElement, this)
+						}
+						
+					}
+					
+					//obj.start();
+					//fl.trace(obj.str);
+				*/
+				
+				/*
+					// function example
+					
+					function traceElement(element, index, level)
+					{
+						var indent = new Array(level + 1).join('\t');
+						fl.trace (indent + level + ' : ' + element);
+					}
+					
+					function testElement(element, level, index)
+					{
+						return element instanceof Array;
+					}
+					
+					fl.outputPanel.clear();
+					
+					var arr = [1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7];
+					
+					Data.recurse(arr, traceElement, testElement)
+					
+				
+				*/
 			}
-			
-			function testElement(element, level, index)
-			{
-				return element instanceof Array;
-			}
-			
-			fl.outputPanel.clear();
-			
-			var arr = [1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7];
-			
-			Data.recurse(arr, traceElement, testElement)
-			
 		
-		*/	
-		}
+		// catch
+			}catch(err){xjsfl.output.error(err);}
+	}
+		
+
