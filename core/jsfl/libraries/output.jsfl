@@ -27,6 +27,39 @@
 		
 		/**
 		 * 
+		 * @param	obj	
+		 * @param	name	
+		 * @param	functions	
+		 * @returns		
+		 */
+		toProps:function(obj, name, type)
+		{
+			// variables
+				var props	= '';
+				name		= name ? ' ' + name : '';
+				type		= type || 'object';
+				
+			// propertes
+				for(var i in obj)
+				{
+					var value = obj[i];
+					if(typeof value === 'function')
+					{
+						continue;
+					}
+					if(typeof value === 'string')
+					{
+						value = '"' +value+ '"';
+					}
+					props += ' ' + i + '=' + value;
+				}
+				
+			// return
+				return '[' + type + name + props + ']';
+		},
+		
+		/**
+		 * 
 		 * @param	arrIn	
 		 * @param	property	
 		 * @param	label	
@@ -399,12 +432,12 @@
 				// uncallable properties
 					var illegal			= [
 											'tools|toolObjs|activeTool', // window
-											'morphShape|hintsList|actionScriptOffsets', // shape?
+											'morphShape|hintsList|actionScriptOffsets', // shape
 											'brightness|tintColor|tintPercent', // SymbolInstance
 											]
 				
 				// init
-					var rxIllegal		= new RegExp('\b' + illegal.join('|') + '\b');
+					var rxIllegal		= new RegExp('^' + illegal.join('|') + '$');
 					var indent			= [];
 					var strOutput		= '';
 					var type			= getType(obj);
@@ -421,9 +454,9 @@
 					{
 						if(label == 'Inspect')
 						{
-							label = 'Inspect (debug mode)';
+							label = 'Debug';
 						}
-						trace(Output.print('', label + ': ' + className, false).replace(/[\r\n]+$/, ''))
+						trace(Output.print('', label + ': ' + className, false).replace(/\s*$/, ''))
 					}
 					
 				// initial outout
@@ -436,13 +469,17 @@
 					processValue(obj);
 					
 				// get final stats
-					//stats.time			= (((new Date) - stats.time) / 1000).toFixed(1) + ' seconds';
+					stats.time			= (((new Date) - stats.time) / 1000).toFixed(1) + ' seconds';
+					stats				= ' (depth:' +maxDepth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')';
 					
 				// output
-					if(debug === false && print === true)
+					if(debug === true)
 					{
-						//Output.print(strOutput, label + ': ' + className + ' (depth:' +maxDepth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')');
-						//Output.print('objects:  ' +stats.objects+ '\nvalues: ' +stats.values + '\ntime:   ' + stats.time, 'Inspect: ' + (label || className));
+						trace('\n' + stats + '\n');
+					}
+					else if(print === true)
+					{
+						Output.print(strOutput, label + ': ' + className + stats);
 					}
 					
 				// return
@@ -451,7 +488,7 @@
 		},
 		
 		/**
-		 * Convenience function to Toabe.print() to output value in tabular format
+		 * Convenience function to Table.print() to output value in tabular format
 		 * @param	arr		{array}		An Array of values
 		 * @returns			{String}	The output of the print() call
 		 */
@@ -508,12 +545,12 @@
 				output		= output !== false;
 				var result	= '';
 				result		+= '\n\t' +title + '\n\t----------------------------------------------------------------------------------------------------\n';
-				result		+= '\t' + String(content).replace(/\n/g, '\n\t') + '\n';
+				result		+= '\t' + String(content).replace(/\n/g, '\n\t');
 				
 			// trace
 				if (output)
 				{
-					Output.trace(result);
+					Output.trace(result + '\n');
 				}
 				
 			// return
@@ -570,10 +607,10 @@
 		// Inspect items
 		
 			// in a hierchical format
-				if(1)
+				if(0)
 				{
 					var obj = {a:1, b:2, c:[0,1,2,3,4, {hello:'hello'}]}
-					Output.inspect(obj, true)
+					Output.inspect(obj)
 				}
 			
 			// in a hierarchical format, adding a custom label and recursion depth
@@ -588,7 +625,7 @@
 			// Selection
 				if(0)
 				{
-					Output.table(dom.selection)
+					Output.inspect(dom.selection, 5)
 				}
 		
 			// The preset panel

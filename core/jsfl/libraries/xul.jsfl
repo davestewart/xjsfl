@@ -54,6 +54,8 @@
 						this.rules		= {};
 						this.columns	= [80, 150], 
 						this.error		= null;
+						this.id			= -1;
+						
 						//TODO columns flex properly, and ensure appropriate elements flex to fill
 						
 					// set title if provided
@@ -168,6 +170,7 @@
 			// properties
 			
 				// settings
+					id:			null,
 					xml:		null,
 					
 				// properties
@@ -284,7 +287,7 @@
 							xml = this._addHandlers(type, xml);
 								
 						// set control
-							this.controls[id] = new Control(id, type, this, xml); // attributes ? attributes.value : ''
+							this.controls[id] = new XULControl(id, type, this, xml); // attributes ? attributes.value : ''
 							this.addXML(xml, false, true);
 							
 						// debug
@@ -297,9 +300,9 @@
 					/**
 					 * Updates supplied XML with new child items parent
 					 * @param	parent	{XML}		An XML parent node. Child items are updated by reference
-					 * @param	values	{Array}
-					 * @param	id		{String}
-					 * @returns			{XML}
+					 * @param	values	{Array}		The values (values, or {label:'',value:''} Objects) of each of the new elements you want to add
+					 * @param	id		{String}	The id of the new control
+					 * @returns			{XML}		The XML of the new children (altough the original parent is altered by reference anyway)
 					 */
 					_addChildren:function(parent, values, id)
 					{
@@ -368,19 +371,25 @@
 							var types =
 							{
 								button:			'create command',
-								checkbox:		'create',
-								radio:			'create',
-								choosefile:		'create',
+								//checkbox:		'create',
+								//radio:			'create',
+								//choosefile:		'create',
 								colorchip:		'create change',
-								expression:		'create change',
+								//expression:		'create change',
 								flash:			'create',
 								listbox:		'create change setfocus',
 								menulist:		'create change setfocus',
-								popupslider:	'create',
-								targetlist:		'create',
+								//popupslider:	'create',
+								//targetlist:		'create',
 								textbox:		'create change',
-								property:		''
+								property:		'create'
 							};
+							
+						// return early if type not registered for events
+							if( ! types[type])
+							{
+								return xml;
+							}
 							
 						// add xml under a temp root node, so we can find any top-level control nodes passed in
 							xml = new XML('<temp>' + xml.toXMLString() + '</temp>');
@@ -395,10 +404,10 @@
 								// id
 									var id = node.@id;
 									
-								// assign handler
+								// assign handler. Note that the xulid will be assigned and the {xulid} placeholder replaced during xjsfl.ui.show()
 									for each(var event in events)
 									{
-										node.@['on' + event] = "xjsfl.ui.current.handleEvent('" +event+ "', '" +id+ "')";
+										node.@['on' + event] = "xjsfl.ui.dialogs[{xulid}].handleEvent('" +event+ "', '" +id+ "')";
 									}
 							}
 							
@@ -437,7 +446,7 @@
 											control.@value		= '';
 											
 										// add control
-											this.controls[id]	= new Control(id, type, value, controlXML);
+											this.controls[id]	= new XULControl(id, type, value, controlXML);
 										
 										// add any event handlers
 											xml					= this._addHandlers(type, xml);
@@ -864,7 +873,7 @@
 								xml = new XMLList(xml);
 							}
 							
-						// Parse XML for new controls, and if found, add event handlers, and add to Control array for validation
+						// Parse XML for new controls, and if found, add event handlers, and add to control hash for validation
 							if(dontParse !== true)
 							{
 								xml = this._parseUserXML(xml);
@@ -1214,12 +1223,12 @@
 					// check file is an XML file
 						if( ! /\/[^\/]+\.xml/.test(uri))
 						{
-							throw new Error('XUL.saveAs(): uri must end with ".xml"');
+							throw new Error('XUL.saveAs(): dialog uri must end with an .xml extension');
 						}
 						
 					// make URI
-						uri = xjsfl.utils.makeURI(uri);
-						this.uri = uri;
+						uri			= xjsfl.utils.makeURI(uri);
+						this.uri	= uri;
 						
 					// return
 						return this;
@@ -1250,7 +1259,7 @@
 										var callback = this.events[type];
 										if(typeof callback == 'function')
 										{
-											callback(fl.xmlui, this);
+											callback(new XULEvent(type, null, this, fl.xmlui));
 										}
 									}
 								break;
@@ -1287,10 +1296,19 @@
 										var callback = this.events[type][id];
 										if(typeof callback == 'function')
 										{
-											//TODO Fix problem of colors disappearing when these commands are outside of this if() & check if adding callbacks screws it up too
-											object	= fl.xmlui.getControlItemElement(id);
-											value	= fl.xmlui.get(id);
-											callback(this.controls[id], this, fl.xmlui, type) // control, xul, xmlui, type
+											//FIX Fix problem of colors disappearing when these commands are outside of this if() & check if adding callbacks screws it up too
+											
+											// xul control
+												var control = this.controls[id];
+												var event	= new XULEvent(type, control, this, fl.xmlui);
+												
+											// xmlui element
+												var object	= fl.xmlui.getControlItemElement(id);
+												var value	= fl.xmlui.get(id);
+												
+											// dispatch event
+												//callback(control, this, fl.xmlui, type) // control, xul, xmlui, type
+												callback(event);
 										}
 									}
 								break;
@@ -1311,8 +1329,6 @@
 						// --------------------------------------------------------------------------------
 						// build panel
 						
-							//TODO Onfirst build, if there's no fl.xmlui, call xjsfl.ui.clear()
-
 							// update checkboxes, as they can't seem to be updated via JSFL (prove me wrong, someone!)
 								/*
 								var checkboxes = this.xml..checkbox;
@@ -1342,31 +1358,23 @@
 								}
 								*/
 								
+						// --------------------------------------------------------------------------------
+						// build and show panel
+						
 							// build XML
 								if(this.built == false)
 								{
 									this.build();
 								}
 								
-							// save XML to dialog.xml
-								var uri		= this.uri || xjsfl.utils.makeURI('core/ui/dialog.xml');
-								new File(uri, this.xml, true);
-								
-
-						// --------------------------------------------------------------------------------
-						// show panel
-	
-							// register with xjsfl.ui
-								xjsfl.ui.add(this);
-	
 							// show panel
-								this.settings	= dom.xmlPanel(uri);
-								
-								//Output.inspect(this.settings)
+								this.settings	= xjsfl.ui.show(this);
 								
 						// --------------------------------------------------------------------------------
 						// process result
-						
+								
+								//Output.inspect(this.settings)
+								
 							// get control values and convert to array for callbacks
 								if(accept || cancel)
 								{
@@ -1378,7 +1386,9 @@
 								{
 									// validate
 									
-										// reset error
+										//FIX I seem to have broken validation somewhere!
+									
+										// reset last error message
 											this.error = null;
 											
 										// loop over controls and request validation
@@ -1395,7 +1405,7 @@
 									// didn't validate - alert error and show again
 										if(this.error)
 										{
-											alert(this.error)
+											alert(this.error);
 											this.show(accept, cancel);
 										}
 										
@@ -1415,9 +1425,6 @@
 									cancel.apply(this, args);
 									this.settings = null;
 								}
-								
-							// unregister from from xjsfl ui
-								xjsfl.ui.remove();
 					}
 						
 					return this;
@@ -1452,6 +1459,9 @@
 					// replace separators
 						var str		= this.xml.toXMLString().replace(/<row template="separator"\/>/g, this.separator);
 						this.xml	= new XML(str);
+						
+					// add xulid, so we can test for existance of dialog boxes in future
+						this.xml.*	+= new XML('<textbox id="xulid" value="{xulid}" visible="false" />');
 						
 					// debug
 						//trace(this.xml.toXMLString())
@@ -1490,14 +1500,33 @@
 				 */
 				toString:function()
 				{
-					return '[object XUL controls:' +xjsfl.utils.getKeys(this.controls).length+ ']';
+					return '[object XUL id="' +this.id+ '" title="' +xjsfl.utils.trim(this.xml.@title)+ '" controls:' +xjsfl.utils.getKeys(this.controls).length+ ']';
 				}
 		}
 		
-		
-	// ------------------------------------------------------------------------------------------------
-	// Supporting classes
+	// ---------------------------------------------------------------------------------------------------------------
+	// register
 	
+		xjsfl.classes.register('XUL', XUL);
+
+	
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██ ██  ██ ██        ██████              ██              ██ 
+//  ██  ██ ██  ██ ██        ██                  ██              ██ 
+//  ██  ██ ██  ██ ██        ██     █████ █████ █████ ████ █████ ██ 
+//   ████  ██  ██ ██        ██     ██ ██ ██ ██  ██   ██   ██ ██ ██ 
+//  ██  ██ ██  ██ ██        ██     ██ ██ ██ ██  ██   ██   ██ ██ ██ 
+//  ██  ██ ██  ██ ██        ██     ██ ██ ██ ██  ██   ██   ██ ██ ██ 
+//  ██  ██ ██████ ██████    ██████ █████ ██ ██  ████ ██   █████ ██ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// XUL Control - OO representation of a dialog control
+
+
+	// --------------------------------------------------------------------------------
+	// Constructor
+
 		/**
 		 * An OO wrapper for XMLUI UI elements
 		 * @param	type	{String}	The type (tag name) of the control item
@@ -1505,7 +1534,7 @@
 		 * @param	xml		{XML}		The XML of the control, that will be added to the UI
 		 * @returns		
 		 */
-		function Control(id, type, xul, xml)
+		function XULControl(id, type, xul, xml)
 		{
 			// properties
 				this.id			= id;
@@ -1528,7 +1557,10 @@
 				this.combo		= /^radiogroup|menulist|listbox$/.test(type);
 		}
 		
-		Control.prototype = 
+	// --------------------------------------------------------------------------------
+	// Prototype
+
+		XULControl.prototype = 
 		{
 			// properties
 				id:				'',
@@ -1613,7 +1645,7 @@
 				/**
 				 * Get the values of a radiobuttongroup, listbox, dropdown
 				 */
-				get values()
+				getValues:function()
 				{
 					switch(this.type)
 					{
@@ -1630,7 +1662,7 @@
 					return [this.value || null];
 				},
 				
-				set selectedIndex(index)
+				setSelectedIndex:function(index)
 				{
 					if(this.combo)
 					{
@@ -1659,17 +1691,59 @@
 				
 				toString:function()
 				{
-					return '[object Control id:"'+this.id+'" type:"'+this.type+'" value="' +this.value+ '"]';
+					return '[object XULControl id:"'+this.id+'" type:"'+this.type+'" value="' +this.value+ '"]';
 				}
 				
 		}
 		
-	// ---------------------------------------------------------------------------------------------------------------
-	// register
-	
-		xjsfl.classes.register('XUL', XUL);
-		
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██ ██  ██ ██        ██████                    ██   
+//  ██  ██ ██  ██ ██        ██                        ██   
+//  ██  ██ ██  ██ ██        ██     ██ ██ █████ █████ █████ 
+//   ████  ██  ██ ██        █████  ██ ██ ██ ██ ██ ██  ██   
+//  ██  ██ ██  ██ ██        ██     ██ ██ █████ ██ ██  ██   
+//  ██  ██ ██  ██ ██        ██      ███  ██    ██ ██  ██   
+//  ██  ██ ██████ ██████    ██████  ███  █████ ██ ██  ████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// XUL Event
 
+	// --------------------------------------------------------------------------------
+	// Constructor
+
+		/**
+		 * A XUL Event class to pass parameters to event callbacks
+		 * @param	type	{String}
+		 * @param	control	{XULControl}
+		 * @param	xul		{XUL}
+		 * @param	xmlui	{XMLUI}
+		 */
+		function XULEvent(type, control, xul, xmlui)
+		{
+			/**
+			 * @type {String}
+			 */
+			this.type		= type;
+			/**
+			 * @type {XULControl}
+			 */
+			this.control	= control;
+			/**
+			 * @type {XUL}
+			 */
+			this.xul		= xul;
+			/**
+			 * @type {XMLUI}
+			 */
+			this.xmlui		= xmlui;
+			
+			this.toString = function()
+			{
+				var control		= this.control ? ' control="' +this.control.id+ '"' : '';
+				return '[object XULEvent type="' +this.type+ '"' +control+ ' xul="' +this.xul.id+ '"]';
+			}
+		}
 
 
 // -----------------------------------------------------------------------------------------------------------------------------------------
@@ -1769,12 +1843,21 @@
 		
 			if(1)
 			{
-				function test(xmlui, xul, control)
+				
+				/**
+				 * Click handler for button press
+				 * @param	event	{XULEvent}
+				 */
+				function click(event)
 				{
+					trace('CLICK: ' + event)
+					Output.inspect(event, true, {'function':false, 'xml':false})
+					/*
 					trace(xul.controls.radio);
 					trace(xul.controls.radio.value);
 					trace(xul.controls.radio.currentValue);
 					trace(xul.controls.radio.getXML());
+					*/
 					//trace(xul.controls.radio.values);
 					/*
 					var values =
@@ -1792,12 +1875,12 @@
 					.addRadiogroup('Radio', null, [1,2,3])
 					.addListbox('Listbox', null, [4,5,6])
 					.addDropdown('Dropdown', null, [7,8,9])
-					.addButton('See values', 'button', null, {command:test});
+					.addButton('See values', 'button', null, {command:click});
 					
 				var settings = xul.show();
 					
 				trace(fl.xmlui.get('listbox'))
-				Output.inspect(xul.settings);
+				Output.inspect(xul.settings, true);
 				//trace(settings)
 				
 			}
