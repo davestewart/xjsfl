@@ -22,9 +22,11 @@
 		 */
 		FileSystemObject = function(pathOrUri)
 		{
+			//BUG Errors when file URIs go beyond 260 chars. Need to implement fix (replace FLfile methods?) or workaround.
+			
 			if(pathOrUri)
 			{
-				this.uri = xjsfl.utils.makeURI(pathOrUri); // this.getUri(pathOrUri);
+				this.uri = xjsfl.utils.makeURI(pathOrUri);
 			}
 			if(this.uri)
 			{
@@ -60,20 +62,6 @@
 				 */
 				constructor:FileSystemObject,
 			
-				/**
-				 * Gets a uri-formatted string to the filesystem resource
-				 * @param pathOrUri	Any valid path or uri-formatted pointer to a filsystem resource	
-				 * @returns	{String} The uri-formatted string to the filesystem resource
-				 */
-				getUri:function(pathOrUri)
-				{
-					if(pathOrUri.indexOf('file:') == 0)
-					{
-						return pathOrUri;
-					}
-					return FLfile.platformPathToURI(pathOrUri);
-				},
-				
 				/**
 				 * Deletes the item from the filesystem
 				 * @param skipConfirmation {Boolean} An optional boolean to skip the user-confirmation window
@@ -513,7 +501,7 @@
 						{
 							uriCopy = uriCopy.replace(/\/*$/, '/') + this.name;
 						}
-						uriCopy = this.getUri(uriCopy);
+						uriCopy =  xjsfl.utils.makeURI(uriCopy);
 						
 					// remove target if file should overwrite
 						if(overWrite)
