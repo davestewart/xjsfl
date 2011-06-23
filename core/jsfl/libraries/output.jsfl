@@ -36,10 +36,17 @@
 		list:function(arr, properties, label, output)
 		{
 			// variables
-				properties	= properties || 'name';
 				label		= label || 'List';
 				output		= output || true;
-				arr			= xjsfl.utils.getValues(arr, properties);
+				if(properties != null)
+				{
+					properties	= properties || 'name';
+					arr			= xjsfl.utils.getValues(arr, properties);
+				}
+				else
+				{
+					arr			= arr.map(function(e){return e.toString()});
+				}
 				
 			// trace
 				return Output.inspect(arr, label, properties instanceof Array ? 2 : 1, output)
@@ -51,10 +58,12 @@
 		 * @param arg		{String}		An optional String label (defaults to "Inspect")
 		 * @param arg		{Number}		An optional max depth to recurse to (defaults to 3)
 		 * @param arg		{Boolean}		An optional boolean to indicate outputting or not (defaults to true)
+		 * @param arg		{Object}		An optional filter object to tell the outputter what to print, ie {'function':false}. Allowed types: ['object', 'string', 'array', 'number', 'object', 'boolean', 'function', 'undefined', 'null']
 		 */
 		inspect:function(obj, arg1, arg2, arg3)
 		{
 			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
+			//TODO Maybe just have an include object, which could be like {underscores:false, functions:false,strings:false}
 			
 			// ---------------------------------------------------------------------------------------------------------------------
 			// methods
@@ -98,11 +107,18 @@
 						// get type
 							var type		= getType(value[key]);
 							
+						// skip if filter is set to false
 							//trace(value + ':' + type)
+							if(filter[type] === false)
+							{
+								return false;
+							}
+							
 							
 						// if compound, recurse
 							if (type === 'object' || type === 'array')
 							{
+								// TODO Check if we need the compound recursion check, and if a stack.indexOf(value[key]) would suffice
 								if(checkRecursion())
 								{
 									stats.objects++;
@@ -342,6 +358,7 @@
 					var label		= 'Inspect';
 					var maxDepth	= 4;
 					var print		= true;
+					var filter		= {};
 					
 				// variables
 					for each(var arg in [arg1, arg2, arg3])
@@ -352,6 +369,8 @@
 							label = arg;
 						else if(typeof arg === 'boolean')
 							print = arg;
+						else if(typeof arg === 'object')
+							filter = arg;
 					}
 					
 				// recursion detection
@@ -405,87 +424,50 @@
 				
 		},
 		
+		/**
+		 * Convenience function to Toabe.print() to output value in tabular format
+		 * @param	arr		{array}		An Array of values
+		 * @returns			{String}	The output of the print() call
+		 */
 		table:function(arr)
 		{
-			Table.print(arr);
+			return Table.print(arr);
 		},		
 			
 		/**
 		 * View the hierarchy of a folder
+		 * @param value		{String}		A valid folder path
+		 * @param value		{Folder}		An existing folder object
+		 * @param depth		{Number}		An optional max depth to recurse to (defaults to 3)
+		 * @param output	{Boolean}		An optional boolean to indicate outputting or not (defaults to true)
+		 * @returns		
 		 */
-		folder:function(value, arg1, arg2)
+		folder:function(folder, depth, output)
 		{
-			// functions
-				function fnChild(element, index, level, indent)
-				{
-					if(hierarchical)
-					{
-						fl.trace(indent + '/' +  element.name);
-					}
-					else
-					{
-						fl.trace(element.path);
-					}
-				}
+			//BUG Errors when file URIs go beyond 260 chars. @see FileSystem for more info
+			
+			// output
+				var _output = '';
 				
-				function fnFolder(element, level)
+			// callback
+				function callback(element, index, level, indent)
 				{
-					return element instanceof Folder && level < maxDepth;
+					_output += indent + '/' +  element.name + '\n';
+					return element.uri.length < 250;
 				}
 			
-				function recurse(root, fnChild, fnTestChildren)
+			// process
+				var files = Data.recurseFolder(folder, depth, callback);
+				trace(files.length)
+				
+			// print
+				if(output !== false)
 				{
-					var indent = '';
-					var level = 0;
-					
-					function list(e, i)
-					{
-						fnChild(e, i, level, indent);
-						if(fnTestChildren ? fnTestChildren(e, level) : e.length)
-						{
-							level ++;
-							indent += '	';
-							e.each(list);
-							indent = indent.substring(1);
-							level--;
-						}
-					}
-					
-					list(root);
-					
+					trace(_output);
 				}
 				
-			// parse value
-				if(typeof value === 'string')
-				{
-					var folder = new Folder(value);
-				}
-				else if(value instanceof Folder)
-				{
-					// do nothing
-				}
-				else if(value instanceof File)
-				{
-					var folder = value.parent;
-				}
-			
-			// parse maxDepth and hierarchical
-				var maxDepth 		= 100;
-				var hierarchical	= true;
-				for each(var arg in [arg1, arg2])
-				{
-					if(typeof arg === 'number')
-						maxDepth = arg;
-					if(typeof arg === 'boolean')
-						hierarchical = arg;
-				}
-				
-			// do it
-				if(folder.exists)
-				{
-					recurse(folder, fnChild, fnFolder);
-				}
-
+			// return
+				return _output;
 		},
 		
 		/**
@@ -498,7 +480,7 @@
 		print:function(content, title, output)
 		{
 			// variables
-				output		= output == undefined ? true : false;
+				output		= output !== false;
 				var result	= '';
 				result		+= '\n\t' +title + '\n\t----------------------------------------------------------------------------------------------------\n';
 				result		+= '\t' + String(content).replace(/\n/g, '\n\t') + '\n';
@@ -533,7 +515,7 @@
 	if( ! xjsfl.loading )
 	{
 		// initialize
-			xjsfl.init(this);
+			xjsfl.reload(this);
 			clear();
 			try
 			{
@@ -587,22 +569,24 @@
 			// The preset panel
 				if(0)
 				{
-					Output.table(app.presetPanel.items)
+					Output.table(app.presetPanel.items);
 				}
 		
 		// --------------------------------------------------------------------------------
 		// Inspect a hierarchy of folders
 		
 			// hierarchically
-				if(0)
+				if(1)
 				{
-					Output.folder('c:/temp/', 4)
+					Timer.start();
+					Output.folder('c:/temp', 8);
+					Timer.stop();
 				}
 			
-			// show full paths
+			// show full paths, and limit to 4 levels deep
 				if(0)
 				{
-					Output.folder('c:/temp/', 4, false)
+					Output.folder('core/jsfl/libraries/copy', 4, false)
 				}
 		
 		// catch
