@@ -71,14 +71,14 @@
 			},
 			
 			/**
-			 * Recursively trawl a folder's contents, optionally calling a callback per element
+			 * Recursively trawl a folder's contents, optionally calling a callback per element. (NB, arguments 2 and 3 may be swapped)
 			 * @param	folder		{String}	The path or uri to a valid folder
 			 * @param	folder		{Folder}	A valid Folder object
-			 * @param	depth		{Number}	An optional max depth to recurse to, defaults to 100 
-			 * @param	callback	{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element
+			 * @param	arg2		{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element
+			 * @param	arg3		{Number}	An optional max depth to recurse to, defaults to 100 
 			 * @returns				(Array}		An array of paths
 			 */
-			recurseFolder:function(folder, depth, callback)
+			recurseFolder:function(folder, arg2, arg3)
 			{
 				// ------------------------------------------------------------
 				// functions
@@ -112,8 +112,18 @@
 				// code
 				
 					// defaults
-						depth	 		= depth || 100;
-					
+						var depth		= depth || 100;
+						var callback	= null;
+						
+					// variables
+						for each(var arg in [arg2, arg3])
+						{
+							if(typeof arg === 'number')
+								depth = arg;
+							else if(typeof arg === 'function')
+								callback = arg;
+						}
+
 					// folder
 						if(typeof folder === 'string')
 						{

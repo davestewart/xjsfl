@@ -60,7 +60,7 @@
 		 * @param arg		{Boolean}		An optional boolean to indicate outputting or not (defaults to true)
 		 * @param arg		{Object}		An optional filter object to tell the outputter what to print, ie {'function':false}. Allowed types: ['object', 'string', 'array', 'number', 'object', 'boolean', 'function', 'undefined', 'null']
 		 */
-		inspect:function(obj, arg1, arg2, arg3)
+		inspect:function(obj, arg2, arg3, arg4)
 		{
 			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
 			//TODO Maybe just have an include object, which could be like {underscores:false, functions:false,strings:false}
@@ -361,7 +361,7 @@
 					var filter		= {};
 					
 				// variables
-					for each(var arg in [arg1, arg2, arg3])
+					for each(var arg in [arg2, arg3, arg4])
 					{
 						if(typeof arg === 'number')
 							maxDepth = arg;
@@ -457,7 +457,7 @@
 				}
 			
 			// process
-				var files = Data.recurseFolder(folder, depth, callback);
+				var files = Data.recurseFolder(folder, callback, depth);
 				trace(files.length)
 				
 			// print
