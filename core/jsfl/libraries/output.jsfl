@@ -57,8 +57,8 @@
 		 * @param obj		{Object}		Any Object or value
 		 * @param arg		{String}		An optional String label (defaults to "Inspect")
 		 * @param arg		{Number}		An optional max depth to recurse to (defaults to 3)
-		 * @param arg		{Boolean}		An optional boolean to indicate outputting or not (defaults to true)
-		 * @param arg		{Object}		An optional filter object to tell the outputter what to print, ie {'function':false}. Allowed types: ['object', 'string', 'array', 'number', 'object', 'boolean', 'function', 'undefined', 'null']
+		 * @param arg		{Boolean}		An optional boolean to indicate output type: true=debug, false=return, undefined=output
+		 * @param arg		{Object}		An optional filter object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
 		 */
 		inspect:function(obj, arg2, arg3, arg4)
 		{
@@ -95,15 +95,22 @@
 					
 					function processLeaf(value, key)
 					{
-						// variables
-							key = key !== undefined ? key :  null;
-					
 						// quit if max depth reached
 							if (indent.length > maxDepth)
 							{
 								return false;
 							}
 							
+						// skip prototypes (seems to cause silent errors. Not sure if this is an issue with prototypes, or just some classes)
+							// trace(key);
+							if(key == 'prototype')
+							{
+								return false;
+							}
+							
+						// variables
+							key = key !== undefined ? key :  null;
+					
 						// get type
 							var type		= getType(value[key]);
 							
@@ -113,7 +120,6 @@
 							{
 								return false;
 							}
-							
 							
 						// if compound, recurse
 							if (type === 'object' || type === 'array')
@@ -177,8 +183,15 @@
 					
 					function output(str)
 					{
-						var output = indent.join('') + str
-						strOutput += output + '\n';
+						// get output
+							var output = indent.join('') + str
+							strOutput += output + '\n';
+							
+						// if debugging, output immediately
+							if(debug)
+							{
+								trace('	' + output);
+							}
 					}
 					
 					function down(obj)
@@ -345,7 +358,7 @@
 					
 		
 			// ---------------------------------------------------------------------------------------------------------------------
-			// constructor
+			// setup
 			
 				/**
 				 * Output object in hierarchical format
@@ -354,13 +367,15 @@
 				 * @param maxDepth	uint	An optional uint specifying a max depth to recurse to (needed to limit recursive objects)
 				 */
 				
-				// variables
+				// defaults
 					var label		= 'Inspect';
 					var maxDepth	= 4;
+					var print		= null;
+					var debug		= false;
 					var print		= true;
 					var filter		= {};
 					
-				// variables
+				// parameter shifting
 					for each(var arg in [arg2, arg3, arg4])
 					{
 						if(typeof arg === 'number')
@@ -368,7 +383,12 @@
 						else if(typeof arg === 'string')
 							label = arg;
 						else if(typeof arg === 'boolean')
-							print = arg;
+						{
+							if(arg === true)
+								debug = true;
+							else
+								print = false;
+						}
 						else if(typeof arg === 'object')
 							filter = arg;
 					}
@@ -393,6 +413,19 @@
 				// reset stats
 					var stats			= {objects:0, values:0, time:new Date};
 					
+			// ---------------------------------------------------------------------------------------------------------------------
+			// output
+			
+				// if debug, start tracing now, as subsequent output will be traced directly to the listener
+					if(debug === true)
+					{
+						if(label == 'Inspect')
+						{
+							label = 'Inspect (debug mode)';
+						}
+						trace(Output.print('', label + ': ' + className, false).replace(/[\r\n]+$/, ''))
+					}
+					
 				// initial outout
 					if(type == 'object' || type == 'array')
 					{
@@ -402,21 +435,14 @@
 				// process
 					processValue(obj);
 					
-				// stats
-					stats.time			= (((new Date) - stats.time) / 1000).toFixed(1) + ' seconds';
+				// get final stats
+					//stats.time			= (((new Date) - stats.time) / 1000).toFixed(1) + ' seconds';
 					
 				// output
-					if(print == 0 || print == false)
+					if(debug === false && print === true)
 					{
-						// do nothing
-					}
-					else if(print == 1 | print == true)
-					{
-						Output.print(strOutput, label + ': ' + className + ' (depth:' +maxDepth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')');
-					}
-					else
-					{
-						Output.print('objects:  ' +stats.objects+ '\nvalues: ' +stats.values + '\ntime:   ' + stats.time, 'Inspect: ' + (label || className));
+						//Output.print(strOutput, label + ': ' + className + ' (depth:' +maxDepth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')');
+						//Output.print('objects:  ' +stats.objects+ '\nvalues: ' +stats.values + '\ntime:   ' + stats.time, 'Inspect: ' + (label || className));
 					}
 					
 				// return
@@ -458,7 +484,6 @@
 			
 			// process
 				var files = Data.recurseFolder(folder, callback, depth);
-				trace(files.length)
 				
 			// print
 				if(output !== false)
@@ -545,10 +570,10 @@
 		// Inspect items
 		
 			// in a hierchical format
-				if(0)
+				if(1)
 				{
 					var obj = {a:1, b:2, c:[0,1,2,3,4, {hello:'hello'}]}
-					Output.inspect(obj)
+					Output.inspect(obj, true)
 				}
 			
 			// in a hierarchical format, adding a custom label and recursion depth
@@ -576,7 +601,7 @@
 		// Inspect a hierarchy of folders
 		
 			// hierarchically
-				if(1)
+				if(0)
 				{
 					Timer.start();
 					Output.folder('c:/temp', 8);
