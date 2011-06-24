@@ -24,8 +24,8 @@
 				}
 				
 			// check that root folder is *only* named xJSFL
-				var root = String(fl.scriptURI).replace('/core/jsfl/install/install.jsfl', '');
-				if( ! /\bxJSFL$/.test(root))
+				var xjsfl = String(fl.scriptURI).replace('core/install/install.jsfl', '');
+				if( ! /\bxJSFL\/$/.test(xjsfl))
 				{
 					alert('xJSFL installation issue.\n\nThe xJSFL root folder must only be named "xJSFL".\n\nPlease rename the folder and start the installation process again.');
 					return false;
@@ -37,11 +37,10 @@
 			// variables
 				var src, trg, file;
 				var win		= fl.version.indexOf('WIN') != -1;
-				var xjsfl	= fl.scriptURI.replace(/core\/.+$/, '');
-				var uris =
+				var uris	=
 				{
-					install		:fl.scriptURI.replace(/[^\/]+$/, ''),
 					xjsfl		:xjsfl,
+					install		:xjsfl + 'core/install/',
 					config		:fl.configURI,
 					tools		:fl.configURI + 'Tools/',
 					commands	:fl.configURI + 'Commands/',
@@ -97,9 +96,17 @@
 				FLfile.copy(src, trg);
 				
 			// Commands
-				src				= uris.install + 'Commands/Open xJSFL user folder.jsfl';
-				trg				= uris.commands + 'xJSFL/Open xJSFL user folder.jsfl';
-				FLfile.copy(src, trg);
+				var commands =
+				[
+					'Open xJSFL user folder.jsfl',
+					'Open Commands folder.jsfl'
+				];
+				for each(var command in commands)
+				{
+					src			= uris.install + 'Commands/' + command;
+					trg			= uris.commands + 'xJSFL/' + command;
+					FLfile.copy(src, trg);
+				}
 				
 		// ----------------------------------------------------------------------------------------
 		// splash

@@ -1,1 +1,1 @@
-fl.runScript(fl.scriptURI.replace(/[^\/]+$/, '') + 'core/jsfl/install/install.jsfl');
+fl.runScript(fl.scriptURI.replace(/[^\/]+$/, '') + 'core/install/install.jsfl');

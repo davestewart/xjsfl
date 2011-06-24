@@ -4,7 +4,5 @@
 	<spacer />
 	<label value="Installation complete!" />
 	<spacer />
-	<label value="Restart Flash and navigate to Window > Other Panels > xJSFL" />
-	<label value="Snippets to start using xJSFL straight away, or click the logo" />
-	<label value="above to view the onlne documentation." />
+	<label width ="310" value="Restart Flash and navigate to Window > Other Panels > xJSFL Snippets to start using xJSFL straight away, or click the logo above to view the onlne documentation." />
 </dialog>

@@ -1,0 +1,1 @@
+new xjsfl.classes.Folder(fl.configURI + 'Commands').open();
