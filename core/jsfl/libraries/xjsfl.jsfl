@@ -356,13 +356,13 @@
 		 * Function will:
 		 * 
 		 * - convert file:/// to paths
-		 * - convert <xjsfl> and <config> tokens
-		 * - convert relative paths to absolute from <xjsfl> folder
+		 * - convert {xjsfl} and {config} tokens
+		 * - convert relative paths to absolute from xJSFL folder
 		 * - replace multiple / and \ with /
 		 * - resolve ../ tokens to correct parent folder
 		 * 
 		 * @param	str			{String}	An absolute path, relative path, or uri
-		 * @param	shorten		{Boolean}	An optional boolean to return a path with <xjsfl> or <config> swapped out from the actual path
+		 * @param	shorten		{Boolean}	An optional boolean to return a path with {xjsfl} or {config} swapped out from the actual path
 		 * @returns				{String}	An absolute or shortened path
 		 */
 		makePath:function(str, shorten)
@@ -377,10 +377,10 @@
 					path = str;
 				}
 				
-			// convert <config> and <xjsfl> tokens
+			// convert {config} and {xjsfl} tokens
 				path = path
-					.replace(/^.*<config>/g, xjsfl.settings.folders.config)
-					.replace(/^.*<xjsfl>/g, xjsfl.settings.folders.xjsfl);
+					.replace(/^.*{config}/g, xjsfl.settings.folders.config)
+					.replace(/^.*{xjsfl}/g, xjsfl.settings.folders.xjsfl);
 				
 			// if a relative path is passed in, convert it to absolute from the xJSFL root
 				if( ! xjsfl.utils.isAbsolutePath(path))
