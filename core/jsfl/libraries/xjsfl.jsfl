@@ -23,16 +23,16 @@
 	// setup
 	
 		// temp variables for framework setup
-			xjsflPath		= FLfile.uriToPlatformPath(xjsfl.uri).replace(/\\/g, '/');
+			var xjsflPath = FLfile.uriToPlatformPath(xjsfl.uri).replace(/\\/g, '/');
 			
 		// temp output object, needed before libraries are loaded
-			if(!xjsfl.settings)
+			if( ! xjsfl.settings )
 			{
 				xjsfl.settings	= {debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)};
 				xjsfl.output =
 				{
-					trace: function(message){ if(xjsfl.settings.debugLevel > 0)fl.trace('> xjsfl: ' + message); },
-					error: function(message){ fl.trace('> xjsfl: << ' + message + ' >>'); }
+					trace: function(message){ if(xjsfl.settings.debugLevel > 0){ fl.trace('> xjsfl: ' + message) } },
+					error: function(message){ fl.trace('> xjsfl: error "' + message + '"') }
 				}
 			}
 	
@@ -40,7 +40,7 @@
 			if( ! FLfile['platformPathToURI'] )
 			{
 				var path = 'core/jsfl/libraries/flfile.jsfl';
-				xjsfl.output.trace('Loading "<xJSFL>/' +path+ '"');
+				xjsfl.output.trace('Loading "{xJSFL}/' +path+ '"');
 				fl.runScript(xjsfl.uri + path);
 			}
 			
@@ -70,7 +70,7 @@
 						return false;
 					}
 				}
-			)
+			);
 			
 		// currently-running script dir
 			xjsfl.__defineGetter__
@@ -79,9 +79,9 @@
 				function()
 				{
 					var stack = xjsfl.utils.getStack();
-					return xjsfl.utils.makeURI(stack[1].path)
+					return xjsfl.utils.makeURI(stack[1].path);
 				}
-			)
+			);
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
