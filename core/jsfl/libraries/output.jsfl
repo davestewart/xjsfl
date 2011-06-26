@@ -17,27 +17,17 @@
 	{
 		
 		/**
-		 * Shortcut to fl.trace which takes multiple arguments
-		 */
-		trace:function()
-		{
-			var values = Array.slice.call(this, arguments).join(', ')
-			fl.trace(values);
-		},
-		
-		/**
 		 * 
 		 * @param	obj	
 		 * @param	name	
 		 * @param	functions	
 		 * @returns		
 		 */
-		toProps:function(obj, name, type)
+		props:function(obj, output)
 		{
 			// variables
 				var props	= '';
-				name		= name ? ' ' + name : '';
-				type		= type || 'object';
+				var str		= obj.toString();
 				
 			// propertes
 				for(var i in obj)
@@ -54,8 +44,17 @@
 					props += ' ' + i + '=' + value;
 				}
 				
+			// str
+				str = str.replace(']', props + ']')
+				
+			// output
+				if(output)
+				{
+					fl.trace(str);
+				}
+				
 			// return
-				return '[' + type + name + props + ']';
+				return str;
 		},
 		
 		/**
@@ -68,21 +67,38 @@
 		 */
 		list:function(arr, properties, label, output)
 		{
+			// defaults
+				label			= label || 'List';
+				
 			// variables
-				label		= label || 'List';
-				output		= output || true;
-				if(properties != null)
+				var strOutput	= '';
+				
+			// if arr is an array, grab selected properties
+				if(arr instanceof Array)
 				{
-					properties	= properties || 'name';
-					arr			= xjsfl.utils.getValues(arr, properties);
-				}
-				else
-				{
-					arr			= arr.map(function(e){return e.toString()});
+					// collect children's properties
+						if(properties == null)
+						{
+							arr			= arr.map(function(e){return String(e)});
+						}
+						else
+						{
+							properties	= properties || 'name';
+							arr			= xjsfl.utils.getValues(arr, properties);
+						}
+						
+					// trace
+						strOutput = Output.inspect(arr, label, properties instanceof Array ? 2 : 1, output);
 				}
 				
-			// trace
-				return Output.inspect(arr, label, properties instanceof Array ? 2 : 1, output)
+			// if arr is an object, just output the top-level key/values
+				else
+				{
+					 strOutput = Output.inspect(arr, label, 1, output, {'function':false});
+				}
+				
+			// output
+				return strOutput;
 		},
 		
 		/**
@@ -92,11 +108,15 @@
 		 * @param arg		{Number}		An optional max depth to recurse to (defaults to 3)
 		 * @param arg		{Boolean}		An optional boolean to indicate output type: true=debug, false=return, undefined=output
 		 * @param arg		{Object}		An optional filter object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
+		 * @param arg		{Function}		An optional output function in case you want to do any custom processing of the data
 		 */
-		inspect:function(obj, arg2, arg3, arg4)
+		inspect:function(obj, arg2, arg3, arg4, arg5)
 		{
 			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
 			//TODO Maybe just have an include object, which could be like {underscores:false, functions:false,strings:false}
+			//TODO Refactor all iteration to the Data class
+			//TODO For callback / debug, output to file in two separate passes - 1:key, 2:value, that way you get to see the actual key name who's value breaks the iteration
+			//TODO Refactor {filter} argument to an {options} object so many parameters can be passed in
 			
 			// ---------------------------------------------------------------------------------------------------------------------
 			// methods
@@ -138,7 +158,7 @@
 							// trace(key);
 							if(key == 'prototype')
 							{
-								return false;
+								//return false;
 							}
 							
 						// variables
@@ -219,6 +239,12 @@
 						// get output
 							var output = indent.join('') + str
 							strOutput += output + '\n';
+							
+						// if callback, call it
+							if(callback)
+							{
+								callback(output);
+							}
 							
 						// if debugging, output immediately
 							if(debug)
@@ -406,6 +432,7 @@
 					var print		= null;
 					var debug		= false;
 					var print		= true;
+					var callback	= null;
 					var filter		= {};
 					
 				// parameter shifting
@@ -424,6 +451,8 @@
 						}
 						else if(typeof arg === 'object')
 							filter = arg;
+						else if(typeof arg === 'function')
+							callback = arg;
 					}
 					
 				// recursion detection
@@ -550,7 +579,7 @@
 			// trace
 				if (output)
 				{
-					Output.trace(result + '\n');
+					fl.trace(result);
 				}
 				
 			// return
@@ -606,7 +635,14 @@
 		// --------------------------------------------------------------------------------
 		// Inspect items
 		
-			// in a hierchical format
+			// an Array in hierchical format
+				if(1)
+				{
+					var arr = [0,1,2,3,4, {hello:'hello'}]
+					Output.inspect(arr)
+				}
+			
+			// an Object in hierchical format
 				if(0)
 				{
 					var obj = {a:1, b:2, c:[0,1,2,3,4, {hello:'hello'}]}
