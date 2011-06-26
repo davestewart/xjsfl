@@ -1445,7 +1445,7 @@
 			}
 			else
 			{
-				xjsfl.output.error('Module names cannot clash with named xjsfl.module methods');
+				xjsfl.output.error('xjsfl.modules.register(): Module names cannot clash with named xjsfl.module methods');
 			}
 		}
 		
