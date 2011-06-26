@@ -1411,12 +1411,46 @@
 		/**
 		 * Load a class or array of classes from disk
 		 * 
-		 * @param	name	{String|Array}		A string name or array of class names
+		 * @param	path		{String}	A class filepath, relative to the jsfl/libraries folder
+		 * @param	path		{Array}		An Array of class filepaths
+		 * @param	debugType	{Number}	An optional debug switch 1:alert, 2:eval
 		 */
-		load:function(name, test)
+		load:function(path, debugType)
 		{
-			xjsfl.utils.applyEach(name, xjsfl.file.load, ['library', test], 1);
-			//xjsfl.file.load('library', name, test)
+			// arrayize paths
+				var paths = path instanceof Array ? path : [path];
+				
+			//TODO Add a check to see if we are loading, and if so, only load classes that are not yet defined. Can we do that? Do we need to cache load paths in that case?
+				
+			// load classes
+				for(var i = 0; i < paths.length; i++)
+				{
+					if(debugType != undefined)
+					{
+						var str = 'Loading class file ' +(i + 1)+ '/' +paths.length+ ': ' + paths[i];
+						(debugType == 1 ? xjsfl.output.trace : alert)(str);
+					}
+					xjsfl.file.load('library', paths[i], debugType === 2);
+				}
+				
+			// return
+				return this;
+		},
+		
+		/**
+		 * Loads a class if not already defined in the supplied scope
+		 * @param	scope		{Object}	A valid scope to extract the class definition to, normally 'this' (without the quotes)
+		 * @param	className	{String}	The class name, such as 'Template', or 'Table'
+		 * @param	path		{String}	The class filepath, relative to the jsfl/libraries folder
+		 * @returns		
+		 */
+		require:function(scope, className, path)
+		{
+			if( ! scope[className])
+			{
+				this.load(path, 1);
+			}
+			return this;
 		},
 		
 		/**
@@ -1428,7 +1462,7 @@
 		 */
 		register:function(name, obj)
 		{
-			if( ! /^load|register|restore$/.test(name) )
+			if( ! /^load|require|register|restore$/.test(name) )
 			{
 				xjsfl.classes[name] = obj;
 			}
@@ -1444,7 +1478,6 @@
 		 */
 		restore:function(name, scope)
 		{
-				
 			// restore all classes
 				if(typeof name !== 'string')
 				{
@@ -1458,7 +1491,7 @@
 			// restore only one class
 				else if(typeof name == 'string')
 				{
-					if( ! /^load|register|restore$/.test(name) )
+					if( ! /^load|require|register|restore$/.test(name) )
 					{
 						//trace('Restoring:' + name)
 						scope = scope || window;
