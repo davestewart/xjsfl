@@ -321,6 +321,12 @@
 		 */
 		makeURI:function(str, context)
 		{
+			// if str is already a URI, no need to convert so return immediately
+				if(str.indexOf('file:') == 0)
+				{
+					return str;
+				}
+				
 			// if an additional filepath is passed in, the returned URI will be relative to it
 				if(typeof context === 'string')
 				{
@@ -336,6 +342,10 @@
 					var path	= stack[1].path;
 					str			= xjsfl.utils.makePath(path) + (str === true ? '' : str);
 				}
+				
+			//TODO If an empty string is passed back, the system assumes the URI is the root. This could be dangerous (especialy if files are to be deleted!) so consider throwing an error, or passing back xJSFL core
+				
+			// return the final URI using the system FLfile commands
 				return str ? FLfile.platformPathToURI(xjsfl.utils.makePath(str)) : '';
 		},
 		
