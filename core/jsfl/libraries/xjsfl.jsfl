@@ -507,6 +507,59 @@
 		},
 		
 		/**
+		 * Optimized Array sortOn method, for sorting Arrays by child property
+		 * @param	arr		{Array}		An Array of Objects
+		 * @param	prop	{String}	A property name to sort on; defaults to 'name'
+		 * @param	alpha	{Boolean}	An optional flag to sort alphabetically
+		 * @returns		
+		 */
+		sortOn:function(arr, prop, alpha)
+		{
+			
+			//TODO Add option to sort alphabetically, including switches in partition
+			
+			function swap(arr, a, b)
+			{
+				var tmp = arr[a];
+				arr[a] = arr[b];
+				arr[b] = tmp;
+			}
+			
+			function partition(array, begin, end, pivot)
+			{
+				var piv = alpha ? String(array[pivot][prop]).toLowerCase() : array[pivot][prop];
+				swap(array, pivot, end - 1);
+				var store = begin;
+				var ix;
+				for(ix = begin; ix < end - 1; ++ix)
+				{
+					if((alpha ? String(array[ix][prop]).toLowerCase() : array[ix][prop]) <= piv)
+					{
+						swap(array, store, ix);
+						++store;
+					}
+				}
+				swap(array, end - 1, store);
+			
+				return store;
+			}
+			
+			function qsort(array, begin, end)
+			{
+				if(end - 1 > begin)
+				{
+					var pivot	= begin + Math.floor(Math.random() * (end - begin));
+					pivot		= partition(array, begin, end, pivot);
+					qsort(array, begin, pivot);
+					qsort(array, pivot + 1, end);
+				}
+			}
+			
+			prop = prop || 'name';
+			qsort(arr, 0, arr.length);
+		},
+		
+		/**
 		 * Get an Array of values from an Object, or an Array of Arrays/Objects from an Array of Objects
 		 * 
 		 * @param	input	{Array}		An Object or an array of Objects

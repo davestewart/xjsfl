@@ -13,11 +13,7 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // UtilityObject - Base object for all Collection types
 
-	if( ! xjsfl.file.loading)
-	{
-		xjsfl.init(this);
-		xjsfl.classes.load('class');
-	}
+	xjsfl.classes.require(this, 'Class', 'class');
 
 	/**
 	 * A base class which contains some utility methods for debugging and development productivity
@@ -399,44 +395,7 @@
 		 */
 		sort:function()
 		{
-			function swap(arr, a, b)
-			{
-				var tmp = arr[a];
-				arr[a] = arr[b];
-				arr[b] = tmp;
-			}
-			
-			function partition(array, begin, end, pivot)
-			{
-				var piv = array[pivot].name.toLowerCase();
-				swap(array, pivot, end - 1);
-				var store = begin;
-				var ix;
-				for(ix = begin; ix < end - 1; ++ix) {
-					if(array[ix].name.toLowerCase() <= piv) {
-						swap(array, store, ix);
-						++store;
-					}
-				}
-				swap(array, end - 1, store);
-			
-				return store;
-			}
-			
-			function qsort(array, begin, end)
-			{
-				if(end - 1 > begin) {
-					var pivot = begin + Math.floor(Math.random() * (end - begin));
-			
-					pivot = partition(array, begin, end, pivot);
-			
-					qsort(array, begin, pivot);
-					qsort(array, pivot + 1, end);
-				}
-			}
-			
-			qsort(this.elements, 0, this.elements.length);
-			
+			xjsfl.utils.sortOn(this.elements);
 			return this;
 		},
 		
@@ -1349,100 +1308,76 @@
 
 
 
-
-if( ! xjsfl.file.loading )
-{
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Demo code
 	
-	// utilitiy functions
-		trace = fl.trace;
-		clear = fl.outputPanel.clear
-		dom = fl.getDocumentDOM();
-		
-		
-		clear();
-		/*
-		
-		function Test()
-		{
-			UtilityObject.apply(this, arguments);
-			this.className = 'Test';
-		}
-		Test.prototype = new UtilityObject;
-		Test.prototype.constructor = Test;
-		
-		
-		var test = new Test();
-		test.prototypeChain(true)
-
-
-		Object.prototype.is = function(classDef)
-		{
-			return this.constructor == classDef;
-		}
-	 */
-			
-	// functions	
-		test = function(e, i)
-		{
-			trace([this, e.name, i].join(' | '));
-			new Error()
-		}
-		
-	// code
-		dom.selectAll();
-		var c = new ElementCollection(fl.getDocumentDOM().selection);
-		
-		
-		
-		c
-			.each(test)
-			//.rename('dave')
-			//.resetTransform()
-			
-			
-			.orderBy('x', true)
-			//.distribute(true, true)
-			.randomize({rotation:'360', position:{x:300, y:300}})
-			.toGrid(100)
-			//.randomize({width:[20, 100, 20], height:[20, 100, 20], x:800, y:400, rotation:360, tint:0}) //
-	/*
-			*/
-					
-			/*
-		c
-			.each(function(e, i){e.scaleX = e.scaleY = 1})
-			.filter(function(){return Math.random() < 0.66})
-			.each(function(e, i){e.scaleX = e.scaleY = 0.66})
-			.filter(function(){return Math.random() < 0.5})
-			.each(function(e, i){e.scaleX = e.scaleY = 0.33})
-			*/
-								
-			/*
-			.resetTransform()
-			.attr('scale', 1)
-			.filter(function(){return Math.random() < 0.66})
-			.attr('scale', 0.66)
-			.filter(function(){return Math.random() < 0.5})
-			.attr('scale', 0.33)
-			*/
-					
-			//.arrange.space('vertical -20')
-			//.arrange('space', 'horizontal 10')
-			//.arrange('align', 'top')
-
-			
-		
-		/*
-		try{
-		}
-		catch(e)
-		{
-			for(var i in e)
+	if( ! xjsfl.loading )
+	{
+		// initialize
+			xjsfl.reload(this);
+			clear();
+			try
 			{
-				trace(i + ':' + e[i])
-			}	
-		}
-		*/
-}
 
+		// grab some objects
+			dom.selectAll();
+			var c = new ElementCollection(fl.getDocumentDOM().selection);
+			
+		// --------------------------------------------------------------------------------
+		// Test sorting
+		
+			if(1)
+			{
+				var items = $$(':selected').sort();
+				Output.inspect(items.elements, 1);
+				
 
+			}
+			
+		// --------------------------------------------------------------------------------
+		// Basic element selection
+		
+			if(0)
+			{
+				c
+					.each(test)
+					//.rename('dave')
+					//.resetTransform()
+					
+					
+					.orderBy('x', true)
+					//.distribute(true, true)
+					.randomize({rotation:'360', position:{x:300, y:300}})
+					.toGrid(100)
+					//.randomize({width:[20, 100, 20], height:[20, 100, 20], x:800, y:400, rotation:360, tint:0}) //
+
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Basic element selection
+		
+			if(0)
+			{
+				c
+					.each(function(e, i){e.scaleX = e.scaleY = 1})
+					.filter(function(){return Math.random() < 0.66})
+					.each(function(e, i){e.scaleX = e.scaleY = 0.66})
+					.filter(function(){return Math.random() < 0.5})
+					.each(function(e, i){e.scaleX = e.scaleY = 0.33})
+										
+					/*
+					.resetTransform()
+					.attr('scale', 1)
+					.filter(function(){return Math.random() < 0.66})
+					.attr('scale', 0.66)
+					.filter(function(){return Math.random() < 0.5})
+					.attr('scale', 0.33)
+					*/
+							
+					//.arrange.space('vertical -20')
+					//.arrange('space', 'horizontal 10')
+					//.arrange('align', 'top')
+			}
+		// catch
+			}catch(err){xjsfl.output.error(err);}
+	}
