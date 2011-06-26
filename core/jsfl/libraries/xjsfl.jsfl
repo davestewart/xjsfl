@@ -1572,32 +1572,58 @@
 
 
 	/**
-	 * Global storage for XUL UIs and settings
+	 * Global access to XUL UI dialogs
 	 */
 	xjsfl.ui =
 	{
-		stack:[],
+		dialogs:[],
 		
-		get current()
+		/**
+		 * Show a new XUL dialog, nesting if one is already shown
+		 * @param	xul		{XUL}		A valid XUL object
+		 * @returns			{Object}	The settings object from the XMLUI
+		 */
+		show:function(xul)
 		{
-			return this.stack[this.stack.length - 1];
-		},
-		
-		add:function(xul)
-		{
-			this.stack.push(xul);
-		},
-		
-		remove:function()
-		{
-			this.stack.pop();
-		},
-		
-		clear:function()
-		{
-			this.stack = [];
+			// clear dialogs if there's no current XMLUI
+				var xulid = fl.xmlui.get('xulid');
+				if(xulid == undefined)
+				{
+					this.dialogs = [];
+				}
+				
+			// grab new id
+				xul.id					= this.dialogs.length;
+				
+			// update XML id placeholders with correct id
+				 var xml				= xul.xml.toXMLString();
+				 xml					= xml.replace(/{xulid}/g, xul.id);
+				
+			// save XML to dialog.xml
+				var uri					= xul.uri || xjsfl.utils.makeURI('core/ui/dialog.xml');
+				new File(uri, xml, true);
+				
+			// register XUL
+				this.dialogs.push(xul);
+				
+			// debug
+				//Output.list(this.dialogs, null, 'Dialog opened')
+				
+			// show
+				var settings = dom.xmlPanel(uri);
+				
+			// unregister
+				this.dialogs.pop();
+
+			// debug
+				//Output.list(this.dialogs, null, 'Dialog closed')
+				
+			// return settings
+				return settings;
 		}
+		
 	}
+	
 	
 // ------------------------------------------------------------------------------------------------------------------------
 //
