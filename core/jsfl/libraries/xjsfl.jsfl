@@ -1647,9 +1647,12 @@
 	 */
 	xjsfl.reload = function()
 	{
+		//TODO Possibly add in an alert box which is controlled by debug level
 		if( ! xjsfl.loading)
 		{
-			fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
+				//alert('Reloading xJSFL...:' + xjsfl.utils.getStack())
+				delete xjsfl.uri;
+				fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
 		}
 	}
 
