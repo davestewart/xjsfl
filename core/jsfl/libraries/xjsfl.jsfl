@@ -691,32 +691,45 @@
 		 * Returns an array of the the currently executing files, paths, lines, and code
 		 * 
 		 * @param	error		{Error}		An optional error object
-		 * @param	shorten		{Boolean}	An optional Boolean to shorten any core paths with <xjsfl>
+		 * @param	shorten		{Boolean}	An optional Boolean to shorten any core paths with {xjsfl}
 		 * @returns				{Array}		An array of the executing files, paths, lines and code
 		 */
 		getStack:function(error, shorten)
 		{
 			// variables
-				var rx			= /^(.*?)@(.+?)([^\/\\]*):(\d*)$/gm;
+				var rxParts		= /^(.*?)@(.*?):(\d+)$/mg;
+				var rxFile		= /(.+?)([^\\\/]*)$/;
+				
+			// error
 				error			= error || new Error();
-				var matches		= error.stack.match(rx);
-				var stack		= [];
-				var xjsflPath	= FLfile.uriToPlatformPath(xjsfl.uri);
-				var parts, path
 				
 			// parse stack
+				var matches		= error.stack.match(rxParts);
+				
+			// parse lines
+				var stack		= [];
+				var xjsflPath	= FLfile.uriToPlatformPath(xjsfl.uri);
+				var parts, fileParts, path, file;
+				
 				for (var i = 0; i < matches.length; i++)
 				{
-					rx.lastIndex	= 0;
-					parts			= rx.exec(matches[i]);
-					path			= (parts[2] || '');
-					stack[i] =
-					{
-						code:parts[1] || '',
-						line:parseInt(parts[4]) || '',
-						file:parts[3] || '',
-						path:(this.makePath(path, shorten))
-					};
+					// error, file, line number
+						rxParts.lastIndex	= 0;
+						parts				= rxParts.exec(matches[i]);
+						
+					// file parts
+						fileParts			= (parts[2] || '').match(rxFile);
+						path				= fileParts ? fileParts[1] : '';
+						file				= fileParts ? fileParts[2] : '';
+						
+					// stack object
+						stack[i] =
+						{
+							code:parts[1] || '',
+							line:parseInt(parts[3]) || '',
+							file:file,
+							path:(this.makePath(path, shorten))
+						};
 				}
 				
 			// return
@@ -779,20 +792,30 @@
 		},
 		
 		/**
-		 * Tests a callback and outputs the error stack if the call fails
-		 * @param	fn	
+		 * Tests a callback and outputs the error stack if the call fails. Add additional parameters after the callback reference
+		 * @param	fn	{Function}	The function to test
 		 * @returns		
 		 */
 		test:function(fn)
 		{
-			try
-			{
-				fn();
-			}
-			catch(err)
-			{
-				xjsfl.output.error(err);
-			}
+			// variables
+				var source	= fn.toSource();
+				source		= source.substring(source.indexOf(' ') + 1, source.indexOf('('));
+				//TODO change function name parsing to recognise function() {...}
+
+			// feedback
+				xjsfl.output.trace('testing function: "' + source + '"');
+				
+			// test!
+				try
+				{
+					var params = this.getArguments(arguments, 1);
+					fn.apply(this, params);
+				}
+				catch(err)
+				{
+					xjsfl.output.error(err, true);
+				}
 		}
 		
 	}
@@ -866,15 +889,19 @@
 		 * 
 		 * @param error		{String}	A string defining the main error message
 		 * @param error		{Error}		A javaScript Error object
-		 * @param data		{Object}	An optional Object contaiing key:value pairs of extra information
+		 * @param testing	{Boolean}	Internal use only. Removes test() stack items
 		 */
-		error:function(error, data)
+		error:function(error, testing)
 		{
 			// variables
 				var stack;
 				if(error instanceof Error)
 				{
 					stack	= xjsfl.utils.getStack(error, true);
+					if(testing)
+					{
+						stack.splice(stack.length - 3, 2);
+					}
 				}
 				else
 				{
@@ -892,17 +919,15 @@
 				for(var i = 0; i < stack.length; i++)
 				{
 					stack[i].index = i;
-					content += new Template(uriError, stack[i]).render();
+					content += new xjsfl.classes.Template(uriError, stack[i]).render();
 				}
 				
 			// build output
-				data			= { error:error.toString(), content:content };
-				trace(new Template(uriErrors, data).render());
-				
-				
+				var data = { error:error.toString(), content:content };
+				trace(new xjsfl.classes.Template(uriErrors, data).render());
 		}
-		
 	}
+
 	
 // ------------------------------------------------------------------------------------------------------------------------
 //
