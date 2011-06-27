@@ -8,130 +8,149 @@
 			<column flex="2" />
 		</columns>
 		
-		<rows id="controls">
+		<rows id="controls" >
 
-			<row template="button">
-				<label value="Button:" align="" control="" />
-				<button class="control" id="button" label="Button" width="" flex="1" tabindex="" acceskey="" oncommand="" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/button -->
 
-			<row template="checkbox">
-				<label value="Checkbox:" />
-				<checkbox class="control" id="checkbox" label="Checkbox" checked="true" tabindex="" acceskey="" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/checkbox -->
-
-			
-			<row template="checkboxgroup">
-				<label value="Checkbox Group:" />
-				<radiogroup class="control" tabindex="" groupbox="true">
-					<checkbox class="control" id="checkbox[0]" label="Checkbox 1" checked="true" tabindex="" acceskey="" />
-					<checkbox class="control" id="checkbox[1]" label="Checkbox 2" checked="true" tabindex="" acceskey="" />
-					<checkbox class="control" id="checkbox[2]" label="Checkbox 3" checked="true" tabindex="" acceskey="" />
-				</radiogroup>
-			</row>
-			
-			<row template="colorchip">
-				<label value="Colorchip:" />
-				<colorchip class="control" id="colorchip" color="" format="hex" width="100" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/colorchip -->
 			<!--
-				format:	hex|string
+			====================================================================================================
+			SIMPLE CONTROLS
+			====================================================================================================
 			-->
 			
-			<row template="choosefile">
-				<label value="Choose File:" align="" control="" />
-				<choosefile id="choosefile" literal="false" pathtype="" required="" size="" type="" width="" flex="1" tabindex="" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/button -->
+				<row template="label">
+					<label value="Label" align="" />
+				</row>
+				
+				<row template="textbox">
+					<label value="Textbox:" />
+					<textbox class="control" id="textbox" value="" maxlength="" prompt="" size="" multiline="false" width="" flex="1" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/textbox -->
+				<!-- size="20" wrap="on" scroll="true" rows="3" wraparound="true" -->
+				
+				<row template="colorchip">
+					<label value="Colorchip:" />
+					<colorchip class="control" id="colorchip" color="" format="hex" width="100" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/colorchip -->
+				<!--
+					format:	hex|string
+				-->
+				
+				<row template="popupslider">
+					<label value="Popupslider:" />
+					<popupslider class="control" id="popupslider" value="" minvalue="0" maxvalue="100" orientation="horz" tabindex="" width="60" flex="" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/popupslider -->
+				
+				<row template="checkbox">
+					<label value="Checkbox:" />
+					<checkbox class="control" id="checkbox" label="Checkbox" checked="true" tabindex="" acceskey="" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/checkbox -->
+
+				<row template="button">
+					<label value="Button:" align="" control="" />
+					<button class="control" id="button" label="Button" width="" flex="1" tabindex="" acceskey="" oncommand="" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/button -->
+	
+				<!--
+				<row template="expression">
+					<label value="Expression:" />
+					<expression class="control" id="expression" value="" prompt="" size="" flex="" />
+				</row>
+				-->
+				<!-- https://developer.mozilla.org/en/XUL/expression -->
+				
+				<row template="flash">
+					<label value="Flash:" valign="top" />
+					<flash class="control" id="flash" src="assets/flash.swf" width="250" height="100" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/flash -->
+				<!-- https://developer.mozilla.org/en/XUL/property -->
+				<!-- http://www.webdesign.org/flash-swish/flash-tutorials/communicating-between-actionscript-and-jsfl.8608.html -->
+							
 			
+				<row template="targetlist">
+					<label value="Targetlist:" />
+					<targetlist id="targetlist" class="" width="100" height="" flex="1" pathtype="absolute" />
+					<property id="targetlist" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/targetlist -->
+				
+				<row template="choosefile">
+					<label value="Choose File:" align="" control="" />
+					<choosefile id="choosefile" literal="false" pathtype="" required="" size="" type="" width="" flex="1" tabindex="" />
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/button -->
+				
 			<!--
-			<row template="expression">
-				<label value="Expression:" />
-				<expression class="control" id="expression" value="" prompt="" size="" flex="" />
-			</row>
+			====================================================================================================
+			COMPOUND CONTROLS
+			====================================================================================================
 			-->
-			<!-- https://developer.mozilla.org/en/XUL/expression -->
 			
-			<row template="flash">
-				<label value="Flash:" valign="top" />
-				<flash class="control" id="flash" src="assets/flash.swf" width="250" height="100" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/flash -->
-			<!-- https://developer.mozilla.org/en/XUL/property -->
-			<!-- http://www.webdesign.org/flash-swish/flash-tutorials/communicating-between-actionscript-and-jsfl.8608.html -->
-			
-			
-			<row template="listbox">
-				<label value="Listbox:" />
-				<listbox class="control" id="listbox" width="" flex="1" rows="6" tabindex="">
-					<listitem label="Item 1" value="1" selected="" />
-					<listitem label="Item 2" value="2" selected="" />
-					<listitem label="Item 3" value="3" selected="" />
-				</listbox>
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/listbox -->
-			<!-- https://developer.mozilla.org/en/XUL/listitem -->
-			
-			<row template="menulist">
-				<label value="Menu List:" />
-				<menulist class="control" id="menulist" editable="" width="" flex="1" tabindex="" oncreate="" onsetfocus="">
-					<menupop class="control" id="menupop">
-						<menuitem label="Item 1" value="1" selected="" />
-						<menuitem label="Item 2" value="2" selected="" />
-						<menuitem label="Item 3" value="3" selected="" />
-					</menupop>
-				</menulist>
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/menulist -->
-			<!-- https://developer.mozilla.org/en/XUL/menupop -->
-			<!-- https://developer.mozilla.org/en/XUL/menuitem -->
-			
-			<row template="popupslider">
-				<label value="Popupslider:" />
-				<popupslider class="control" id="popupslider" value="" minvalue="0" maxvalue="100" orientation="horz" tabindex="" width="60" flex="" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/popupslider -->
-			
-			<row template="radiogroup">
-				<label value="Radiogroup:" />
-				<radiogroup class="control" id="radiogroup" tabindex="" groupbox="true">
-					<radio label="Radio 1" selected="" acceskey="" />
-					<radio label="Radio 2" selected="" acceskey="" />
-					<radio label="Radio 3" selected="" acceskey="" />
-				</radiogroup>
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/radiogroup -->
-			<!-- https://developer.mozilla.org/en/XUL/radio -->
-			
-			<row template="targetlist">
-				<label value="Targetlist:" />
-				<targetlist id="targetlist" class="" width="100" height="" flex="1" pathtype="absolute" />
-				<property id="targetlist" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/targetlist -->
-			
-			<row template="textbox">
-				<label value="Textbox:" />
-				<textbox class="control" id="textbox" value="" maxlength="" prompt="" size="" multiline="false" width="" flex="1" />
-			</row>
-			<!-- https://developer.mozilla.org/en/XUL/textbox -->
-			<!-- size="20" wrap="on" scroll="true" rows="3" wraparound="true" -->
-			
-			<row template="label">
-				<label value="Label" align="" />
-			</row>
-			
-			<row template="separator" />
-			
-			<row template="spacer">
-				<spacer />
-				<label />
-			</row>
-			
-			<property template="property" id="property" />
+				<row template="listbox">
+					<label value="Listbox:" />
+					<listbox class="control" id="listbox" width="" flex="1" rows="6" tabindex="">
+						<listitem label="Item 1" value="1" selected="" />
+						<listitem label="Item 2" value="2" selected="" />
+						<listitem label="Item 3" value="3" selected="" />
+					</listbox>
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/listbox -->
+				<!-- https://developer.mozilla.org/en/XUL/listitem -->
+				
+				<row template="menulist">
+					<label value="Menu List:" />
+					<menulist class="control" id="menulist" editable="" width="" flex="1" tabindex="" oncreate="" onsetfocus="">
+						<menupop class="control" id="menupop">
+							<menuitem label="Item 1" value="1" selected="" />
+							<menuitem label="Item 2" value="2" selected="" />
+							<menuitem label="Item 3" value="3" selected="" />
+						</menupop>
+					</menulist>
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/menulist -->
+				<!-- https://developer.mozilla.org/en/XUL/menupop -->
+				<!-- https://developer.mozilla.org/en/XUL/menuitem -->
+				
+				<row template="radiogroup">
+					<label value="Radio Group:" />
+					<radiogroup class="control" id="radiogroup" tabindex="" groupbox="true">
+						<radio label="Radio 1" selected="" value="1" acceskey="" />
+						<radio label="Radio 2" selected="" value="2" acceskey="" />
+						<radio label="Radio 3" selected="" value="3" acceskey="" />
+					</radiogroup>
+				</row>
+				<!-- https://developer.mozilla.org/en/XUL/radiogroup -->
+				<!-- https://developer.mozilla.org/en/XUL/radio -->
+
+				<row template="checkboxgroup">
+					<label value="Checkbox Group:" />
+					<vbox class="control" groupbox="true">
+						<checkbox class="control" id="checkbox[0]" label="Checkbox 1" checked="true" tabindex="" acceskey="" />
+						<checkbox class="control" id="checkbox[1]" label="Checkbox 2" checked="true" tabindex="" acceskey="" />
+						<checkbox class="control" id="checkbox[2]" label="Checkbox 3" checked="true" tabindex="" acceskey="" />
+					</vbox>
+				</row>
+				
+
+			<!--
+			====================================================================================================
+			NON-VISUAL CONTROLS
+			====================================================================================================
+			-->
+				
+				<row template="separator" />
+				
+				<row template="spacer">
+					<spacer />
+					<label />
+				</row>
+				
+				<property template="property" id="property" />
 			
 		</rows>
 	</grid>

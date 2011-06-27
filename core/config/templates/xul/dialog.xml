@@ -22,7 +22,7 @@
 		<script id="userscripts" />
 		
 		<script>
-			xjsfl.ui.current.handleEvent('initialize');
+			xjsfl.ui.dialogs[{xulid}].handleEvent('initialize');
 		</script>
 		
 	</scripts>
