@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <codeintel version="2.0" name="JSFL" description="Adobe Flash JSAPI (CS4)">
- description="JavaScript framework for web development" name="Prototype" version="2.0"
-	<file lang="JavaScript" path="javascript.cix" doc="JSFL API for Flash">
+ 	<file lang="JavaScript" path="javascript.cix" doc="JSFL API for Flash">
 		<scope name="*" ilk="blob" lang="JavaScript">
 			<!--
 
