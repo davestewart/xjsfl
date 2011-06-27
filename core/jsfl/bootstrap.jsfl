@@ -22,39 +22,43 @@
 		// libraries
 			xjsfl.classes.load
 			([
-				// core
-					'output',
+				// core (these need to go first, as they are required by later classes)
 					'class',
+					'flfile',
 					'filesystem',
-					
-				// datatypes
 					'xml',
+				
+				// data
+					'config',
+					'events',
+					'jsfl',
 					//'json',
+					
+				// utility
+					'data',
 					'geom',
+					'utils',
+					'timer',
 					
 				// elements
+					'superdoc',
 					'context',
+					'iterators',
 					'collections',
 					'library',
 					'stage',
 					
-				// utility
-					'data',
-					'events',
+				// text
+					'output',
 					'template',
 					'simple-template',
-					'timer',
 					'table',
-					'superdoc',
+					'source',
 					
 				// ui
 					'xul',
-					'validate',
-					
-				// modules
-					'config',
 					'module',
-					'jsfl'
+					'validate',
 			]);
 			
 		// modules
