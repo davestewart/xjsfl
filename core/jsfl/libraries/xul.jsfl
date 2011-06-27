@@ -23,8 +23,10 @@
 		{
 			//TODO Allow a file: uri to be passed into the constructor
 			
-			//TODO Consider making XUL driver-based, so basic controls are constructed using the core, but can be wrapped with additional driver-based methods
-			//TODO Alternatively, have an additional XULBuilder class, so code and presentation are kept separate 
+			//TODO Consider making XUL driver-based, so basic controls are constructed using the core, but can be wrapped with additional markup using driver-based methods
+			//TODO Alternatively, have an additional XULBuilder class, so code and presentation are kept separate
+			
+			//TODO Add functionality for basic arithmetic to be performed inside textboxes
 			
 			// check for dom
 				var dom = fl.getDocumentDOM();
@@ -184,7 +186,8 @@
 					content:	'',
 					separator:	'</rows></grid><separator /><grid><columns><column flex="1" /><column flex="2" /></columns><rows>',
 					
-				// last error message
+				// properties
+					title:		'',
 					error:		null,
 					
 				// flags
@@ -554,7 +557,7 @@
 					{
 						// build xml
 							var xml				= XUL.templates.choosefile.copy();
-							Output.inspect(attributes, 'Attributes')
+							//Output.inspect(attributes, 'Attributes')
 							
 						// add control
 							return this._addControl('choosefile', id, label, xml, attributes, validation, events);
@@ -768,7 +771,7 @@
 				// other elemnts methods
 				
 					/**
-					 * Add a Pextbox control to the UI
+					 * Add a Property control to the UI
 					 * @param	id	
 					 * @returns		
 					 */
@@ -786,6 +789,8 @@
 							return this;
 					},
 					
+					//FIX Work out why separators don't make it into the final XUL.
+					// Is this because the non-controls are being added to a separate XML buffer? Compare to _addControl()
 					addSeparator:function(label)
 					{
 						// build xml
@@ -797,7 +802,7 @@
 							
 						// add xml
 							this.addXML(xml);
-							
+
 						// return
 							return this;
 					},
@@ -1040,7 +1045,7 @@
 													value = values;
 											}
 											
-											Output.inspect(label, control)
+											//Output.list([label, control)
 											
 										// add control
 											switch(control)
@@ -1179,6 +1184,7 @@
 					if(this.xml)
 					{
 						this.xml.@title = ' ' + title;
+						this.title = title;
 					}
 					return this;
 				},
@@ -1191,6 +1197,23 @@
 				setColumns:function(columns)
 				{
 					this.columns = columns;
+					return this;
+				},
+				
+				/**
+				 * 
+				 * @param	columns	
+				 * @returns		
+				 */
+				setButtons:function(str)
+				{
+					this.xml.@buttons = str;
+					return this;
+				},
+				
+				setEventScope:function(scope)
+				{
+					this.scope = scope;
 					return this;
 				},
 				
@@ -1259,7 +1282,8 @@
 										var callback = this.events[type];
 										if(typeof callback == 'function')
 										{
-											callback(new XULEvent(type, null, this, fl.xmlui));
+											var event = new XULEvent(type, null, this, fl.xmlui);
+											callback.apply(this.scope || window, [event]);
 										}
 									}
 								break;
@@ -1268,6 +1292,7 @@
 								case 'create':
 									
 									//TODO If list items have no setting, set the first item as selected
+									//TODO Make sure checkbox reselection works
 									
 									// assign element to original control on creation
 										var control = this.controls[id];
@@ -1308,7 +1333,7 @@
 												
 											// dispatch event
 												//callback(control, this, fl.xmlui, type) // control, xul, xmlui, type
-												callback(event);
+												callback.apply(this.scope || window [event]);
 										}
 									}
 								break;
@@ -1329,7 +1354,7 @@
 						// --------------------------------------------------------------------------------
 						// build panel
 						
-							// update checkboxes, as they can't seem to be updated via JSFL (prove me wrong, someone!)
+							// old checkbox code
 								/*
 								var checkboxes = this.xml..checkbox;
 								for each(var checkbox in checkboxes)
@@ -1366,6 +1391,9 @@
 								{
 									this.build();
 								}
+								
+							// clear settings
+								this.settings	= null;
 								
 							// show panel
 								this.settings	= xjsfl.ui.show(this);
@@ -1574,9 +1602,11 @@
 			
 				get value()
 				{
-					// grab the current (String) value for the control
+					// work out if the dialog is open, or closed (existance of settings object implies it's closed)
 						var settings	= this.getXUL().settings;
-						var value		= settings[this.id];
+						
+					// grab the (String) value for the control
+						var value		= settings ? settings[this.id] : fl.xmlui.get(this.id);
 						
 					// parse to a real value
 						switch(this.type)
@@ -1588,9 +1618,10 @@
 								{
 									var id		= item.@id.toString();
 									var value	= xjsfl.utils.parseValue(item.@value.toString());
-									if(settings[id] == 'true')
+									var state	= settings ? settings[id] : fl.xmlui.get(this.id);;
+									if(state === 'true')
 									{
-										arr.push(value)
+										arr.push(value);
 									}
 								}
 								return arr;
@@ -1618,23 +1649,19 @@
 						return value == '' ? null : value;
 				},
 				
-				//TODO refactor so value returns the control value if open, or the setting if closed
-				
 				set value(value)
 				{
-					if(this.type == 'choosefile' && value == '')
+					if(this.settings == null)
 					{
-						// do nothing
+						if(this.type == 'choosefile' && value == '')
+						{
+							// do nothing
+						}
+						else
+						{
+							fl.xmlui.set(this.id, value);
+						}
 					}
-					else
-					{
-						fl.xmlui.set(this.id, value);
-					}
-				},
-				
-				get currentValue()
-				{
-					return xjsfl.utils.parseValue(fl.xmlui.get(this.id));
 				},
 				
 				get element()
@@ -1643,7 +1670,7 @@
 				},
 				
 				/**
-				 * Get the values of a radiobuttongroup, listbox, dropdown
+				 * Get the values of a radiobuttongroup, listbox, or dropdown child items
 				 */
 				getValues:function()
 				{
@@ -1666,8 +1693,7 @@
 				{
 					if(this.combo)
 					{
-						var values = this.values;
-						this.value = values[index];
+						this.value = this.values[index];
 					}
 				},
 				
@@ -1754,7 +1780,7 @@
 		// initialize
 		
 			xjsfl.reload(this);
-			clear();
+			//clear();
 			try{
 		
 		// --------------------------------------------------------------------------------
@@ -1841,7 +1867,7 @@
 		// --------------------------------------------------------------------------------
 		// Inspect combo controls
 		
-			if(1)
+			if(0)
 			{
 				
 				/**
@@ -1855,7 +1881,6 @@
 					/*
 					trace(xul.controls.radio);
 					trace(xul.controls.radio.value);
-					trace(xul.controls.radio.currentValue);
 					trace(xul.controls.radio.getXML());
 					*/
 					//trace(xul.controls.radio.values);
@@ -1878,10 +1903,7 @@
 					.addButton('See values', 'button', null, {command:click});
 					
 				var settings = xul.show();
-					
-				trace(fl.xmlui.get('listbox'))
-				Output.inspect(xul.settings, true);
-				//trace(settings)
+				Output.inspect(xul.settings, 'Settings');
 				
 			}
 			
@@ -1947,6 +1969,35 @@
 			}
 
 		// --------------------------------------------------------------------------------
+		// Nested dialogs and capturing the return values
+		
+			if(1)
+			{
+				// global settings
+					var settings = {};
+					
+				// event handler to make a new dialog
+					function newDialog()
+					{
+						// create dialog
+							var xul = XUL
+								.factory('radiogroup:Options=[1,2,3],dropdown:Values=[One,Two,Three],checkbox:State,|,button:New dialog')
+								.addEvent('newdialog', 'command', newDialog)
+								.setTitle('Dialog ' + (xjsfl.ui.dialogs.length + 1))
+								.show();
+								
+						// assign the values to the global settings object
+							settings[xul.title]	= xul.values;
+					}
+					
+				// create the first dialog
+					newDialog();
+					
+				// view the results
+					Output.inspect(settings);
+			}
+
+		// --------------------------------------------------------------------------------
 		// Custom XML
 		
 			if(0)
@@ -1979,7 +2030,7 @@
 							if(control.id == 'textbox1')
 							{
 								// Note that this is OO! : "control.value" NOT "fl.xmlui.set(id, value)"
-									xul.controls.textbox2.value = control.currentValue.split('').reverse().join('');
+									xul.controls.textbox2.value = control.value.split('').reverse().join('');
 							}
 							
 							if(control.id == 'button')
