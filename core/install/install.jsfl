@@ -116,7 +116,7 @@
 			{
 				dom = fl.createDocument();
 			}
-			dom.xmlPanel(xjsfl + 'core/ui/install.xml')
+			dom.xmlPanel(xjsfl + 'core/install/ui/install.xml')
 			
 		// ----------------------------------------------------------------------------------------
 		// done
