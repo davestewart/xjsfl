@@ -53,25 +53,6 @@
 				return '[class xJSFL]';
 			}
 	
-		// document check function
-			xjsfl.__defineGetter__
-			(
-				'dom',
-				function()
-				{
-					var dom = fl.getDocumentDOM();
-					if(dom)
-					{
-						return dom;
-					}
-					else
-					{
-						alert('A document (.fla) needs to be open before running this command.');
-						return false;
-					}
-				}
-			);
-			
 		// currently-running script dir
 			xjsfl.__defineGetter__
 			(
@@ -82,6 +63,67 @@
 					return xjsfl.utils.makeURI(stack[1].path);
 				}
 			);
+			
+
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██████        ██   
+//  ██            ██   
+//  ██     █████ █████ 
+//  ██ ███ ██ ██  ██   
+//  ██  ██ █████  ██   
+//  ██  ██ ██     ██   
+//  ██████ █████  ████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Get - Utility functions to ensure user has a document open, selection, etc, and alert if not
+
+	xjsfl.get =
+	{
+		dom:function()
+		{
+			var dom = fl.getDocumentDOM();
+			if(dom)
+			{
+				return dom;
+			}
+			alert('Open a Flash document (FLA) before running this script.');
+			return false;
+		},
+		
+		items:function()
+		{
+			if(xjsfl.get.dom())
+			{
+				var items = fl.getDocumentDOM().library.getSelectedItems();
+				if(items.length > 0)
+				{
+					return items;
+				}
+				alert('Select some library items before running this script.');
+				return false;
+			}
+			return false;
+		},
+		
+		selection:function(min, max)
+		{
+			var dom = xjsfl.get.dom();
+			if(dom)
+			{
+				var selection = dom.selection;
+				if(selection.length > 0)
+				{
+					return selection;
+				}
+				alert('Make a selection before running this script.');
+				return false;
+			}
+			return false;
+		}
+		
+	}
+	
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -801,11 +843,11 @@
 				value = trim !== false ? xjsfl.utils.trim(value) : value;
 				
 			// undefined
-				if(value == 'undefined')
+				if(value === 'undefined')
 					return undefined;
 				
-			// null
-				if(value == 'null' || value == '')
+			// null - note that empty strings will be returned as null
+				if(value === 'null' || value === '')
 					return null;
 				
 			// Number
@@ -818,7 +860,7 @@
 				
 			// Hexadecimal String / Number
 				if(/^(#|0x)[0-9A-F]{6}$/i.test(value))
-					return parseInt(value[0] == '#' ? value.substr(1) : value, 16);
+					return parseInt(value[0] === '#' ? value.substr(1) : value, 16);
 				
 			// XML
 				if(/^<(\w+)\b[\s\S]*(<\/\1>|\/>)$/.test(value))
@@ -1282,7 +1324,6 @@
 	}
 	
 	
-
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██                               
@@ -1495,7 +1536,7 @@
 				
 			// save XML to dialog.xml
 				var uri					= xul.uri || xjsfl.utils.makeURI('core/ui/dialog.xml');
-				new File(uri, xml, true);
+				new File(uri, xml);
 				
 			// register XUL
 				this.dialogs.push(xul);
@@ -1548,6 +1589,8 @@
 		}
 		
 	// event code will be added in core/jsfl/libraries/events.jsfl
+	//TODO Can this code be moved to events, or does it need to execute here?
+
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -1584,9 +1627,6 @@
 	 */
 	xjsfl.init = function(scope, force)
 	{
-		// default to window
-			scope = scope || window;
-			
 		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined, or force is set as true
 			if( ! scope.xJSFL || force)
 			{
