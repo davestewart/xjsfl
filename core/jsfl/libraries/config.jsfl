@@ -59,7 +59,7 @@
 				if(this.xml.*.length() > 0)
 				{
 					var xml		= this.xml.toXMLString().replace(/ {2}/g, '	').replace(/\n/g, xjsfl.settings.newLine);
-					var file	= new File(this.uri, xml, true);
+					var file	= new File(this.uri, xml);
 					file.save()
 				}
 			},
