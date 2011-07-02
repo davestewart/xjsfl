@@ -58,7 +58,7 @@
 			{
 				if(this.xml.*.length() > 0)
 				{
-					var xml		= this.xml.toXMLString().replace(/ {2}/g, '	').replace(/\n/g, xjsfl.settings.newLine);
+					var xml		= this.xml.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, xjsfl.settings.newLine);
 					var file	= new File(this.uri, xml);
 					file.save()
 				}
@@ -84,3 +84,5 @@
 	
 		xjsfl.classes.register('Config', Config);
 		
+		
+		//var config = new Config('Test', 'settings', '');

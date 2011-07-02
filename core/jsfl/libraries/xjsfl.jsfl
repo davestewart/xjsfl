@@ -1467,7 +1467,10 @@
 		 */
 		load:function(name)
 		{
-			xjsfl.file.load('module', name)
+			if(name && name != '')
+			{
+				xjsfl.file.load('module', name);
+			}
 		},
 		
 		/**
