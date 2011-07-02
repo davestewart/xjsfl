@@ -68,6 +68,9 @@
 	// --------------------------------------------------------------------------------
 	// Static methods
 	
+		//TODO consider modifying Context.create() to just take a single argument
+		// That way you pass in any object, and the context is worked out automatically
+	
 		/**
 		 * Factory method provides the quickest way to get the current context
 		 * @param	dom			{Boolean} An optional flag to not create a dom context
@@ -1093,6 +1096,6 @@
 			}
 		
 		// catch
-			}catch(err){xjsfl.output.error(err);}
+			}catch(err){xjsfl.output.debug(err);}
 	}
 		

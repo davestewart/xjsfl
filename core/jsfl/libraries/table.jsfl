@@ -24,6 +24,8 @@
 		function Table(rows, keys, maxColWidth, maxRowHeight)
 		{
 			//TODO Add option to automatically skip functions, including constructors
+			//TODO Add a setHeading() method to add a tabel eading row
+			//TODO Update constructor to allow setting of heading
 			
 			if(rows instanceof Array && rows.length > 0)
 			{
@@ -524,7 +526,7 @@
 		
 		
 // -----------------------------------------------------------------------------------------------------------------------------------------
-// Test code
+// Demo code
 	
 	if( ! xjsfl.loading )
 	{
@@ -589,7 +591,7 @@
 		
 		
 		// catch
-			}catch(err){xjsfl.output.error(err);}
+			}catch(err){xjsfl.output.debug(err);}
 	}
 		
 

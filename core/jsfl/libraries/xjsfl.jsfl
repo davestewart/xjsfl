@@ -909,7 +909,7 @@
 				}
 				catch(err)
 				{
-					xjsfl.output.error(err, true);
+					xjsfl.output.debug(err, true);
 				}
 		}
 		
@@ -986,7 +986,7 @@
 		 * @param error		{Error}		A javaScript Error object
 		 * @param testing	{Boolean}	Internal use only. Removes test() stack items
 		 */
-		error:function(error, testing)
+		debug:function(error, testing)
 		{
 			// variables
 				var stack;
@@ -1271,7 +1271,7 @@
 												catch(err)
 												{
 													xjsfl.output.trace(err);
-													xjsfl.output.error('xjsfl.file.load(): The file "' +path+ '" could not be executed');
+													xjsfl.output.debug('xjsfl.file.load(): The file "' +path+ '" could not be executed');
 													xjsfl.file.stack.pop();
 													return false;
 												}
@@ -1486,7 +1486,7 @@
 			}
 			else
 			{
-				xjsfl.output.error('xjsfl.modules.register(): Module names cannot clash with named xjsfl.module methods');
+				xjsfl.output.debug('xjsfl.modules.register(): Module names cannot clash with named xjsfl.module methods');
 			}
 		}
 		

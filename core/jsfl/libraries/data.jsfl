@@ -14,6 +14,8 @@
 	// ------------------------------------------------------------------------------------------------
 	// Class
 	
+		//TODO Assess fesibility of moving Output.inspect functions to Data as a generic recurse method
+	
 		Data =
 		{
 			//TODO review recursive function signatures & implementation, & provide default callbacks if appropriate. @see Data#recurseFolder
@@ -115,7 +117,7 @@
 						var depth		= depth || 100;
 						var callback	= null;
 						
-					// variables
+					// parameter shift
 						for each(var arg in [arg2, arg3])
 						{
 							if(typeof arg === 'number')
@@ -253,7 +255,7 @@
 			}
 		
 		// catch
-			}catch(err){xjsfl.output.error(err);}
+			}catch(err){xjsfl.output.debug(err);}
 	}
 		
 

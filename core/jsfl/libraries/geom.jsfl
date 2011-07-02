@@ -141,6 +141,6 @@
 				}
 		
 		// catch
-			}catch(err){xjsfl.output.error(err);}
+			}catch(err){xjsfl.output.debug(err);}
 	}
 		
