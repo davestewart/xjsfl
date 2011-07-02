@@ -3,60 +3,94 @@
  * @icon {iconsURI}UI/table/table_edit.png
  */
 
-// --------------------------------------------------------------------------------
-// initialize
+// object
 
-	//xjsfl.init(this);
-	
-// --------------------------------------------------------------------------------
-// do something with items
-
-	var items = $$(':selected').sort('itemType');
-	
-	if(items.elements.length > 0)
+	SpreadsheetEdit =
 	{
-			
 		// --------------------------------------------------------------------------------
-		// variables
-		
-			// grab keys and filter
-				var ignore		= 'constructor,timeline,scalingGridRect,sourceLibraryName,linkageImportForRS,linkageIdentifier,quality'.split(',');
-				var keys		= xjsfl.utils.getKeys(items.elements);
-				keys			= keys.filter(function(key){return ignore.indexOf(key) == -1});
-				
-			// reorder keys, with path, then name, so user can easily rename items
-				var index		= keys.indexOf('name');
-				keys.splice(index, 1);
-				keys			= ['name', 'name'].concat(keys);
-				
-			// grab rows
-				var rows		= xjsfl.utils.getValues(items.elements, keys);
-				
-			// update header
-				keys[0]			= 'path';
-				var str			= keys.join(',') + '\n';
-				
-			// create CSV content
-				for each(var row in rows)
-				{
-					row[1]	= row[1].split('/').pop();
-					str		+= '"' + row.join('","') + '"\n';
-				}
-				
-			// create and save file
-				var uri			= xjsfl.utils.makeURI('user/jsfl/temp/items.csv');
-				var file		= new File(uri, str, true);
-			
-		// --------------------------------------------------------------------------------
-		// handlers
+		// properties
 	
-			function accept()
+			items:null,
+			
+			file:null,
+			
+			modified:null,
+			
+			xul:null,
+			
+		// --------------------------------------------------------------------------------
+		// functions
+	
+			exportCSV:function()
 			{
-				// run (Flash will pause whilst the file is open)
-					file.run();
+				// create file
+					var uri			= xjsfl.utils.makeURI('user/temp/spreadsheet-edit.csv');
+					this.file		= new File(uri, true);
+
+				// grab keys and filter
+					var ignore		= 'constructor,timeline,scalingGridRect,sourceLibraryName,linkageImportForRS,linkageIdentifier,quality'.split(',');
+					var keys		= xjsfl.utils.getKeys(this.items);
+					keys			= keys.filter(function(key){return ignore.indexOf(key) == -1});
+					
+				// reorder keys, with path, then name, so user can easily rename items
+					var index		= keys.indexOf('name');
+					keys.splice(index, 1);
+					keys			= ['name', 'name'].concat(keys);
+					
+				// grab rows
+					var rows		= xjsfl.utils.getValues(this.items, keys);
+					
+				// update header
+					keys[0]			= 'original item';
+					var str			= keys.join(',') + '\n';
+					
+				// create CSV content
+					for each(var row in rows)
+					{
+						row[1]	= row[1].split('/').pop();
+						str		+= '"' + row.join('","') + '"\n';
+					}
+					
+				// save to file
+					var state		= this.file.write(str, false);
+					this.modified	= this.file.modified;
+					
+				// open excel
+					if(state)
+					{
+						if(this.xul.controls.excel.value)
+						{
+							this.file.run();
+						}
+					}
+					else
+					{
+						alert("The file couldn't be written. If it's still open in Excel, close it first then try again.");
+					}
+					
+			},
+			
+			importCSV:function()
+			{
+				// only import if file has been created
+					if( ! this.file )
+					{
+						alert('You need to export properties before importing them again.');
+						return false;
+					}
+					
+				// only import if file has been saved
+					if(this.file.modified == this.modified)
+					{
+						alert('The Excel file needs to be saved before importing.');
+						return false;
+					}
+					
+				// update modified
+					this.modified = this.file.modified;
 					
 				// get file contents
-					var lines		= file.contents.split(/[\r\n]+/g);
+					var lines		= this.file.contents.split(/[\r\n]+/g);
 					var keys		= lines.shift().split(',');
 					
 				// update items
@@ -81,29 +115,56 @@
 								// check if OK to assign, and assign
 									if(item[key] != undefined)
 									{
-										trace(item.name, key, value);
+										trace(item.name, key, value, xjsfl.utils.parseValue(value));
 										item[key] = xjsfl.utils.parseValue(value);
 									}
 							}
-					}
+					}		
 					
 				// prompt
-					alert('The items in the library have been updated!');					
-			}
-			
+					alert('The items in the library have been updated!');
+					return true;
+			},
 			
 		// --------------------------------------------------------------------------------
-		// do it
+		// main
 	
-			var xul = new XUL('Spreadsheet edit')
-				.setXML('<label value="Click OK to export selected item properties to spreadsheet" width="200" flex="1"/><spacer />')
-				.show(accept);
-				
+			open:function()
+			{
+				this.items = xjsfl.get.items();
+				if(this.items)
+				{
+					// ui
+						var ui = <ui>
+							<label value="IMPORTANT: Ensure Excel is open before exporting values." flex="1" />
+							<spacer />
+							<separator />
+							<hbox>
+								<button id="export" label="Export" width="120" />
+								<button id="import" label="Import" width="120" />
+								<button id="cancel" label="Cancel" width="120" />
+							</hbox>
+							<checkbox id="excel" label="Open exported file in Excel" checked="true" />
+						</ui>
+						
+					// build UI
+						this.xul = new XUL('Spreadsheet Edit')
+							.setXML(ui)
+							.setButtons('')
+							.setEventScope(this)
+							.setTitle('Spreadsheet Edit (' +this.items.length+ ' items)')
+							.addEvent('export', 'command', this.exportCSV)
+							.addEvent('import', 'command', this.importCSV)
+							.addEvent('cancel', 'command', fl.xmlui.cancel);
+							
+					// show ui
+						this.xul.show();
+				}
+			}
+	
 	}
-	else
-	{
-		alert('You need to select some library items before running this script');
-	}
-	
-	
+
+// start
+	xjsfl.reload(this);
+	SpreadsheetEdit.open();
 
