@@ -856,7 +856,7 @@
 				
 			// Boolean
 				if(/^true|false$/i.test(value))
-					return value === 'true' ? true : false;
+					return value.toLowerCase() === 'true' ? true : false;
 				
 			// Hexadecimal String / Number
 				if(/^(#|0x)[0-9A-F]{6}$/i.test(value))
