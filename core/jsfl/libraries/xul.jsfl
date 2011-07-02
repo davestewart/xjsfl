@@ -916,30 +916,58 @@
 					 */
 					addEvent:function(ids, types, callback)
 					{
-						// convert ids and types to Arrays
-							ids		= xjsfl.utils.trim(ids).split(/\W+/g);
-							types	= xjsfl.utils.trim(types).split(/\W+/g);
-						
-						// add events
-							for each(var id in ids)
+						// xul-level events
+							if(arguments.length == 2 && typeof types == 'function')
 							{
-								for each(var type in types)
-								{
-									// check types are valid
-										if( ! /^command|change|setfocus|create$/.test(type))
-										{
-											throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
-										}
+								// variables
+									callback	= types;
+									var type	= ids;
+								
+								// check types are valid
+									if( ! /^initialize|prevalidate|postvalidate$/.test(type))
+									{
+										throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
+									}
+								
+								// build hash if not yet exists
+									if(this.events[type] == null)
+									{
+										this.events[type] = {};
+									}
 									
-									// build hash if not  yest exists
-										if(this.events[type] == null)
+								// assign command
+									this.events[type] = callback;								
+								
+							}
+						
+						// control events
+							else
+							{
+								// convert ids and types to Arrays
+									ids		= xjsfl.utils.trim(ids).split(/\W+/g);
+									types	= xjsfl.utils.trim(types).split(/\W+/g);
+								
+								// add events
+									for each(var id in ids)
+									{
+										for each(var type in types)
 										{
-											this.events[type] = {};
+											// check types are valid
+												if( ! /^command|change|setfocus|create$/.test(type))
+												{
+													throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
+												}
+											
+											// build hash if not yet exists
+												if(this.events[type] == null)
+												{
+													this.events[type] = {};
+												}
+												
+											// assign command
+												this.events[type][id] = callback;								
 										}
-										
-									// assign command
-										this.events[type][id] = callback;								
-								}
+									}								
 							}
 							
 						// return
@@ -1272,11 +1300,10 @@
 					// handle event
 						switch(type)
 						{
-							//TODO Implement these events, and add checks to addEvent()
-							// initialized
-								case 'initialized':
-								case 'prevalidation':
-								case 'postvalidation':
+							// xul-level
+								case 'initialize':
+								case 'prevalidate':
+								case 'postvalidate':
 									if(this.events[type])
 									{
 										var callback = this.events[type];
@@ -1333,7 +1360,7 @@
 												
 											// dispatch event
 												//callback(control, this, fl.xmlui, type) // control, xul, xmlui, type
-												callback.apply(this.scope || window [event]);
+												callback.apply(this.scope || window, [event]);
 										}
 									}
 								break;
@@ -1349,7 +1376,7 @@
 			
 				show:function(accept, cancel)
 				{
-					if(xjsfl.dom)
+					if(xjsfl.get.dom())
 					{
 						// --------------------------------------------------------------------------------
 						// build panel
@@ -1410,7 +1437,7 @@
 								}
 	
 							// test for validation
-								if(this.settings.dismiss == 'accept')
+								if(this.settings && this.settings.dismiss == 'accept')
 								{
 									// validate
 									
@@ -1669,6 +1696,8 @@
 					return fl.xmlui.getControlItemElement(this.id);
 				},
 				
+			// compound controls only
+			
 				/**
 				 * Get the values of a radiobuttongroup, listbox, or dropdown child items
 				 */
@@ -1971,7 +2000,7 @@
 		// --------------------------------------------------------------------------------
 		// Nested dialogs and capturing the return values
 		
-			if(1)
+			if(0)
 			{
 				// global settings
 					var settings = {};
@@ -2017,25 +2046,29 @@
 			if(0)
 			{
 				// callback
-					//function callback(xmlui, xul, element, control, value, id, type)
-					function callback(control, xul, xmlui, type)
+					/**
+					 * Event handler
+					 * @param	event	{XULEvent}
+					 * @returns		
+					 */
+					function onControlEvent(event)
 					{
 						// output
 							clear();
 							
 						// inspect parameters
-							Output.inspect({ control:control, xul:xul.toString(), xmlui:xmlui, type:type }, 'Callback parameters');
+							trace(event);
 							
 						// if the id is the textbox, update the other textbox
-							if(control.id == 'textbox1')
+							if(event.control.id == 'textbox1')
 							{
-								// Note that this is OO! : "control.value" NOT "fl.xmlui.set(id, value)"
-									xul.controls.textbox2.value = control.value.split('').reverse().join('');
+								// Note that this is OO! : "event.control.value" NOT "fl.xmlui.set(id, value)"
+								event.xul.controls.textbox2.value = event.control.value.split('').reverse().join('');
 							}
 							
-							if(control.id == 'button')
+							if(event.control.id == 'button')
 							{
-								Output.inspect(xul.events)
+								Output.inspect(event.xul.events)
 							}
 					}
 					
@@ -2055,12 +2088,32 @@
 					XUL
 						.factory(options)
 						.setTitle('Dialog with events')
-						.addEvent('button', 'command', callback)
-						.addEvent('color', 'change', callback)
-						.addEvent('listbox', 'change setfocus', callback)
-						.addEvent('menulist', 'change setfocus', callback)
-						.addEvent('popupslider', 'change', callback)
-						.addEvent('textbox1', 'change', callback)
+						.addEvent('button', 'command', onControlEvent)
+						.addEvent('color', 'change', onControlEvent)
+						.addEvent('listbox', 'change setfocus', onControlEvent)
+						.addEvent('menulist', 'change setfocus', onControlEvent)
+						.addEvent('popupslider', 'change', onControlEvent)
+						.addEvent('textbox1', 'change', onControlEvent)
+						.show();
+			}
+			
+		// --------------------------------------------------------------------------------
+		// Initialization event
+		
+			if(0)
+			{
+				// callback
+					function onInitialize(event)
+					{
+						event.xul.controls.text.value = 'Initialized!';
+					}
+					
+				// create
+					XUL
+						.factory()
+						.setTitle('Dialog with initiaze event')
+						.addTextbox('Text', 'text')
+						.addEvent('initialize', onInitialize)
 						.show();
 			}
 		
