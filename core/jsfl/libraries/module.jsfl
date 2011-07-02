@@ -53,10 +53,6 @@
 				{
 					properties.init.apply(this);
 				}
-				
-			// add myself to the xjsfl modules array
-				var key = name.toLowerCase().replace(/\W/g, '');
-				xjsfl.modules[key] = this;
 		}
 		
 	// ------------------------------------------------------------------------------------------------
@@ -76,10 +72,13 @@
 				settings:	null,
 				data:		null,
 				
+			// accessors
+				get key(){ return this.name.toLowerCase().replace(/\W/g, ''); },
+				
 			// built-in
 				toString:function()
 				{
-					return '[class Module "' +this.name+ '"]';
+					return '[object Module "' +this.name+ '"]';
 				}
 		}
 		
