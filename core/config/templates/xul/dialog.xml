@@ -1,4 +1,4 @@
-<dialog id="dialog" title="" buttons="accept,cancel">
+<dialog id="dialog" title="" buttons="accept,cancel,help">
 	
 	<content>
 		
@@ -17,14 +17,8 @@
 		
 	</content>
 	
-	<scripts id="scripts">
+	<script>
+		xjsfl.ui.dialogs[{xulid}].handleEvent('initialize');
+	</script>
 		
-		<script id="userscripts" />
-		
-		<script>
-			xjsfl.ui.dialogs[{xulid}].handleEvent('initialize');
-		</script>
-		
-	</scripts>
-	
 </dialog>
