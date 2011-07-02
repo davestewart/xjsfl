@@ -17,22 +17,38 @@
 	// Constructor
 	
 		/**
-		 * Config class for Modules, loads and saves XML from the config folders
+		 * Config class, loads and saves XML from the config folders
 		 * 
-		 * @param	name	{String}	The name of your Config object. Include slashes to place in subfolders
-		 * @param	type	{String}	An optional type of preference ('settings' or 'data', defaults to 'settings')
-		 * @param	path	{Module}	An optional base path (defaults to '<xJSFL>/user/config/')
+		 * @param	configPath		{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
 		 * @author	Dave Stewart	
 		 */
-		Config = function(name, type, path)
+		Config = function(configPath)
 		{
-			// uri
-				type		= type || 'settings';
-				path		= path || xjsfl.uri + 'user/config/';
-				this.uri	= path + escape(type.toLowerCase() + '/' + name.toLowerCase()) + '.xml';
+			// absolute uri
+				if(configPath.indexOf('file:') == 0)
+				{
+					var uri = configPath;
+				}
+				
+			// relative uri - find
+				else
+				{
+					var uri	= xjsfl.file.find('config', configPath);
+					uri		= uri ? uri : xjsfl.utils.makeURI('user/config/' + configPath + '.xml');
+				}
+				
+			// file
+				this.file	= new File(uri);
 				
 			// xml
-				this.xml	= new XML('<' +type+ '/>');
+				if(this.file.exists)
+				{
+					this.load();
+				}
+				else
+				{
+					this.clear();
+				}
 		}
 		
 	// ------------------------------------------------------------------------------------------------
@@ -41,32 +57,98 @@
 		Config.prototype =
 		{
 			xml:	null,
-			uri:	'',
+			file:	null,
 			
 			constructor:Config,
-		
-			load:function()
+			
+			/**
+			 * Sets data on the wrapped XML data
+			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
+			 * @param	path	
+			 * @param	value	
+			 * @returns		
+			 */
+			set:function(path, value)
 			{
-				var text = new File(this.uri).contents;
-				if(text)
-				{
-					this.xml = new XML(text);
-				}
+				// grab nodes
+					var parts		= path.split('.')
+					var nodeName	= parts.pop();
+					var parent		= parts.length ? eval('this.xml.' + parts.join('.')) : this.xml;
+					var node		= eval('this.xml.' + path);
+					
+				// delete any existing childnodes
+					if(node.length())
+					{
+						node.setChildren(new XMLList());
+					}
+					
+				// treat differently, depending on datatype
+					switch(typeof value)
+					{
+						case 'boolean':
+						case 'number':
+						case 'string':
+							parent[nodeName] = value;
+						break;
+					
+						case 'xml':
+							node[nodeName] += value
+						break;
+					
+						default:
+							node[nodeName] += new XML('<![CDATA[' + String(value) + ']]>');
+					}
+					
+				// save
+					this.save();
+					
+				// return
+					return this
 			},
 			
+			/**
+			 * 
+			 * @param	path	
+			 * @returns		
+			 */
+			get:function(path)
+			{
+				return eval('this.xml.' + path);
+			},
+			
+			/**
+			 * 
+			 * @returns		
+			 */
+			load:function()
+			{
+				this.xml = new XML(this.file.contents);
+				return this;
+			},
+			
+			/**
+			 * 
+			 * @returns		
+			 */
 			save:function()
 			{
 				if(this.xml.*.length() > 0)
 				{
-					var xml		= this.xml.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, xjsfl.settings.newLine);
-					var file	= new File(this.uri, xml);
-					file.save()
+					var xml = this.xml.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, xjsfl.settings.newLine);
+					this.file.write(xml);
 				}
+				return this;
 			},
 			
-			toString:function()
+			clear:function()
 			{
-				return '[object Config]';
+				this.xml	= <config />;
+				return this;
+			},
+			
+			toString:function(asXML)
+			{
+				return asXML ? this.xml.toXMLString() : '[object Config "' +xjsfl.utils.makePath(this.file.uri, true)+ '"]';
 			}
 			
 		}
@@ -85,4 +167,79 @@
 		xjsfl.classes.register('Config', Config);
 		
 		
-		//var config = new Config('Test', 'settings', '');
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Demo code
+	
+	if( ! xjsfl.loading )
+	{
+		// initialize
+			xjsfl.init(this);
+			clear();
+			try
+			{
+		
+		// --------------------------------------------------------------------------------
+		// Create a test config item, but don't save
+		
+			if(0)
+			{
+				var config = new Config('settings/test')
+				trace(config);
+			}
+			
+		// --------------------------------------------------------------------------------
+		// Create a test config item, and set some data
+		
+			if(0)
+			{
+				var config = new Config('settings/test');
+				config
+					.clear()
+					.set('@id', 1)						// root-level attribute (number)
+					.set('app', 'xJSFL')				// root-level node (string)
+					.set('long.path.to.value', 'Hello')	// compound path
+
+				trace(config.toString(true));
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Create a test config item, and attempt to pass in various datatypes
+		
+			if(0)
+			{
+				var config = new Config('settings/test');
+				config
+					.clear()
+					.set('string', '"Hello"')
+					.set('illegalstring', '<Hello>')
+					.set('number', 1)
+					.set('boolean', true)
+					.set('xml', <name>Dave</name>)
+					.set('xmllist', new XMLList('<icon id="1" /><icon id="2" /><icon id="3" />'))
+					.set('date', new Date())
+					.set('class', new Config(''))
+					.set('array', [1,2,3,4,5])
+
+				trace(config.toString(true));
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Read values from config
+		
+			if(0)
+			{
+				var config = new Config('settings/test');
+				config
+					.clear()
+					.set('some.setting.@id', 'Hello')
+					
+				trace(config.toString(true));
+				trace(config.get('some.setting.@id'));
+			}
+		
+
+		
+		// catch
+			}catch(err){xjsfl.output.debug(err);}
+	}
+		
