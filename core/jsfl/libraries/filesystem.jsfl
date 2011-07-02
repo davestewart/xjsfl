@@ -79,20 +79,8 @@
 					{
 						return FLfile.remove(this.uri);
 					}
-					return false;
+					return this;
 				},
-				
-				/**
-				 * Resolves an absolute path from a relative path - takes 1 or 2 arguments depending on the context
-				 * @param source {String} If 2 arguments passed, the original absolute source path, such as 'c:/temp/file.txt'
-				 * @param source {String} If 1 argument passed, a relative target path, such as '../../file.txt'
-				 * @param target {String} A relative target path
-				 */
-				resolve:function(source, target)
-				{
-					
-				},
-				
 				
 			// -------------------------------------------------------------------------------------------------------------------
 			// accessors
@@ -386,25 +374,21 @@
 		/**
 		 * File class
 		 * @param pathOrUri	{String}	The uri or path to the object
-		 * @param contents	{String}	The string contents of the file
-		 * @param create	{Boolean}	A flag to create the file immediately
+		 * @param contents	{String}	An optional string contents of the file, or true to 
 		 */
-		File = function(pathOrUri, contents, create)
+		File = function(pathOrUri, contents)
 		{
 			// constructor
 				FileSystemObject.apply(this, [pathOrUri]);
-			
-			// if create is specified, ensure the folder exists
-				if(create)
-				{
-					var uri = this.uri.replace(/\/[^\/]+$/, '');
-					var folder = new Folder(uri, true);
-				}
-
+				
 			// if there's any data, save it
 				if(contents)
 				{
-					this.contents = contents;
+					this.create();
+					if(typeof contents === 'string')
+					{
+						this.write(contents, false);
+					}
 				}
 				else if(this.extension == 'fla' && ! this.exists)
 				{
@@ -431,6 +415,22 @@
 				 * reset constructor
 				 */
 				constructor:File,
+				
+				create:function()
+				{
+					// folder
+						var uri		= this.uri.replace(/\/[^\/]+$/, '');
+						var folder	= new Folder(uri);
+						
+					// delete old file if it exists
+						if(this.exists)
+						{
+							this.remove(true);
+						}
+						
+					// return
+						return this;
+				},
 			
 				/**
 				 * Opens the file in the Flash authoring environment
@@ -535,22 +535,26 @@
 				
 				/**
 				 * Append data to the file
-				 * @param data {String} The data to append to the file
-				 * @returns {File} The original file
+				 * @param data		{String}	The data to append to the file
+				 * @param append	{Boolean}	An optional flag to append, rather than overwrite the file
+				 * @returns			{File}		The original file
 				 */
 				write:function(data, append)
 				{
-					FLfile.write(this.uri, (data || ''), append ? 'append' : null);
-					return this;
+					// write
+						append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
+						
+					// return
+						return this;
 				},
 				
 				/**
-				 * Saves the file
+				 * Saves the file. Alternative to file.write('')
 				 * @returns {File} The original file
 				 */
 				save:function()
 				{
-					this.write();
+					this.write('', true);
 					return this;
 				},
 				
@@ -616,17 +620,17 @@
 				/** 
 				 * @type {Number} Get the size of the file
 				 */
-				get size (){ return FLfile.getSize(this.uri) },
+				get size (){ return FLfile.getSize(this.uri); },
 				
 				/** 
 				 * @type {String} get the contents of the file
 				 */
-				get contents (){ return FLfile.read(this.uri).replace(/\r\n/g, '\n') },
+				get contents (){ return FLfile.read(this.uri).replace(/\r\n/g, '\n'); },
 				
 				/** 
 				 * @type {String} Set the contents of the file
 				 */
-				set contents (data){ return FLfile.write(this.uri, data) },
+				set contents (data){ return this.write(data); },
 				/** 
 				 * @type {String} The file extension of the file
 				 */
@@ -642,7 +646,12 @@
 				set extension(value)
 				{
 					return this.uri.substr(this.uri.lastIndexOf('.') + 1);
-				}
+				},
+				
+			// -------------------------------------------------------------------------------------------------------------------
+			// properties
+			
+				saved:false
 					
 			}
 	
@@ -679,7 +688,7 @@
 		
 			if(0)
 			{
-				var file	= new File('c:/temp/this/is/a/new/file.jsfl', 'Hello!', true)
+				var file	= new File('c:/temp/this/is/a/new/file.jsfl', 'Hello!')
 				var folder	= file.parent;
 				
 				fl.trace('file: ' + file.toString(true))
@@ -726,7 +735,7 @@
 		
 			if(0)
 			{
-				var file = new File('c:/temp/document.doc', 'Hello!', true).open();
+				var file = new File('c:/temp/document.doc', 'Hello!').open();
 			}
 		
 		// --------------------------------------------------------------------------------
