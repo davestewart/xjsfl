@@ -199,13 +199,13 @@
 				add:function(path, type)
 				{
 					// variables
-						type == type || 'user';
+						type = type || 'user';
 						path = path.replace(/[\/]+$/g, '') + '/';	// ensure a single trailing slash
 						
 					// module type
-						if(type == 'module')
+						if(type === 'module')
 						{
-							path = xjsfl.settings.folders.root + 'modules/' + path
+							path = xjsfl.settings.folders.xjsfl + 'modules/' + path
 						}
 						
 					// user type - should be absolute
@@ -1095,6 +1095,13 @@
 							which	= 0;
 						break;
 						
+						// for full config path return the last file found from: core, modules, user (xml)
+						case 'config':
+							path	= 'config/' + name;
+							ext		= '.xml';
+							which	= -1;
+						break;
+						
 						// for data or settings, return the last file found, from: core, modules, user (xml)
 						case 'data':
 						case 'settings':
@@ -1161,7 +1168,7 @@
 					}
 					else
 					{
-						return uris.length ? uris : null;
+						return uris;
 					}
 		},
 		
@@ -1480,12 +1487,12 @@
 		 * @param	module	{Object}	The actual module object to register
 		 * @returns			{xjsfl}		The main xJSFL object
 		 */
-		register:function(name, module)
+		register:function(module)
 		{
-			if( ! name.match(/register|load/) )
+			if( ! module.name.match(/register|load/) )
 			{
-				xjsfl.paths.add(name, 'module');
-				xjsfl.modules[name] = module;
+				xjsfl.settings.paths.add(module.name, 'module');
+				xjsfl.modules[module.key] = module;
 			}
 			else
 			{
