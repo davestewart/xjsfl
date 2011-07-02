@@ -1182,7 +1182,7 @@
 													break;
 											
 											default:
-												xjsfl.output.error('XUL.add(): Undefined control type "' +control+ '"');
+												xjsfl.output.debug('XUL.add(): Undefined control type "' +control+ '"');
 											}
 									}
 									
@@ -2111,7 +2111,7 @@
 				// create
 					XUL
 						.factory()
-						.setTitle('Dialog with initiaze event')
+						.setTitle('Dialog with initilize event')
 						.addTextbox('Text', 'text')
 						.addEvent('initialize', onInitialize)
 						.show();
