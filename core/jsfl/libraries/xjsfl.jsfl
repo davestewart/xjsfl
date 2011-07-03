@@ -221,7 +221,7 @@
 						}
 				},
 				
-				get:function()
+				get all()
 				{
 					var paths = xjsfl.settings.paths;
 					return paths.core.concat(paths.module).concat(paths.user);
@@ -385,7 +385,9 @@
 					str			= xjsfl.utils.makePath(path) + (str === true ? '' : str);
 				}
 				
+			//TODO IMPORTANT! Throw error / passback false on empty string
 			//TODO If an empty string is passed back, the system assumes the URI is the root. This could be dangerous (especialy if files are to be deleted!) so consider throwing an error, or passing back xJSFL core
+			// Also, if a recursive operation is to be called, this could freeze flash if too many files
 				
 			// return the final URI using the system FLfile commands
 				return str ? FLfile.platformPathToURI(xjsfl.utils.makePath(str)) : '';
@@ -412,17 +414,17 @@
 			// if a URI is passed in, just convert it
 				if(str.match(/^file:\/\/\//))
 				{
-					path = FLfile.uriToPlatformPath(str);
+					path = FLfile.uriToPlatformPath(String(str));
 				}
 				else
 				{
-					path = str;
+					path = String(str);
 				}
 				
 			// convert {config} and {xjsfl} tokens
 				path = path
-					.replace(/^.*{config}/g, xjsfl.settings.folders.config)
-					.replace(/^.*{xjsfl}/g, xjsfl.settings.folders.xjsfl);
+					.replace(/.*{config}/g, xjsfl.settings.folders.config)
+					.replace(/.*{xjsfl}/g, xjsfl.settings.folders.xjsfl);
 				
 			// if a relative path is passed in, convert it to absolute from the xJSFL root
 				if( ! xjsfl.utils.isAbsolutePath(path))
@@ -1133,7 +1135,7 @@
 			
 				// variables
 					var uris		= [];
-					var paths		= xjsfl.settings.paths.get();
+					var paths		= xjsfl.settings.paths.all;
 					
 				// check all paths for files
 					for(var i = 0; i < paths.length; i++)
@@ -1491,6 +1493,7 @@
 		{
 			if( ! module.name.match(/register|load/) )
 			{
+				//trace('Registering MODULE:' + module.key)
 				xjsfl.settings.paths.add(module.name, 'module');
 				xjsfl.modules[module.key] = module;
 			}
