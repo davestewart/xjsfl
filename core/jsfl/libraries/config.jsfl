@@ -22,7 +22,7 @@
 		 * @param	configPath		{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
 		 * @author	Dave Stewart	
 		 */
-		Config = function(configPath)
+		Config = function(configPath, xml)
 		{
 			// absolute uri
 				if(configPath.indexOf('file:') == 0)
@@ -30,25 +30,42 @@
 					var uri = configPath;
 				}
 				
-			// relative uri - find
+			// relative uri - find in paths
 				else
 				{
-					var uri	= xjsfl.file.find('config', configPath);
-					uri		= uri ? uri : xjsfl.utils.makeURI('user/config/' + configPath + '.xml');
+					// find in paths
+						var uri	= xjsfl.file.find('config', configPath);
+						
+					// fall back to user config if module or user config doesn't exist
+					//TODO decide if this is what we want. Should null configs be allowed?
+						if(uri == null)
+						{
+							uri = xjsfl.utils.makeURI('user/config/' + configPath + '.xml');
+						}
 				}
 				
 			// file
 				this.file	= new File(uri);
 				
-			// xml
-				if(this.file.exists)
+			// if data is passed in, save
+				if(xml)
+				{
+					this.xml = xml;
+					this.save();
+				}
+
+			// if not, load if file exists
+				else if(this.file.exists)
 				{
 					this.load();
 				}
+				
+			// otherwise, just initialize XML
 				else
 				{
 					this.clear();
 				}
+					
 		}
 		
 	// ------------------------------------------------------------------------------------------------
@@ -132,23 +149,24 @@
 			 */
 			save:function()
 			{
-				if(this.xml.*.length() > 0)
-				{
-					var xml = this.xml.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, xjsfl.settings.newLine);
-					this.file.write(xml);
-				}
+				var xml = this.xml.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, xjsfl.settings.newLine);
+				this.file.write(xml);
 				return this;
 			},
 			
 			clear:function()
 			{
-				this.xml	= <config />;
+				var matches = this.file.uri.match(/(\w+)\/[^\/]+$/);
+				var name	= matches ? matches[1] : 'config';
+				this.xml	= <{name} />;
 				return this;
 			},
 			
 			toString:function(asXML)
 			{
-				return asXML ? this.xml.toXMLString() : '[object Config "' +xjsfl.utils.makePath(this.file.uri, true)+ '"]';
+				var path	= this.file ? xjsfl.utils.makePath(this.file.uri, true) : '';
+				var nodes	= this.xml ? this.xml.*.length() : 0;
+				return asXML ? this.xml.toXMLString() : '[object Config path="' +path+ '" nodes=' +nodes+ ']';
 			}
 			
 		}
