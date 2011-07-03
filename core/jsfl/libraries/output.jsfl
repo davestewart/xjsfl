@@ -214,7 +214,7 @@
 							}
 							else
 							{
-								output(' ' + key + ": [ TRANSIENT! ]");
+								output(' ' + key + ": [ SKIPPING! ]");
 							}
 						}
 						up();
@@ -460,6 +460,7 @@
 					
 				// uncallable properties
 					var illegal			= [
+											'constructor', // class
 											'tools|toolObjs|activeTool', // window
 											'morphShape|hintsList|actionScriptOffsets', // shape
 											'brightness|tintColor|tintPercent', // SymbolInstance
