@@ -27,31 +27,24 @@
 			// add class properties
 				for(var prop in properties)
 				{
-					if(prop != 'init')
-					{
-						this[prop] = properties[prop];
-					}
+					this[prop] = properties[prop];
 				}
 				
 			// core properties
 				this.name		= name;
-				
-			// derived properties
 				this.uri		= xjsfl.uri + 'modules/' + escape(this.name) + '/';
-				var configUri	= xjsfl.uri + 'user/config/';
+				
+			// register module so path is added to global paths before config is created
+				xjsfl.modules.register(this);
 				
 			// instantiate settings and data
-				this.settings	= new Config(this.name, 'settings', configUri);
-				this.data		= new Config(this.name, 'data', configUri);
+				this.settings	= new Config('settings/' + this.key);
+				this.data		= new Config('data/' + this.key);
 				
-			// load settings and data
-				this.settings.load();
-				this.data.load();
-		
 			// call a constructor if provided
-				if(properties && properties.init)
+				if(this.init)
 				{
-					properties.init.apply(this);
+					this.init();
 				}
 		}
 		
@@ -66,7 +59,6 @@
 			// core properties
 				name:		'',
 				uri:		'',
-				path:		'',
 				
 			// methods
 				settings:	null,
@@ -74,11 +66,21 @@
 				
 			// accessors
 				get key(){ return this.name.toLowerCase().replace(/\W/g, ''); },
+				get path(){ return xjsfl.utils.makePath(this.uri, true); },
+				
+			// methods
+				getURI:function(folder, file)
+				{
+					//TODO update this so it's more intelligent about picking where config files are stored (module or user folders)
+					folder	= folder ? folder + '/' : '';
+					file	= file || '';
+					return this.uri + folder + file;
+				},
 				
 			// built-in
 				toString:function()
 				{
-					return '[object Module "' +this.name+ '"]';
+					return '[object Module name="' +this.name+ '" path="' +this.path+ '"]';
 				}
 		}
 		
@@ -94,11 +96,27 @@
 		
 		
 		
-	// ------------------------------------------------------------------------------------------------
-	// Test code
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Demo code
 	
-		if( ! xjsfl.file.loading)
-		{
+	if( ! xjsfl.loading )
+	{
+		// initialize
 			xjsfl.init(this);
-			var module = new Module('Test');
-		}
+			clear();
+			try
+			{
+		
+		// --------------------------------------------------------------------------------
+		// Test
+		
+			if(1)
+			{
+				xjsfl.init(this);
+				var module = new Module('Test');
+				trace(module);
+			}
+		
+		// catch
+			}catch(err){xjsfl.output.debug(err);}
+	}
