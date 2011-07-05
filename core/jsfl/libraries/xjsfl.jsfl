@@ -60,7 +60,7 @@
 				function()
 				{
 					var stack = xjsfl.utils.getStack();
-					return xjsfl.utils.makeURI(stack[1].path);
+					return xjsfl.utils.makeURI(stack[3].path);
 				}
 			);
 			
@@ -895,6 +895,7 @@
 		 */
 		test:function(fn)
 		{
+			//TODO Add scope param, and change arguments to a single Array argument test(fn, args, scope)
 			// variables
 				var source	= fn.toSource();
 				source		= source.substring(source.indexOf(' ') + 1, source.indexOf('('));
@@ -1541,14 +1542,16 @@
 				}
 				
 			// grab new id
-				xul.id					= this.dialogs.length;
+				xul.id			= this.dialogs.length;
 				
 			// update XML id placeholders with correct id
-				 var xml				= xul.xml.toXMLString();
-				 xml					= xml.replace(/{xulid}/g, xul.id);
+				 var xml		= xul
+									.xml.toXMLString()
+									.replace(/{xulid}/g, xul.id)
+									.replace(/xjsfl.ui.handleEvent\(0,/g, 'xjsfl.ui.handleEvent(' +xul.id+ ',');
 				
 			// save XML to dialog.xml
-				var uri					= xul.uri || xjsfl.utils.makeURI('core/ui/dialog.xml');
+				var uri			= xul.uri || xjsfl.utils.makeURI('core/ui/dialog.xml');
 				new File(uri, xml);
 				
 			// register XUL
@@ -1568,8 +1571,16 @@
 				
 			// return settings
 				return settings;
-		}
+		},
 		
+		handleEvent:function(xulid, type, id)
+		{
+			var dialog = this.dialogs[xulid];
+			if(dialog)
+			{
+				dialog.handleEvent(type, id);
+			}
+		}
 	}
 	
 	
