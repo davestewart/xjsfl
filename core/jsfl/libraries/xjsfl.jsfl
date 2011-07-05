@@ -60,7 +60,7 @@
 				function()
 				{
 					var stack = xjsfl.utils.getStack();
-					return xjsfl.utils.makeURI(stack[3].path);
+					return xjsfl.file.makeURI(stack[3].path);
 				}
 			);
 			
@@ -349,129 +349,6 @@
 		trim:function(string)
 		{
 			return String(string || '').replace(/(^\s*|\s*$)/g, '');
-		},
-		
-		/**
-		 * Create a valid URI from a supplied string
-		 * Function has the same internal functionality as makePath()
-		 * 
-		 * @param	str			{String}	An absolute path, relative path, or uri
-		 * @param	context		{String}	An optional context (uri or path), from which to start the URI
-		 * @param	context		{Boolean}	An alternative optional Boolean indicating to automatically derive the URI from the calling function's file location
-		 * @returns				{String}	An absolute URI
-		 * @see								xjsfl.utils#makePath
-		 */
-		makeURI:function(str, context)
-		{
-			// if str is already a URI, no need to convert so return immediately
-				if(str.indexOf('file:') == 0)
-				{
-					return str;
-				}
-				
-			// if an additional filepath is passed in, the returned URI will be relative to it
-				if(typeof context === 'string')
-				{
-					context = context.replace(/[^\/\\]+$/, '');
-					str		= xjsfl.utils.makePath(context) + str;
-				}
-				
-			// if context is true, then the returned URI will be relative to the calling script
-			// if str is true, the returned URI will be the folder of the calling script
-				else if(context === true || str === true)
-				{
-					var stack	= xjsfl.utils.getStack();
-					var path	= stack[1].path;
-					str			= xjsfl.utils.makePath(path) + (str === true ? '' : str);
-				}
-				
-			//TODO IMPORTANT! Throw error / passback false on empty string
-			//TODO If an empty string is passed back, the system assumes the URI is the root. This could be dangerous (especialy if files are to be deleted!) so consider throwing an error, or passing back xJSFL core
-			// Also, if a recursive operation is to be called, this could freeze flash if too many files
-				
-			// return the final URI using the system FLfile commands
-				return str ? FLfile.platformPathToURI(xjsfl.utils.makePath(str)) : '';
-		},
-		
-		
-		/**
-		 * Create a valid path from a supplied string
-		 * 
-		 * Function will:
-		 * 
-		 * - convert file:/// to paths
-		 * - convert {xjsfl} and {config} tokens
-		 * - convert relative paths to absolute from xJSFL folder
-		 * - replace multiple / and \ with /
-		 * - resolve ../ tokens to correct parent folder
-		 * 
-		 * @param	str			{String}	An absolute path, relative path, or uri
-		 * @param	shorten		{Boolean}	An optional boolean to return a path with {xjsfl} or {config} swapped out from the actual path
-		 * @returns				{String}	An absolute or shortened path
-		 */
-		makePath:function(str, shorten)
-		{
-			// if a URI is passed in, just convert it
-				if(str.match(/^file:\/\/\//))
-				{
-					path = FLfile.uriToPlatformPath(String(str));
-				}
-				else
-				{
-					path = String(str);
-				}
-				
-			// convert {config} and {xjsfl} tokens
-				path = path
-					.replace(/.*{config}/g, xjsfl.settings.folders.config)
-					.replace(/.*{xjsfl}/g, xjsfl.settings.folders.xjsfl);
-				
-			// if a relative path is passed in, convert it to absolute from the xJSFL root
-				if( ! xjsfl.utils.isAbsolutePath(path))
-				{
-					path = xjsflPath + path;
-				}
-				
-			// replace backslashes
-				path = path.replace(/\\+/g, '/');
-				
-			// replace double-slashes
-				path = path.replace(/\/+/g, '/');
-				
-			// resolve ../
-				while(path.indexOf('../') > -1)
-				{
-					path = path.replace(/\/[^\/]+\/\.\.\//, "/");
-				}
-				
-			// optionally, shorten path
-				if(shorten)
-				{
-					path = path
-						.replace(xjsfl.settings.folders.config, 'Configuration/')
-						.replace(xjsfl.settings.folders.xjsfl, 'xJSFL/');
-				}
-				
-			// return
-				return path
-		},
-		
-		/**
-		 * Checks if a path is absolute or not
-		 * 
-		 * @param path {String} The path to the file
-		 * @returns {Boolean} True (absolute) or False (relative)
-		 */
-		isAbsolutePath:function(path)
-		{
-			if(xjsfl.settings.platform == 'mac')
-			{
-				return path.substr(0, 1).replace('\\', '/') == '/';
-			}
-			else
-			{
-				return path.match(/^[A-Z]:/i);
-			}
 		},
 		
 		/**
@@ -1009,8 +886,8 @@
 				}
 				
 			// template uris
-				var uriErrors	= xjsfl.utils.makeURI('core/config/templates/errors/errors.txt');
-				var uriError	= xjsfl.utils.makeURI('core/config/templates/errors/error.txt');
+				var uriErrors	= xjsfl.file.makeURI('core/config/templates/errors/errors.txt');
+				var uriError	= xjsfl.file.makeURI('core/config/templates/errors/error.txt');
 				
 			// build errors
 				var content = '';
@@ -1141,7 +1018,7 @@
 				// check all paths for files
 					for(var i = 0; i < paths.length; i++)
 					{
-						var uri = xjsfl.utils.makeURI(paths[i] + path);
+						var uri = xjsfl.file.makeURI(paths[i] + path);
 						if(FLfile.exists(uri))
 						{
 							uris.push(uri);
@@ -1212,7 +1089,7 @@
 					if(name == null || name === true || name === false)
 					{
 						var path = type;
-						var uri = xjsfl.utils.makeURI(path);
+						var uri = xjsfl.file.makeURI(path);
 						result	= FLfile.exists(uri) ? uri : null;
 					}
 				
@@ -1251,7 +1128,7 @@
 						{
 							// variables
 								var uri		= uris[i];
-								var path	= xjsfl.utils.makePath(uri, true);
+								var path	= xjsfl.file.makePath(uri, true);
 								var ext		= uri.match(/(\w+)$/)[1];
 	
 							// debug
@@ -1299,7 +1176,7 @@
 										// if the type was a module, ensure any panels are copied to the WindowSWF folder
 											if(type.match(/modules?/))
 											{
-												var folder = new xjsfl.classes.Folder(xjsfl.utils.makeURI('modules/' + name + '/ui/'));
+												var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI('modules/' + name + '/ui/'));
 												for each(var file in folder.contents)
 												{
 													if(file.extension == 'swf')
@@ -1329,6 +1206,130 @@
 
 			// return
 				return this;
+		},
+		
+		
+		/**
+		 * Create a valid URI from a supplied string
+		 * Function has the same internal functionality as makePath()
+		 * 
+		 * @param	str			{String}	An absolute path, relative path, or uri
+		 * @param	context		{String}	An optional context (uri or path), from which to start the URI
+		 * @param	context		{Boolean}	An alternative optional Boolean indicating to automatically derive the URI from the calling function's file location
+		 * @returns				{String}	An absolute URI
+		 * @see								xjsfl.file.makePath
+		 */
+		makeURI:function(str, context)
+		{
+			// if str is already a URI, no need to convert so return immediately
+				if(str.indexOf('file:') == 0)
+				{
+					return str;
+				}
+				
+			// if an additional filepath is passed in, the returned URI will be relative to it
+				if(typeof context === 'string')
+				{
+					context = context.replace(/[^\/\\]+$/, '');
+					str		= xjsfl.file.makePath(context) + str;
+				}
+				
+			// if context is true, then the returned URI will be relative to the calling script
+			// if str is true, the returned URI will be the folder of the calling script
+				else if(context === true || str === true)
+				{
+					var stack	= xjsfl.utils.getStack();
+					var path	= stack[1].path;
+					str			= xjsfl.file.makePath(path) + (str === true ? '' : str);
+				}
+				
+			//TODO IMPORTANT! Throw error / passback false on empty string
+			//TODO If an empty string is passed back, the system assumes the URI is the root. This could be dangerous (especialy if files are to be deleted!) so consider throwing an error, or passing back xJSFL core
+			// Also, if a recursive operation is to be called, this could freeze flash if too many files
+				
+			// return the final URI using the system FLfile commands
+				return str ? FLfile.platformPathToURI(xjsfl.file.makePath(str)) : '';
+		},
+		
+		
+		/**
+		 * Create a valid path from a supplied string
+		 * 
+		 * Function will:
+		 * 
+		 * - convert file:/// to paths
+		 * - convert {xjsfl} and {config} tokens
+		 * - convert relative paths to absolute from xJSFL folder
+		 * - replace multiple / and \ with /
+		 * - resolve ../ tokens to correct parent folder
+		 * 
+		 * @param	str			{String}	An absolute path, relative path, or uri
+		 * @param	shorten		{Boolean}	An optional boolean to return a path with {xjsfl} or {config} swapped out from the actual path
+		 * @returns				{String}	An absolute or shortened path
+		 */
+		makePath:function(str, shorten)
+		{
+			// if a URI is passed in, just convert it
+				if(str.match(/^file:\/\/\//))
+				{
+					path = FLfile.uriToPlatformPath(String(str));
+				}
+				else
+				{
+					path = String(str);
+				}
+				
+			// convert {config} and {xjsfl} tokens
+				path = path
+					.replace(/.*{config}/g, xjsfl.settings.folders.config)
+					.replace(/.*{xjsfl}/g, xjsfl.settings.folders.xjsfl);
+				
+			// if a relative path is passed in, convert it to absolute from the xJSFL root
+				if( ! xjsfl.file.isAbsolutePath(path))
+				{
+					path = xjsflPath + path;
+				}
+				
+			// replace backslashes
+				path = path.replace(/\\+/g, '/');
+				
+			// replace double-slashes
+				path = path.replace(/\/+/g, '/');
+				
+			// resolve ../
+				while(path.indexOf('../') > -1)
+				{
+					path = path.replace(/\/[^\/]+\/\.\.\//, "/");
+				}
+				
+			// optionally, shorten path
+				if(shorten)
+				{
+					path = path
+						.replace(xjsfl.settings.folders.config, 'Configuration/')
+						.replace(xjsfl.settings.folders.xjsfl, 'xJSFL/');
+				}
+				
+			// return
+				return path
+		},
+		
+		/**
+		 * Checks if a path is absolute or not
+		 * 
+		 * @param path {String} The path to the file
+		 * @returns {Boolean} True (absolute) or False (relative)
+		 */
+		isAbsolutePath:function(path)
+		{
+			if(xjsfl.settings.platform == 'mac')
+			{
+				return path.substr(0, 1).replace('\\', '/') == '/';
+			}
+			else
+			{
+				return path.match(/^[A-Z]:/i);
+			}
 		}
 		
 	}
@@ -1551,7 +1552,7 @@
 									.replace(/xjsfl.ui.handleEvent\(0,/g, 'xjsfl.ui.handleEvent(' +xul.id+ ',');
 				
 			// save XML to dialog.xml
-				var uri			= xul.uri || xjsfl.utils.makeURI('core/ui/dialog.xml');
+				var uri			= xul.uri || xjsfl.file.makeURI('core/ui/dialog.xml');
 				new File(uri, xml);
 				
 			// register XUL

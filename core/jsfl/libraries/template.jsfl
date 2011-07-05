@@ -135,7 +135,7 @@
 						}
 						else
 						{
-							xjsfl.output.warn('The template "' +xjsfl.utils.makePath(uri, true)+ '" was not saved');
+							xjsfl.output.warn('The template "' +xjsfl.file.makePath(uri, true)+ '" was not saved');
 						}
 					}
 					else

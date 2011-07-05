@@ -607,7 +607,7 @@
 					{
 						// build xml
 							var xml			= XUL.templates.flash.copy();
-							var uri			= xjsfl.utils.makeURI(src);
+							var uri			= xjsfl.file.makeURI(src);
 							xml..flash.@src	= src;
 							
 						// properties
@@ -1290,7 +1290,7 @@
 						}
 						
 					// make URI
-						uri			= xjsfl.utils.makeURI(uri);
+						uri			= xjsfl.file.makeURI(uri);
 						this.uri	= uri;
 						
 					// return

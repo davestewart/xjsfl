@@ -34,7 +34,7 @@
 				this.name		= name;
 				this.uri		= xjsfl.uri + 'modules/' + escape(this.name) + '/';
 				
-			// register module so path is added to global paths before config is created
+			// register module so the module path is added to global paths before config is created
 				xjsfl.modules.register(this);
 				
 			// instantiate settings and data
@@ -66,7 +66,7 @@
 				
 			// accessors
 				get key(){ return this.name.toLowerCase().replace(/\W/g, ''); },
-				get path(){ return xjsfl.utils.makePath(this.uri, true); },
+				get path(){ return xjsfl.file.makePath(this.uri, true); },
 				
 			// methods
 				getURI:function(folder, file)

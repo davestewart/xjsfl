@@ -40,7 +40,7 @@
 					//TODO decide if this is what we want. Should null configs be allowed?
 						if(uri == null)
 						{
-							uri = xjsfl.utils.makeURI('user/config/' + configPath + '.xml');
+							uri = xjsfl.file.makeURI('user/config/' + configPath + '.xml');
 						}
 				}
 				
@@ -164,7 +164,7 @@
 			
 			toString:function(asXML)
 			{
-				var path	= this.file ? xjsfl.utils.makePath(this.file.uri, true) : '';
+				var path	= this.file ? xjsfl.file.makePath(this.file.uri, true) : '';
 				var nodes	= this.xml ? this.xml.*.length() : 0;
 				return asXML ? this.xml.toXMLString() : '[object Config path="' +path+ '" nodes=' +nodes+ ']';
 			}

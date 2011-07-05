@@ -26,7 +26,7 @@
 			
 			if(pathOrUri)
 			{
-				this.uri = xjsfl.utils.makeURI(pathOrUri);
+				this.uri = xjsfl.file.makeURI(pathOrUri);
 			}
 			if(this.uri)
 			{
@@ -505,7 +505,7 @@
 						{
 							uriCopy = uriCopy.replace(/\/*$/, '/') + this.name;
 						}
-						uriCopy =  xjsfl.utils.makeURI(uriCopy);
+						uriCopy =  xjsfl.file.makeURI(uriCopy);
 						
 					// remove target if file should overwrite
 						if(overWrite)

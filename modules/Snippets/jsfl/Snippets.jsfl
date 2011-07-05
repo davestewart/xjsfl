@@ -62,7 +62,7 @@ var snippets =
 				if(uri && name)
 				{
 					// add settings
-						this.settings.xml.sets.set += new XML('<set name="' +name+ '" uri="' +xjsfl.utils.makePath(uri, true)+ '" />');
+						this.settings.xml.sets.set += new XML('<set name="' +name+ '" uri="' +xjsfl.file.makePath(uri, true)+ '" />');
 						
 					// change set
 						this.changeSet(name);
@@ -277,7 +277,7 @@ var snippets =
 				}
 				
 			// update folderURI
-				folderURI			= xjsfl.utils.makeURI(folderURI);
+				folderURI			= xjsfl.file.makeURI(folderURI);
 				var iconsURI		= this.uri + 'assets/icons/16x16/';
 				
 			// generate xml
