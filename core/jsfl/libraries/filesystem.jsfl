@@ -374,7 +374,7 @@
 		/**
 		 * File class
 		 * @param pathOrUri	{String}	The uri or path to the object
-		 * @param contents	{String}	An optional string contents of the file, or true to 
+		 * @param contents	{String}	An optional string contents of the file, or true to save a blank file
 		 */
 		File = function(pathOrUri, contents)
 		{
@@ -385,9 +385,13 @@
 				if(contents)
 				{
 					this.create();
-					if(typeof contents === 'string')
+					if(contents === true)
 					{
-						this.write(contents, false);
+						this.save();
+					}
+					else
+					{
+						this.write(String(contents), false);
 					}
 				}
 				else if(this.extension == 'fla' && ! this.exists)
@@ -420,7 +424,7 @@
 				{
 					// folder
 						var uri		= this.uri.replace(/\/[^\/]+$/, '');
-						var folder	= new Folder(uri);
+						var folder	= new Folder(uri, true);
 						
 					// delete old file if it exists
 						if(this.exists)
@@ -525,10 +529,10 @@
 							}
 						}
 						
-					// if not, just write the contents of this file to the new file
+					// if not, throw an error, or just save an empty file?
 						else
 						{
-							throw new Error('The file "' +this.name+ '" must be saved before copying');
+							throw new Error('The file "' +this.name+ '" does not exist or has not been saved');
 						}
 						return this;
 				},
