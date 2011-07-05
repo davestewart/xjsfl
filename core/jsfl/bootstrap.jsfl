@@ -37,7 +37,7 @@
 				// utility
 					'data',
 					'geom',
-					'utils',
+					//'utils',
 					'timer',
 					
 				// elements
