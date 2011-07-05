@@ -191,6 +191,7 @@ var snippets =
 				{
 					xjsfl.utils.getPanel('xJSFL Snippets').call('update');
 				}
+				//xjsfl.utils.getPanel('xJSFL Snippets').call('update');
 		},
 		
 		rebuild:function()
