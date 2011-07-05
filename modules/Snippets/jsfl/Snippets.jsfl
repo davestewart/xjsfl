@@ -1,4 +1,3 @@
-
 var snippets =
 {
 	
@@ -7,43 +6,211 @@ var snippets =
 	
 		init:function()
 		{
-			// always refresh when instantiating
-			this.saveData();
+			var set = this.getCurrentSet();
+			this.changeSet(set.@name);
 		},
 		
 	// ------------------------------------------------------------------------------------------------
-	// variables
+	// public functions for Flash Panel
+	
+		/**
+		 * Change the 
+		 * @param	name	{String}	
+		 * @returns		
+		 */
+		changeSet:function(name, force)
+		{
+			// grab config for set
+				var dataURI		= this.uri + 'config/data/snippets.xml';
+				var cacheURI	= this.uri + 'config/data/cache/' + name + '.xml';
+				var file		= new File(cacheURI);
+				var sets		= this.settings.get('sets');
+				
+			// if the config file doesn't exist, create it
+				if( ! file.exists || force)
+				{
+					var folderURI = sets.find(function(node){ return node.@name == name; }).@uri;
+					this.createData(folderURI, cacheURI);
+				}
+				
+			// copy file
+				file.copy(dataURI, true);
+				
+			// update and save settings
+				sets.@current = name;
+				this.settings.save();
+				
+			// return
+				return true;
+		},
+	
+		/**
+		 * Add a new Snippet set
+		 * @returns		
+		 */
+		addSet:function()
+		{
+			// UI
+				var uri = fl.browseForFolderURL('Choose a folder');
+				if(uri)
+				{
+					var folder	= new Folder(uri);
+					var name	= prompt('Choose a name for the new set', folder.name.substr(0, 1).toUpperCase() + folder.name.substr(1));
+				}
+				
+			// create data
+				if(uri && name)
+				{
+					// add settings
+						this.settings.xml.sets.set += new XML('<set name="' +name+ '" uri="' +xjsfl.utils.makePath(uri, true)+ '" />');
+						
+					// change set
+						this.changeSet(name);
+					
+					// return
+						return true;
+				}
+				return false;
+		},
+		
+		/**
+		 * 
+		 * @param	name	
+		 * @returns		
+		 */
+		removeSet:function(name)
+		{
+			if(confirm('Are you sure you want to remove set ' +name+ '?'))
+			{
+				// remove file
+					var file = new File(this.uri + 'config/data/cache/' +name+ '.xml');
+					file.remove(true);
+					
+				// remove setting
+					var sets	= this.settings.get('sets');
+					sets.remove('@name=' + name);
+					this.settings.save();
+				
+				// if setting is current, revert to first setting
+					if(sets.@current == name)
+					{
+						name = sets.set[0].@name;
+						this.changeSet(name);
+					}
+					
+				// return
+					return true;
+			}
 
-		iconUri:this.uri + 'assets/icons/16x16/',
+			return false;
+		},
+		
+		/**
+		 * 
+		 * @param		
+		 * @returns		
+		 */
+		getCurrentSet:function()
+		{
+			// grab current set
+				var sets	= this.settings.get('sets');
+				var set		= sets.find('@name=' +sets.@current)[0];
+				
+			// if not defined, default to the first set, and re-save
+				if( ! set)
+				{
+					set = sets.set[0];
+					sets.@current = set.@name;
+					this.settings.save();
+				}
+				
+			// return
+				return set;
+		},
+		
+		getSet:function(name)
+		{
+			// grab current set
+				var sets	= this.settings.get('sets');
+				var set		= sets.find( function(node){ return node.@name == name; } )[0];
+				
+			// return
+				return set;
+		},
+		
+		/**
+		 * 
+		 * @param		
+		 * @returns		
+		 */
+		manageSets:function()
+		{
+			// grab set names
+				var names		= [];
+				var sets		= this.settings.get('sets');
+				var selected	= sets.@current;
+				for each(var set in sets.set)
+				{
+					names.push(String(set.@name));
+				}
+				
+			// create XUL dialog
+				var xul = XUL.factory()
+					.setTitle('Snippets')
+					.addRadiogroup('Set', 'set', names)
+					.addDropdown('Action', 'action', ['Load', 'Add', 'Remove'])
+					.addEvent('initialize', function(event){ event.xul.controls.set.value = selected; })
+					.show();
+			
+			// take action
+				if(xul.values.accept)
+				{
+					switch(xul.values.action)
+					{
+						case 'Load':
+							var state = this.changeSet(xul.values.set);
+						break;
+					
+						case 'Add':
+							var state = this.addSet(xul.controls.set.value);
+						break;
+					
+						case 'Remove':
+							var state = this.removeSet(xul.controls.set.value);
+						break;
+					}
+				}
+				
+			// update
+				/*
+					This is a hack, as Flash appears to forget about the XUL dialog after 
+					a short while so the panel needs to be reminded to update manually.
+					Ordinarily, we should return true or false.
+				*/
+				if(state)
+				{
+					xjsfl.utils.getPanel('xJSFL Snippets').call('update');
+				}
+		},
+		
+		rebuild:function()
+		{
+			var set = this.getCurrentSet();
+			this.changeSet(set.@name, true);
+			xjsfl.utils.getPanel('xJSFL Snippets').call('update');
+		},
 		
 	// ------------------------------------------------------------------------------------------------
 	// make the config file that stores the user's scripts
-
-		saveData:function()
+	
+		/**
+		 * 
+		 * @param	name	
+		 * @param	uri	
+		 * @returns		
+		 */
+		createData:function(folderURI, cacheURI)
 		{
-			// recursive function to iterate through folders and list all user scripts
-				function recurse(root, fnChild, fnTestChildren)
-				{
-					var indent = '';
-					var level = 0;
-					
-					function list(e, i)
-					{
-						fnChild(e, i, level, indent);
-						if(fnTestChildren ? fnTestChildren(e, level) : e.length)
-						{
-							level ++;
-							indent += '	';
-							e.each(list);
-							indent = indent.substring(1);
-							level--;
-						}
-					}
-					
-					list(root);
-					
-				}
-				
 			// callack for recusrsive function
 				function callback(element, index, level, indent)
 				{
@@ -64,30 +231,37 @@ var snippets =
 						//item.@level	= level - 1;
 						item.@type	= (element instanceof Folder ? 'folder' : 'file');
 						item.@label	= element.name.replace(/\.jsfl$/, '');
-						item.@path	= element.path + (item.@type == 'folder' ? '/' : '');
+						item.@path	= element.uri + (item.@type == 'folder' ? '/' : '');
 						
 					// file properties
 						if(element instanceof File)
 						{
+							//TODO use Source class instead
+							//TODO also parse functions
+							
 							var contents	= element.contents || '';
 							var comments	= contents.match(/\/\*(?:(?!\*\/|\/\*)[\s\S])*(?:\/\*(?:(?!\*\/|\/\*)[\s\S])*\*\/(?:(?!\*\/|\/\*)[\s\S])*)*[\s\S]*?\*\//);
 							if(comments)
 							{
-								var desc	= comments[0].match(/@desc\s+([^\r\n]+)/);
-								if(desc == null)
-								{
-									var desc	= comments[0].match(/\* (\w[^\r\n]+)/);
-								}
-								var icon	= comments[0].match(/@icon\s+([^\r\n]+)/);
-								
-								if(icon)
-								{
-									item.@icon = icon[1];
-								}
-								if(desc)
-								{
-									item.@desc = desc[1].replace(/"/g, '\"');
-								}
+								// desc
+									var desc	= comments[0].match(/@desc\s+([^\r\n]+)/);
+									if(desc == null)
+									{
+										var desc	= comments[0].match(/\* (\w[^\r\n]+)/);
+									}
+									
+								// icon
+									var icon	= comments[0].match(/@icon\s+([^\r\n]+)/);
+									if(icon)
+									{
+										item.@icon = icon[1].replace(/{iconsURI}/g, iconsURI);
+									}
+									
+								// desc ... again? TODO Tidy up
+									if(desc)
+									{
+										item.@desc = desc[1].replace(/"/g, '\"');
+									}
 							}
 						}
 						
@@ -98,71 +272,65 @@ var snippets =
 						}
 						
 					// add child
-						items.appendChild(item);
+						xml.appendChild(item);
 				}
 				
-			// path
-				var path		= new Folder(xjsfl.uri + 'user/jsfl/snippets').path + '/';
-				
-			// debug
-				//fl.trace('Saving from "' +path+ '"');
-				//fl.trace('Saving from to "' +this.data.uri+ '"');
+			// update folderURI
+				folderURI			= xjsfl.utils.makeURI(folderURI);
+				var iconsURI		= this.uri + 'assets/icons/16x16/';
 				
 			// generate xml
-				var items		= new XML('<files type="folder" label="scripts" />');
+				var xml				= <files type="folder" label="scripts" />;
+				xml.@path			= folderURI;
 				
-			// icon url
-				items.@path		= path;
-				//items.@iconsURI	= xjsfl.uri + 'modules/Snippets/assets/icons/16x16/';
+			// process files
+				Data.recurseFolder(folderURI, callback);
 				
-			// grab files
-				recurse(new Folder(path), callback, function(e){return e instanceof Folder && e.name.substr(0, 1) != '_'})
-				
-			// trace
-				this.data.xml = items;
-				this.data.save();
+			// save config
+				var file			= new File(cacheURI, xml).save();
 		},
+		
 	
 	// ------------------------------------------------------------------------------------------------
 	// public functions for Flash Panel
 	
-		runFile:function(path)
+		runFile:function(uri)
 		{
-			new File(path).run();
+			new File(uri).run();
 		},
 	
-		openFile:function(path)
+		openFile:function(uri)
 		{
-			new File(path).open();
+			new File(uri).open();
 		},
 	
-		browseFile:function(path)
+		browseFile:function(uri)
 		{
-			new File(path).reveal();
+			new File(uri).reveal();
 		},
 	
-		browseFolder:function(path)
+		browseFolder:function(uri)
 		{
-			new Folder(path).open();
+			new Folder(uri).open();
 		},
 	
-		deleteFile:function(path)
+		deleteFile:function(uri)
 		{
-			var file = new File(path);
+			var file = new File(uri);
 			file.remove();
 			return ! file.exists;
 		},
 	
-		deleteFolder:function(path)
+		deleteFolder:function(uri)
 		{
-			var folder = new Folder(path);
+			var folder = new Folder(uri);
 			folder.remove()
 			return ! folder.exists;
 		},
 		
-		createCommand:function(name, path)
+		createCommand:function(name, uri)
 		{
-			var jsfl	= 'fl.runScript("' +FLfile.platformPathToURI(path)+ '");';
+			var jsfl	= 'fl.runScript("' +uri+ '");';
 			var file	= new File(fl.configURI + 'Commands/' + name + '.jsfl', jsfl);
 			file.save();
 			if(file.exists)
@@ -179,29 +347,29 @@ var snippets =
 			return file.exists;
 		},
 		
-		makeFolder:function(path)
+		makeFolder:function(uri)
 		{
-			//fl.trace('Creating folder: ' + path)
-			var folder = new Folder(path, true);
+			//fl.trace('Creating folder: ' + uri)
+			var folder = new Folder(uri, true);
 			return folder.exists();
 		},
 		
 		//TODO update to use Template class
-		makeFile:function(path, contents, desc, icon, version, author)
+		makeFile:function(uri, contents, desc, icon, version, author)
 		{
 			// debug
-				fl.trace('Creating file: ' + path)
+				fl.trace('Creating file: ' + FLfile.uriToPlatformPath(uri))
 				
 			// default values
 				var date		= new Date();
-				var name		= path.match(/([^\/]+)\.jsfl$/)[1];
+				var name		= uri.match(/([^\/]+)\.jsfl$/)[1];
 				desc			= desc || name;
 				icon			= icon || 'Filesystem/page/page_white.png';
 				version			= version || '1.0';
 				author			= author || 'Dave Stewart (dave@xjsfl.com)'
 				
 			// read template file
-				var template	= new File(this.xjsflPath + 'user/config/templates/template.jsfl').contents;
+				var template	= new File(xjsfl.uri + 'user/config/templates/template.jsfl').contents;
 				
 			// grab contents
 				var docs		= '';
@@ -226,56 +394,46 @@ var snippets =
 			// save file
 				var file		= new File(path, contents)
 				file.save()
-		},
-		
-		toString:function()
-		{
-			return '[module Snippets]';
 		}
-
+		
 		
 	}
 
 // ------------------------------------------------------------------------------------------------
 // create module
 	
-	//xjsfl.reload();
-	//xjsfl.init(this);
-	var module = new Module('Snippets', snippets);
+	var module = new xjsfl.classes.Module('Snippets', snippets);
 	
-	//module.createCommand('test', 'this is a test');
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Demo code
 	
-	/*
-	module.settings.xml.author = 'Dave Stewart';
-	module.settings.xml.url = 'www.xjsfl.com';
-	module.settings.xml.icon= 'Filesystem/page/page_white.png';
-	
-	module.settings.save();
-	*/
-
-/*
-	xjsfl.init(this);
-	
-	
-	var nodes	= module.data.xml.children()
-	var path	= nodes[4].@path;
-	alert(path)
-	module.browseFile(path);
-
-	//module.saveData();
-
-	//Output.inspect(module)
-*/
-// ------------------------------------------------------------------------------------------------
-// main
-
-//fl.outputPanel.clear();
-//snippets.makeXML();
-//fl.trace(snippets.getXML())
-//snippets.makeFolder(xjsfl.uri + 'user/temp/test/')
-//makeFile('E:/02 - Current Jobs/xJSFL/xJSFL/user/jsfl/scripts/test/new file.jsfl', "alert('HELLO!');")
-
-
-
-
-
+	if( ! xjsfl.loading )
+	{
+		// initialize
+			xjsfl.init(this);
+			clear();
+			try
+			{
+		
+		// --------------------------------------------------------------------------------
+		// Test
+		
+			if(0)
+			{
+				
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Test
+		
+			if(0)
+			{
+				var module = new Module('Snippets', snippets);
+				//Output.inspect(module);
+				trace(module)
+							
+			}
+		
+		// catch
+			}catch(err){xjsfl.output.debug(err);}
+	}
