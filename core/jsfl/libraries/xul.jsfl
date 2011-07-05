@@ -202,7 +202,7 @@
 					 */
 					get values()
 					{
-						var values = {};
+						var values = {accept:this.settings && this.settings.dismiss == 'accept'};
 						for(var id in this.controls)
 						{
 							var control = this.controls[id];
@@ -302,12 +302,13 @@
 					
 					/**
 					 * Updates supplied XML with new child items parent
-					 * @param	parent	{XML}		An XML parent node. Child items are updated by reference
-					 * @param	values	{Array}		The values (values, or {label:'',value:''} Objects) of each of the new elements you want to add
-					 * @param	id		{String}	The id of the new control
-					 * @returns			{XML}		The XML of the new children (altough the original parent is altered by reference anyway)
+					 * @param	parent		{XML}		An XML parent node. Child items are updated by reference
+					 * @param	values		{Array}		The values (values, or {label:'',value:''} Objects) of each of the new elements you want to add
+					 * @param	id			{String}	The id of the new control
+					 * @param	selected	{String}	The value of the selected item
+					 * @returns				{XML}		The XML of the new children (altough the original parent is altered by reference anyway)
 					 */
-					_addChildren:function(parent, values, id)
+					_addChildren:function(parent, values, id, selected)
 					{
 						// grab the first item in the list to use as a template for the others
 							var items			= parent.*;
@@ -318,27 +319,38 @@
 							{
 								delete items[0];
 							}
-							
+
 						// add new child nodes
 							var i = 0;
 							for each(var value in values)
 							{
-								var item 			= itemTemplate.copy();
-								if(value.label) // value is an object
-								{
-									item.@value		= value.value;
-									item.@label		= value.label;
-								}
-								else
-								{
-									item.@value		= value;
-									item.@label		= value;
-								}
-								if(id)
-								{
-									item.@id		= id + '[' + i + ']';
-								}
-								items[i++]			= item;
+								// create item
+									var item 			= itemTemplate.copy();
+									if(value.label) // value is an object
+									{
+										item.@value		= value.value;
+										item.@label		= value.label;
+									}
+									else
+									{
+										item.@value		= value;
+										item.@label		= value;
+									}
+									
+								// item id
+									if(id)
+									{
+										item.@id		= id + '[' + i + ']';
+									}
+									
+								// selected
+									if((selected === undefined && i === 0) || value == selected)
+									{
+										item.@selected = true;
+									}
+									
+								// add
+									items[i++]			= item;
 							}
 							
 						// return parent
@@ -410,7 +422,7 @@
 								// assign handler. Note that the xulid will be assigned and the {xulid} placeholder replaced during xjsfl.ui.show()
 									for each(var event in events)
 									{
-										node.@['on' + event] = "xjsfl.ui.dialogs[{xulid}].handleEvent('" +event+ "', '" +id+ "')";
+										node.@['on' + event] = "xjsfl.ui.handleEvent(0, '" +event+ "', '" +id+ "')";
 									}
 							}
 							
@@ -717,7 +729,7 @@
 							
 						// add child items
 							var parent			= xml..radiogroup;
-							this._addChildren(parent, values);
+							this._addChildren(parent, values, id, attributes ? attributes.selected : null);
 						
 						// add control
 							return this._addControl('radiogroup', id, label, xml, attributes);
@@ -1722,7 +1734,9 @@
 				{
 					if(this.combo)
 					{
-						this.value = this.values[index];
+						var values = this.getvalues();
+						alert(values)
+						this.value = values[index];
 					}
 				},
 				
