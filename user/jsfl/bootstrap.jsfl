@@ -17,7 +17,6 @@
 	{
 		// add user paths
 			//xjsfl.settings.paths.add('z:/temp/user/');
-			//xjsfl.settings.paths.add('console', 'module');
 			
 		// load optional libraries
 		

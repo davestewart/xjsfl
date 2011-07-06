@@ -24,7 +24,7 @@
 			exportCSV:function()
 			{
 				// create file
-					var uri			= xjsfl.utils.makeURI('user/temp/spreadsheet-edit.csv');
+					var uri			= xjsfl.file.makeURI('user/temp/spreadsheet-edit.csv');
 					this.file		= new File(uri, true);
 
 				// grab keys and filter
@@ -165,6 +165,6 @@
 	}
 
 // start
-	xjsfl.reload(this);
+	xjsfl.init(this);
 	SpreadsheetEdit.open();
 

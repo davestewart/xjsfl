@@ -1,0 +1,1 @@
+Place UI items here. XML files for XUL dalogs, and SWF files for XUL Flash objects
