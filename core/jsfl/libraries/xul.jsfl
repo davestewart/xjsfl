@@ -28,41 +28,29 @@
 			
 			//TODO Add functionality for basic arithmetic to be performed inside textboxes
 			
-			// check for dom
-				var dom = fl.getDocumentDOM();
-				if( ! dom)
+			// load dialog
+				this.xml		= xjsfl.file.load('template', 'xul/dialog.xml');
+				
+			// load controls
+				var xml			= xjsfl.file.load('template', 'xul/controls.xml');
+				for each(var node in xml.grid.rows.*)
 				{
-					xjsfl.trace('A document (.fla file) needs to be open before a XUL dialog box can be shown');
-					return null;
+					XUL.templates[node.@template.toString()] = node.copy();
 				}
 				
-			// initialize and build
-				else
-				{
-					// load dialog
-						this.xml		= xjsfl.file.load('template', 'xul/dialog.xml');
-						
-					// load controls
-						var xml			= xjsfl.file.load('template', 'xul/controls.xml');
-						for each(var node in xml.grid.rows.*)
-						{
-							XUL.templates[node.@template.toString()] = node.copy();
-						}
-						
-					// properties
-						this.controls	= {};
-						this.settings	= {};
-						this.events		= {};
-						this.rules		= {};
-						this.columns	= [80, 150], 
-						this.error		= null;
-						this.id			= -1;
-						
-						//TODO columns flex properly, and ensure appropriate elements flex to fill
-						
-					// set title if provided
-						this.setTitle(title || 'xJSFL');
-				}
+			// properties
+				this.controls	= {};
+				this.settings	= {};
+				this.events		= {};
+				this.rules		= {};
+				this.columns	= [80, 150], 
+				this.error		= null;
+				this.id			= -1;
+				
+				//TODO columns flex properly, and ensure appropriate elements flex to fill
+				
+			// set title if provided
+				this.setTitle(title || 'xJSFL');
 				
 			// return
 				return this;
@@ -1388,7 +1376,7 @@
 			
 				show:function(accept, cancel)
 				{
-					if(xjsfl.get.dom())
+					if(xjsfl.get.dom('A document (.fla file) needs to be open before this dialog box can be shown.'))
 					{
 						// --------------------------------------------------------------------------------
 						// build panel
