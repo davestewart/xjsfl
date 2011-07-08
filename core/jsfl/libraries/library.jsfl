@@ -269,7 +269,7 @@
 					{
 						if(item['timeline'])
 						{
-							return ! xjsfl.iterators.layers(item, null, function (frame){ return frame.elements.length > 0; });
+							return ! Iterators.layers(item, null, function (frame){ return frame.elements.length > 0; });
 						}
 						return false;
 					},
@@ -278,7 +278,7 @@
 					{
 						if(item['timeline'])
 						{
-							return xjsfl.iterators.layers(item, null, function (frame){ return frame.tweenType != 'none'; } );
+							return Iterators.layers(item, null, function (frame){ return frame.tweenType != 'none'; } );
 						}
 						return false;
 					},
@@ -287,7 +287,7 @@
 					{
 						if(item['timeline'])
 						{
-							return xjsfl.iterators.layers(item, null, function (frame){ return frame.actionScript != ''; });
+							return Iterators.layers(item, null, function (frame){ return frame.actionScript != ''; });
 						}
 						return false;
 					},
@@ -296,7 +296,7 @@
 					{
 						if(item['timeline'])
 						{
-							return xjsfl.iterators.layers(item, null, function (frame){ return frame.soundLibraryItem != null; });
+							return Iterators.layers(item, null, function (frame){ return frame.soundLibraryItem != null; });
 						}
 						return false;
 					}
