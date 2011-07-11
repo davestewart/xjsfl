@@ -80,14 +80,14 @@
 
 	xjsfl.get =
 	{
-		dom:function()
+		dom:function(error)
 		{
 			var dom = fl.getDocumentDOM();
 			if(dom)
 			{
 				return dom;
 			}
-			alert('Open a Flash document (FLA) before running this script.');
+			alert(error || 'Open a Flash document (FLA) before running this script.');
 			return false;
 		},
 		
@@ -702,7 +702,7 @@
 							code:parts[1] || '',
 							line:parseInt(parts[3]) || '',
 							file:file,
-							path:(this.makePath(path, shorten))
+							path:(xjsfl.file.makePath(path, shorten))
 						};
 				}
 				
