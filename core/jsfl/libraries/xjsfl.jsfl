@@ -1085,14 +1085,14 @@
 			// --------------------------------------------------------------------------------
 			// Load file
 			
-				// single argument, so type is actually a file, or an array of files,so just convert the path to a uri
-					if(name == null || name === true || name === false)
+				// single argument, so type is probably a file, so just convert the path to a uri
+					if(name == undefined || name === true || name === false)
 					{
-						var path = type;
-						var uri = xjsfl.file.makeURI(path);
-						result	= FLfile.exists(uri) ? uri : null;
+						catchErrors	= name;
+						var path	= type;
+						var uri		= xjsfl.file.makeURI(path);
+						result		= FLfile.exists(uri) ? uri : null;
 					}
-				
 				// type and name supplied, so find the file we need in the cascading file system
 					else
 					{
@@ -1151,6 +1151,7 @@
 											{
 												try
 												{
+													trace('Testing file: "' +FLfile.uriToPlatformPath(uri)+ '"');
 													eval(FLfile.read(uri));
 													xjsfl.file.stack.pop();
 													return uri;
