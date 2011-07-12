@@ -285,8 +285,10 @@
 				 */
 				toString:function(path)
 				{
-					var num = this.contents.length;
-					return '[object Folder "' +(path ? this.path : this.name)+ '" contains ' +num+ ' item' +(num == 1 ? '' : 's' )+ ']';
+					var items	= this.contents.length;
+					var label	= path ? 'path' : 'name';
+					var value	= path ? this.path : this.name;
+					return '[object Folder ' +label+ '="' +value+ '" items=' +items+ ']';
 				},
 					
 			// -------------------------------------------------------------------------------------------------------------------
@@ -615,7 +617,7 @@
 				 */
 				toString:function(path)
 				{
-					return '[object File "' +(path ? this.path : this.name)+ '"]';
+					return '[object File ' +(path ? 'path' : 'name')+ '="' +(path ? this.path : this.name)+ '"]';
 				},
 				
 			// -------------------------------------------------------------------------------------------------------------------
@@ -750,7 +752,7 @@
 				var folder		= new Folder('c:/temp');
 				for each(var item in folder.contents)
 				{
-					trace(item)
+					trace(item.toString(true))
 				}
 			}
 		
