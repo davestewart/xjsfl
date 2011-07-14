@@ -910,7 +910,7 @@
 					/**
 					 * Add (or actually, set) a event callback for an id
 					 * @param	ids			{String}	The id(s) of the element to register the callback for
-					 * @param	types		{String}	The type(s) of callback. Values can be create, change, setfocus, command. Separate multiple types with spaces or commas if required
+					 * @param	types		{String}	The type(s) of callback. Values can be create, change, click, setfocus. Separate multiple types with spaces or commas if required
 					 * @param	callback	{Function}	The callback to call. Format must be function(xmlui, xul, object, value, type, id){ ... }
 					 * @returns		
 					 */
@@ -943,6 +943,9 @@
 						// control events
 							else
 							{
+								// update "click" events to "command" events
+									types	= types.replace(/click/g, 'command');
+								
 								// convert ids and types to Arrays
 									ids		= xjsfl.utils.trim(ids).split(/\W+/g);
 									types	= xjsfl.utils.trim(types).split(/\W+/g);
@@ -1376,7 +1379,7 @@
 			
 				show:function(accept, cancel)
 				{
-					if(xjsfl.get.dom('A document (.fla file) needs to be open before this dialog box can be shown.'))
+					if(xjsfl.get.dom('A document (.fla file) needs to be open before a dialog can be shown.'))
 					{
 						// --------------------------------------------------------------------------------
 						// build panel
@@ -1931,7 +1934,7 @@
 					.addRadiogroup('Radio', null, [1,2,3])
 					.addListbox('Listbox', null, [4,5,6])
 					.addDropdown('Dropdown', null, [7,8,9])
-					.addButton('See values', 'button', null, {command:click});
+					.addButton('See values', 'button', null, {click:click});
 					
 				var settings = xul.show();
 				Output.inspect(xul.settings, 'Settings');
@@ -2013,7 +2016,7 @@
 						// create dialog
 							var xul = XUL
 								.factory('radiogroup:Options=[1,2,3],dropdown:Values=[One,Two,Three],checkbox:State,|,button:New dialog')
-								.addEvent('newdialog', 'command', newDialog)
+								.addEvent('newdialog', 'click', newDialog)
 								.setTitle('Dialog ' + (xjsfl.ui.dialogs.length + 1))
 								.show();
 								
@@ -2037,7 +2040,7 @@
 					.factory()
 					.setTitle('Custom XML')
 					.setXML(<xml><textbox width="300" value="I am a textbox" /> <button id="button" label="...and I am a mighty button!" width="300" /></xml>)
-					.addEvent('button', 'command', function(){alert('But I can still have events assigned :)')})
+					.addEvent('button', 'click', function(){alert('But I can still have events assigned :)')})
 					.show()
 					
 			}
@@ -2090,7 +2093,7 @@
 					XUL
 						.factory(options)
 						.setTitle('Dialog with events')
-						.addEvent('button', 'command', onControlEvent)
+						.addEvent('button', 'click', onControlEvent)
 						.addEvent('color', 'change', onControlEvent)
 						.addEvent('listbox', 'change setfocus', onControlEvent)
 						.addEvent('menulist', 'change setfocus', onControlEvent)
