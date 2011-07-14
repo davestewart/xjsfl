@@ -153,9 +153,9 @@
 							.setButtons('')
 							.setEventScope(this)
 							.setTitle('Spreadsheet Edit (' +this.items.length+ ' items)')
-							.addEvent('export', 'command', this.exportCSV)
-							.addEvent('import', 'command', this.importCSV)
-							.addEvent('cancel', 'command', fl.xmlui.cancel);
+							.addEvent('export', 'click', this.exportCSV)
+							.addEvent('import', 'click', this.importCSV)
+							.addEvent('cancel', 'click', fl.xmlui.cancel);
 							
 					// show ui
 						this.xul.show();
