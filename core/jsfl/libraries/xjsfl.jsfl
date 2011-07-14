@@ -1206,7 +1206,7 @@
 					}
 
 			// return
-				return this;
+				return undefined;
 		},
 		
 		
@@ -1657,7 +1657,7 @@
 			if( ! scope.xJSFL || force)
 			{
 				// debug
-					xjsfl.output.trace('setting environment variables...');
+					xjsfl.output.trace('initializing...');
 				
 				// dom getter
 					scope.__defineGetter__( 'dom', function(){ return fl.getDocumentDOM(); } );
