@@ -11,7 +11,7 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Events - OO events
 
-	/**
+	/*
 	 * IMPORTANT - unexpected results with Frame callbacks
 	 *
 	 * The JSAPI appears to fire a frameChanged callback *before* it has updated the document current
@@ -33,24 +33,34 @@
 	// --------------------------------------------------------------------------------
 	// Event classes
 	
-		// Event
+		
+		
+			/**
+			 * Base Event object
+			 */
 			Event = function()
 			{
 				
 			}
 			Event.prototype =
 			{
-				type:null,
-				document:null,
-				timeline:null,
-				frame:null,
-				toString:function()
+				type			:null,
+				document		:null,
+				timeline		:null,
+				frame			:null,
+				toString		:function()
 				{
 					return '[object Event type="' +this.type+ '"]';
 				}
 			}
 				
-		// DocumentEvent
+			/**
+			 * An object representing a the JSFL Event that fires when a user interacts with a document
+			 * @param type		{String}	The type of event, can be 'new,open,closed,changed' and in CS5 'published,saved'
+			 * @param document	{Document}	The Document object the event occured in
+			 * @param timeline	{Timeline}	The Timeline object the event occured on
+			 * @param layer		{Layer}		The Layer object the event occured on
+			 */
 			DocumentEvent = function(type)
 			{
 				this.type		= type;
@@ -58,7 +68,13 @@
 			}
 			DocumentEvent.prototype.toString	= function(){ return '[object DocumentEvent type="' +this.type+ '" name="' +this.document.name+ '" id="' +this.document.id+ '"]'; }
 			
-		// LayerEvent
+			/**
+			 * An object representing a the JSFL Event that fires when a user changes a layer
+			 * @param type		{String}	The type of event, which is always 'changed'
+			 * @param document	{Document}	The Document object the event occured in
+			 * @param timeline	{Timeline}	The Timeline object the event occured on
+			 * @param layer		{Layer}		The Layer object the event occured on
+			 */
 			LayerEvent = function()
 			{
 				this.type		= 'changed';
@@ -68,7 +84,14 @@
 			}
 			LayerEvent.prototype.toString	= function(){ return '[object LayerEvent timeline="' +this.timeline.name+ '" layer="' +this.layer.name+ '"]'; }
 			
-		// FrameEvent
+			/**
+			 * An object representing a the JSFL Event that fires when a user changes a frame
+			 * @param type		{String}	The type of event, which is always 'changed'
+			 * @param document	{Document}	The Document object the event occured in
+			 * @param timeline	{Timeline}	The Timeline object the event occured on
+			 * @param layer		{Layer}		The Layer object the event occured on
+			 * @param frame		{Frame}		The Frame object the event occured on
+			 */
 			FrameEvent = function()
 			{
 				this.type		= 'changed';
@@ -79,7 +102,15 @@
 			}
 			FrameEvent.prototype.toString	= function(){ return '[object FrameEvent timeline="' +this.timeline.name+ '" layer="' +this.layer.name+ '" frame="' +this.timeline.currentFrame+ '"]'; }
 			
-		// MouseEvent
+			/**
+			 * An object representing a the JSFL Event that fires when a user move the mouse
+			 * @param type		{String}	The type of event, which is always 'move'
+			 * @param shift		{Boolean}	A flag indicating if the SHIFT key is down
+			 * @param ctrl		{Boolean}	A flag indicating if the CTRL key is down
+			 * @param alt		{Boolean}	A flag indicating if the ALT key is down
+			 * @param x			{Number}	The x location in pixels of the mouse on the Flash stage
+			 * @param y			{Number}	The y location in pixels of the mouse on the Flash stage
+			 */
 			MouseEvent = function()
 			{
 				this.type		= 'move';
@@ -150,6 +181,12 @@
 			// --------------------------------------------------------------------------------
 			// public functions
 			
+				/**
+				 * Add an event handler function for a particular event type
+				 * @param	type		{String}	A String Event constant
+				 * @param	callback	{Function}	A callback function to be fired when the event happens
+				 * @param	overwrite	{Boolean}	An optional Boolean indicating to overwrite any existing Events of that type
+				 */
 				add:function(type, callback, overwrite)
 				{
 					// check event type
@@ -179,14 +216,14 @@
 									{
 										// all objects
 											//trace('Adding handler for "' + type + '"')
-											this.objects[type].callbacks = {};
-											var handler = xjsfl.events.objects[type].handler;
-											this.objects[type].id = fl.addEventListener(type, handler);
+											this.objects[type].callbacks	= {};
+											var handler						= xjsfl.events.objects[type].handler;
+											this.objects[type].id			= fl.addEventListener(type, handler);
 									}
 									
 								// add callback
 									//trace('Adding callback ' + name)
-									this.objects[type].callbacks[name] = callback;
+									this.objects[type].callbacks[name]		= callback;
 			
 							}
 							else
@@ -204,7 +241,13 @@
 						return true;
 				},
 				
-				remove:function(type, name)
+				/**
+				 * Remove an event handler function for a single or all event types
+				 * @param	type		{String}	A String Event constant
+				 * @param	callback	{Function}	An optional reference to a previously-registered callback
+				 * @param	callback	{String}	An optional name of a previously-registered callback
+				 */
+				remove:function(type, callback)
 				{
 					// remove callback for single type
 						if(arguments.length == 2)
@@ -212,10 +255,7 @@
 							if(this.objects[type].callbacks != null)
 							{
 								// grab the name if a function was passed in
-									if(name instanceof Function)
-									{
-										name = name.toSource().match(/function (\w+)/)[1];
-									}
+									var name = callback instanceof Function ? callback.toSource().match(/function (\w+)/)[1] : String(callback);
 									
 								// if the callback exists, delete it
 									if(this.objects[type].callbacks[name])
@@ -252,7 +292,7 @@
 					// otherwise, remove named callback for all types
 						else
 						{
-							name = type;
+							var name = type;
 							for(type in this.objects)
 							{
 								this.remove(type, name);
@@ -260,6 +300,10 @@
 						}
 				},
 				
+				/**
+				 * Remove all event handler functions for a single, or all event types
+				 * @param	type	{String}	An optional String Event constant
+				 */
 				removeAll:function(type)
 				{
 					// remove all callbacks for a single event
@@ -281,9 +325,20 @@
 						}
 				},
 				
-				get:function(type, name)
+				/**
+				 * Get a refernece to an event handler function for an event type
+				 * @param	type		{String}	A String Event constant
+				 * @param	callback	{Function}	A reference to a previously-registered callback
+				 * @param	callback	{String}	A name of a previously-registered callback
+				 * @returns				{Function}	An event handler function or null if it doesn't exist
+				 */
+				get:function(type, callback)
 				{
-					return this.objects[type] && this.objects[type].callbacks && this.objects[type].callbacks[name] ? this.objects[type].callbacks[name] : null;
+					// grab the name if a function was passed in
+						var name = callback instanceof Function ? callback.toSource().match(/function (\w+)/)[1] : String(callback);
+					
+					// grab the event handler function	
+						return this.objects[type] && this.objects[type].callbacks && this.objects[type].callbacks[name] ? this.objects[type].callbacks[name] : null;
 				},
 				
 				toString:function()
