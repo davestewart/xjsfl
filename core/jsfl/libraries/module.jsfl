@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██   ██          ██       ██       
 //  ███ ███          ██       ██       
@@ -19,7 +19,6 @@
 		 * 
 		 * @param	name		{string}	The name of your module - this should match the folder path
 		 * @param 	properties	{object}	The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
-		 * @param	user		{boolean}	Don't use this! It's reserved for core framework modules only
 		 * @author	Dave Stewart	
 		 */
 		Module = function(name, properties)
@@ -37,7 +36,7 @@
 			// register module so the module path is added to global paths before config is created
 				xjsfl.modules.register(this);
 				
-			// instantiate settings and data
+			// instantiate default settings and data
 				this.settings	= new Config('settings/' + this.key);
 				this.data		= new Config('data/' + this.key);
 				
@@ -56,16 +55,44 @@
 			// reset constructor
 				constructor:Module,
 			
+			// ----------------------------------------------------------------------------------------
 			// core properties
+			
+			
+				/**
+				 * @type {String} The English name of the module, ie "Animation Tools"
+				 */
 				name:		'',
+				
+				/**
+				 * @type {String} The URI to the module's folder
+				 */
 				uri:		'',
 				
-			// methods
+			// ----------------------------------------------------------------------------------------
+			// settings and data
+			
+				/**
+				 * @type {Config} The default settings Config object
+				 */
 				settings:	null,
+				
+				/**
+				 * @type {Config} The default data Config object
+				 */
 				data:		null,
 				
+			// ----------------------------------------------------------------------------------------
 			// accessors
+			
+				/**
+				 * @type {String} The module's key name in xjsfl.modules, ie "animationtools"
+				 */
 				get key(){ return this.name.toLowerCase().replace(/\W/g, ''); },
+				
+				/**
+				 * @type {String} The path to the module's folder
+				 */
 				get path(){ return xjsfl.file.makePath(this.uri, true); },
 				
 			// methods
