@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████        ██                ██   
 //  ██  ██        ██                ██   
@@ -13,21 +13,25 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Output - provides logging functionality, object introspection, and a variety of printing and formatting methods
 
+	
+	/**
+	 * Provides logging functionality, object introspection, and a variety of printing and formatting methods
+	 */
 	Output =
 	{
 		
 		/**
-		 * 
-		 * @param	obj	
-		 * @param	name	
-		 * @param	functions	
-		 * @returns		
+		 * Converts a typical [object Object] string into an [object Class value="1" property="2"] string
+		 * Should only be used on JavaScript Objects that already convert properly to String
+		 * @param	obj		{Object}	Any object that can be converted to a String
+		 * @param	output	{Boolean}	An optional Boolean idicating to output the result to the Output panel
+		 * @returns			{String}	A String representation of the object and its properties
 		 */
 		props:function(obj, output)
 		{
 			// variables
 				var props	= '';
-				var str		= obj.toString();
+				var str		= String(obj);
 				
 			// propertes
 				for(var i in obj)
@@ -58,17 +62,20 @@
 		},
 		
 		/**
-		 * 
-		 * @param	arrIn	
-		 * @param	property	
-		 * @param	label	
-		 * @param	output	
-		 * @returns		
+		 * Lists the properties of an object in a human-readable format
+		 * @param arr			{Object}	An object whose properties you wish to list
+		 * @param arr			{Array}		An Array of objects with selected properties you wish to list
+		 * @param properties	{String}	An optional property to list, defaults to 'name'
+		 * @param properties	{Array}		An optional Array of properties
+		 * @param label			{String}	An optional String label, defaults to "List"
+		 * @param output		{Boolean}	An optional boolean to indicate output type: true=debug, false=return, undefined=output
+		 * @returns				{String}	A String list of the object's properties
 		 */
 		list:function(arr, properties, label, output)
 		{
 			// defaults
 				label			= label || 'List';
+				properties		= properties || 'name';
 				
 			// variables
 				var strOutput	= '';
@@ -76,14 +83,14 @@
 			// if arr is an array, grab selected properties
 				if(arr instanceof Array)
 				{
-					// collect children's properties
+					// collect object to string only
 						if(properties == null)
 						{
 							arr			= arr.map(function(e){return String(e)});
 						}
+					// collect children's properties
 						else
 						{
-							properties	= properties || 'name';
 							arr			= xjsfl.utils.getValues(arr, properties);
 						}
 						
@@ -109,6 +116,7 @@
 		 * @param arg		{Boolean}		An optional boolean to indicate output type: true=debug, false=return, undefined=output
 		 * @param arg		{Object}		An optional filter object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
 		 * @param arg		{Function}		An optional output function in case you want to do any custom processing of the data
+		 * @returns			{String}		A String hierarchy of the object's properties
 		 */
 		inspect:function(obj, arg2, arg3, arg4, arg5)
 		{
@@ -486,7 +494,7 @@
 						{
 							label = 'Debug';
 						}
-						trace(Output.print('', label + ': ' + className, false).replace(/\s*$/, ''))
+						trace(Output._print('', label + ': ' + className, false).replace(/\s*$/, ''))
 					}
 					
 				// initial outout
@@ -509,7 +517,7 @@
 					}
 					else if(print === true)
 					{
-						Output.print(strOutput, label + ': ' + className + stats);
+						Output._print(strOutput, label + ': ' + className + stats);
 					}
 					
 				// return
@@ -533,7 +541,7 @@
 		 * @param value		{Folder}		An existing folder object
 		 * @param depth		{Number}		An optional max depth to recurse to (defaults to 3)
 		 * @param output	{Boolean}		An optional boolean to indicate outputting or not (defaults to true)
-		 * @returns		
+		 * @returns			{String}		The String hierarchy of the folder
 		 */
 		folder:function(folder, depth, output)
 		{
@@ -569,7 +577,7 @@
 		 * @param	output		An optional Boolean specifying whether to print to the Output Panel, defualts to true
 		 * @return	The String result of the print
 		 */
-		print:function(content, title, output)
+		_print:function(content, title, output)
 		{
 			// variables
 				output		= output !== false;
@@ -613,47 +621,63 @@
 			{
 		
 		// --------------------------------------------------------------------------------
+		// Get properties of items
+		
+			// straight list, defaulting to the property "name"
+				if(0)
+				{
+					var obj = {a:null, b:1, c:'Hello'};
+					trace(Output.props(obj));
+				}
+				
+		// --------------------------------------------------------------------------------
 		// List items
 		
 			// straight list, defaulting to the property "name"
 				if(0)
 				{
-					Output.list(dom.library.items)
+					Output.list(dom.selection);
 				}
 				
 			// using a custom property
 				if(0)
 				{
-					Output.list(dom.library.items, 'itemType')
+					Output.list(dom.library.items, 'itemType');
 				}
 				
 			// supplying several properties
 				if(0)
 				{
-					Output.list(dom.library.items, ['name', 'timeline', 'itemType'])
+					Output.list(dom.library.items, ['name', 'timeline', 'itemType']);
 				}
 			
+			// listing a single object's properties
+				if(0)
+				{
+					Output.list(dom.selection[0]);
+				}
+				
 		// --------------------------------------------------------------------------------
 		// Inspect items
 		
 			// an Array in hierchical format
-				if(1)
+				if(0)
 				{
-					var arr = [0,1,2,3,4, {hello:'hello'}]
-					Output.inspect(arr)
+					var arr = [0,1,2,3,4, {hello:'hello'}];
+					Output.inspect(arr);
 				}
 			
 			// an Object in hierchical format
 				if(0)
 				{
-					var obj = {a:1, b:2, c:[0,1,2,3,4, {hello:'hello'}]}
-					Output.inspect(obj)
+					var obj = {a:1, b:2, c:[0,1,2,3,4, {hello:'hello'}]};
+					Output.inspect(obj);
 				}
 			
 			// in a hierarchical format, adding a custom label and recursion depth
 				if(0)
 				{
-					Output.inspect(dom.library.items, 'Library items', 2) // 2nd + arguments can go in any order
+					Output.inspect(dom.library.items, 'Library items', 3); // 2nd + arguments can go in any order
 				}
 		
 		// --------------------------------------------------------------------------------
@@ -662,7 +686,7 @@
 			// Selection
 				if(0)
 				{
-					Output.inspect(dom.selection, 5)
+					Output.inspect(dom.selection, 5);
 				}
 		
 			// The preset panel
@@ -682,10 +706,10 @@
 					Timer.stop();
 				}
 			
-			// show full paths, and limit to 4 levels deep
+			// Output the user folder in hierarchical format, limiting to 3 levels deep
 				if(0)
 				{
-					Output.folder('core/jsfl/libraries/copy', 4, false)
+					Output.folder('user', 3, true)
 				}
 		
 		// catch
