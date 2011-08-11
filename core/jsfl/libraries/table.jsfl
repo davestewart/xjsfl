@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██    ██       
 //    ██         ██    ██       
@@ -16,8 +16,10 @@
 		
 		/**
 		 * Table constructor
-		 * @param rows			{Array}		The input array
-		 * @param keys			{Array}		An optional anything-delimted string, or array of columns to extract from the data, or a Table ORDER Constant to order all columns
+		 * @param rows			{Array}		An input Array of objects
+		 * @param keys			{Array}		An optional array of columns to extract from the data
+		 * @param keys			{String}	An optional anything-delimted string to extract from the data
+		 * @param keys			{Number}	An optional Table ORDER Constant to order the columns
 		 * @param maxColWidth	{Number}	Max Column Height (returns)
 		 * @param maxRowHeight	{Number}	Max Row Width (chars)
 		 */
@@ -73,9 +75,11 @@
 		
 		/**
 		 * Static table method to print a table
-		 * @param	rows	
-		 * @param	showHeading	
-		 * @param	maxColWidth	
+		 * @param rows			{Array}		An input Array of objects
+		 * @param keys			{Array}		An optional array of columns to extract from the data
+		 * @param keys			{String}	An optional anything-delimted string to extract from the data
+		 * @param keys			{Number}	An optional Table ORDER Constant to order the columns
+		 * @param maxColWidth	{Number}	Max Column Height (returns)
 		 */
 		Table.print = function(rows, keys, maxColWidth)
 		{
@@ -89,10 +93,10 @@
 		Table.ORDER_ALPHA	= 1;
 		
 		/// Sort table columns by the most popular keys first
-		Table.ORDER_COUNT	= 2;
+		Table.ORDER_COLUMN	= 2;
 		
 		/// Sort table columns by the most popular rows first
-		Table.ORDER_GROUP	= 3;
+		Table.ORDER_ROW	= 3;
 		
 		/// Sort table columns by the first row's keys only (this will hide data for some objects!)
 		Table.ORDER_FIRST	= 4;
@@ -174,12 +178,10 @@
 			// public methods
 			
 				/**
-				 * Prints the data to a text table
-				 *
-				 * @param bool return Set to 'true' to return text rather than printing
-				 * @return mixed
+				 * Renders the data in the class as an ASCII table
+				 * @return 	{String}	The String output of the table
 				 */
-				render:function(output)
+				render:function()
 				{
 					// header
 						this.addLine();
@@ -194,12 +196,6 @@
 					// footer
 						this.addLine(false);
 						
-					// output
-						if(output)
-						{
-							fl.trace(this.output);
-						}
-				
 					// return
 						return this.output;
 				},
@@ -214,12 +210,13 @@
 			
 				/**
 				 * Filter the displayed row data by key (column)
-				 * @param	keys	{Array|Number}
+				 * @param	keys	{Array}		An array of column names
+				 * @param	keys	{Number}	A Table ORDER constant
 				 */
 				setKeys:function(keys)
 				{
 					// default
-						keys = keys || Table.ORDER_GROUP;
+						keys = keys || Table.ORDER_ROW;
 					
 					// string - split into keys
 						if(typeof keys == 'string')
@@ -255,7 +252,7 @@
 								}
 								
 							// count-order
-								else if(keys === Table.ORDER_COUNT)
+								else if(keys === Table.ORDER_COLUMN)
 								{
 									// grab all keys individually
 										for(var y = 0; y < this.rows.length; y++)
@@ -276,7 +273,7 @@
 								}
 								
 							// group-order
-								else if(keys === Table.ORDER_GROUP)
+								else if(keys === Table.ORDER_ROW)
 								{
 									// grab keys per entire row
 										for(var y = 0; y < this.rows.length; y++)
@@ -358,7 +355,7 @@
 				setHeading:function()
 				{
 					// data
-						data = [];
+						var data = [];
 						
 					// loop through columns
 						for(var x = 0; x < this.keys.length; x++)
@@ -549,7 +546,7 @@
 		
 			if(0)
 			{
-				var table = new Table(data);
+				var table = new Table(dom.library.items);
 				trace(table.render());
 			}
 			
@@ -564,14 +561,27 @@
 			
 		
 		// --------------------------------------------------------------------------------
+		// Different Table ORDER constants
+		
+			if(1)
+			{
+				Table.print(data, Table.ORDER_FOUND);
+				Table.print(data, Table.ORDER_ALPHA);
+				Table.print(data, Table.ORDER_COLUMN);
+				Table.print(data, Table.ORDER_ROW);
+				Table.print(data, Table.ORDER_FIRST);
+			}
+		
+		
+		// --------------------------------------------------------------------------------
 		// Limit column widths
 		
 			if(0)
 			{
 				Table.print(data, null, 10);
 			}
-		
-		
+			
+			
 		// --------------------------------------------------------------------------------
 		// Selected library items
 		
