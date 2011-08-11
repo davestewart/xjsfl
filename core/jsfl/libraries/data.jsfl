@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  █████         ██         
 //  ██  ██        ██         
@@ -16,6 +16,10 @@
 	
 		//TODO Assess fesibility of moving Output.inspect functions to Data as a generic recurse method
 	
+		
+		/**
+		 * The Data class is designed to munge data in a variety of ways
+		 */
 		Data =
 		{
 			//TODO review recursive function signatures & implementation, & provide default callbacks if appropriate. @see Data#recurseFolder
@@ -169,6 +173,44 @@
 			clear();
 			try
 			{
+				
+		// --------------------------------------------------------------------------------
+		// Default iteration returns the array of iterated paths
+		
+			if(0)
+			{
+				var paths = Data.recurseFolder('c:/temp/test/');
+				trace(paths.join('\n'));
+			}
+					
+		
+		// --------------------------------------------------------------------------------
+		// Call a callback function on each of the iterated items
+		
+			if(0)
+			{
+				function callback(element, index, level, indent)
+				{
+					trace (indent + '/' + element.name);
+				}
+				
+				Data.recurseFolder('c:/temp/test/', callback);
+			}
+					
+		// --------------------------------------------------------------------------------
+		// Skip subfolders with the letter a in them
+		
+			if(1)
+			{
+				function callback(element, index, level, indent)
+				{
+					return element.name.indexOf('a') == -1;
+				}
+				
+				var paths = Data.recurseFolder('c:/temp/test/', callback);
+				trace(paths.join('\n'));
+			}
+					
 		
 		// --------------------------------------------------------------------------------
 		// Test
