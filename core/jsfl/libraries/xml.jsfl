@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██  ██ ██   ██ ██     
 //  ██  ██ ███ ███ ██     
@@ -154,6 +154,28 @@
 		// return
 			return output;
 	}
+	
+	
+/*
+ 
+	//TODO Investigate function:: workaround more thoroughly
+ 
+	var xml = <a id="dave">
+		<b id="1" name="node">Hello
+			<c id="2" name="node">Goodbye</c>
+		</b>
+		<d id="2" name="node">Goodbye</d>
+	</a>
+	
+	var nodes = xml.*.(@id == '2');
+	var nodes = xml..*.(function::attribute('name') == 'node');
+	var nodes = xml.(function::hasOwnProperty('@id') && @id == 'dave');
+	var nodes = xml..*.(attribute('name') == 'node');
+
+	trace(nodes.toXMLString())
+	
+
+*/
 
 
 // -----------------------------------------------------------------------------------------------------------------------------------------
@@ -167,15 +189,18 @@
 			try
 			{
 				
-				var xml =	<xml>
-								<a id="a" />
-								<b id="b" />
-								<c id="c" name="Cee" class="test" />
-								<d id="d" name="Dee" class="test" />
-								<e id="e">
-									<f id="f" class="test" />
-								</e>
-							</xml>
+			var xml =
+				<xml>
+					<a id="a" vowel="true"/>
+					<b id="b" />
+					<c id="c" class="test" />
+					<d id="d" class="test">
+						<e id="e" vowel="true">
+							<f id="f" class="test" />
+						</e>
+					</d>
+				</xml>
+
 		
 		// --------------------------------------------------------------------------------
 		// Find nodes by name
@@ -196,15 +221,6 @@
 			}
 		
 		// --------------------------------------------------------------------------------
-		// Find nodes by attribute
-		
-			if(0)
-			{
-				var nodes = xml.find('@name=Cee')
-				trace(nodes.toXMLString());
-			}
-		
-		// --------------------------------------------------------------------------------
 		// Find nodes by class
 		
 			if(0)
@@ -214,7 +230,7 @@
 			}
 		
 		// --------------------------------------------------------------------------------
-		// Find all nodes by class
+		// Find nodes by class
 		
 			if(0)
 			{
@@ -223,11 +239,21 @@
 			}
 		
 		// --------------------------------------------------------------------------------
+		// Find nodes by attribute
+		
+			if(0)
+			{
+				var nodes = xml.find('@vowel=true', true)
+				trace(nodes.toXMLString());
+			}
+		
+		
+		// --------------------------------------------------------------------------------
 		// Find nodes using a callback
 		
 			if(0)
 			{
-				var nodes = xml.find( function(node, index, nodes){ return index >= 1; } )
+				var nodes = xml.find( function(node, index, nodes){ return node.children().length() > 0; }, true );
 				trace(nodes.toXMLString());
 			}
 		
@@ -236,17 +262,20 @@
 		
 			if(0)
 			{
-				xml.remove('.test')
+				xml.remove('.test', true)
 				trace(xml.toXMLString());
 			}
 			
 		// --------------------------------------------------------------------------------
-		// Remove all nodes by class
+		// Filter an XMLList by 
 		
 			if(0)
 			{
-				xml.remove('.test', true)
-				trace(xml.toXMLString());
+				var nodes = xml..*;
+				trace(nodes.toXMLString());
+				
+				var filtered = nodes.filter( function(node, index, nodes){ return index % 2 == 0; } );
+				trace(filtered.toXMLString());
 			}
 			
 		// catch
