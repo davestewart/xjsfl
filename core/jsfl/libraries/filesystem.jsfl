@@ -1,4 +1,4 @@
-// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+﻿// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██ ██       ██████              ██                  ██████ ██    ██              ██   
 //  ██        ██       ██                  ██                  ██  ██ ██                    ██   
@@ -90,44 +90,61 @@
 				 */
 				get path(){ return FLfile.uriToPlatformPath(this.uri).replace(/\\/g, '/') },
 				
-		
 				/**
 				 * @type {Boolean} true if the file exists; false otherwise. 
 				 */
-				get exists(){ return FLfile.exists(this.uri) },
-				
+				get exists()
+				{
+					return FLfile.exists(this.uri);
+				},
 		
 				/**
 				 * @type {Number} The number of seconds that have elapsed between January 1, 1970 and the time the file or folder was created, or "00000000" if the file or folder doesn’t exist
 				 */
-				get created(){ var num = parseInt(FLfile.getCreationDate(this.uri), 16); return num ? num : null; },
+				get created()
+				{
+					var num = parseInt(FLfile.getCreationDate(this.uri), 16); return num ? num : null;
+				},
 		
 				/**
 				 * @type {Number} The number of seconds that have elapsed between January 1, 1970 and the time the file or folder was last modified, or "00000000" if the file or folder doesn’t exist
 				 */
-				get modified(){ var num = parseInt(FLfile.getModificationDate(this.uri), 16); return num ? num : null; },
+				get modified()
+				{
+					var num = parseInt(FLfile.getModificationDate(this.uri), 16); return num ? num : null;
+				},
 				
-		
 				/**
 				 * @type {Date} A JavaScript Date object that represents the date and time when the specified file or folder was created. If the file doesn’t exist, the object contains information indicating that the file or folder was created at midnight GMT on December 31, 1969.
 				 */
-				get createdDate(){ return FLfile.getCreationDateObj(this.uri) },
+				get createdDate()
+				{
+					return this.exists ? FLfile.getCreationDateObj(this.uri) : null;
+				},
 		
 				/**
 				 * @type {Date} A JavaScript Date object that represents the date and time when the specified file or folder was last modified. If the file or folder doesn’t exist, the object contains information indicating that the file or folder was created at midnight GMT on December 31, 1969.
 				 */
-				get modifiedDate(){ return FLfile.getModificationDateObj(this.uri) },
-				
+				get modifiedDate()
+				{
+					return this.exists ? FLfile.getModificationDateObj(this.uri) : null;
+				},
 		
 				/**
 				 * @type {String} A string that represents the attributes of the specified file or folder.
 				 */
-				get attributes(){ return FLfile.getAttributes(this.uri) },
+				get attributes()
+				{
+					return this.exists ? FLfile.getAttributes(this.uri) : null;
+				},
 		
 				/**
 				 * @type {String} A string specifying values for the attribute(s) you want to set. N: No specific attribute, A: Ready for archiving (Windows only), R: Read-only (on the Macintosh, read-only means “locked”), W: Writable (overrides R), H: Hidden (Windows only), V: Visible (overrides H, Windows only)
 				 */
-				set attributes(attributes){ return FLfile.setAttributes(this.uri, attributes) },
+				set attributes(attributes)
+				{
+					return this.exists ? FLfile.setAttributes(this.uri, attributes) : null;
+				},
 				
 				/**
 				 * @type {Array} The object's parent folder, or the same folder if the root
@@ -168,6 +185,7 @@
 		/**
 		 * Folder class
 		 * @param pathOrUri {String} The uri or path to the object
+		 * @param create {Boolean} An optional Boolean flag on whether to create the folder or not, defaults to false
 		 */
 		Folder = function(pathOrUri, create)
 		{
@@ -176,7 +194,7 @@
 				
 			// constructor
 				FileSystemObject.apply(this, [pathOrUri]);
-				if( ! this.exists && create)
+				if(create && ! this.exists)
 				{
 					this.create();
 				}
@@ -222,7 +240,10 @@
 				/**
 				 * alias for open()
 				 */
-				reveal:Folder.prototype.open,
+				reveal:function()
+				{
+					File.prototype.open.apply(this);
+				},
 				
 				/**
 				 * Copy the folder to a new uri
@@ -297,12 +318,7 @@
 				/**
 				 * @type {Number} The number of items in the folder
 				 */
-				get items (){ return FLfile.listFolder(this.uri).length; },
-					
-				/**
-				 * @type {Number} Synonym for items
-				 */
-				get length (){ return this.items; },
+				get length (){ return this.exists ? FLfile.listFolder(this.uri).length : 0; },
 					
 				/**
 				 * @type {Array} The folder's files and folders
@@ -386,19 +402,7 @@
 			// if there's any data, save it
 				if(contents)
 				{
-					this.create();
-					if(contents === true)
-					{
-						this.save();
-					}
-					else
-					{
-						this.write(String(contents), false);
-					}
-				}
-				else if(this.extension == 'fla' && ! this.exists)
-				{
-					this.save();
+					this.create(contents);
 				}
 		}
 		
@@ -422,7 +426,7 @@
 				 */
 				constructor:File,
 				
-				create:function()
+				create:function(contents)
 				{
 					// folder
 						var uri		= this.uri.replace(/\/[^\/]+$/, '');
@@ -434,40 +438,53 @@
 							this.remove(true);
 						}
 						
+					// write new contents
+						if(contents === true)
+						{
+							this.save();
+						}
+						else
+						{
+							this.write(String(contents), false);
+						}
+
 					// return
 						return this;
 				},
 			
 				/**
-				 * Opens the file in the Flash authoring environment
+				 * Opens the file in the associated application
 				 * @returns {File} The original file
 				 */
 				open:function()
 				{
-					switch(this.extension)
+					if(this.exists)
 					{
-						case 'fla':
-							fl.openDocument(this.uri);
-						break;
-					
-						case 'jsfl':
-							fl.openScript(this.uri);
-						break;
-					
-						default:
-							// osascript -e 'tell application "flash" to open alias "Mac OS X:Users:user:myTestFile.jsfl" '
-							var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
-							var exec = command + " \"\" \"" +this.path+ "\""
-							FLfile.runCommandLine(exec);
-		
+						switch(this.extension)
+						{
+							case 'fla':
+								fl.openDocument(this.uri);
+							break;
+						
+							case 'jsfl':
+								fl.openScript(this.uri);
+							break;
+						
+							default:
+								// osascript -e 'tell application "flash" to open alias "Mac OS X:Users:user:myTestFile.jsfl" '
+								var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
+								var exec = command + " \"\" \"" +this.path+ "\""
+								FLfile.runCommandLine(exec);
+						}
 					}
 					//fl[this.extension == 'fla' ? 'openDocument' : 'openScript'](this.uri);
 					return this;
 				},
 				
 				/**
-				 * executes any JSFL file, or Attempts to run the file via the operating system command line if not
-				 * @returns {File} The original file
+				 * Executes any JSFL file, or attempts to run any other file type via the OS
+				 * @returns {File}	The original file if it exists
+				 * @returns {false} False if the file doesn't exist
 				 */
 				run:function()
 				{
@@ -487,48 +504,49 @@
 					}
 					else
 					{
-						return undefined;
+						return false;
 					}
 				},
 				
 				/**
 				 * Copies the file to a new location
 				 * @param uriCopy	{String}	The new uri to copy the file to. Can be a folder or file.
-				 * @param overWrite	{Boolean}	Optional Boolean indicating whether the target file should be overwritten if it exists
+				 * @param overWrite	{Boolean}	Optional Boolean indicating whether the target file should be overwritten if it exists, defaults to false
 				 * @returns			{File}		A new File object
 				 */
 				copy:function(uriCopy, overWrite)
 				{
-					// if the path doesn't have a filename, use the existing filename
-						var rx			= /[^\/]+\.[a-z0-9]+$/i;
-						var matches		= uriCopy.match(rx);
-						var filename	= matches ? matches[0] : null;
-						if(filename == null)
-						{
-							uriCopy = uriCopy.replace(/\/*$/, '/') + this.name;
-						}
-						uriCopy =  xjsfl.file.makeURI(uriCopy);
-						
-					// remove target if file should overwrite
-						if(overWrite)
-						{
-							FLfile.remove(uriCopy);
-						}
-						
-					// make sure the target folder exists
-						var targetFolder = new Folder(uriCopy.replace(/[^\/]+$/, ''));
-						if( ! targetFolder.exists )
-						{
-							targetFolder.create();
-						}
-						
 					// if the file exists, copy it
 						if(this.exists)
 						{
-							if(FLfile.copy(this.uri, uriCopy))
-							{
-								return new File(uriCopy);
-							}
+							// if the path doesn't have a filename, use the existing filename
+								var rx			= /[^\/]+\.[a-z0-9]+$/i;
+								var matches		= uriCopy.match(rx);
+								var filename	= matches ? matches[0] : null;
+								if(filename == null)
+								{
+									uriCopy = uriCopy.replace(/\/*$/, '/') + this.name;
+								}
+								uriCopy =  xjsfl.file.makeURI(uriCopy);
+								
+							// remove target if file should overwrite
+								if(overWrite)
+								{
+									FLfile.remove(uriCopy);
+								}
+								
+							// make sure the target folder exists
+								var targetFolder = new Folder(uriCopy.replace(/[^\/]+$/, ''));
+								if( ! targetFolder.exists )
+								{
+									targetFolder.create();
+								}
+								
+							// take action on result
+								if(FLfile.copy(this.uri, uriCopy))
+								{
+									return new File(uriCopy);
+								}
 						}
 						
 					// if not, throw an error, or just save an empty file?
@@ -543,23 +561,38 @@
 				 * Append data to the file
 				 * @param data		{String}	The data to append to the file
 				 * @param append	{Boolean}	An optional flag to append, rather than overwrite the file
-				 * @returns			{File}		The original file
+				 * @returns			{File}		The original file if successful
+				 * @returns			{Boolean}	A Boolean false if the operation failed
 				 */
 				write:function(data, append)
 				{
 					// write
-						append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
+						var result = append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
 						
 					// return
-						return this;
+						return result ? this : false;
 				},
 				
 				/**
-				 * Saves the file. Alternative to file.write('')
-				 * @returns {File} The original file
+				 * Saves the file, optionally as UTF8
+				 * @param utf8	{Boolean}	An optional Boolean indicating to save the file as UTF8
+				 * @returns 	{File}		The original file
 				 */
-				save:function()
+				save:function(utf8)
 				{
+					/*
+					if(utf8)
+					{
+						fl.outputPanel.clear();
+						fl.outputPanel.trace(this.contents);
+						fl.outputPanel.save(this.uri, false, false);
+						fl.outputPanel.clear();
+					}
+					else
+					{
+						
+					}
+					*/
 					this.write('', true);
 					return this;
 				},
@@ -613,7 +646,7 @@
 				/**
 				 * A string representation of the file
 				 * @param	path	{Boolean}		A flag to show the full path, not just the name
-				 * @returns {File} A string containing the class and filename
+				 * @returns 		{String}		A string containing the class and filename
 				 */
 				toString:function(path)
 				{
@@ -623,11 +656,6 @@
 			// -------------------------------------------------------------------------------------------------------------------
 			// accessors
 			
-				/** 
-				 * @type {Number} Get the size of the file
-				 */
-				get size (){ return FLfile.getSize(this.uri); },
-				
 				/** 
 				 * @type {String} get the contents of the file
 				 */
@@ -647,12 +675,10 @@
 				},
 		
 				/** 
-				 * @type {String} The file extension of the file
+				 * @type {Number} Get the size of the file
 				 */
-				set extension(value)
-				{
-					return this.uri.substr(this.uri.lastIndexOf('.') + 1);
-				},
+				get size (){ return FLfile.getSize(this.uri); },
+				
 				
 			// -------------------------------------------------------------------------------------------------------------------
 			// properties
@@ -757,6 +783,13 @@
 			}
 		
 		// --------------------------------------------------------------------------------
+		// iterate over the contents of a folder
+		
+			if(0)
+			{
+				new Folder('c:/temp').each(function(e, i){trace(i, e)});
+			}
+		// --------------------------------------------------------------------------------
 		// list the filtered contents of folder
 		
 			if(0)
@@ -768,13 +801,6 @@
 				}
 			}
 		
-		// --------------------------------------------------------------------------------
-		// iterate over the contents of a folder
-		
-			if(0)
-			{
-				new Folder('c:/temp').each(function(e, i){trace(i, e)});
-			}
 		
 		// --------------------------------------------------------------------------------
 		// recursively list the contents of a folder
