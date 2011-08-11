@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //     ██ ██████ ██████ ██     
 //     ██ ██     ██     ██     
@@ -14,10 +14,10 @@
 	JSFL =
 	{
 		/**
-		 * Serializes values as XML so they can be returned to Flash then be deserialized
+		 * Serializes values to XML so they can be passed to Flash and be deserialized to values again
 		 * 
-		 * @param		Any value
-		 * @returns		An XML String	
+		 * @param	value	{Value}		Any value		
+		 * @returns			{String}	An XML String	
 		 */
 		serialize:function(value)
 		{
@@ -93,7 +93,7 @@
 						return '<null />';
 					}
 				}
-				
+
 			// constructor
 			
 				return toXML(value)
@@ -108,3 +108,40 @@
 	
 	xjsfl.classes.register('JSFL', JSFL);
 
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// Demo code
+	
+	if( ! xjsfl.loading )
+	{
+		// initialize
+			xjsfl.init(this);
+			clear();
+			try
+			{
+				
+			var data =
+			{
+				a:1,
+				b:'Hello',
+				c:true,
+				d:new Date(),
+				e:[1,2,3],
+				f:undefined,
+				g:null
+			}
+			
+		// --------------------------------------------------------------------------------
+		// serialize the data
+		
+			if(0)
+			{
+				var xml = JSFL.serialize(data);
+				trace(new XML(xml).toXMLString())
+			}
+		
+
+			
+		// catch
+			}catch(err){xjsfl.output.debug(err);}
+	}
+		
