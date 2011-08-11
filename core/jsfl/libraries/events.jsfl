@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                    ██         
 //  ██                        ██         
@@ -33,33 +33,10 @@
 	// --------------------------------------------------------------------------------
 	// Event classes
 	
-		
-		
-			/**
-			 * Base Event object
-			 */
-			Event = function()
-			{
-				
-			}
-			Event.prototype =
-			{
-				type			:null,
-				document		:null,
-				timeline		:null,
-				frame			:null,
-				toString		:function()
-				{
-					return '[object Event type="' +this.type+ '"]';
-				}
-			}
-				
 			/**
 			 * An object representing a the JSFL Event that fires when a user interacts with a document
 			 * @param type		{String}	The type of event, can be 'new,open,closed,changed' and in CS5 'published,saved'
 			 * @param document	{Document}	The Document object the event occured in
-			 * @param timeline	{Timeline}	The Timeline object the event occured on
-			 * @param layer		{Layer}		The Layer object the event occured on
 			 */
 			DocumentEvent = function(type)
 			{
@@ -125,19 +102,19 @@
 	// --------------------------------------------------------------------------------
 	// static Event constants
 		
-		// CS4
-			Event.DOCUMENT_NEW			= 'documentNew';
-			Event.DOCUMENT_OPENED		= 'documentOpened';
-			Event.DOCUMENT_CLOSED		= 'documentClosed';
-			Event.DOCUMENT_CHANGED		= 'documentChanged';
-			Event.LAYER_CHANGED			= 'layerChanged';
-			Event.FRAME_CHANGED			= 'frameChanged';
-			Event.MOUSE_MOVE			= 'mouseMove';
-			
 		// CS5 only
-			Event.DOCUMENT_PUBLISHED	= 'documentPublished';
-			Event.DOCUMENT_SAVED		= 'documentSaved';
+			DocumentEvent.PUBLISHED		= 'documentPublished';
+			DocumentEvent.SAVED			= 'documentSaved';
 		
+		// CS4
+			DocumentEvent.NEW			= 'documentNew';
+			DocumentEvent.OPENED		= 'documentOpened';
+			DocumentEvent.CLOSED		= 'documentClosed';
+			DocumentEvent.CHANGED		= 'documentChanged';
+			LayerEvent.CHANGED			= 'layerChanged';
+			FrameEvent.CHANGED			= 'frameChanged';
+			MouseEvent.MOVE				= 'mouseMove';
+			
 	// --------------------------------------------------------------------------------
 	// Add pre-emptive events to catch all document and layer changes
 	
@@ -167,9 +144,9 @@
 				//fl.trace('Adding event events...')
 				
 			// add events
-				fl.addEventListener(Event.DOCUMENT_CHANGED, function(){ onStateChange(Event.DOCUMENT_CHANGED) } );
-				fl.addEventListener(Event.LAYER_CHANGED, function(){ onStateChange(Event.LAYER_CHANGED) } );
-				fl.addEventListener(Event.FRAME_CHANGED, function(){ onStateChange(Event.FRAME_CHANGED) } );
+				fl.addEventListener(DocumentEvent.CHANGED, function(){ onStateChange(DocumentEvent.CHANGED) } );
+				fl.addEventListener(LayerEvent.CHANGED, function(){ onStateChange(LayerEvent.CHANGED) } );
+				fl.addEventListener(FrameEvent.CHANGED, function(){ onStateChange(FrameEvent.CHANGED) } );
 			
 		}
 		
@@ -328,17 +305,12 @@
 				/**
 				 * Get a refernece to an event handler function for an event type
 				 * @param	type		{String}	A String Event constant
-				 * @param	callback	{Function}	A reference to a previously-registered callback
 				 * @param	callback	{String}	A name of a previously-registered callback
 				 * @returns				{Function}	An event handler function or null if it doesn't exist
 				 */
 				get:function(type, callback)
 				{
-					// grab the name if a function was passed in
-						var name = callback instanceof Function ? callback.toSource().match(/function (\w+)/)[1] : String(callback);
-					
-					// grab the event handler function	
-						return this.objects[type] && this.objects[type].callbacks && this.objects[type].callbacks[name] ? this.objects[type].callbacks[name] : null;
+					return this.objects[type] && this.objects[type].callbacks && this.objects[type].callbacks[name] ? this.objects[type].callbacks[name] : null;
 				},
 				
 				toString:function()
@@ -379,14 +351,14 @@
 						documentPublished:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'documentPublished', new DocumentEvent('published') ); },
+							handler:	function(){ xjsfl.events.fire.user( DocumentEvent.PUBLISHED, new DocumentEvent('published') ); },
 							id:			-1
 						},
 						
 						documentSaved:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'documentSaved', new DocumentEvent('saved') ); },
+							handler:	function(){ xjsfl.events.fire.user( DocumentEvent.SAVED, new DocumentEvent('saved') ); },
 							id:			-1
 						},
 						
@@ -395,28 +367,28 @@
 						documentNew:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'documentNew', new DocumentEvent('new') ); },
+							handler:	function(){ xjsfl.events.fire.user( DocumentEvent.NEW, new DocumentEvent('new') ); },
 							id:			-1
 						},
 						
 						documentOpened:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'documentOpened', new DocumentEvent('opened') ); },
+							handler:	function(){ xjsfl.events.fire.user( DocumentEvent.OPENED, new DocumentEvent('opened') ); },
 							id:			-1
 						},
 						
 						documentClosed:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'documentClosed', new DocumentEvent('closed') ); },
+							handler:	function(){ xjsfl.events.fire.user( DocumentEvent.CLOSED, new DocumentEvent('closed') ); },
 							id:			-1
 						},
 						
 						documentChanged:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'documentChanged', new DocumentEvent('changed') ); },
+							handler:	function(){ xjsfl.events.fire.user( DocumentEvent.CHANGED, new DocumentEvent('changed') ); },
 							id:			-1
 						},
 						
@@ -425,14 +397,14 @@
 						layerChanged:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'layerChanged', new LayerEvent() ); },
+							handler:	function(){ xjsfl.events.fire.user( LayerEvent.CHANGED, new LayerEvent() ); },
 							id:			-1
 						},
 						
 						frameChanged:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'frameChanged', new FrameEvent() ); },
+							handler:	function(){ xjsfl.events.fire.user( FrameEvent.CHANGED, new FrameEvent() ); },
 							id:			-1
 						},
 						
@@ -441,7 +413,7 @@
 						mouseMove:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire.user( 'mouseMove', new MouseEvent() ); },
+							handler:	function(){ xjsfl.events.fire.user( MouseEvent.MOVE, new MouseEvent() ); },
 							id:			-1
 						}
 
@@ -474,16 +446,16 @@
 			if(0)
 			{
 				// CS4 events
-					xjsfl.events.add(Event.DOCUMENT_CHANGED, onEvent);
-					xjsfl.events.add(Event.DOCUMENT_CLOSED, onEvent);
-					xjsfl.events.add(Event.DOCUMENT_NEW, onEvent);
-					xjsfl.events.add(Event.DOCUMENT_OPENED, onEvent);
+					xjsfl.events.add(DocumentEvent.CHANGED, onEvent);
+					xjsfl.events.add(DocumentEvent.CLOSED, onEvent);
+					xjsfl.events.add(DocumentEvent.NEW, onEvent);
+					xjsfl.events.add(DocumentEvent.OPENED, onEvent);
 					
 				// CS5 events
 					if(xjsfl.settings.app.csVersion > 4)
 					{
-						xjsfl.events.add(Event.DOCUMENT_PUBLISHED, onEvent);
-						xjsfl.events.add(Event.DOCUMENT_SAVED, onEvent);
+						xjsfl.events.add(DocumentEvent.PUBLISHED, onEvent);
+						xjsfl.events.add(DocumentEvent.SAVED, onEvent);
 					}
 			}
 		
@@ -492,8 +464,8 @@
 		
 			if(0)
 			{
-				xjsfl.events.add(Event.LAYER_CHANGED, onEvent);
-				xjsfl.events.add(Event.FRAME_CHANGED, onEvent);
+				xjsfl.events.add(LayerEvent.CHANGED, onEvent);
+				xjsfl.events.add(FrameEvent.CHANGED, onEvent);
 			}
 		
 		// --------------------------------------------------------------------------------
@@ -506,7 +478,7 @@
 					trace(event);
 				}
 				
-				xjsfl.events.add(Event.MOUSE_MOVE, onEvent);
+				xjsfl.events.add(MouseEvent.MOVE, onEvent);
 			}
 		
 
