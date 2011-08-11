@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                             ██              
 //  ██                                 ██              
@@ -60,6 +60,9 @@
 								this.bottom		= a[0] / 2;
 							}
 							
+						// Array - selection or list of elements
+						//TODO Add
+							
 						break;
 					
 					// width, height
@@ -120,7 +123,7 @@
 				}
 		
 			// create an element the same size as another element
-				if(0)
+				if(1)
 				{
 					// grab a context to reference items
 						var context = Context.create();
@@ -129,7 +132,7 @@
 						context.dom.addNewRectangle(new Bounds(50, 50, 200, 100), 0);
 						
 					// create symbol
-						context.dom.selection = Context.create().frame.elements;
+						context.dom.selection = context.frame.elements;
 						context.dom.convertToSymbol('movie clip', '', 'center');
 						
 					// get bounds
