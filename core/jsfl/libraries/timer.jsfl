@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██                     
 //    ██                          
@@ -16,7 +16,7 @@
 	
 		/**
 		 * Timer constructor
-		 * @type name {String}	An optinoal name for the new Timer
+		 * @param name {String}	An optinoal name for the new Timer
 		 */
 		function Timer(name)
 		{
@@ -119,6 +119,10 @@
 				return new Date(ms || 0).getTime()
 			},
 			
+			/**
+			 * Start the timer
+			 * @returns			{Timer}		Itself
+			 */
 			start:function()
 			{
 				this.running	= true;
@@ -126,6 +130,11 @@
 				return this;
 			},
 			
+			/**
+			 * Stop the timer
+			 * @param	print	{Boolean}	Optionally print the results of the timer
+			 * @returns			{Timer}		Itself
+			 */
 			stop:function(print)
 			{
 				if(this.running)
@@ -140,9 +149,13 @@
 				return this;
 			},
 			
+			/**
+			 * Standard toString method
+			 * @returns		{String}	A String representation of the object
+			 */
 			toString:function()
 			{
-				return '[object Timer:' +this.time+ ']';
+				return '[object Timer time="' +this.time+ '"]';
 			}
 		}
 		
@@ -184,9 +197,10 @@
 			
 			function report(timer)
 			{
+				fl.trace('timer			' + timer);
 				fl.trace('time:			' + timer.time);
 				fl.trace('milliseconds:	' + timer.milliseconds);
-				fl.trace('startDate:		' + timer.startDate);
+				fl.trace('startDate:	' + timer.startDate);
 				fl.trace('endDate:		' + timer.endDate);
 				fl.trace('\n');
 			}
