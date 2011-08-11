@@ -63,14 +63,6 @@
 				-->
 				<!-- https://developer.mozilla.org/en/XUL/expression -->
 				
-				<row template="flash">
-					<label value="Flash:" valign="top" />
-					<flash class="control" id="flash" src="assets/flash.swf" width="250" height="100" />
-				</row>
-				<!-- https://developer.mozilla.org/en/XUL/flash -->
-				<!-- https://developer.mozilla.org/en/XUL/property -->
-				<!-- http://www.webdesign.org/flash-swish/flash-tutorials/communicating-between-actionscript-and-jsfl.8608.html -->
-							
 			
 				<row template="targetlist">
 					<label value="Targetlist:" />
@@ -152,6 +144,21 @@
 				
 				<property template="property" id="property" />
 			
+			<!--
+			====================================================================================================
+			FLASH CONTROLS
+			====================================================================================================
+			-->
+			
+				<element template="flash">
+					<flash class="control" id="flash" src="assets/flash.swf" width="250" height="100" />
+				</element>
+				<!-- https://developer.mozilla.org/en/XUL/flash -->
+				<!-- https://developer.mozilla.org/en/XUL/property -->
+				<!-- http://www.webdesign.org/flash-swish/flash-tutorials/communicating-between-actionscript-and-jsfl.8608.html -->
+							
+
+				
 		</rows>
 	</grid>
 	

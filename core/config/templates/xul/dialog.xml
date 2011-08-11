@@ -18,7 +18,7 @@
 	</content>
 	
 	<script>
-		xjsfl.ui.handleEvent(0, 'initialize');
+		xjsfl.ui.handleEvent({xulid}, 'initialize');
 	</script>
 		
 </dialog>
