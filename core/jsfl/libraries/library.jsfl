@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //                                              ██   ██     ██   ██   
 //  ██     ██ ██                               ██  ██████ ██████  ██  
@@ -17,10 +17,11 @@
 	/**
 	 * Library Item selector function
 	 * 
-	 * @param	expression		{String}		A String expression
-	 * @param	context			{String||Item}	A path or reference to a library Item
-	 * @returns					{Array}			An array of library Items
-	 * @author	Dave Stewart	
+	 * @param	expression	{String}	A String expression
+	 * @param	context		{String}	A path to a library Item
+	 * @param	context		{Item}		A library Item
+	 * @param	context		{Context}	A Context object with a valid item property
+	 * @returns				{Array}		An array of library Items
 	 */
 	$$ = function(expression, context)
 	{
@@ -311,10 +312,29 @@
 			// check context is a library item or valid path
 				if(context)
 				{
-					if( ! (context instanceof LibraryItem))
+					if(typeof context === 'string')
 					{
 						var index	= library.findItemIndex(String(context));
 						context		= index != '' ? library.items[index] : null;
+					}
+					else if(context instanceof LibraryItem)
+					{
+						context = context;
+					}
+					else if(context instanceof Context)
+					{
+						if(context.item)
+						{
+							context = context.item;
+						}
+						else
+						{
+							throw new Error('Library Selector Error: item not set on supplied Context object');
+						}
+					}
+					else
+					{
+						throw new Error('Library Selector Error: invalid context supplied');
 					}
 				}
 				
@@ -432,7 +452,7 @@
 						selector	= selectors[test.type][test.method];
 						if( ! selector )
 						{
-							xjsfl.trace('Illegal selector "' +test.selector+ '"');
+							throw new Error('Library Selector Error: Illegal selector "' +test.selector+ '"');
 							continue;
 						}
 						else
