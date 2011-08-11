@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                           ██             
 //  ██                               ██             
@@ -30,8 +30,8 @@
 					document.setFillColor(color);
 				},
 				/**
-				 * Retrieves the fill object of the selected shape or, if specified, of the Tools panel and Property inspector. 
-				 * @param objectToFill {String} A string that specifies the location of the fill object. The following values are valid:	
+				 * Sets the fill object of the selected shape
+				 * @param objectToFill {String} A string that specifies the location of the fill object
 				 * @returns {Fill}
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0d.html
 				 */
@@ -41,9 +41,8 @@
 				},
 				get toolbar(){ return document.getCustomFill('toolbar'); },
 				/**
-				 * Retrieves the fill object of the selected shape or, if specified, of the Tools panel and Property inspector. 
-				 * @param objectToFill {String} A string that specifies the location of the fill object. The following values are valid:	
-				 * @returns {Fill}
+				 * Retrieves the fill object of the Tools panel and Property inspector. 
+				 * @returns {Fill}	A string that specifies the location of the fill object
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7e0d.html
 				 */
 				set selection(fill)
@@ -53,7 +52,6 @@
 				get selection(){ return document.getCustomFill('selection'); },
 				/**
 				 * Swaps the Stroke and Fill colors. 
-				 * @returns {}
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7cb2.html
 				 */
 				swapWithStroke:function()
