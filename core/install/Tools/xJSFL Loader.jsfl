@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //           ██ ██████ ██████ ██          ██                    ██            
 //           ██ ██     ██     ██          ██                    ██            
@@ -18,6 +18,18 @@
 			if( ! xjsfl.uri ) // reload only if xjsfl.uri is unset
 			{
 				//TODO Add checks to make sure xjsfl.ui folder exists, and promt to reinstall if it doesn't
+				
+				// functions
+					function uriToPlatformPath(uri)
+					{
+						uri = uri.replace("file:///", "").replace(/%20/g, " ");
+						if (/win/i.test(fl.version))
+						{
+							uri = uri.replace(/^([A-Z])\|/i, "$1:");
+						}
+						return uri;
+					}
+
 
 				// set xJSFL URI
 					xjsfl.uri = '{xjsfl}';
@@ -35,7 +47,7 @@
 					xjsfl.loading = true;
 	
 				// load core bootstrap
-					fl.trace('> xjsfl: running core bootstrap...');
+					fl.trace('> xjsfl: install path: "' +uriToPlatformPath(xjsfl.uri)+ '"');
 					fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
 					
 				// load user bootstrap

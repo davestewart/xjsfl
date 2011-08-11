@@ -1,1 +1,1 @@
-new xjsfl.classes.Folder(xjsfl.uri + 'user').open();
+﻿new xjsfl.classes.Folder(xjsfl.uri + 'user').open();

@@ -1,1 +1,1 @@
-new xjsfl.classes.Folder(fl.configURI + 'Commands').open();
+﻿new xjsfl.classes.Folder(fl.configURI + 'Commands').open();

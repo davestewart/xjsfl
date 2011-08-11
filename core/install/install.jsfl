@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██              ██         ██ ██ 
 //  ██              ██         ██ ██ 
@@ -30,6 +30,15 @@
 					alert('xJSFL installation issue.\n\nThe xJSFL root folder must only be named "xJSFL".\n\nPlease rename the folder and start the installation process again.');
 					return false;
 				}
+				
+			// check that there is only one xJSFL folder in the install path
+				var matches = xjsfl.match(/\bxJSFL\//g)
+				if(matches.length > 2)
+				{
+					alert('xJSFL installation issue.\n\nThere must only be one folder named "xJSFL" in the installation path.\n\nPlease move the real xJSFL folder to a new location and start the installation process again.');
+					return false;
+				}
+				
 	
 		// ----------------------------------------------------------------------------------------
 		// OK, let's go!
