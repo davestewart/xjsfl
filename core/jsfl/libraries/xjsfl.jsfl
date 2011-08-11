@@ -78,8 +78,16 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Get - Utility functions to ensure user has a document open, selection, etc, and alert if not
 
+	
+	/**
+	 * A set of functions to return objects or selections in the UI, or issue standard warnings if not available
+	 */
 	xjsfl.get =
 	{
+		/**
+		 * Get the current Document DOM, or issue a standard warning if not available
+		 * @returns		{Document|Boolean}	A Document object or false if not available
+		 */
 		dom:function(error)
 		{
 			var dom = fl.getDocumentDOM();
@@ -87,10 +95,14 @@
 			{
 				return dom;
 			}
-			alert(error || 'Open a Flash document (FLA) before running this script.');
+			alert(error || 'Open a Flash document (FLA) before running this script');
 			return false;
 		},
 		
+		/**
+		 * Get the currently selected library items, or issue a standard warning if not selected
+		 * @returns		{Array|Boolean}	An array of library items or false if not available
+		 */
 		items:function()
 		{
 			if(xjsfl.get.dom())
@@ -100,13 +112,17 @@
 				{
 					return items;
 				}
-				alert('Select some library items before running this script.');
+				alert('Select some library items before running this script');
 				return false;
 			}
 			return false;
 		},
 		
-		selection:function(min, max)
+		/**
+		 * Get the current selection, or issue a standard warning if nothing is selected
+		 * @returns		{Array|Boolean}	An array of elements or false if no selection
+		 */
+		selection:function()
 		{
 			var dom = xjsfl.get.dom();
 			if(dom)
@@ -116,7 +132,7 @@
 				{
 					return selection;
 				}
-				alert('Make a selection before running this script.');
+				alert('Make a selection before running this script');
 				return false;
 			}
 			return false;
@@ -288,7 +304,7 @@
 			// for each element, call the function with the parameters
 				arr.forEach
 				(
-					function(element)
+					function(element, index, elements)
 					{
 						var args = [].concat(params);
 						args.splice(argIndex, 0, element);
@@ -303,9 +319,13 @@
 		/**
 		 * Extends an object or array with more properties or elements
 		 * 
-		 * @param obj {Object|Array} The source object or array to be extended
-		 * @param props {Object|Array} The properties or elements to be added
-		 * @returns {Object|Array} Returns the modified object or array
+		 * @param obj		{Object}	A source Object to be extended
+		 * @param props		{Object}	The properties to be added
+		 * @returns			{Object}	The modified object
+		 * 
+		 * @param obj		{Array}		A source Array to be extended
+		 * @param props		{Array}		The elements to be added
+		 * @returns			{Array}		The modified array
 		 */
 		extend:function(obj, props)
 		{
@@ -346,6 +366,11 @@
 				return obj;
 		},
 		
+		/**
+		 * Trims the whitespace from both sides of a string
+		 * @param	string	{String}	The input string to trim
+		 * @returns			{String}	The trimmed string
+		 */
 		trim:function(string)
 		{
 			return String(string || '').replace(/(^\s*|\s*$)/g, '');
@@ -354,8 +379,8 @@
 		/**
 		 * Checks if the object is an array or not
 		 * 
-		 * @param obj {Object} Any object that needs to be checked if it's a true Array
-		 * @returns {Boolean} True or false
+		 * @param obj	{Object}		Any object that needs to be checked if it's a true Array
+		 * @returns		{Boolean}		True or false
 		 */
 		isArray:function (obj)
 		{
@@ -366,9 +391,10 @@
 		 * Turns a single value into an array
 		 * It either returns an existing array, splits a string at delimiters, or wraps the single value in an array
 		 * 
-		 * @param	value	{Value}
-		 * @param	delim	{String|RegExp}
-		 * @returns		
+		 * @param	value	{String}	A string
+		 * @param	delim	{RegExp}	An optional RegExp with which to split the input string, defaults to any non-word character
+		 * @param	delim	{String}	An optional character with which to split the string
+		 * @returns			{Array}		A new Array
 		 */
 		toArray:function(value, delim)
 		{
@@ -387,21 +413,28 @@
 					// trim
 						value = xjsfl.utils.trim(value);
 						
+					// variables
+						
 					// if RegExp, split
 						if(delim instanceof RegExp)
 						{
 							delim.global = true;
-							return value.split(rx2);
+							return value.split(delim);
 						}
 						
-					// if RegExp, split
+					// else if String split
 						else
 						{
-							var rx1	= new RegExp('^[\s' +delim+ ']+|[\s' +delim+ ']+$', 'g'); // trim
-							var rx2	= new RegExp('\s*' +delim+ '\s*', 'g'); // split 
-							return value.replace(rx1, '').split(rx2);
+							delim		= delim.replace(/([\\\|\*\+])/g, '\\$1')
+							var rxTrim	= new RegExp('^[\\s' +delim+ ']+|[\\s' +delim+ ']+$', 'g');
+							var rxSplit	= new RegExp('\\s*' +delim+ '+\\s*', 'g');
+							return value.replace(rxTrim, '').split(rxSplit);
 						}
 					
+				}
+				else
+				{
+					throw new TypeError('xjsfl.utils.toArray() expects a string');
 				}
 				return [value];
 		},
@@ -409,9 +442,8 @@
 		/**
 		 * Returns a unique array without any duplicate items
 		 * 
-		 * @param	arrIn	{Array}		Any array
+		 * @param	arr		{Array}		Any array
 		 * @returns			{Array}		A unique array
-		 * @author	Dave Stewart	
 		 */
 		toUniqueArray:function(arr)
 		{
@@ -428,11 +460,10 @@
 		},
 		
 		/**
-		 * Optimized Array sortOn method, for sorting Arrays by child property
+		 * Optimized Array sortOn method, for sorting Arrays by child property. This function modifies the input Array
 		 * @param	arr		{Array}		An Array of Objects
 		 * @param	prop	{String}	A property name to sort on; defaults to 'name'
 		 * @param	alpha	{Boolean}	An optional flag to sort alphabetically
-		 * @returns		
 		 */
 		sortOn:function(arr, prop, alpha)
 		{
@@ -564,7 +595,8 @@
 		/**
 		 * Get an object's keys, or all the keys from an Array of Objects
 		 * 
-		 * @param	obj	{Object}	Any object with iterable properties, or an Array of objects
+		 * @param	obj	{Object}	Any object with iterable properties
+		 * @param	obj	{Array}		An Array of objects with iterable properties
 		 * @returns		{Array}		An array of key names
 		 */
 		getKeys:function(obj)
@@ -712,9 +744,9 @@
 		
 		/**
 		 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, Array notation, Object notation, JSON, Date, undefined, null
-		 * @param	value	{String}	The input value, usually a string
+		 * @param	value	{String}	An input string
 		 * @param	trim	{Boolean}	An optional flag to trim the string, on by default
-		 * @returns		
+		 * @returns			{Mixed}		The parsed value of the original value
 		 */
 		parseValue:function(value, trim)
 		{
@@ -767,12 +799,13 @@
 		
 		/**
 		 * Tests a callback and outputs the error stack if the call fails. Add additional parameters after the callback reference
-		 * @param	fn	{Function}	The function to test
+		 * @param	fn		{Function}	The function to test
+		 * @param	params	{Array}		An array or arguments to pass to the function
+		 * @param	scope	{Object}	An alternative scope to run the function in
 		 * @returns		
 		 */
-		test:function(fn)
+		test:function(fn, params, scope)
 		{
-			//TODO Add scope param, and change arguments to a single Array argument test(fn, args, scope)
 			// variables
 				var source	= fn.toSource();
 				source		= source.substring(source.indexOf(' ') + 1, source.indexOf('('));
@@ -784,8 +817,7 @@
 			// test!
 				try
 				{
-					var params = this.getArguments(arguments, 1);
-					fn.apply(this, params);
+					fn.apply(scope || this, params);
 				}
 				catch(err)
 				{
@@ -825,6 +857,9 @@
 		
 		/**
 		 * Logging function
+		 * @param	type	{String}	The type of log message
+		 * @param	message	{String}	The text of the log message
+		 * @returns		
 		 */
 		log:function(type, message)
 		{
@@ -862,7 +897,6 @@
 		/**
 		 * Traces a human-readable error stack to the Output Panel
 		 * 
-		 * @param error		{String}	A string defining the main error message
 		 * @param error		{Error}		A javaScript Error object
 		 * @param testing	{Boolean}	Internal use only. Removes test() stack items
 		 */
@@ -932,11 +966,11 @@
 		/**
 		 * Finds all files of a particular type within the cascading file system
 		 * 
-		 * @param	type			{String}			The folder in which to look in to find the files, @see switch statement
-		 * @param	name			{String|Array}		A file name (pass no extension to use default), or partial file path
-		 * @param	returnType		{Number}			An optional 0, 1 or -1; 0: all files (default), -1: the last file (user), 1:the first file (core)
-		 * @returns					{String|Array|null}	A single file or an array of files
-		 * @author	Dave Stewart	
+		 * @param	type			{String}	The folder in which to look in to find the files, @see switch statement
+		 * @param	name			{String}	A file name (pass no extension to use default), or partial file path
+		 * @param	returnType		{Number}	An optional 0, 1 or -1; 0: all files (default), -1: the last file (user), 1:the first file (core)
+		 * @returns					{String}	A single file path if found and return type is 1 or -1, or null if not
+		 * @returns					{Array}		An Array of file paths if found, and return type is 0, or null if not
 		 */
 		find:function(type, name, returnType)
 		{
@@ -1240,7 +1274,7 @@
 				else if(context === true || str === true)
 				{
 					var stack	= xjsfl.utils.getStack();
-					var path	= stack[1].path;
+					var path	= stack[3].path;
 					str			= xjsfl.file.makePath(path) + (str === true ? '' : str);
 				}
 				
@@ -1323,13 +1357,13 @@
 		 */
 		isAbsolutePath:function(path)
 		{
-			if(xjsfl.settings.platform == 'mac')
+			if(xjsfl.settings.platform === 'mac')
 			{
-				return path.substr(0, 1).replace('\\', '/') == '/';
+				return path.substr(0, 1).replace('\\', '/') === '/';
 			}
 			else
 			{
-				return path.match(/^[A-Z]:/i);
+				return path.match(/^[A-Z]:/i) !== null;
 			}
 		}
 		
@@ -1417,7 +1451,7 @@
 		},
 		
 		/**
-		 * Restores a class/function to the supplied namespace
+		 * Internal function that restores a class/function to the supplied namespace
 		 * 
 		 * @param	name	{string}	The name of the class to restore
 		 * @param	scope	{Object}	The scope to which the class should be restored to (defaults to window)
@@ -1475,7 +1509,8 @@
 		/**
 		 * Load a module or array of modules
 		 * 
-		 * @param	name	{String|Array}		A module name or array of module names
+		 * @param	name	{String}	A module name
+		 * @param	name	{Array}		An Array of module names
 		 */
 		load:function(name)
 		{
@@ -1569,7 +1604,7 @@
 				this.dialogs.pop();
 
 			// debug
-				//Output.list(this.dialogs, null, 'Dialog closed')
+				//Output.inspect(settings);
 				
 			// return settings
 				return settings;
@@ -1649,9 +1684,10 @@
 	 * Initialize the environment by extracting variables / objects / functions to global scope
 	 * @param	scope	{Object}	The scope into which the framework should be extracted
 	 * @param	force	{Boolean}	An optional Boolean to force extraction of the framework, even if already extracted
+	 * @param	silent	{Boolean}	An optional Boolean to not trace the initializein
 	 * @returns		
 	 */
-	xjsfl.init = function(scope, force)
+	xjsfl.init = function(scope, force, silent)
 	{
 		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined, or force is set as true
 			if( ! scope.xJSFL || force)
