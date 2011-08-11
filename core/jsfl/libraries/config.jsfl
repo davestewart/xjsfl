@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████              ████ ██       
 //  ██                  ██            
@@ -19,7 +19,8 @@
 		/**
 		 * Config class, loads and saves XML from the config folders
 		 * 
-		 * @param	configPath		{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
+		 * @param	configPath	{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
+		 * @param	xml			{XML}		An XMl object with which to populate the Config instance
 		 * @author	Dave Stewart	
 		 */
 		Config = function(configPath, xml)
@@ -81,9 +82,9 @@
 			/**
 			 * Sets data on the wrapped XML data
 			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
-			 * @param	path	
-			 * @param	value	
-			 * @returns		
+			 * @param	path	{String}	A dot-notation path to a node or attribute
+			 * @param	value	{Value}		Any value that can be converted to a string
+			 * @returns			{Config}	The current Config node
 			 */
 			set:function(path, value)
 			{
@@ -124,18 +125,34 @@
 			},
 			
 			/**
-			 * 
-			 * @param	path	
-			 * @returns		
+			 * Gets the value of the specified node path
+			 * @param	path	{Srting}	A dot-notation path to a node or attribute
+			 * @param	parse	{Boolean}	A Boolean flag indicating that you want to parse the value to the currect datatype
+			 * @param	test	{Boolean}	A Boolean flag to test the path exists, but trap and return an Error object if not
+			 * @returns			{value}		The value of the node / attribute
 			 */
-			get:function(path)
+			get:function(path, parse, test)
 			{
-				return eval('this.xml.' + path);
+				if(test !== false)
+				{
+					try{
+						var value = eval('this.xml.' + path);
+					}
+					catch(err)
+					{
+						return new Error('The property "' +path+ '" does not exist');
+					}
+				}
+				else
+				{
+					var value = eval('this.xml.' + path);
+				}
+				return parse === false ? value : xjsfl.utils.parseValue(value);
 			},
 			
 			/**
-			 * 
-			 * @returns		
+			 * Loads the XML config from disk
+			 * @returns			{Config}	The current Config node
 			 */
 			load:function()
 			{
@@ -144,8 +161,8 @@
 			},
 			
 			/**
-			 * 
-			 * @returns		
+			 * Saves the internal XML to disk
+			 * @returns			{Config}	The current Config node
 			 */
 			save:function()
 			{
@@ -154,6 +171,10 @@
 				return this;
 			},
 			
+			/**
+			 * Clears all nodes inside the internal XML
+			 * @returns			{Config}	The current Config node
+			 */
 			clear:function()
 			{
 				var matches = this.file.uri.match(/(\w+)\/[^\/]+$/);
@@ -162,6 +183,12 @@
 				return this;
 			},
 			
+			/**
+			 * Returns either a standard String summary of the Config item or the pretty-printed XML contents
+			 * @param	asXML	{Boolean}		An optional flag to return the XML String
+			 * @returns			{String}		The standard String summary of the Config instance
+			 * @returns			{String}		The pretty-printed XML contents
+			 */
 			toString:function(asXML)
 			{
 				var path	= this.file ? xjsfl.file.makePath(this.file.uri, true) : '';
@@ -237,7 +264,7 @@
 					.set('date', new Date())
 					.set('class', new Config(''))
 					.set('array', [1,2,3,4,5])
-
+				
 				trace(config.toString(true));
 			}
 		
@@ -253,6 +280,46 @@
 					
 				trace(config.toString(true));
 				trace(config.get('some.setting.@id'));
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Read parsed values from config
+		
+			if(0)
+			{
+				var config = new Config('settings/test');
+				config
+					.clear()
+					.set('five', 5)
+					.set('four', 4)
+					
+				trace(config.toString(true));
+				trace('product is: ' + config.get('five') * config.get('four'));
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Test that a value exists when getting
+		
+			if(0)
+			{
+				var config = new Config('settings/test');
+				config.clear()
+					
+				var value = config.get('this.setting.does.not.exist');
+				if(value instanceof Error)
+				{
+					trace('Oh no! ' + value);
+				}
+			}
+		
+		// --------------------------------------------------------------------------------
+		// Clear the loaded config
+		
+			if(0)
+			{
+				var config = new Config('settings/test');
+				config.clear()
+				trace(config.toString(true));
 			}
 		
 
