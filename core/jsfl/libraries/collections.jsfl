@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██  ██  ██   ██ ██ ██  ██         ██████ ██    ██              ██   
 //  ██  ██  ██      ██     ██         ██  ██ ██                    ██   
@@ -107,8 +107,7 @@
 // Collection
 
 	/**
-	 * Collection Class
-	 * @param elements {Array} An array of elements
+	 * Base Collection class with core methods to iterate over and manipulate elements
 	 */
 	collection =
 	{
@@ -369,6 +368,9 @@
 
 */
 
+	/**
+	 * ItemCollection class enacpsulates and modifies Arrays of LibraryItems
+	 */
 	var itemCollection =
 	{
 		className:'ItemCollection',
@@ -625,7 +627,7 @@
 	// context = timeline / item?
 
 	/**
-	 * LayerCollection class
+	 * LayerCollection class enacpsulates and modifies Arrays of Layers
 	 */
 	layerCollection =
 	{
@@ -654,7 +656,7 @@
 	// $frames(':selected', [1,2,3])
 
 	/**
-	 * FrameCollection class
+	 * FrameCollection class enacpsulates and modifies Arrays of Layers
 	 */
 	frameCollection =
 	{
@@ -713,6 +715,10 @@
 
 	// context = document / item / layer / frame?
 
+	
+	/**
+	 * ElementCollection class enacpsulates and modifies Arrays of stage Elements
+	 */
 	elementCollection =
 	{
 		className:'ElementCollection',
@@ -816,12 +822,9 @@
 		 * @param reverseOrder {Boolean} Optionally arrange in reverse order
 		 * @returns {Collection} The original ElementCollection object
 		 */
-
-		// look up more efficient sort functions?
-		
-		
 		orderBy:function(prop, reverseOrder)
 		{
+		// look up more efficient sort functions?
 			if(prop.match(/(name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)/))
 			{
 				// helper functions
@@ -866,21 +869,16 @@
 		},
 		
 		
-		/**
-		 * Align, distribute, space or match elements to one another
-		 * @param type {String} align, distribute, space, size
-		 * @param props {String} The specific arguments for the arrange type. Acceptable values are
-		 * 						align:      left,right,top,bottom,top left,top right,bottom left,bottom right,vertical,horizontal,center
-		 * 						distribute: 1 or 2 of left,horizontal,right,top,vertical,bottom
-		 * 						space:      vertical,horizontal
-		 * 						match:      width,height,size
-		 * @param toStage {Boolean} Use the stage bounding box
-		 */
 		arrange:
 		{
 			dom:fl.getDocumentDOM(),
 			
-			align:function(type, props, toStage)
+			/**
+			 * Align elements to one another
+			 * @param props		{String}	The specific arguments for the arrange type. Acceptable values are 'left,right,top,bottom,top left,top right,bottom left,bottom right,vertical,horizontal,center'
+			 * @param toStage	{Boolean}	Use the stage bounding box
+			 */
+			align:function(props, toStage)
 			{
 				if(props.match(/\b(left|right|top|bottom|top left|top right|bottom left|bottom right|vertical|horizontal|center)\b/))
 				{
@@ -908,7 +906,12 @@
 				return this;
 			},
 			
-			distribute:function(type, props, toStage)
+			/**
+			 * Distribute elements relative to one another
+			 * @param props		{String}	1 or 2 of 'left,horizontal,right,top,vertical,bottom'
+			 * @param toStage	{Boolean}	Use the stage bounding box
+			 */
+			distribute:function(props, toStage)
 			{
 				props = props.split(' ');
 				for(var i = 0; i < props.length; i++)
@@ -929,7 +932,12 @@
 				return this;
 			},
 			
-			space:function(type, props, toStage)
+			/**
+			 * Space elements relative to one another
+			 * @param props		{String}	Acceptable values are 'vertical,horizontal'
+			 * @param toStage	{Boolean}	Use the stage bounding box
+			 */
+			space:function(props, toStage)
 			{
 				if(props.match(/\b(vertical|horizontal)\b/))
 				{
@@ -971,6 +979,11 @@
 				return this;
 			},
 			
+			/**
+			 * match elements dimensions relative to one another
+			 * @param props		{String}	Acceptable values are'width,height,size'
+			 * @param toStage	{Boolean}	Use the stage bounding box
+			 */
 			match:function(type, props, toStage)
 			{
 				if(props.match(/(width|height|size)/))
@@ -1041,21 +1054,21 @@
 		
 		/**
 		 * Randomizes properties of the elements
-		 * @param properties {Object} An object containing property names and values
-		 * @returns {Collection} The original ElementCollection object
+		 * @param		properties	{Object}		An object containing property names and values
+		 * @returns					{Collection}	The original ElementCollection object
 		 */
-		 
-		 /*
-		 
-			Maybe move the random methods to the NumberUtils class?
-			
-			from and to methods
-			Number from and to methods
-			
-			Should they be on the class itself (Number.randomize(val)) or in a Utils class (NumberUtils.randomize(num, val))
-		*/
 		randomize:function(properties)
 		{
+			/*
+			
+			   Maybe move the random methods to the NumberUtils class?
+			   
+			   from and to methods
+			   Number from and to methods
+			   
+			   Should they be on the class itself (Number.randomize(val)) or in a Utils class (NumberUtils.randomize(num, val))
+		   */
+			
 			/**
 			 * Return a random value or randomly modifiy a value by +, -, %
 			 * @param value {Number} A value to modify
@@ -1073,7 +1086,7 @@
 					else if(typeof modifier == 'string')
 					{
 						// value
-							var modifierValue =  Math.abs(parseInt(modifier));
+							var modifierValue =  Math.abs(parseFloat(modifier));
 							
 							//trace(modifierValue)
 							
@@ -1119,23 +1132,26 @@
 				return value;
 			}
 				
-			// update variables
+			// handle compound (Object) values such as position, scale and size
 				if(properties.position)
 				{
 					properties.x = properties.position.x;
 					properties.y = properties.position.y;
+					delete properties.position;
 				}
 	
 				if(properties.scale)
 				{
 					properties.scaleX = properties.scale.x;
 					properties.scaleY = properties.scale.y;
+					delete properties.scale;
 				}
 	
 				if(properties.size)
 				{
 					properties.width = properties.size[0];
 					properties.height = properties.size[1];
+					delete properties.size;
 				}
 	
 			// loop
