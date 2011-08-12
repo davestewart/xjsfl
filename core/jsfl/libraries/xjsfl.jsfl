@@ -377,6 +377,26 @@
 		},
 		
 		/**
+		 * Pads a value to a certain length with a specific character
+		 * @param	value	{Value}		Any value
+		 * @param	chr		{String}	An optional padding character, defaults to 0
+		 * @param	length	{Number}	An optional length, defaults to 6
+		 * @param	right	{Boolean}	An optional flag to pad to the right, rather than the left
+		 * @returns			{String}	The padded value
+		 */
+		pad:function(value, chr, length, right)
+		{
+			value	= String(value);
+			chr		= chr || '0';
+			length	= length || 6;
+			while(value.length < length)
+			{
+				right ? value += chr : value = chr + value;
+			}
+			return value;
+		},
+		
+		/**
 		 * Checks if the object is an array or not
 		 * 
 		 * @param obj	{Object}		Any object that needs to be checked if it's a true Array
