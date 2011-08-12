@@ -779,7 +779,7 @@
 					 * Add a Colorchip control to the UI
 					 * @param	label		{String}	A label for the UI item
 					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
+					 * @param	attributes	{Object}	Optional attributes [value, format]
 					 * @param	validation	{Object}	Optional validation properties
 					 * @param	events		{Object}	Optional event callbacks
 					 * @returns				{XUL}		The XUL dialog
@@ -793,6 +793,7 @@
 							var value = attributes.value;
 							if(value)
 							{
+								value = String(attributes.value);
 								if(value.substr(0, 2) == '0x')
 								{
 									attributes.format = 'hex';
@@ -804,7 +805,14 @@
 								else
 								{
 									attributes.format = 'string';
-									attributes.value = '#' + value;
+									if(!isNaN(parseInt(attributes.value)))
+									{
+										attributes.value = '#' + xjsfl.utils.pad(parseInt(value).toString(16).toUpperCase());
+									}
+									else
+									{
+										attributes.value = '#' + value;
+									}
 								}
 							}
 							//Output.inspect(attributes)
