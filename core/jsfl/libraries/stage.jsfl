@@ -55,6 +55,9 @@
 					case ':selection':
 					case ':selected':
 						elements = dom.selection;
+					break;
+					default:
+						throw new TypeError('TypeError: Unknown type "' +selector+ '" in $()');
 				}
 			}
 			
@@ -68,6 +71,8 @@
 				elements = selector;
 			}
 			
+			
+			//alert('Selecting: ' + elements.length)
 
 			return new ElementCollection(elements);
 		}
