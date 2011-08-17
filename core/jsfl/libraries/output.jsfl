@@ -73,6 +73,12 @@
 		 */
 		list:function(arr, properties, label, output)
 		{
+			// catch null values
+				if( ! arr)
+				{
+					throw new ReferenceError('ReferenceError: Output.list(): parameter "arr" is undefined');
+				}
+				
 			// defaults
 				label			= label || 'List';
 				properties		= properties || 'name';
@@ -582,8 +588,10 @@
 			// variables
 				output		= output !== false;
 				var result	= '';
-				result		+= '\n\t' +title + '\n\t----------------------------------------------------------------------------------------------------\n';
-				result		+= '\t' + String(content).replace(/\n/g, '\n\t');
+				var border	= new Array(Math.max(title.length, 80) + 1).join('-');
+				result		+= '\n' +title + '\n' +border+ '\n';
+				result		+= '' + String(content);
+				//result		= result.replace(/\n/g, '\n\t');
 				
 			// trace
 				if (output)
