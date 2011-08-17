@@ -24,21 +24,9 @@
 		
 		/**
 		 * A chainable utility function, that allows an external callback function to be called a single time
-		 * @param callback {Function} Function to call
-		 * @param params {Array} Optional arguments to be passed to the callback
-		 * @returns {Collection} The original Collection object
-		 */
-		call:function(callback, params)
-		{
-			callback.apply(this, params);
-			return this;
-		},
-		
-		/**
-		 * A chainable utility function, that allows an external callback function to be called a single time
-		 * @param callback {Function} Function to call
-		 * @param params {Array} Optional arguments to be passed to the callback
-		 * @returns {Collection} The original Collection object
+		 * @param callback	{Function}		Function to call
+		 * @param params	{Array}			Optional arguments to be passed to the callback
+		 * @returns			{Collection}	The original Collection object
 		 */
 		trace:function(str)
 		{
@@ -48,8 +36,8 @@
 		
 		/**
 		 * A chainable utility function, that displays the prototype chain
-		 * @param trace {Boolean} An optional switch to trace the result to the output panel
-		 * @returns {Array} An array of the 
+		 * @param trace		{Boolean}		An optional switch to trace the result to the output panel
+		 * @returns			{Array}			An array of the 
 		 */
 		prototypeChain:function(trace)
 		{
@@ -116,6 +104,11 @@
 			
 		className:'Collection',
 		
+		/**
+		 * Collection Constructor
+		 * @param	elements	{Array}			An array of values
+		 * @returns				{Collection}
+		 */
 		constructor:function(elements)
 		{
 			this.add(elements);//elements = elements instanceof Array ? elements : [];
@@ -123,42 +116,62 @@
 
 		/**
 		 * Calls a function on each element in the collection in forward order (although internally, it's in reverse)
-		 * @param callback {Function} A callback to = function fire on each iteraction
-		 * @param arguments {Array} An optional array of arguments to pass to the callback function
-		 * @returns {Collection} The original Collection object
+		 * @param callback		{Function}		A callback function to fire on each iteraction
+		 * @param params	 	{Array}			An optional array of parameters to pass to the callback function
+		 * @param scope		 	{Object}		An optional scope object, defaults to the collection
+		 * @returns				{Collection}	The original Collection object
 		 */
-		each:function(callback, arguments)
+		each:function(callback, params, scope)
 		{
-			var i = this.elements.length - 1, j = 0;
-			while(i >= 0)
+			if(params !== undefined && ! xjsfl.utils.isArray(params))
 			{
-				callback.apply(this, [this.elements[i], i, this.elements])
-				i--; j++;
+				throw new TypeError('TypeError: parameter "params" must be an Array in Collection.each()');
 			}
-			return this;
-		},
-		
-		/**
-		 * Calls a on = function each element in the collection in reverse (native) order
-		 * @param callback {Function} A callback to = function fire on each iteraction
-		 * @param arguments {Array} An optional array of arguments to pass to the callback function
-		 * @returns {Collection} The original Collection object
-		 */
-		reach:function(callback, arguments)
-		{
-			var i = 0;
+			
+			params	= [null, null, this.elements].concat(params || []);
+			scope	= scope || this;
+			var i	= 0;
 			while(i < this.elements.length)
 			{
-				callback.apply(this, [this.elements[i], i, this.elements])
+				params[0] = this.elements[i];
+				params[1] = i;
+				callback.apply(scope, params);
 				i++;
 			}
 			return this;
 		},
 		
 		/**
+		 * Calls a function on each element in the collection in reverse (native) order
+		 * @param callback		{Function}		A callback function to fire on each iteraction
+		 * @param params	 	{Array}			An optional array of parameters to pass to the callback function
+		 * @param scope		 	{Object}		An optional scope object, defaults to the collection
+		 * @returns				{Collection}	The original Collection object
+		 */
+		reach:function(callback, params, scope)
+		{
+			if(params !== undefined && ! xjsfl.utils.isArray(params))
+			{
+				throw new TypeError('TypeError: parameter "params" must be an Array in Collection.reach()');
+			}
+			
+			params	= [null, null, this.elements].concat(params || []);
+			scope	= scope || this;
+			var i	= this.elements.length - 1, j = 0;
+			while(i >= 0)
+			{
+				params[0] = this.elements[i];
+				params[1] = i;
+				callback.apply(scope, params);
+				i--; j++;
+			}
+			return this;
+		},
+		
+		/**
 		 * Adds elements to the collection
-		 * @param elements {Array} Adds elements to the collection
-		 * @returns {Collection} The original Collection object
+		 * @param elements		{Array}			Adds elements to the collection
+		 * @returns				{Collection}	The original Collection object
 		 */
 		add:function(elements)
 		{
@@ -176,72 +189,121 @@
 		
 		/**
 		 * Gets an element from the collection
-		 * @param index {Number} Gets the nth object in the collection
-		 * @returns {Object} An object
+		 * @param index			{Number}		Gets the nth object in the collection
+		 * @returns				{Object}		An object
 		 */
 		get:function(index)
 		{
-			return this.elements[this.elements.length - 1 - index];
+			return this.elements[index];
 		},
 		
 		/**
 		 * Removes elements from the collection
-		 * @param startIndex {Number} An integer that specifies at what position to remove elements
-		 * @param deleteCount {Number} The number of elements to be removed
-		 * @returns {Collection} The original Collection object
+		 * @param startIndex	{Number}		An integer that specifies at what position to remove elements
+		 * @param deleteCount	{Number}		The number of elements to be removed
+		 * @returns				{Collection}	The original Collection object
 		 */
 		remove:function(startIndex, deleteCount)
 		{
-			this.elements.splice(startIndex, deleteCount);
+			this.elements.splice(startIndex, deleteCount || 1);
 			return this;
 		},
 		
 		/**
 		 * Filters the collection using a callback function
-		 * @param callback {Function} Function to test each element of the array
-		 * @param thisObject {Object} Object to use as this when executing callback
-		 * @returns {Collection} The original Collection object
+		 * @param callback		{Function}		A callback function to test each element of the array, of the format function(element, index, elements)
+		 * @param thisObject	{Object}		Object to use as this when executing callback
+		 * @returns				{Collection}	The original Collection object
 		 */
 		filter:function(callback, thisObject)
 		{
 			this.elements = this.elements.filter(callback, thisObject || this)
-			
-			trace('filtered:' + this.elements.length)
-			
-			//this.elements = [];
-
 			return this;
 		},
 		
 		/**
 		 * Returns the first index at which a given element can be found in the array, or -1 if it is not present
-		 * @param element {Object} Element to locate in the array
-		 * @param fromIndex {Number} Optional index at which to begin the search. Defaults to 0, i.e. the whole array will be searched. If the index is greater than or equal to the length of the array, -1 is returned, i.e. the array will not be searched. If negative, it is taken as the offset from the end of the array. Note that even when the index is negative, the array is still searched from front to back. If the calculated index is less than 0, the whole array will be searched.
-		 * @returns {Number} The first index at which the element is found, or -1 if it is not present
+		 * @param element		{Object}		Element to locate in the array
+		 * @param fromIndex 	{Number}		Optional index at which to begin the search. Defaults to 0, i.e. the whole array will be searched. If the index is greater than or equal to the length of the array, -1 is returned, i.e. the array will not be searched. If negative, it is taken as the offset from the end of the array. Note that even when the index is negative, the array is still searched from front to back. If the calculated index is less than 0, the whole array will be searched.
+		 * @returns				{Number}		The first index at which the element is found, or -1 if it is not present
 		 */
 		indexOf:function(element, fromIndex)
 		{
 			return this.elements.indexOf(element, fromIndex);
 		},
 		
-		attr:function(name, value)
+		/**
+		 * Modifies a particular attribute on all items in the collection
+		 * @param	prop		{Object}		An object containing name:value pairs of attribute to modify
+		 * @param	prop		{String}		The name of the attribute to modify
+		 * @param	value		{Value}			A value attribute value
+		 * @param	value		{Function}		A callback function that returns a value, of the format function(element, index, elements);
+		 * @returns				{Collection}	The current Collection
+		 */
+		attr:function(prop, value)
 		{
-			for(var i = 0; i < this.elements.length; i++)
+			if(typeof prop === 'object')
 			{
-				this.elements[i][name] = value;
+				for(var name in prop)
+				{
+					this.attr(name, prop[name]);
+				}
+			}
+			else
+			{
+				var fn = typeof value === 'function' ? value : function(){ return value; };
+				for(var i = 0; i < this.elements.length; i++)
+				{
+					this.elements[i][prop] = fn(this.elements[i], i, this.elements);
+				}
 			}
 			return this;
 		},
 		
-		toString:function()
+		/**
+		 * A chainable utility function, that allows an external callback function to be called a single time
+		 * @param callback	{Function}		Function to call
+		 * @param ...params					Optional arguments to be passed to the callback
+		 * @returns			{Collection}	The original Collection object
+		 */
+		call:function(callback)
 		{
-			return '[object ' +this.className+ ': ' + this.elements.length+ ' elements]';
+			var params = xjsfl.utils.getArguments(arguments, 1);
+			callback.apply(this, params);
+			return this;
 		},
 		
-		debug:function()
+		/**
+		 * A chainable utility function, that allows an external callback function to be called a single time
+		 * @param callback	{Function}		Function to call
+		 * @param params	{Array}			Optional arguments to be passed to the callback
+		 * @param scope		{Object}		An optional scope to run the function in, default to the collection
+		 * @returns			{Collection}	The original Collection object
+		 */
+		apply:function(callback, params, scope)
 		{
-			fl.trace('\n' + this.toString());
-			this.elements.forEach(function(e, i){fl.trace('  [' + i + '] => ' + e)})
+			callback.apply(scope || this, params);
+			return this;
+		},
+		
+		/**
+		 * Utility function to list the contents of the collection
+		 * @param		
+		 * @returns		
+		 */
+		list:function()
+		{
+			Output.inspect(this.elements, this.toString(), 1);
+			return this;
+		},
+		
+		/**
+		 * Return a string representation of the collection 
+		 * @returns				{String}		A string representation of the collection
+		 */
+		toString:function()
+		{
+			return '[object ' +this.className+ ' length=' + this.elements.length+ ']';
 		}
 		
 	}
@@ -397,15 +459,13 @@
 		 */
 		sort:function()
 		{
-			xjsfl.utils.sortOn(this.elements);
+			xjsfl.utils.sortOn(this.elements, 'name', true);
 			return this;
 		},
 		
 		/**
 		 * Select the item in the library
-		 * @param		
-		 * @returns		
-		 * @author	Dave Stewart	
+		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
 		select:function()
 		{
@@ -414,12 +474,13 @@
 			{
 				this.library.selectItem(this.elements[i].name, false, true);
 			}
+			this.reveal();
 			return this;
 		},
 		
 		/**
 		 * Updates the elements from the hard disk
-		 * @author	Dave Stewart	
+		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
 		update:function()
 		{
@@ -428,11 +489,23 @@
 		},
 		
 		/**
-		 * 
-		 * @param	state	
-		 * @param	recurse	
-		 * @returns		
-		 * @author	Dave Stewart	
+		 * Delete the item from the library
+		 * @returns				{ItemCollection}	The original ItemCollection
+		 */
+		deleteItems:function()
+		{
+			for(var i = this.elements.length - 1; i >= 0; i--)
+			{
+				this.library.deleteItem(this.elements[i].name);
+			}
+			return this;
+		},
+		
+		/**
+		 * Visually expands or collapses folders in the library panel
+		 * @param	state		{Boolean}		
+		 * @param	recurse		{Boolean}
+		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
 		expand:function(state, recurse)
 		{
@@ -449,11 +522,35 @@
 		},
 		
 		/**
+		 * Reveals the items in the library panel by expanding contaiing folders
+		 * @returns				{ItemCollection}	The original ItemCollection
+		 */
+		reveal:function()
+		{
+			var cache = [];
+			for(var i = 0; i < this.elements.length; i++)
+			{
+				var path = this.elements[i].name;
+				while(/\//.test(path))
+				{
+					path = path.replace(/\/[^\/]*$/, '');
+					if(cache.indexOf(path) == -1)
+					{
+						this.library.expandFolder(true, false, path);
+						cache.push(path)
+					}
+				}
+				this.library.expandFolder(true, false, path);
+			}
+			return this;
+		},
+		
+		/**
 		 * Move collection elements to a folder
-		 * @param	path		{String}	The path to move items to
-		 * @param	replace		{Boolean}	Replace any items of the same name (set false to automatically rename)
-		 * @param	expand		{Boolean}	Expand any newly-created folders
-		 * @returns				{ItemCollection}
+		 * @param	path		{String}			The path to move items to
+		 * @param	replace		{Boolean}			Replace any items of the same name (set false to automatically rename)
+		 * @param	expand		{Boolean}			Expand any newly-created folders
+		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
 		move:function(path, replace, expand)
 		{
@@ -489,41 +586,18 @@
 		},
 		
 		/**
-		 * Remove the item from the library
-		 * @param		
-		 * @returns		
-		 */
-		remove:function()
-		{
-			for(var i = this.elements.length - 1; i >= 0; i--)
-			{
-				this.library.deleteItem(this.elements[i].name);
-			}
-			return this;
-		},
-		
-		/**
-		 * Numerically rename the the items in the collection using a pattern or callback
-		 * @param	baseName	{String}			A base name for numerical naming. Alternatively, pass a callback of the format function(name, index, item) which returns a custom name
-		 * @returns	this		(ItemCollection)
+		 * Rename the the items in the collection using a numerical pattern or callback
+		 * @param	baseName	{Function}			A callback of the format function(name, index, item) which should return a custom name
+		 * @param	baseName	{String}			A optinoal base name for numerical naming.
+		 * @param	padding		{Number}			An optional length to pad the numeric part of the new name to
+		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
 		rename:function(baseName, padding)
 		{
-			// padding function
-				function pad(num, length)
-				{
-					var str = String(num);
-					while(str.length < length)
-					{
-						str = '0' + str;
-					}
-					return str;
-				}
-				
 			// default callback function
-				function callback(name, index, item)
+				function callback(item, name, index)
 				{
-					return baseName + ' ' + pad(index + 1);
+					return baseName + ' ' + xjsfl.utils.pad(index + 1, '0', padding);
 				}
 				
 			// default pattern
@@ -545,8 +619,8 @@
 						var name	= parts.pop();
 						
 					// run via renaming callback
-						name		= callback(name, i, this.elements[i]);
-						var path	= parts.join('/') + '/' + name;
+						name		= callback(this.elements[i], name, i);
+						//var path	= parts.join('/') + '/' + name;
 						this.elements[i].name = name;
 				}
 				
@@ -555,10 +629,9 @@
 		
 		/**
 		 * Run a function in each item in the collection by entering edit mode, running the function, then moving onto the next item
-		 * @param	callback		{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
-		 * @param	params			{Array}				An array of optional parameters to pass to the callback
-		 * @returns					{ItemCollection}	The original ItemCollection
-		 * @author	Dave Stewart	
+		 * @param	callback	{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
+		 * @param	params		{Array}				An array of optional parameters to pass to the callback
+		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
 		exec:function(callback, params)
 		{
@@ -574,18 +647,13 @@
 			return this;
 		},
 		
-		invoke:function(method, params)
+		/**
+		 * Debugging function to list the items in the collection
+		 * @returns				{ItemCollection}	The original ItemCollection
+		 */
+		list:function()
 		{
-			for(var i = this.elements.length - 1; i >= 0; i--)
-			{
-				this.library[method].apply(this, params);
-			}
-		},
-		
-		inspect:function()
-		{
-			fl.trace('\n' + this.toString());
-			this.elements.forEach(function(e, i){fl.trace('  [' + i + '] => ' + e.name)})
+			Output.list(this.elements, 'name', this.toString());
 			return this;
 		}
 		
@@ -596,7 +664,6 @@
 	{
 		return '[class ItemCollection]';
 	}
-	
 	
 	/*
 	var items = fl.getDocumentDOM().library.items.slice(1, 3);
@@ -725,6 +792,30 @@
 		
 		dom:null,
 		
+		selection:null,
+		
+		/**
+		 * Swap any existing selection for the collection
+		 */
+		_deselect:function(state)
+		{
+			this.selection = dom.selection || [];
+			if(state !== false)
+			{
+				dom.selectNone();
+				dom.selection = this.elements;
+			}
+		},
+		
+		/**
+		 * Reselect any user selection
+		 */
+		_reselect:function()
+		{
+			dom.selectNone();
+			dom.selection = this.selection;
+		},
+		
 		constructor:function(elements)
 		{
 			this.dom = fl.getDocumentDOM();
@@ -736,97 +827,295 @@
 		},
 		
 		/**
-		 * Select the elements within the collection
+		 * Finds a single element or groups of elements within the collection
+		 * @param	element		{Number}		The index of the element to find
+		 * @param	element		{String}		The name of the element to find
+		 * @param	element		{RegExp}		A RegExp to match agains the names of the elements (plural) to find
+		 * @returns				{Element}		A single element
+		 * @returns				{Array}			An array of elements (only if a RegExp is supplied)
 		 */
-		select:function()
+		find:function(element)
+		{
+			if(element == null)
+			{
+				element = 0;
+			}
+			if(typeof element === 'number')
+			{
+				return this.elements[element];
+			}
+			else if(typeof element === 'string')
+			{
+				var i = -1;
+				while(i++ < this.elements.length - 1)
+				{
+					if(this.elements[i].name === element)
+					{
+						return this.elements[i];
+					}
+				}
+			}
+			else if(element instanceof RegExp)
+			{
+				var i = 0;
+				var elements = [];
+				while(i++ < this.elements.length)
+				{
+					if(this.elements[i].name === element)
+					{
+						elements.push(this.elements[i]);
+					}
+				}
+				return element;
+			}
+			else if(element instanceof Element)
+			{
+				return element;
+			}
+			return null;
+		},
+		
+		/**
+		 * Select one or all of the elements within the collection
+		 * @param	element		{Boolean}			An optional true flag to select all elements (the default)
+		 * @param	element		{Number}			An optional index of the element to select
+		 * @param	element		{String}			An optional name of the element to select
+		 * @param	element		{Element}			An optional reference to the element to select
+		 * @returns				{ElementCollection}	The original ElementCollection object
+		 */
+		select:function(element)
 		{
 			this.dom.selectNone();
-			this.dom.selection = this.elements;
+			if(element === true || element == undefined)
+			{
+				this.dom.selection	= this.elements;
+			}
+			else
+			{
+				element				= this.find(element);
+				this.dom.selection	= [element];
+			}
+			return this;
+		},
+		
+		/**
+		 * Move the collection on stage to, or by, x and y values
+		 * @param	x			{Number}			The x pixel value to move to, or by
+		 * @param	y			{Number}			The y pixel value to move to, or by
+		 * @param	relative	{Boolean}			An optional flag to move the elements relative to their current position, defaults to false
+		 * @returns				{ElementCollection}	The original ElementCollection object
+		 */
+		move:function(x, y, relative)
+		{
+			// variables
+				x = x || 0;
+				y = y || 0;
+				
+			// move relative
+				if(relative)
+				{
+					for(var i = 0; i < this.elements.length; i++)
+					{
+						var element = this.elements[i];
+						element.x = element.x + x;
+						element.y = element.y + y;
+					}
+				}
+				
+			// move absolute
+				else
+				{
+					// get bounds
+						this._deselect();
+						var bounds = dom.getSelectionRect();
+						
+					// loop
+						for(var i = 0; i < this.elements.length; i++)
+						{
+							var element	= this.elements[i];
+							element.x	= (element.left - bounds.left) + (element.x - element.left) + x;
+							element.y	= (element.top - bounds.top) + (element.y - element.top) + y;
+						}
+						
+					// reselect
+						this._reselect();
+				}
+				
+			// refresh
+				this.refresh();
+				
+			// return
+				return this;
+		},
+		
+		/**
+		 * Duplicates and updates the current collection
+		 * @param	add			{Boolean}			An optional flag to add the duplicated items to the current collection, defaulst to false
+		 * @returns				{ElementCollection}	The original ElementCollection object
+		 */
+		duplicate:function(add)
+		{
+			this._deselect();
+			this.dom.duplicateSelection();
+			this.elements = add ? this.elements.concat(this.dom.selection) : this.dom.selection;
+			this.refresh();
 			return this;
 		},
 		
 		/**
 		 * Sets a single property on each element in the collection
-		 * @param name {String} The property name
-		 * @param value {Object} The property value. Can be any valid value, or a callback of = function the form fn(e,i){} that returns a value
-		 * @returns {Collection} The original ElementCollection object
+		 * @param	prop		{Object}			A hash of valid name:value properties
+		 * @param	prop		{String}			The name of the property to modify
+		 * @param	value		{Value}				A valid property value
+		 * @param	value		{Array}				An array of property values
+		 * @param	value		{Object}			An Object of x, y property values
+		 * @param	value		{Function}			A callback function of the format function(element, index, elements), that returns a value
+		 * @returns				{ElementCollection}	The original ElementCollection object
 		 */
 		attr:function (prop, value)
 		{
+			//TODO Update to handle 3D properties
+			//TDOD Update to handle alpha, brightness, tint, filters
 			
-			trace('attr:' + this.elements.length)
-			
-			var i = 0;
-			if(typeof value == 'function')
-			{
-				this.elements.each(value);
-			}
-			else
-			{
-				// 2D properties
-					if(prop.match(/(position|size|scale)/))
+			// if a hash is supplied, recurse the name:values
+				if(typeof prop === 'object')
+				{
+					var props = prop;
+					for(prop in props)
 					{
-						// convert values to array format
-							if(typeof value === 'number')
-							{
-								value = [value, value];
-							}
-							else if(value.x != undefined && value.y != undefined)
-							{
-								value = [value.x, value.y];
-							}
-						
-						// properties
-							switch(prop)
-							{
-								case 'position':
-									prop = ['x','y'];
-								break;
-							
-								case 'size':
-									prop = ['width','height'];
-								break;
-							
-								case 'scale':
-									prop = ['scaleX','scaleY'];
-								break;
-							}
-							
-						// assign
-							while(i < this.elements.length)
-							{
-								this.elements[i][prop[0]] = value[0];
-								this.elements[i][prop[1]] = value[1];
-								i++;
-							}
+						this.attr(prop, props[prop]);
 					}
-				
-				// 1D properties
-					else
-					{
-						while(i < this.elements.length)
+					return this;
+				}
+			
+			// if 2D properties, recurse sub-properties
+				if(/^(pos|position|size|scale)$/.test(String(prop)))
+				{
+					// convert values to array format
+						if(typeof value === 'number')
 						{
-							this.elements[i][prop] = value;
-							i++;
+							var values = [value, value];
 						}
+						else if(value.x != undefined && value.y != undefined)
+						{
+							var values = [value.x, value.y];
+						}
+						else
+						{
+							values = undefined;
+						}
+					
+					// get prop names
+						switch(prop)
+						{
+							case 'position':
+							case 'pos':
+								var x = 'x';
+								var y = 'y';
+							break;
+						
+							case 'size':
+								var x = 'width';
+								var y = 'height';
+							break;
+						
+							case 'scale':
+								var x = 'scaleX';
+								var y = 'scaleY';
+							break;
+						}
+						
+					// set properties
+					
+						//TODO modify width and height to update in object-space (rotate, resize, rotate back)
+						//TODO Add screenwidth and screenheight properties
+						
+						for(var i = 0; i < this.elements.length; i++)
+						{
+							values				= typeof value === 'function' ? value.apply(this, [this.elements[i], i, this.elements]) : value;
+							values				= xjsfl.utils.isArray(values) ? [values[0], values[1]] : [values, values];
+							this.elements[i][x]	= values[0]
+							this.elements[i][y]	= values[1]
+						}
+						
+					// return
+						return this;
+				}
+			
+			// if 1D properties, assign
+				else
+				{
+					var fn = typeof value === 'function' ? value : function(){ return value; };
+					for(var i = 0; i < this.elements.length; i++)
+					{
+						this.elements[i][prop] = fn(this.elements[i], i, this.elements);
 					}
-			}
+				}
 			
 			return this;
 		},
 		
+		/**
+		 * Numerically renames elements in order
+		 * @param baseName		{String}			The basename for your objects
+		 * @param padding		{Number}			An optional length to pad the numbers to the elements are renamed
+		 * @param padding		{Boolean}			An optional flag to pad the numbers as they are created
+		 * @param startIndex	{Number}			An optional number to start renaming from. Defaults to 1
+		 * @param separator		{String}			An optional separator between the numeric part of the name. Defaults to '_'
+		 * @returns				{ElementCollection}	The original ElementCollection object
+		 */
+		rename:function (baseName, padding, startIndex, separator)
+		{
+			// padding function
+				function rename(element, index, elements)
+				{
+					var number		= padding > 0 ? xjsfl.utils.pad(startIndex + index, 0, padding) : index;
+					element.name	= baseName + number;
+				}
+				
+			// variables
+				separator	= separator || '_';
+				startIndex	= startIndex || 1;
+				baseName	= baseName + separator;
+				padding		= padding == undefined ? true : padding;
+				padding		= padding === true ? String(this.elements.length).length : padding;
+				
+			// do it
+				this.elements.forEach(rename);
+				
+			// return
+				return this;
+		},
 		
 		/**
-		 * Reorder the elements om teh stage by an arbitrary property
-		 * @param prop {String} The property to compare
-		 * @param reverseOrder {Boolean} Optionally arrange in reverse order
-		 * @returns {Collection} The original ElementCollection object
+		 * Removes all elements from the collection and the stage
+		 * @returns		
+		 */
+		deleteElements:function()
+		{
+			this.dom.selectNone();
+			this.dom.selection = this.elements;
+			this.dom.deleteSelection;
+			this.elements = [];
+			return this;
+		},
+		
+
+		/**
+		 * Reorder the elements om the stage by an arbitrary property
+		 * @param	prop			{String}			The property to compare. Available properties are 'name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY'
+		 * @param	reverseOrder	{Boolean}			Optionally arrange in reverse order
+		 * @returns 				{ElementCollection}	The original ElementCollection object
 		 */
 		orderBy:function(prop, reverseOrder)
 		{
+			
 		// look up more efficient sort functions?
-			if(prop.match(/(name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)/))
+			if(prop.match(/(name|elementType|x|y|width|height|size|left|top|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)/))
 			{
+				// update selection
+					this._deselect(false);
+					
 				// helper functions
 					getProperty = function(element, prop)
 					{
@@ -845,75 +1134,117 @@
 					}
 					
 				// grab the array and sort it
-					var arr = this.elements;
+					var arr = [].concat(this.elements);
 					arr = arr.sort(cmp);
 					
 				// reorder elements
 					this.dom.selectNone();
 					arr.forEach
 					(
-						function(e)
+						function(element)
 						{
-							this.dom.selection = [e];
+							this.dom.selection = [element];
 							this.dom.arrange(reverseOrder ? 'back' : 'front');
-							/*
-							this.dom.selection = [e];
-							this.dom.clipCut();
-							this.dom.clipPaste(true)
-							*/
 						}
 					)
-					this.dom.selection = this.elements;
+					
+				// re-order
+					this.elements = arr;
+					
+				// update selection
+					this._reselect();
+					
 			}
 			return this;
 		},
 		
 		
-		arrange:
+		/**
+		 * Align elements to one another
+		 * @param props		{String}			The specific arguments for the arrange type. Acceptable values are 'left,right,top,bottom,top left,top right,bottom left,bottom right,vertical,horizontal,center'
+		 * @param toStage	{Boolean}			Use the stage bounding box
+		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 */
+		align:function(props, element)
 		{
-			dom:fl.getDocumentDOM(),
-			
-			/**
-			 * Align elements to one another
-			 * @param props		{String}	The specific arguments for the arrange type. Acceptable values are 'left,right,top,bottom,top left,top right,bottom left,bottom right,vertical,horizontal,center'
-			 * @param toStage	{Boolean}	Use the stage bounding box
-			 */
-			align:function(props, toStage)
-			{
+			// return early if no elements
+				if(this.elements.length == 0)
+				{
+					return this;
+				}
+				
+			// align
+				props = props || 'center';
 				if(props.match(/\b(left|right|top|bottom|top left|top right|bottom left|bottom right|vertical|horizontal|center)\b/))
 				{
+					// update selection
+						this._deselect();
+						
+					// variables
+						var align, x, y;
+						
 					// special props
 						if(props === 'center')
 						{
-							props = ['vertical center', 'horizontal center'];
+							align	= ['vertical center', 'horizontal center'];
+							//x		= element.x;
+							//y		= element.y;
 						}
-						else if(props.match(/(vertical|horizontal)/))
+						else if(/(vertical|horizontal)/.test(props))
 						{
-							props = [props + ' center'];
+							align	= [props + ' center'];
+							if(/horizontal/.test(props))
+							{
+								//x		= element['x'];
+							}
+							else
+							{
+								//y		= element['y'];
+							}
 						}
 						else
 						{
-							props = props.split(' ');
+							align	= props.split(' ');
+							//x		= element['x'];
+							//y		= element['y'];
 						}
 					
+					// reposition
+						//this.attr('x', coords[0]);
+						//this.attr('y', coords[1]);
+							
 					// align
-						for(var i = 0; i < props.length; i++)
+						for(var i = 0; i < align.length; i++)
 						{
-							this.dom.align(props[i], toStage);
+							dom.align(align[i]);
 						}
+						
+					// update selection
+						this._reselect();
 				};
-				
-				return this;
-			},
 			
-			/**
-			 * Distribute elements relative to one another
-			 * @param props		{String}	1 or 2 of 'left,horizontal,right,top,vertical,bottom'
-			 * @param toStage	{Boolean}	Use the stage bounding box
-			 */
-			distribute:function(props, toStage)
-			{
-				props = props.split(' ');
+			return this;
+		},
+		
+		/**
+		 * Distribute elements relative to one another from their transformation point
+		 * @param props		{String}			1 or 2 of 'left,horizontal,right,top,vertical,bottom'
+		 * @param toStage	{Boolean}			Use the stage bounding box
+		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 */
+		distribute:function(props, toStage)
+		{
+			// return early if no elements
+				if(this.elements.length == 0)
+				{
+					return this;
+				}
+				
+			// update selection
+				this._deselect();
+				
+			// distribute
+				props = xjsfl.utils.toArray(props);
 				for(var i = 0; i < props.length; i++)
 				{
 					if(props[i].match(/(left|horizontal|right|top|vertical|bottom)/))
@@ -926,79 +1257,161 @@
 						{
 							props[i] += ' edge';
 						}
-						this.dom.distribute(props[i], toStage);
+						dom.distribute(props[i], toStage);
 					}
 				}
+				
+			// update selection
+				this._reselect();
+				
+			// return
 				return this;
-			},
-			
-			/**
-			 * Space elements relative to one another
-			 * @param props		{String}	Acceptable values are 'vertical,horizontal'
-			 * @param toStage	{Boolean}	Use the stage bounding box
-			 */
-			space:function(props, toStage)
-			{
-				if(props.match(/\b(vertical|horizontal)\b/))
-				{
-					// variables
-						props = props.match(/(vertical|horizontal)(\s+(-?\d+))?/);
-						var direction = props[1];
-						var space = props[3];
-						
-					// custom spacing routine
-						if(space)
-						{
-							var val = 0;
-							space = parseInt(space);
-							if(direction === 'horizontal')
-							{
-								this.orderBy('x');
-								for(var i = 0; i < this.elements.length; i++)
-								{
-									this.elements[i].x = val;
-									val += this.elements[i].width + space;
-								}
-							}
-							else
-							{
-								this.orderBy('y');
-								for(var i = 0; i < this.elements.length; i++)
-								{
-									this.elements[i].y = val;
-									val += this.elements[i].height + space;
-								}
-							}
-						}
-					// standard spacing
-						else
-						{
-							this.dom.space(props, toStage);
-						}
-				}
-				return this;
-			},
-			
-			/**
-			 * match elements dimensions relative to one another
-			 * @param props		{String}	Acceptable values are'width,height,size'
-			 * @param toStage	{Boolean}	Use the stage bounding box
-			 */
-			match:function(type, props, toStage)
-			{
-				if(props.match(/(width|height|size)/))
-				{
-					this.dom.match(props.match(/(width|size)/), props.match(/(height|size)/), toStage);
-				}
-				return this;
-			}
 		},
 		
 		/**
+		 * Space elements relative to one another
+		 * @param direction	{String}			The direction in which to space. Acceptable values are 'vertical,horizontal'
+		 * @param type		{Number}			An optional amount of space to add or subtract between items
+		 * @param type		{Boolean}			An optional flag to use the stage bounding box (only has an effect on the root)
+		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 */
+		space:function(direction, type)
+		{
+			if(/^(horizontal|vertical)$/.test(direction))
+			{
+				// return early if no elements
+					if(this.elements.length == 0)
+					{
+						return this;
+					}
+					
+				// custom spacing routine
+					if(typeof type === 'number')
+					{
+						// variables
+							var x, y, element, offset;
+							gutter	= type || 0;
+							
+						// reorder
+							this.orderBy(direction == 'horizontal' ? 'left' : 'top');
+							
+						// align
+							for(var i = 0; i < this.elements.length; i++)
+							{
+								// element
+									element	= this.elements[i];
+									
+								// move
+									if(direction == 'horizontal')
+									{
+										offset = element.x - element.left;
+										i === 0 ? x = element.x - offset : element.x = x + offset;
+										x += element.width + gutter;
+									}
+									else if(direction == 'vertical')
+									{
+										offset = element.y - element.top;
+										i === 0 ? y = element.y - offset : element.y = y + offset;
+										y += element.height + gutter;
+									}
+							}
+					}
+					
+				// standard spacing
+					else
+					{
+						// update selection
+							this._deselect();
+							
+						// make a selection
+							dom.selectNone();
+							dom.selection = this.elements;
+
+						// space						
+							dom.space(direction, !!type);
+							
+						// update selection
+							this._reselect();
+					}
+			}
+			return this;
+		},
+		
+		/**
+		 * match elements' dimensions relative to one another
+		 * @param	props	{String}			The dimension in which to match. Acceptable values are'width,height,size'
+		 * @param	element	{Boolean}			An optional flag (true=biggest, false=smallest) of the element whose dimension(s) you want to match. Defaults to true
+		 * @param	element	{Number}			An optional index of the element whose dimension(s) you want to match
+		 * @param	element	{String}			An optional name of the element whose dimension(s) you want to match
+		 * @param	element	{Element}			An optional reference to the element whose dimension(s) you want to match
+		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 */
+		match:function(prop, element)
+		{
+			if(/^(width|height|size)$/.test(prop))
+			{
+				// return early if no elements
+					if(this.elements.length == 0)
+					{
+						return this;
+					}
+					
+				// test
+					if(typeof element === 'undefined')
+					{
+						element = true;
+					}
+					
+				// get element
+					if(typeof element === 'boolean')
+					{
+						element =
+						{
+							width:	xjsfl.utils.getExtremeValue(this.elements, 'width', element),
+							height:	xjsfl.utils.getExtremeValue(this.elements, 'height', element)
+						};
+					}
+					
+				// name or index
+					else if(typeof element === 'string' || typeof element === 'number')
+					{
+						element = this.find(element);
+					}
+					
+				// match
+					if(element && element instanceof Element)
+					{
+						trace(element.name)
+						if(/^(width|size)$/.test(prop))
+						{
+							this.attr('width', element.width);
+						}
+						if(/^(height|size)$/.test(prop))
+						{
+							this.attr('height', element.height);
+						}
+					}
+					//this.dom.match(props.match(/(width|size)/), props.match(/(height|size)/), toStage);
+			}
+			return this;
+		},
+		
+		/*
+		match:function(props, toStage)
+		{
+			if(props.match(/(width|height|size)/))
+			{
+				this.dom.match(props.match(/(width|size)/), props.match(/(height|size)/), toStage);
+			}
+		},
+		*/
+		
+		/**
 		 * Repositions element positions to round multiples of numbers
-		 * @param precision {Number|Array} What precision to reposition to - for example, 1 is every pixel, 10 is every 10 pixels. Pass in an array for different y and y values
-		 * @param rounding {Number} Round down(-1), nearest(0), or up(1). Defaults to nearest(0)
-		 * @returns {Collection} The original ElementCollection object
+		 * @param	precision	{Number}			The pixel-precision to reposition to, same for x and y values
+		 * @param	precision	{Array}				The pixel-precision to reposition to, different for x and y values
+		 * @param	rounding	{Number}			Round down(-1), nearest(0), or up(1). Defaults to nearest(0)
+		 * @returns				{ElementCollection}	The original ElementCollection object
 		 */
 		toGrid:function(precision, rounding)
 		{
@@ -1052,132 +1465,128 @@
 				return this;
 		},
 		
-		/**
-		 * Randomizes properties of the elements
-		 * @param		properties	{Object}		An object containing property names and values
-		 * @returns					{Collection}	The original ElementCollection object
-		 */
-		randomize:function(properties)
+		layout:function(columns, gutter, spacing)
 		{
-			/*
+			var element	= this.elements[0];
+			var x		= element.x;
+			var y		= element.y;
 			
-			   Maybe move the random methods to the NumberUtils class?
-			   
-			   from and to methods
-			   Number from and to methods
-			   
-			   Should they be on the class itself (Number.randomize(val)) or in a Utils class (NumberUtils.randomize(num, val))
-		   */
-			
-			/**
-			 * Return a random value or randomly modifiy a value by +, -, %
-			 * @param value {Number} A value to modify
-			 * @param modifier {Number|String} A modifier value. String values can have optional leading +/- and a trailing %
-			 * @returns {Number} The modified value
-			 */
-			randomizeValue = function(value, modifier)
+			for(var i = 0; i < this.elements.length; i++)
 			{
-				if(modifier != undefined)
-				{
-					if(modifier instanceof Array)
-					{
-						return modifier[0] + (modifier[1] - modifier[0]) * Math.random();
-					}
-					else if(typeof modifier == 'string')
-					{
-						// value
-							var modifierValue =  Math.abs(parseFloat(modifier));
-							
-							//trace(modifierValue)
-							
-						// percentage
-							if(modifier.substring(-1,1) === '%')
-							{
-								modifierValue = value * (modifierValue / 100);
-							}
-							
-						// multiplier
-							if(modifier.substring(0,1) === '*')
-							{
-								return value * modifierValue * Math.random();
-							}
-							
-						// more than
-							else if(modifier.substring(0,1) === '+')
-							{
-								return value + modifierValue * Math.random();
-							}
-							
-						// less than
-							else if(modifier.substring(0,1) === '-')
-							{
-								return value - modifierValue * Math.random();
-							}
-							
-						// either side of
-							else
-							{
-								return value + (modifierValue * Math.random()) - (modifierValue / 2);
-							}
-					}
-					else
-					{
-						return modifier * Math.random();
-					}
-				}
-				else
-				{
-					return value * Math.random();
-				}
-				return value;
+				px			= i % cols;
+				py			= (i - x) / cols;
+				element		= this.elements[i];
 			}
-				
-			// handle compound (Object) values such as position, scale and size
-				if(properties.position)
+		},
+		
+		/**
+		 * Randomizes any valid element properties
+		 * @param	prop		{Object}			An object containing property name:value pairs
+		 * @param	prop		{String}			A valid String property names
+		 * @param	modifier	{Number}			A multiplier value
+		 * @param	modifier	{String}			A valid modifier property: n%, +n, -n, *n
+		 * @param	modifier	{Array}				A valid modifier range: [from, to]
+		 * @returns				{ElementCollection}	The original ElementCollection object
+		 */
+		randomize:function(prop, modifier)
+		{
+			// object
+				if(typeof prop === 'object')
 				{
-					properties.x = properties.position.x;
-					properties.y = properties.position.y;
-					delete properties.position;
-				}
-	
-				if(properties.scale)
-				{
-					properties.scaleX = properties.scale.x;
-					properties.scaleY = properties.scale.y;
-					delete properties.scale;
-				}
-	
-				if(properties.size)
-				{
-					properties.width = properties.size[0];
-					properties.height = properties.size[1];
-					delete properties.size;
-				}
-	
-			// loop
-				for(var i = 0; i < this.elements.length; i++)
-				{
-					for(var prop in properties)
+					var props = prop;
+					for(prop in props)
 					{
-						var element = this.elements[i];
-						var value = randomizeValue(element[prop], properties[prop]);
-						if(prop.match(/(x|y|width|height|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)/))
-						{
-							element[prop] = value;
-						}
+						this.randomize(prop, props[prop]);
 					}
+					return this;
+				}
+				
+			// variable
+				var isArray	= xjsfl.utils.isArray(modifier);
+				
+			// handle single properties
+				if(/^(x|y|width|height|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)$/.test(prop))
+				{
+					for(var i = 0; i < this.elements.length; i++)
+					{
+						this.elements[i][prop] = isArray
+													? xjsfl.utils.randomValue(modifier)
+													: xjsfl.utils.randomizeValue(this.elements[i][prop], modifier);
+					}
+				}
+				
+			// handle compound (Array) properties such as position, scale and size
+				else if(/^(pos|position|scale|size)$/.test(prop))
+				{
+					// variables
+						var values	= [];
+						var element, px, py, value;
+						if(prop === 'pos')
+						{
+							prop = 'position';
+						}
+						
+					// attribute components
+						var attrs =
+						{
+							position:	['x', 'y'],
+							scale:		['scaleX', 'scaleY'],
+							size:		['width', 'height']
+						};
+						
+					// assign per compound type
+						switch(prop)
+						{
+							case 'position':
+								values = isArray ? modifier : [modifier[0],  modifier[1]];
+								this.randomize({x:values[0], y:values[1]});
+							break;
+						
+							case 'size':
+							case 'scale':
+								for(var i = 0; i < this.elements.length; i++)
+								{
+									// variables
+										element			= this.elements[i];
+										px				= attrs[prop][0];
+										py				= attrs[prop][1];
+
+									// get values
+										if(isArray)
+										{
+											values[0]	= xjsfl.utils.randomizeValue(element[px], modifier[0]);
+											values[1]	= xjsfl.utils.randomizeValue(element[py], modifier[1]);
+										}
+										else if(typeof modifier === 'string')
+										{
+											value		= xjsfl.utils.randomizeValue(element[px], modifier[0]);
+											values		= [value, value];
+											trace(element[px], value)
+										}
+										else
+										{
+											value		= xjsfl.utils.randomizeValue(Math.max(element[px], element[py]), modifier);
+											values		= [value, value];
+										}
+										
+									// assign values
+										element[px]		= values[0];
+										element[py]		= values[1];
+								}
+							break;
+						}
+
 				}
 				
 			// return
 				return this;
-			
 		},
 		
 		
 		/**
 		 * Centers the transform points of the elements
-		 * @param state {Boolean} Sets the transform point to the center (true) or the original pivot point (false). Defaults to true
-		 * @returns {Collection} The original ElementCollection object
+		 * @param state		{Boolean}			Sets the transform point to the center (true) or the original pivot point (false). Defaults to true
+		 * @returns			{ElementCollection}	The original ElementCollection object
 		 */
 		centerTransformPoint:function(state)
 		{
@@ -1187,25 +1596,23 @@
 			{
 				if(false)
 				{
-					var rot = e.rotation;
+					var rot		= e.rotation;
 					
 					e.rotation
-					var mat = e.matrix;
-					var mat2 = fl.Math.invertMatrix(e.matrix)
+					var mat		= e.matrix;
+					var mat2	= fl.Math.invertMatrix(e.matrix)
 					
 					//$debug(e.matrix)
 					
-					
 					//fl.Math.concatMatrix()
-					mat2.tx = e.width/2;
-					mat2.ty = e.height/2;
+					mat2.tx		= e.width/2;
+					mat2.ty		= e.height/2;
 					
 					trace(e.matrix)
 					
 					/*
 					var cMat = {a:1, b:0, c:0, d:1, tx:e.width/2, ty:e.height/2};
 					*/
-					
 					
 					/*
 					e.matrix = mat;
@@ -1216,15 +1623,15 @@
 					e.matrix = fl.Math.concatMatrix(mat, invMat);
 					*/
 					
-					var mat = e.matrix
-					var b = e.matrix.b;
-					var c = e.matrix.c;
+					var mat		= e.matrix
+					var b		= e.matrix.b;
+					var c		= e.matrix.c;
 					
-					var cMat = {a:mat.a, b:0, c:0, d:mat.d, tx:mat.tx, ty:mat.ty};
+					var cMat	= {a:mat.a, b:0, c:0, d:mat.d, tx:mat.tx, ty:mat.ty};
 					
-					e.matrix = cMat;
+					e.matrix	= cMat;
 					e.setTransformationPoint( {x:(e.width/2) * (1/e.scaleX), y:(e.height/2) * (1/e.scaleY)} );
-					e.matrix = mat;
+					e.matrix	= mat;
 					
 							
 				//e.setTransformationPoint( {x:e.width/2, y:e.height/2} );
@@ -1237,41 +1644,36 @@
 		
 		/**
 		 * Resets the transform of the elements
-		 * @returns {Collection} The original ElementCollection object
+		 * @returns				{ElementCollection}	The original ElementCollection object
 		 */
 		resetTransform:function()
 		{
-			var selection = this.dom.selection;
-			this.dom.selectNone();
-			this.dom.selection = this.elements;
-			this.dom.resetTransformation();
-			this.dom.selectNone();
-			this.dom.selection = this.elements;
+			this._deselect();
+			dom.resetTransformation();
+			this._reselect();
 			return this;
 		},
 		
 		/**
-		 * Numerically renames elements in order
-		 * @param baseName {String} The basename for your objects
-		 * @param separator {String} An optional separator between the numeric part of the name. Defaults to '_'
-		 * @returns {Collection} The original ElementCollection object
-		 */
-		rename:function (baseName, separator)
-		{
-			// need to add padding ### :)
-			return this.each(function(e, i){e.name = baseName + (separator ? separator : '_') + i;})
-		},
-		
-		/**
 		 * Forces the a refreshes of the display after a series of operations
-		 * @returns {Collection} The original ElementCollection object
+		 * @returns				{ElementCollection}	The original ElementCollection object
 		 */
 		refresh:function()
 		{
 			this.dom.livePreview = true
 			return this;
-		}
+		},
 		
+		/**
+		 * Utility function to list the contents of the collection
+		 * @returns				{ElementCollection}	The original ElementCollection object
+		 */
+		list:function()
+		{
+			Output.list(this.elements, 'name', this.toString());
+			return this;
+		}
+
 	}
 	
 	ElementCollection = Collection.extend(elementCollection);
