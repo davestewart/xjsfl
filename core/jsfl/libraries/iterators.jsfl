@@ -117,12 +117,13 @@
 				else
 				{
 					context	= Context.create(true, false, false, false, false);
+					items	= context.dom.library.items;
 				}
 				
 			// final check for items
 				if( ! items )
 				{
-					throw new TypeError('Iiterators.items(): context param expects an Array or Context object');
+					throw new TypeError('Iterators.items(): context param expects an Array or Context object');
 				}
 
 			// iterate
