@@ -68,7 +68,7 @@
 			]);
 			
 		// initialize
-			xjsfl.init(this);
+			xjsfl.init(this, true);
 			
 	}
 	catch(err)
