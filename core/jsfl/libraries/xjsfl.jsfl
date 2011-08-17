@@ -25,6 +25,8 @@
 		// temp variables for framework setup
 			var xjsflPath = FLfile.uriToPlatformPath(xjsfl.uri).replace(/\\/g, '/');
 			
+			//TODO remove xjsflPath, and change all references to use xjsfl.uri
+			
 		// temp output object, needed before libraries are loaded
 			if( ! xjsfl.settings )
 			{
@@ -54,6 +56,7 @@
 			}
 	
 		// currently-running script dir
+		// TODO Make this a global function
 			xjsfl.__defineGetter__
 			(
 				'scriptDir',
@@ -86,10 +89,12 @@
 	{
 		/**
 		 * Get the current Document DOM, or issue a standard warning if not available
-		 * @returns		{Document|Boolean}	A Document object or false if not available
+		 * @returns		{Document}	A Document object
+		 * @returns		{Boolean}	False if not available
 		 */
 		dom:function(error)
 		{
+			//TODO Look to see if passing in an error message is good design or not
 			var dom = fl.getDocumentDOM();
 			if(dom)
 			{
@@ -101,7 +106,8 @@
 		
 		/**
 		 * Get the currently selected library items, or issue a standard warning if not selected
-		 * @returns		{Array|Boolean}	An array of library items or false if not available
+		 * @returns		{Array}		An array of library items
+		 * @returns		{Boolean}	False if not available
 		 */
 		items:function()
 		{
@@ -120,7 +126,8 @@
 		
 		/**
 		 * Get the current selection, or issue a standard warning if nothing is selected
-		 * @returns		{Array|Boolean}	An array of elements or false if no selection
+		 * @returns		{Array}		An array of elements
+		 * @returns		{Boolean}	False if no selection
 		 */
 		selection:function()
 		{
@@ -613,6 +620,40 @@
 		},
 		
 		/**
+		 * comparison function to get a max or min value within an array of objects
+		 * @param	elements		{Array}		An Array of objects with named properties
+		 * @param	prop			{String}	The property to test
+		 * @param	bias			{Boolean}	An optional flag to get the max (true, default) or the min (false) value
+		 * @param	returnElement	{Boolean}	An optional flag to return the element, rather than the value
+		 * @returns					{Number}	The number
+		 */
+		getExtremeValue:function(elements, prop, bias, returnElement)
+		{
+			// comparison function
+				function test(el, index, elements)
+				{
+					var val	= el[prop];
+					value	= value || val;
+					if(bias ? val > value : val < value)
+					{
+						value	= val;
+						element	= el;
+					}
+				}
+				
+			// variables
+				var value;
+				var element;
+				
+			// test
+				elements.forEach(test);
+				
+			// return
+				return returnElement ? element : value;
+		},
+					
+
+		/**
 		 * Get an object's keys, or all the keys from an Array of Objects
 		 * 
 		 * @param	obj	{Object}	Any object with iterable properties
@@ -815,6 +856,124 @@
 					
 			// String
 				return value;
+		},
+		
+		/**
+		 * Randomnly modify a seed value with a secondary modifier component
+		 * @param value		{Number}	A value to modify
+		 * @param modifier	{Number}	An optional modifier component with which to modify the original value
+		 * @param modifier	{String}	An optional modifier component with which to modify the original value, with optional leading +,-,* or a trailing %
+		 * @returns			{Number}	The modified value
+		 */
+		randomizeValue:function(value, modifier)
+		{
+			// value is a number
+				if(typeof value === 'number')
+				{
+					// if a modifier is supplied, 
+						if(modifier != undefined)
+						{
+							// if a string is supplied, 
+								if(typeof modifier == 'string')
+								{
+									// value
+										var matches = modifier.match(/([+-\/*])?(\d+(.\d+)?)(%)?/);
+										if(matches)
+										{
+											// variables
+												var modified;
+												
+											// components
+												var sign	= matches[1];
+												var offset	= parseFloat(matches[2]);
+												var percent	= matches[4];
+												
+											// offset
+												if(percent)
+												{
+													if(sign === '+' || sign === '-')
+													{
+														offset	= value * (offset / 100)
+													}
+													else if(sign === '*' || sign === '/')
+													{
+														offset	= (offset / 100);
+													}
+												}
+												
+											// modify value
+												switch(sign)
+												{
+													case '+':
+														modified = value + offset * Math.random();
+													break;
+												
+													case '-':
+														modified = value - offset * Math.random();
+													break;
+												
+													case '*':
+														modified = value * offset * Math.random();
+													break;
+												
+													case '/':
+														modified = value / offset * Math.random();
+													break;
+												
+													default: // either side
+														modified = value + (offset * Math.random()) - (offset / 2);
+														//modified = value + (offset * 2 * Math.random()) - offset;
+
+												}
+												
+												return modified;
+										}
+										else
+										{
+											return value;
+										}
+
+								}
+							
+							// otherwise, update according to the number
+								else
+								{
+									return value + modifier * Math.random();
+								}
+						}
+						
+					// if a number is supplied, just randomize it
+						else
+						{
+							return value * Math.random();
+						}
+				}
+				
+			// if value is an array, simply return a value between the two numbers
+				else if(value instanceof Array)
+				{
+					return this.randomValue(value[0], value[1]);
+				}
+				
+			// return
+				return value;
+		},
+		
+		/**
+		 * Get a random value between 2 numbers
+		 * @param	a	{Array}		A 2-element array defining the lower and upper limits
+		 * @param	a	{Number}	The lower limit of the range
+		 * @param	b	{Number}	The lower limit of the range
+		 * @returns		{Number}	A number between a and b	
+		 */
+		randomValue:function(a, b)
+		{
+			if(a instanceof Array)
+			{
+				b = a[1];
+				a = a[0];
+			}
+			return a + (b - a) * Math.random();
 		},
 		
 		/**
@@ -1139,6 +1298,8 @@
 			// --------------------------------------------------------------------------------
 			// Load file
 			
+				//TODO swap name and type parameters round, so load(filename) feels more intuitive, and is more straightforward to document
+				
 				// single argument, so type is probably a file, so just convert the path to a uri
 					if(name == undefined || name === true || name === false)
 					{
@@ -1282,28 +1443,36 @@
 					return str;
 				}
 				
+			// variables
+				var path		= str;
+				
 			// if an additional filepath is passed in, the returned URI will be relative to it
 				if(typeof context === 'string')
 				{
-					context = context.replace(/[^\/\\]+$/, '');
-					str		= xjsfl.file.makePath(context) + str;
+					context 	= context.replace(/[^\/\\]+$/, '');
+					path			= xjsfl.file.makePath(context) + path;
 				}
 				
 			// if context is true, then the returned URI will be relative to the calling script
-			// if str is true, the returned URI will be the folder of the calling script
-				else if(context === true || str === true)
+			// if path is true, the returned URI will be the folder of the calling script
+				else if(context === true || path === true)
 				{
 					var stack	= xjsfl.utils.getStack();
-					var path	= stack[3].path;
-					str			= xjsfl.file.makePath(path) + (str === true ? '' : str);
+					path			= xjsfl.file.makePath(stack[3].path) + (path === true ? '' : path);
 				}
 				
 			//TODO IMPORTANT! Throw error / passback false on empty string
 			//TODO If an empty string is passed back, the system assumes the URI is the root. This could be dangerous (especialy if files are to be deleted!) so consider throwing an error, or passing back xJSFL core
 			// Also, if a recursive operation is to be called, this could freeze flash if too many files
+			
+			// error if empty string
+				if( ! path )
+				{
+					throw new Error('Error: Path "' +str+ '" evaluates to "" in xjsfl.file.makeURI()');
+				}
 				
 			// return the final URI using the system FLfile commands
-				return str ? FLfile.platformPathToURI(xjsfl.file.makePath(str)) : '';
+				return FLfile.platformPathToURI(xjsfl.file.makePath(path));
 		},
 		
 		
@@ -1704,16 +1873,19 @@
 	 * Initialize the environment by extracting variables / objects / functions to global scope
 	 * @param	scope	{Object}	The scope into which the framework should be extracted
 	 * @param	force	{Boolean}	An optional Boolean to force extraction of the framework, even if already extracted
-	 * @param	silent	{Boolean}	An optional Boolean to not trace the initializein
+	 * @param	trace	{Boolean}	An optional Boolean to output an initializion message
 	 * @returns		
 	 */
-	xjsfl.init = function(scope, force, silent)
+	xjsfl.init = function(scope, trace)
 	{
-		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined, or force is set as true
-			if( ! scope.xJSFL || force)
+		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined
+			if( ! scope.xJSFL )
 			{
 				// debug
-					xjsfl.output.trace('initializing...');
+					if(trace)
+					{
+						xjsfl.output.trace('initializing...');
+					}
 				
 				// dom getter
 					scope.__defineGetter__( 'dom', function(){ return fl.getDocumentDOM(); } );
