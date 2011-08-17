@@ -111,6 +111,7 @@
 		 */
 		constructor:function(elements)
 		{
+			this.elements = [];
 			this.add(elements);//elements = elements instanceof Array ? elements : [];
 		},
 
@@ -175,15 +176,22 @@
 		 */
 		add:function(elements)
 		{
-			if(arguments.length == 1 && arguments[0] instanceof Array)
-			{
-				this.elements	= this.elements.concat(elements)
-			}
-			else
+			if(arguments.length > 1)
 			{
 				elements		= Array.slice.call(this, arguments)
-				this.elements	= this.elements.concat(elements);
 			}
+			
+			if(elements instanceof Array)
+			{
+				for(var i = 0; i < elements.length; i++)
+				{
+					if(this.elements.indexOf(elements[i]) == -1)
+					{
+						this.elements.push(elements[i]);
+					}
+				}
+			}
+			
 			return this;
 		},
 		
@@ -794,6 +802,16 @@
 		
 		selection:null,
 		
+		constructor:function(elements)
+		{
+			this.dom = fl.getDocumentDOM();
+			if(!this.dom)
+			{
+				throw new Error('ElementCollection requires that a document be open before instantiation');
+			}
+			this.base(elements);
+		},
+		
 		/**
 		 * Swap any existing selection for the collection
 		 */
@@ -814,16 +832,6 @@
 		{
 			dom.selectNone();
 			dom.selection = this.selection;
-		},
-		
-		constructor:function(elements)
-		{
-			this.dom = fl.getDocumentDOM();
-			if(!this.dom)
-			{
-				throw new Error('ElementCollection requires that a document be open before instantiation');
-			}
-			this.base(elements);
 		},
 		
 		/**
@@ -955,13 +963,72 @@
 		 */
 		duplicate:function(add)
 		{
-			this._deselect();
-			this.dom.duplicateSelection();
-			this.elements = add ? this.elements.concat(this.dom.selection) : this.dom.selection;
-			this.refresh();
+			// deselect existing items
+				this._deselect();
+				
+			// duplicate
+				//alert('before:' + [this.elements.length, dom.selection.length])
+				this.dom.duplicateSelection();
+				var elements	= this.dom.selection;
+				
+			// rename elements
+			
+				// function
+					function parseNames(element)
+					{
+						var matches = element.name.match(/(.+?)_(\d+$)/);
+						if(matches)
+						{
+							var _name	= matches[1];
+							var _pad	= matches[2].length;
+							var _num	= parseInt(matches[2]);
+							if(_num > num)
+							{
+								name	= _name;
+								num		= _num;
+								pad		= _pad;
+							}
+						}
+					}
+					
+				// generate data for new names
+					var name	= '';
+					var num		= 0;
+					var pad		= 0;
+					
+					this.elements.forEach(parseNames);
+					name	= name || 'Item';
+					num		= num == 0 ? 1 : num + 1;
+					
+				// rename elements
+					new ElementCollection(elements).rename(name, pad, num)
+
+			// add / replace elements
+				this.elements = add ? this.elements.concat(elements) : elements;
+				
+			// reselect
+				//alert('after:' + [this.elements.length, dom.selection.length])
+				this.refresh();
+				return this;
+		},
+		
+		/**
+		 * Removes all elements from the collection and the stage
+		 * @returns				{ElementCollection}	The original ElementCollection object
+		 */
+		deleteElements:function()
+		{
+			if(this.elements.length)
+			{
+				this.dom.selectNone();
+				this.dom.selection = this.elements;
+				this.dom.deleteSelection();
+				this.elements = [];
+			}
 			return this;
 		},
 		
+
 		/**
 		 * Sets a single property on each element in the collection
 		 * @param	prop		{Object}			A hash of valid name:value properties
@@ -1069,8 +1136,9 @@
 			// padding function
 				function rename(element, index, elements)
 				{
-					var number		= padding > 0 ? xjsfl.utils.pad(startIndex + index, 0, padding) : index;
-					element.name	= baseName + number;
+					var num			= index + startIndex;
+					var str			= padding > 0 ? xjsfl.utils.pad(num, 0, padding) : num;
+					element.name	= baseName + str;
 				}
 				
 			// variables
@@ -1087,20 +1155,6 @@
 				return this;
 		},
 		
-		/**
-		 * Removes all elements from the collection and the stage
-		 * @returns		
-		 */
-		deleteElements:function()
-		{
-			this.dom.selectNone();
-			this.dom.selection = this.elements;
-			this.dom.deleteSelection;
-			this.elements = [];
-			return this;
-		},
-		
-
 		/**
 		 * Reorder the elements om the stage by an arbitrary property
 		 * @param	prop			{String}			The property to compare. Available properties are 'name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY'
@@ -1554,14 +1608,21 @@
 									// get values
 										if(isArray)
 										{
-											values[0]	= xjsfl.utils.randomizeValue(element[px], modifier[0]);
-											values[1]	= xjsfl.utils.randomizeValue(element[py], modifier[1]);
+											if(values[2] === true)
+											{
+												values[0]	= xjsfl.utils.randomValue(modifier[0], modifier[1]);
+												values[1]	= values[0];
+											}
+											else
+											{
+												values[0]	= xjsfl.utils.randomizeValue(element[px], modifier[0]);
+												values[1]	= xjsfl.utils.randomizeValue(element[py], modifier[1]);
+											}
 										}
 										else if(typeof modifier === 'string')
 										{
 											value		= xjsfl.utils.randomizeValue(element[px], modifier[0]);
 											values		= [value, value];
-											trace(element[px], value)
 										}
 										else
 										{
