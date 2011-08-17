@@ -402,8 +402,12 @@
 						if(typeof value === 'string' || typeof value === 'number')
 						{
 							// variables
-								var index	= typeof value == 'string' ? Number(this.timeline.findLayerIndex(value)) || -1 : value;
-								var _layer	= this.timeline.layers[index];
+								var _layer;
+								var index	= typeof value === 'string' ? this.timeline.findLayerIndex(value): value;
+								if(index !== undefined)
+								{
+									_layer	= this.timeline.layers[index];
+								}
 								
 							// grab layer
 								if(_layer)
@@ -413,7 +417,7 @@
 								}
 								else
 								{
-									throw new Error('xjsfl.iterators.frames(): Invalid Layer reference ' +value);
+									throw new ReferenceError('ReferenceError: "' +value+ '" is not a valid layer in Context.setLayer()');
 								}
 						}
 					// Layer
@@ -672,7 +676,7 @@
 									else
 									{
 										//trace('Changing Item: ' + this.item.name)
-										this.dom.library.editItem(this.item.name);
+										this.item ? this.dom.library.editItem(this.item.name) : this.dom.editScene(0);
 									}
 								}
 							
