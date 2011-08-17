@@ -102,10 +102,7 @@
 					
 					path:function(item, path, rxPath)
 					{
-						var itemPath = item.name.split('/');
-						//itemPath.pop();
-						//trace(rxPath, itemPath, rxPath.test(itemPath))
-						return rxPath.test(itemPath);
+						return rxPath.test(item.name);
 					},
 					
 					//TODO Add package filter and RegExp, also look at class filtering & selection in general
@@ -364,6 +361,13 @@
 						tests.push({selector:exec[0], type:type, method:method, params:params});
 					}
 					
+				// function to convert wildcards to regexps
+					function makeRX(str)
+					{
+						str = str.replace(/\//g, '\\/');
+						return new RegExp('^' + str + '$');
+					}
+					
 				// parse
 					var exec, matches, rx, tests = [];
 					while(exec = chunker.exec(expression))
@@ -384,19 +388,19 @@
 						// name
 							else if(exec[2])
 							{
-								addTest('filter', 'name', exec[2], new RegExp('^' + exec[2] + '$'));
+								addTest('filter', 'name', exec[2], makeRX(exec[2]));
 							}
 							
 						// path
 							else if(exec[3])
 							{
-								addTest('filter', 'path', exec[3], new RegExp('^' + exec[3] + '$'));
+								addTest('filter', 'path', exec[3], makeRX(exec[3]));
 							}
 							
 						// Class
 							else if(exec[4])
 							{
-								addTest('filter', 'Class', exec[4], new RegExp('^' + exec[4] + '$'));
+								addTest('filter', 'Class', exec[4], makeRX(exec[4]));
 							}
 							
 						// find / pseudo / type
