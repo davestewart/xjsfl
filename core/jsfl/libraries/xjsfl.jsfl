@@ -202,23 +202,11 @@
 				user:	[ xjsfl.uri + 'user/' ],
 				
 			// methods
-				add:function(path, type)
+				add:function(uri, type)
 				{
 					// variables
 						type	= type || 'user';
-						var uri	= path.replace(/[\/]+$/g, '') + '/';	// ensure a single trailing slash
-						
-					// module type
-						if(type === 'module')
-						{
-							uri = xjsfl.uri + 'modules/' + path;
-						}
-						
-					// user type - should be absolute
-						else
-						{
-							// check if absolute
-						}
+						uri		= uri.replace(/[\/]+$/g, '') + '/';	// ensure a single trailing slash
 						
 					// add if not already added
 						if(this[type].indexOf(uri) == -1)
@@ -1513,9 +1501,8 @@
 				if(shorten)
 				{
 					path = path
-						.replace(xjsfl.settings.folders.config, 'Configuration/')
-						.replace(xjsfl.settings.folders.xjsfl, 'xJSFL/')
-						.replace(xjsfl.uri, 'xJSFL/');
+						.replace(FLfile.uriToPlatformPath(xjsfl.settings.folders.config).replace(/\\+/g, '/'), 'Configuration/')
+						.replace(FLfile.uriToPlatformPath(xjsfl.settings.folders.xjsfl).replace(/\\+/g, '/'), 'xJSFL/')
 				}
 				
 			// return
@@ -1706,7 +1693,7 @@
 			if( ! module.name.match(/register|load/) )
 			{
 				//trace('Registering MODULE:' + module.key)
-				xjsfl.settings.uris.add(module.name, 'module');
+				xjsfl.settings.uris.add(xjsfl.uri + 'modules/' + module.name + '/', 'module');
 				xjsfl.modules[module.key] = module;
 			}
 			else
