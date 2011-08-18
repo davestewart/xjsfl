@@ -29,7 +29,7 @@
 			//TODO Add functionality for basic arithmetic to be performed inside textboxes
 			
 			// public properties
-				this.xml		= xjsfl.file.load('template', 'xul/dialog.xml');
+				this.xml		= xjsfl.file.load('xul/dialog.xml', 'template');
 				this.controls	= {};
 				this.settings	= {};
 				
@@ -41,7 +41,7 @@
 				this.id			= -1;
 				
 			// load controls
-				var xml			= xjsfl.file.load('template', 'xul/controls.xml');
+				var xml			= xjsfl.file.load('xul/controls.xml', 'template');
 				for each(var node in xml.grid.rows.*)
 				{
 					XUL.templates[node.@template.toString()] = node.copy();
