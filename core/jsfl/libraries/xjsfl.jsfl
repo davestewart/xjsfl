@@ -37,7 +37,7 @@
 			if( ! FLfile['platformPathToURI'] )
 			{
 				var path = 'core/jsfl/libraries/flfile.jsfl';
-				xjsfl.output.trace('Loading "xJSFL/' +path+ '"');
+				xjsfl.output.trace('loading "xJSFL/' +path+ '"');
 				fl.runScript(xjsfl.uri + path);
 			}
 			
@@ -191,10 +191,10 @@
 
 		/**
 		 * Search paths
-		 * A cache of paths which xJSFL searches in order when loading files
-		 * Path arrays are updated automatically when new modules are added
+		 * A cache of uris which xJSFL searches in order when loading files
+		 * module uris are updated automatically when new modules are added
 		 */
-		paths:
+		uris:
 		{
 			// properties
 				core:	[ xjsfl.uri + 'core/' ],
@@ -205,13 +205,13 @@
 				add:function(path, type)
 				{
 					// variables
-						type = type || 'user';
-						path = path.replace(/[\/]+$/g, '') + '/';	// ensure a single trailing slash
+						type	= type || 'user';
+						var uri	= path.replace(/[\/]+$/g, '') + '/';	// ensure a single trailing slash
 						
 					// module type
 						if(type === 'module')
 						{
-							path = xjsfl.uri + 'modules/' + path
+							uri = xjsfl.uri + 'modules/' + path;
 						}
 						
 					// user type - should be absolute
@@ -220,19 +220,19 @@
 							// check if absolute
 						}
 						
-					// add
-						if(this[type].indexOf(path) == -1)
+					// add if not already added
+						if(this[type].indexOf(uri) == -1)
 						{
-							this[type].push(path);
+							this[type].push(uri);
 						}
 				},
 				
 				get all()
 				{
-					var paths = xjsfl.settings.paths;
-					return paths.core
-								.concat(paths.module)
-								.concat(paths.user);
+					var uris = xjsfl.settings.uris;
+					return uris.core
+								.concat(uris.module)
+								.concat(uris.user);
 				}
 		},
 			
@@ -1134,7 +1134,7 @@
 		 * @param	name			{String}	A file name (pass no extension to use default), or partial file path
 		 * @param	returnType		{Number}	An optional 0, 1 or -1; 0: all files (default), -1: the last file (user), 1:the first file (core)
 		 * @returns					{String}	A single file path if found and return type is 1 or -1, or null if not
-		 * @returns					{Array}		An Array of file paths if found, and return type is 0, or null if not
+		 * @returns					{Array}		An Array of file uris if found, and return type is 0, or null if not
 		 */
 		find:function(type, name, returnType)
 		{
@@ -1211,12 +1211,12 @@
 			
 				// variables
 					var uris		= [];
-					var paths		= xjsfl.settings.paths.all;
+					var paths		= xjsfl.settings.uris.all;
 					
 				// check all paths for files
 					for(var i = 0; i < paths.length; i++)
 					{
-						var uri = xjsfl.file.makeURI(paths[i] + path);
+						var uri = paths[i] + path;
 						if(FLfile.exists(uri))
 						{
 							uris.push(uri);
@@ -1514,7 +1514,8 @@
 				{
 					path = path
 						.replace(xjsfl.settings.folders.config, 'Configuration/')
-						.replace(xjsfl.settings.folders.xjsfl, 'xJSFL/');
+						.replace(xjsfl.settings.folders.xjsfl, 'xJSFL/')
+						.replace(xjsfl.uri, 'xJSFL/');
 				}
 				
 			// return
@@ -1705,7 +1706,7 @@
 			if( ! module.name.match(/register|load/) )
 			{
 				//trace('Registering MODULE:' + module.key)
-				xjsfl.settings.paths.add(module.name, 'module');
+				xjsfl.settings.uris.add(module.name, 'module');
 				xjsfl.modules[module.key] = module;
 			}
 			else
