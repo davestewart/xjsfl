@@ -516,6 +516,7 @@
 		 * 
 		 * @param	input	{Array}		An Object or an array of Objects
 		 * @param	prop	{String}	The name of a property to collect
+		 * @param	prop	{Function}	A callback function of the format function propertyName(element){ return element.property }
 		 * @param	prop	{Array}		The names of properties to collect
 		 * @param	prop	{Boolean}	A Boolean indicates you want to collect ALL properties
 		 * @param	option	{Boolean}	If passing and returning a single object, pass true to make it unique. If returning a 2D array, pass true to return Objects
@@ -530,7 +531,7 @@
 				prop		= prop || true;
 				
 			// convert input to array if just a single object
-				if(xjsfl.utils.getClass(input) !== 'Array')
+				if( ! xjsfl.utils.isArray(input))
 				{
 					input	= [input];
 					single	= true;
@@ -546,8 +547,19 @@
 				if(this.isArray(prop))
 				{
 					// variables
-						var props	= prop;
-						var output	= new Array(input.length);
+						var propName;
+						var props			= prop;
+						var functionNames	= [];
+						var output			= new Array(input.length);
+						
+					// check if any of the property names are actually functions, and if so, grab the function name in advance
+						for(var f = 0; f < props.length; f++)
+						{
+							if(typeof props[f] === 'function')
+							{
+								functionNames[f] = Source.parseFunction(props[f]).name;
+							}
+						}
 						
 					// return objects
 						if(option)
@@ -557,7 +569,8 @@
 								output[i] = {};
 								for(var j = 0; j < props.length; j++)
 								{
-									output[i][props[j]] = input[i][props[j]];
+									propName = functionNames[j] || props[j];
+									output[i][propName] = functionNames[j] ? props[j](input[i]) : input[i][propName];
 								}
 							}
 						}
@@ -570,7 +583,7 @@
 								output[i] = new Array(props.length);
 								for(var j = 0; j < props.length; j++)
 								{
-									output[i][j] = input[i][props[j]];
+									output[i][j] = functionNames[j] ? props[j](input[i]) : input[i][props[j]];
 								}
 							}
 						}
@@ -583,7 +596,7 @@
 					{
 						if( ! option || (option && output.indexOf(input[i][prop]) === -1) )
 						{
-							output.push(input[i][prop]);
+							output.push(typeof prop === 'function' ? prop(input[i]) : input[i][prop]);
 						}
 					}
 				}
