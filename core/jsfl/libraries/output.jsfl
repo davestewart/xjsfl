@@ -346,6 +346,11 @@
 									type		= 'date';
 									className	= 'Date';
 								}
+								else if (value instanceof RegExp)
+								{
+									type		= 'regexp';
+									className	= 'RegExp';
+								}
 								/*
 								else if(value.constructor)
 								{
@@ -371,13 +376,21 @@
 							break;
 						
 							case 'function': // loop through properties to see if it's a class
-								for(var i in value)
+								if (value instanceof RegExp)
 								{
-									if(i != 'prototype')
+									type		= 'regexp';
+									className	= 'RegExp';
+								}
+								else
+								{
+									for(var i in value)
 									{
-										type = 'object';
-										className = 'Class';
-										break;
+										if(i != 'prototype')
+										{
+											type = 'object';
+											className = 'Class';
+											break;
+										}
 									}
 								}
 							break;
@@ -395,6 +408,7 @@
 					{
 						var value;
 						var type	 = getType(obj);
+
 						switch(type)
 						{
 							case 'array':
@@ -418,6 +432,7 @@
 								value = obj.substr(0, obj.indexOf('{'));
 							break;
 						
+							case 'regexp':
 							case 'boolean':
 							case 'undefined':
 							case 'number':
