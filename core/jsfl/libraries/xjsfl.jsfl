@@ -359,12 +359,12 @@
 		/**
 		 * Pads a value to a certain length with a specific character
 		 * @param	value	{Value}		Any value
-		 * @param	chr		{String}	An optional padding character, defaults to 0
 		 * @param	length	{Number}	An optional length, defaults to 6
+		 * @param	chr		{String}	An optional padding character, defaults to 0
 		 * @param	right	{Boolean}	An optional flag to pad to the right, rather than the left
 		 * @returns			{String}	The padded value
 		 */
-		pad:function(value, chr, length, right)
+		pad:function(value, length, chr, right)
 		{
 			value	= String(value);
 			chr		= chr || '0';
