@@ -357,7 +357,7 @@
 				function rename(element, index, elements)
 				{
 					var num			= index + startIndex;
-					var str			= padding > 0 ? xjsfl.utils.pad(num, 0, padding) : num;
+					var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
 					element.name	= baseName + str;
 				}
 				
