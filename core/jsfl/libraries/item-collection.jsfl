@@ -204,7 +204,7 @@
 			// default callback function
 				function callback(item, name, index)
 				{
-					return baseName + ' ' + xjsfl.utils.pad(index + 1, '0', padding);
+					return baseName + ' ' + xjsfl.utils.pad(index + 1, padding);
 				}
 				
 			// default pattern
@@ -252,6 +252,31 @@
 				}
 			)
 			return this;
+		},
+		
+		/**
+		 * Adds the items in the collection to the stage, returning an ElementCollection of the newly-added elements
+		 * @param	context		{Context}			An optional context object of where to add the items
+		 * @param	x			{Number}			An optional x position to add the items at
+		 * @param	y			{Number}			An optional y position to add the items at
+		 * @returns				{ElementCollection} A new ElementCollection
+		 */
+		addToStage:function(context, x, y)
+		{
+			var elements	= [];
+			context			= context || Context.create();
+			x				= x || 0;
+			y				= y || 0;
+			context.goto();
+			for each(var element in this.elements)
+			{
+				if(/^movie clip|graphic|button|bitmap|component|compiled clip|video|linked video|embedded video$/.test(element.itemType))
+				{
+					context.dom.addItem({x:x,y:y}, element);
+					elements.push(context.dom.selection[0]);
+				}
+			}
+			return new ElementCollection(elements).select();
 		},
 		
 		/**
