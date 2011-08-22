@@ -982,12 +982,13 @@
 			// test!
 				try
 				{
-					fn.apply(scope || this, params);
+					return fn.apply(scope || this, params);
 				}
 				catch(err)
 				{
 					xjsfl.output.debug(err, true);
 				}
+				return null;
 		}
 		
 	}
