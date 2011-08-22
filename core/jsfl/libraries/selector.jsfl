@@ -11,10 +11,11 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Selector - Selector class for CSS-style selections
 
-	function Selector(pattern, scope)
+	function Selector(pattern)
 	{
-		this.pattern = pattern;
-		//this.scope = scope;
+		this.type		= '';
+		this.name		= '';
+		this.pattern	= pattern;
 	}
 	
 	Selector.toString = function()
@@ -52,6 +53,8 @@
 	{
 		type:'',
 		
+		name:'',
+		
 		pattern:'',
 		
 		params:null,
@@ -62,7 +65,6 @@
 		
 		find:function(items, scope)
 		{
-			//TODO Add :not functionality
 			//TODO Decide where in the process toUniqueArray() should be called
 			var params	= [items].concat(this.params);
 			var results	= this.method.apply(scope, params);
