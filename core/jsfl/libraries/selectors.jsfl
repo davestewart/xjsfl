@@ -23,37 +23,56 @@
 		 */
 		select:function(expression, items, scope, debug)
 		{
-			// define selection type from scope
-				var matches = String(scope).match(/(Library|Document|Timeline|Layer|Frame)/);
-				if(matches)
-				{
-					var types =
-					{
-						'Library':		'Item',
-						'Document':		'Element',
-						'Timeline':		'Layer',
-						'Layer':		'Frame'
-					}
-					var type = types[matches[1]];
-				}
-				else
-				{
-					throw new TypeError('TypeError: Invalid scope ' +scope+ ' supplied to Selector.select()');
-				}
-
-
-			// parse selectors			
-				var selectors = this.parse(expression, type);
-				
-			// debug
-				if(debug)
-				{
-					Output.inspect(selectors, 'Selectors for "' + expression + '"');
-				}
-				
-			// test
-				return Selectors.test(selectors, items, scope)
+			// --------------------------------------------------------------------------------
+			// setup
 			
+				// define selection type from scope
+					var matches = String(scope).match(/(Library|Document|Timeline|Layer|Frame)/);
+					if(matches)
+					{
+						var types =
+						{
+							'Library':		'Item',
+							'Document':		'Element',
+							'Timeline':		'Layer',
+							'Layer':		'Frame'
+						}
+						var type = types[matches[1]];
+					}
+					else
+					{
+						throw new TypeError('TypeError: Invalid scope ' +scope+ ' supplied to Selector.select()');
+					}
+	
+			// --------------------------------------------------------------------------------
+			// process rules
+			
+				// variables
+					var rules	= xjsfl.utils.trim(expression).split(/,/g);
+					var results	= [];
+					
+				// get items
+					for each (var rule in rules)
+					{
+						// parse rule into selector array
+							var selectors = this.parse(rule, type);
+							
+						// debug
+							if(debug)
+							{
+								Output.inspect(selectors, 'Selectors for "' + rule + '"');
+							}
+							
+						// get items
+							var _results = Selectors.test(selectors, items, scope)
+							results = results.concat(_results);
+					}
+				
+				// ensure items are unique
+					results = xjsfl.utils.toUniqueArray(results);
+					
+				// return
+					return results;
 		},
 		
 
@@ -64,7 +83,7 @@
 		 * @param	scope	
 		 * @returns		
 		 */
-		parse:function(expression, type)
+		parse:function(rule, type)
 		{
 			// --------------------------------------------------------------------------------
 			// setup
@@ -97,12 +116,12 @@
 						coreTests = Selectors.core;
 						
 				// debug
-					//trace('\n\n\n\n--------------------------------------------------------------------------------\n' + expression + '\n--------------------------------------------------------------------------------')
+					//trace('\n\n\n\n--------------------------------------------------------------------------------\n' + rule + '\n--------------------------------------------------------------------------------')
 				
 			// --------------------------------------------------------------------------------
 			// parse
 			
-				while(exec = chunker.exec(expression))
+				while(exec = chunker.exec(rule))
 				{
 					// --------------------------------------------------------------------------------
 					// setup
@@ -120,26 +139,16 @@
 						// 1: combo ":not(:bitmap)"
 							if(exec[1])
 							{
-								/*
-								// build sub-selector
-									var subselectors		= Selectors.parse(exec[3], typeTests, scope);
-									
-								// re-assign sub-selector
-									//Output.inspect(subselectors, 'SUBSELECTORS');
-									if(subselectors.length)
-									{
-										selector			= subselectors[0];
-										selector.not		= exec[3] === 'not';
-									}
-									*/
 								selector.type	= 'combo';
-								selector.method	= coreTests.combo[exec[2]];
+								selector.name	= exec[2];
+								selector.method	= coreTests.combo[selector.name];
 								selector.params	= [null, Selector.makeRX(exec[3], selector)];
 							}
 							
 						// 4: name "this is a name"
 							else if(exec[4])
 							{
+								selector.type	= 'filter';
 								selector.type	= 'name';
 								selector.method	= typeTests.filter.name;
 								selector.params	= [null, Selector.makeRX(exec[4], selector), selector.range];
@@ -148,7 +157,8 @@
 						// 5: path "/path/to/item"
 							else if(exec[5])
 							{
-								selector.type	= 'path';
+								selector.type	= 'filter';
+								selector.name	= 'path';
 								selector.method	= typeTests.filter.path;
 								selector.params	= [null, Selector.makeRX(exec[5], selector), selector.range];
 							}
@@ -156,7 +166,8 @@
 						// 6: Class ".Class"
 							else if(exec[6])
 							{
-								selector.type	= 'class';
+								selector.type	= 'filter';
+								selector.name	= 'class';
 								selector.method	= typeTests.filter.Class;
 								selector.params	= [null, Selector.makeRX(exec[6], selector)];
 							}
@@ -164,7 +175,8 @@
 						// 7: package ".com.domain.package.Class"
 							else if(exec[7])
 							{
-								selector.type	= 'package';
+								selector.type	= 'filter';
+								selector.name	= 'package';
 								selector.method	= typeTests.filter.Package;
 								selector.params	= [null, Selector.makeRX(exec[7], selector)];
 							}
@@ -172,28 +184,38 @@
 						// 8: pseudo ":type"
 							else if(exec[8])
 							{
-								if(exec[8].match(/selected|children|descendants|parent|first|last/))
-								{
-									selector.type	= 'find';
-									selector.method	= typeTests.find[exec[8]];
-								}
-								else if(exec[8].match(/exported|timeline|empty|animated|scripted|audible/))
-								{
-									selector.type	= 'pseudo';
-									selector.method	= typeTests.pseudo[exec[8]];
-								}
-								else
-								{
-									selector.type	= 'type';
-									selector.method	= typeTests.filter.type;
-								}
-								selector.params	= [null, exec[8]];
+								// variables
+									var name = exec[8];
+									var method;
+									
+								// types
+									if(exec[8].match(/selected|children|descendants|parent|first|last/))
+									{
+										selector.type	= 'find';
+										method			= typeTests.find[exec[8]];
+									}
+									else if(exec[8].match(/exported|timeline|empty|animated|scripted|audible/))
+									{
+										selector.type	= 'pseudo';
+										method			= typeTests.pseudo[exec[8]];
+									}
+									else
+									{
+										selector.type	= 'type';
+										method			= typeTests.filter.type;
+									}
+									
+								// assign
+									selector.name	= name;
+									selector.method	= method;
+									selector.params	= [null, exec[8]];
 							}
 							
 						// 9: attribute "[attribute=value]"
 							else if(exec[9])
 							{
 								selector.type	= 'attribute';
+								selector.name	= exec[10];
 								selector.method	= coreTests.filter.attribute;
 								selector.params	= [null, exec[10], exec[11], Selector.makeRX(exec[12], selector), selector.range];
 							}
@@ -275,7 +297,7 @@
 		
 	}
 	
-	Selectors.core  =
+	Selectors.core =
 	{
 		/**
 		 * 
@@ -290,7 +312,7 @@
 			 * @param	value		{String}	The value to test against. Acceptable values are Numbers, Strings, regExps, or Range syntax
 			 * @returns				{Boolean}	True if the test passes
 			 */
-			attribute:function attribute(item, name, operand, value, range)
+			attribute:function(item, name, operand, value, range)
 			{
 				// no operand, just test for property
 					if(operand == '')
@@ -345,7 +367,7 @@
 		math:
 		{
 			
-			range:function range(str, range)
+			range:function(str, range)
 			{
 				var value = parseFloat(str);
 				return value >= range.min && value <= range.max;
@@ -381,7 +403,7 @@
 			 * @param	test		
 			 * @returns		
 			 */
-			not:function not(items, selector)
+			not:function(items, selector)
 			{
 				trace('NOT ' + selector)
 				// get the items with the new selecor
@@ -400,7 +422,7 @@
 			 * @param	selector	
 			 * @returns		
 			 */
-			filter:function filter(selector)
+			filter:function(selector)
 			{
 				
 			},
@@ -411,7 +433,7 @@
 			 * @param	selector	
 			 * @returns		
 			 */
-			contains:function contains(selector)
+			contains:function(selector)
 			{
 				
 			},
@@ -422,7 +444,7 @@
 			 * @param	selector	
 			 * @returns		
 			 */
-			nth:function nth(selector)
+			nth:function(selector)
 			{
 				
 			}
@@ -451,7 +473,7 @@
 			 * @param	item	
 			 * @returns		
 			 */
-			empty:function empty(element)
+			empty:function(element)
 			{
 				return ! Iterators.layers(element, null, function (frame){ return frame.elements.length > 0; });
 			},
@@ -461,7 +483,7 @@
 			 * @param	element	
 			 * @returns		
 			 */
-			animated:function animated(element)
+			animated:function(element)
 			{
 				return Iterators.layers(element, null, function (frame){ return frame.tweenType != 'none'; } );
 			},
@@ -471,7 +493,7 @@
 			 * @param	element	
 			 * @returns		
 			 */
-			scripted:function scripted(element)
+			scripted:function(element)
 			{
 				return Iterators.layers(element, null, function (frame){ return frame.actionScript != ''; });
 			},
@@ -481,7 +503,7 @@
 			 * @param	element	
 			 * @returns		
 			 */
-			audible:function audible(element)
+			audible:function(element)
 			{
 				return Iterators.layers(element, null, function (frame){ return frame.soundLibraryItem != null; });
 			}
@@ -499,7 +521,7 @@
 			 * @param	rx		{RegExp}	A regular expression to match against the item name
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
-			name:function name(item, rx, range)
+			name:function(item, rx, range)
 			{
 				var name	= item.name.split('/').pop();
 				var matches	= name.match(rx);
@@ -520,7 +542,7 @@
 			 * @param	rx		{RegExp}	A regular expression to match against the item path
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
-			path:function path(item, rx, range)
+			path:function(item, rx, range)
 			{
 				var matches	= item.name.match(rx);
 				if(matches)
@@ -540,7 +562,7 @@
 			 * @param	rx		{RegExp}	A regular expression to match against the item's full linkageClassName
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
-			Package:function Package(item, rx)
+			Package:function(item, rx)
 			{
 				if(item['linkageClassName'])
 				{
@@ -555,7 +577,7 @@
 			 * @param	rx		{RegExp}	A regular expression to match against the Class component of the item'slinkageClassName
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
-			Class:function Class(item, rxClass)
+			Class:function(item, rxClass)
 			{
 				if(item['linkageClassName'])
 				{
@@ -570,7 +592,7 @@
 			 * @param	type	{String}	A valid Item itemType
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
-			type:function type(item, type)
+			type:function(item, type)
 			{
 				// remove spaces from item type
 					var itemType = item.itemType.replace(/ /g, '');
@@ -603,7 +625,7 @@
 			 * @param	items	
 			 * @returns		
 			 */
-			first:function first(items)
+			first:function(items)
 			{
 				return [items.shift()];
 			},
@@ -613,7 +635,7 @@
 			 * @param	items	
 			 * @returns		
 			 */
-			last:function last(items)
+			last:function(items)
 			{
 				return [items.pop()];
 			},
@@ -623,7 +645,7 @@
 			 * @param	items	
 			 * @returns		
 			 */
-			parent:function parent(items)
+			parent:function(items)
 			{
 				// loop through items and grab all parent paths
 					var parent, paths = [];
@@ -662,7 +684,7 @@
 			 * @param	parent	
 			 * @returns		
 			 */
-			children:function children(parents)
+			children:function(parents)
 			{
 				var items = [];
 				for each(var parent in parents)
@@ -696,7 +718,7 @@
 			 * @param	parent	
 			 * @returns		
 			 */
-			descendants:function descendants(parents)
+			descendants:function(parents)
 			{
 				var items = [];
 				for each(var parent in parents)
@@ -725,7 +747,7 @@
 			 * @param	item	
 			 * @returns		
 			 */
-			selected:function selected(items)
+			selected:function(items)
 			{
 				return this.getSelectedItems();
 			}
@@ -739,12 +761,12 @@
 			 * @param	item	
 			 * @returns		
 			 */
-			exported:function exported(item)
+			exported:function(item)
 			{
 				return item.linkageExportForAS === true;
 			},
 			
-			timeline:function timeline(item)
+			timeline:function(item)
 			{
 				return /movie clip|graphic|button/.test(item.itemType);
 			},
@@ -754,7 +776,7 @@
 			 * @param	item	
 			 * @returns		
 			 */
-			empty:function empty(item)
+			empty:function(item)
 			{
 				if(item.itemType === 'folder')
 				{
@@ -773,7 +795,7 @@
 			 * @param	item	
 			 * @returns		
 			 */
-			animated:function animated(item)
+			animated:function(item)
 			{
 				if(Selectors.item.pseudo.timeline(item))
 				{
@@ -787,7 +809,7 @@
 			 * @param	item	
 			 * @returns		
 			 */
-			scripted:function scripted(item)
+			scripted:function(item)
 			{
 				if(Selectors.item.pseudo.timeline(item))
 				{
@@ -801,7 +823,7 @@
 			 * @param	item	
 			 * @returns		
 			 */
-			audible:function audible(item)
+			audible:function(item)
 			{
 				if(Selectors.item.pseudo.timeline(item))
 				{
