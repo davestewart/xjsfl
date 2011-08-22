@@ -182,7 +182,7 @@
 				}
 				else
 				{
-					context = Context.create(false, context, false, false, false);
+					context = new Context(false, context, false, false, false);
 				}
 				
 			// if a timeline was found, process its layers
@@ -243,7 +243,7 @@
 				}
 				else
 				{
-					context	= Context.create(false, false, context, false, false);
+					context	= new Context(false, false, context, false, false);
 				}
 				
 			// if a layer object was found
@@ -304,7 +304,7 @@
 				}
 				else
 				{
-					context = Context.create(false, false, false, context, false);
+					context = new Context(false, false, false, context, false);
 				}
 				
 			// if a frame context exists
