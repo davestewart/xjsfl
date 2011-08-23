@@ -179,7 +179,7 @@
 			
 				/**
 				 * Renders the data in the class as an ASCII table
-				 * @param	{Boolean}	An optional flag to print the tabel table to the Output panel
+				 * @param	{Boolean}	An optional flag to print the table table to the Output panel, defaults to true
 				 * @return 	{String}	The String output of the table
 				 */
 				render:function(output)
@@ -198,7 +198,7 @@
 						this.addLine(false);
 						
 					// print
-						if(output)
+						if(output !== false)
 						{
 							trace(this.output);
 						}
