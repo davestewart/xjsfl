@@ -528,6 +528,7 @@
 				 */
 				copy:function(uriCopy, overWrite)
 				{
+					//Output.inspect(this)
 					// if the file exists, copy it
 						if(this.exists)
 						{
@@ -564,7 +565,7 @@
 					// if not, throw an error, or just save an empty file?
 						else
 						{
-							throw new Error('The file "' +this.name+ '" does not exist or has not been saved');
+							throw new Error('The file "' +this.uri+ '" does not exist or has not been saved');
 						}
 						return this;
 				},
@@ -579,9 +580,9 @@
 				write:function(data, append)
 				{
 					var result;
+					result = append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
 					if(this.exists)
 					{
-						result = append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
 					}
 					return result ? this : false;
 				},
@@ -680,7 +681,7 @@
 				/** 
 				 * @type {String} Set the contents of the file
 				 */
-				set contents (data){ if(this.exists && data != null) this.write(data); },
+				set contents (data){ this.write(data); },
 				/** 
 				 * @type {String} The file extension of the file
 				 */
