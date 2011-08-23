@@ -227,7 +227,7 @@
 			
 				/**
 				 * Opens the folder in the Explorer / Finder
-				 * @returns {File} The original file
+				 * @returns 		{Folder}		The original folder
 				 */
 				open:function()
 				{
@@ -248,7 +248,7 @@
 				/**
 				 * Copy the folder to a new uri
 				 * @param	toUri	{String}
-				 * @returns		
+				 * @returns 		{Folder}		The original folder
 				 */
 				copy:function(toUri)
 				{
@@ -257,42 +257,48 @@
 				
 				/**
 				 * Calls a function on each element in the collection
-				 * @param callback	{Function}	A callback function to fire on each iteraction
-				 * @param itemType	{String}	Optionally limit the iteration to files or folders. Leave blank for all content
-				 * @returns			{Array}		An array of Files and/or Folders
+				 * @param callback	{Function}		A callback function to fire on each iteraction. Return true at any point to cancel iteration
+				 * @param type		{String}		Optionally limit the iteration to files or folders. Leave blank for all content
+				 * @param type		{Scope}			An optional scope to call the function in
+				 * @returns 		{Folder}		The original folder
 				 */
-				each:function(callback, scope, itemType)
+				each:function(callback, type, scope)
 				{
-					scope		= scope || window;
-					itemType	= itemType || 'contents';
-					if(itemType.match(/(files|folders|contents)/))
+					type	= type || 'contents';
+					scope	= scope || window;
+					if(type.match(/(files|folders|contents)/))
 					{
-						var items = this[itemType];
-						if(items)
+						var items = this[type];
+						if(items && items.length)
 						{
+							var state;
 							for(var i = 0; i < items.length; i++)
 							{
-								callback.apply(scope, [items[i], i]);
+								state = callback.apply(scope, [items[i], i]);
+								if(state === true)
+								{
+									return this;
+								}
 							}
 						}
 					}
 					else
 					{
-						fl.trace('Unknown FileSystemItem type!')
+						throw new Error('Error in Folder.each(): Unknown content type "' +type+ '"')
 					}
+					return this;
 				},
 				
 				/**
 				 * Return a filtered array of the folder's contents, matching against the filenames
-				 * @param	rx	{RegExp}	A Regular Expression or string, wildcards allowed
-				 * @returns		{Array}		An array of Filesystem objects
+				 * @param	pattern	{RegExp}	A RegExp filename pattern
+				 * @param	pattern	{String}	A String filename pattern, wildcards allowed
+				 * @returns			{Array}		An array of Filesystem objects
 				 */
-				filter:function(rx)
+				filter:function(pattern)
 				{
-					if(typeof rx === 'string')
-					{
-						rx = new RegExp(rx.replace(/\*/g, '.*'));
-					}
+					//TODO check if pattern macthes an extension-only, then filter against extension only
+					var rx = typeof pattern === 'string' ? new RegExp(pattern.replace(/\*/g, '.*')) : pattern;
 					if(rx instanceof RegExp)
 					{
 						return this.contents.filter(function(e){ return rx.test(e.name); });
