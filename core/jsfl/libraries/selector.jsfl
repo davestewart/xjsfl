@@ -36,6 +36,16 @@
 			expression		= expression.replace(/\*/g, '.*?');
 			
 		// match any ranges i.e. {-100|100}
+			expression		= Selector.makeRange(expression, selector);
+			
+		// return
+			return new RegExp('^' + expression.replace(/\//g, '\\/') + '$', 'i');
+			//return /\.\*|\\d\+/.test(expression) ? new RegExp('^' + expression.replace(/\//g, '\\/') + '$', 'i') : expression;
+	}
+	
+	Selector.makeRange = function(expression, selector)
+	{
+		// match any ranges i.e. {-100|100}
 			var rxRange		= /{(-?[\d\.]+)\|(-?[\d\.]+)}/;
 			var matches		= expression.match(rxRange);
 			if(matches)
@@ -45,8 +55,7 @@
 			}
 			
 		// return
-			return new RegExp('^' + expression.replace(/\//g, '\\/') + '$');
-			return /\.\*|\\d\+/.test(expression) ? new RegExp('^' + expression.replace(/\//g, '\\/') + '$') : expression;
+			return expression;
 	}
 	
 	Selector.prototype =
@@ -57,11 +66,13 @@
 		
 		pattern:'',
 		
+		method:null,
+		
 		params:null,
 		
 		range:null,
 		
-		method:null,
+		keep:true,
 		
 		find:function(items, scope)
 		{
@@ -69,13 +80,14 @@
 			var params	= [items].concat(this.params);
 			var results	= this.method.apply(scope, params);
 			results		= xjsfl.utils.toUniqueArray(results);
+			return results;
 		},
 		
 		test:function(item, scope)
 		{
 			this.params[0]	= item;
 			var state		= this.method.apply(scope, this.params);
-			return this.not ? ! state : state;
+			return this.keep ? state : ! state;
 		},
 		
 		toString:function()
