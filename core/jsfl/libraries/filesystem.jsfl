@@ -346,6 +346,7 @@
 				{
 					if(this.exists)
 					{
+						var uri;
 						var items = FLfile.listFolder(this.uri, "directories");
 						for(var i = 0; i < items.length; i++)
 						{
@@ -364,6 +365,7 @@
 				{
 					if(this.exists)
 					{
+						var uri;
 						var items = FLfile.listFolder(this.uri, "files");
 						for(var i = 0; i < items.length; i++)
 						{
