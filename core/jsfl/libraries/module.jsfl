@@ -31,7 +31,7 @@
 				
 			// core properties
 				this.name		= name;
-				this.uri		= xjsfl.settings.uris.module + escape(this.name) + '/';
+				this.uri		= xjsfl.settings.folders.modules + escape(this.name) + '/';
 				
 			// register module so the module path is added to global paths before config is created
 				xjsfl.modules.register(this);
