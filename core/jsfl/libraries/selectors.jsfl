@@ -18,8 +18,8 @@
 		 * @param	expression	{String}		A CSS expression
 		 * @param	items		{Array}			An array of items to filter
 		 * @param	scope		{Object}		A valid scope reference. Valid types are Library, Document, Timeline, Layer, Frame
-		 * @param	debug		{Boolean}		An optional flsg to print Selector information to the Output panel
-		 * @returns				{Collection}	
+		 * @param	debug		{Boolean}		An optional flag to print Selector information to the Output panel
+		 * @returns				{Array}			An array of elements, items, etc
 		 */
 		select:function(expression, items, scope, debug)
 		{
@@ -46,6 +46,12 @@
 	
 			// --------------------------------------------------------------------------------
 			// process rules
+			
+				// exit early if universal selector is supplied
+					if(expression == '*')
+					{
+						return items;
+					}
 			
 				// variables
 					var rules	= xjsfl.utils.trim(expression).split(/,/g);
@@ -78,9 +84,8 @@
 
 		/**
 		 * parse a selector expression into selectors - also called from :not()
-		 * @param	expression	
-		 * @param	typeTests	
-		 * @param	scope	
+		 * @param	rule	{String}	A CSS rule
+		 * @param	type	{String}	The type of parse
 		 * @returns		
 		 */
 		parse:function(rule, type)
@@ -106,7 +111,7 @@
 						   12: value		value
 					*/
 					//var chunker = /(:([\-\w]+)\((.+)\))|([\*\d\w][\-\w\d\s_*{|}]+)|\/([\-\w\s\/_*{|}]+)|\.([*A-Z][\w*]+)|\.([a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
-					var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]+)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
+					var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]*)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
 	
 				// variables
 					var exec,
@@ -194,14 +199,14 @@
 										selector.type	= 'find';
 										method			= typeTests.find[exec[8]];
 									}
-									else if(exec[8].match(/exported|timeline|empty|animated|scripted|audible/))
+									else if(exec[8].match(/exported|empty|animated|keyframed|scripted|audible/))
 									{
 										selector.type	= 'pseudo';
 										method			= typeTests.pseudo[exec[8]];
 									}
 									else
 									{
-										selector.type	= 'type';
+										selector.type	= 'type'; // should this be 'filter'?
 										method			= typeTests.filter.type;
 									}
 									
@@ -214,10 +219,29 @@
 						// 9: attribute "[attribute=value]"
 							else if(exec[9])
 							{
-								selector.type	= 'attribute';
-								selector.name	= exec[10];
-								selector.method	= coreTests.filter.attribute;
-								selector.params	= [null, exec[10], exec[11], Selector.makeRX(exec[12], selector), selector.range];
+								// selector properties
+									selector.type	= 'filter';
+									selector.name	= 'attribute';
+									selector.method	= coreTests.filter.attribute;
+									
+								// attribute components
+									var attName		= exec[10];
+									var attOperand	= exec[11];
+									var attValue	= exec[12];
+									var val			= parseFloat(attValue);
+									
+								// parse numeric values
+									if( ! isNaN(val) )// /<>/.test(attOperand)
+									{
+										attValue = val;
+									}
+									else
+									{
+										attValue = Selector.makeRX(exec[12], selector);
+									}
+									
+								// assign
+									selector.params	= [null, attName, attOperand, attValue, selector.range];
 							}
 							
 					// --------------------------------------------------------------------------------
@@ -244,6 +268,13 @@
 				return selectors;
 		},
 		
+		/**
+		 * Tests the selectors against the supplied items and returns matches
+		 * @param	selectors	{Array}			An array of Selector instances
+		 * @param	items		{Array}			An array of items to filter
+		 * @param	scope		{Object}		A valid scope reference. Valid types are Library, Document, Timeline, Layer, Frame
+		 * @returns				{Array}			An array of elements, items, etc
+		 */
 		test:function(selectors, items, scope)
 		{
 			// exit early if no valid selectors
@@ -258,7 +289,7 @@
 					// debug
 						//trace(selector);
 						
-					// variables
+					// store temporary items as we find and filter
 						var temp	= [];
 						
 					// filter items as a group, with any extra processing taking place in the testing function
@@ -281,7 +312,7 @@
 							}
 						}
 						
-					// update items
+					// update items with temp items
 						items = temp;
 						
 					// exit early if 0 items
@@ -308,8 +339,9 @@
 			 * Test an attribute of an object against a value
 			 * @param	item		{Object}	The item to test
 			 * @param	name		{String}	The name of the attribute
-			 * @param	operand		{String}	The operand type. Acceptable string values are =, !=, ^=, $=, *=. Acceptable numeric values are =, >, >=, <, <=
-			 * @param	value		{String}	The value to test against. Acceptable values are Numbers, Strings, regExps, or Range syntax
+			 * @param	operand		{String}	The operand type. Acceptable string values are =, !=, ^=, $=, *=. Acceptable numeric values are =, !=, >, >=, <, <=
+			 * @param	value		{String}	The value to test against. Acceptable values are Numbers, Strings
+			 * @param	value		{Number}	The value to test against. 
 			 * @returns				{Boolean}	True if the test passes
 			 */
 			attribute:function(item, name, operand, value, range)
@@ -317,6 +349,7 @@
 				// no operand, just test for property
 					if(operand == '')
 					{
+						//trace('EXISTS')
 						for(var prop in item)
 						{
 							if(prop === name)
@@ -326,13 +359,16 @@
 						}
 						return false;
 					}
-				
+					
 				// numeric operand (>, >=, <, <=)
-					if(/<>/.test(operand))
+					if(typeof value === 'number' && range == undefined)
 					{
-						var prop = parseFloat(item[name]);
+						//trace('NUMERIC')
+						var prop = item[name];
 						switch(operand)
 						{
+							case '=':		return prop == value;
+							case '!=':		return prop != value;
 							case '<':		return prop < value;
 							case '<=':		return prop <= value;
 							case '>':		return prop > value;
@@ -340,20 +376,25 @@
 						}
 					}
 				
+				// range comparison (={min|max} converted to range object {min:n, max:m})
+					if(range)
+					{
+						//trace('RANGE');
+						var prop = item[name];
+						return prop >= range.min && prop <= range.max;
+					}
+					
 				// RegExp comparison (^=, $=, *=)
+					//TODO Complete RegExp comparison
 					if(value instanceof RegExp)
 					{
+						//trace('REGEXP')
 						var prop = String(item[name]);
 						return value.test(prop);
 					}
 				
-				// range comparison (={min|max} converted to range object {min:n, max:m})
-					if(range)
-					{
-						return Selectors.core.math.range(prop, range);
-					}
-					
 				// finally, string operand (=, !=)
+					//trace('STRING');
 					switch(operand)
 					{
 						case '=':		return prop === value;
@@ -396,6 +437,24 @@
 		
 		combo:
 		{
+			//TODO filter() functionality 
+			/**
+			 * 
+			 * @param	selector	
+			 * @returns		
+			 */
+			filter:function(callback)
+			{
+				// filter keeps
+				return callback();
+			},
+			
+			not:function(callback)
+			{
+				// not discards
+				return ! callback();
+			},
+			
 			//TODO not() functionality 
 			/**
 			 * 
@@ -413,17 +472,6 @@
 				
 				// compare to items in
 					return newItems
-				
-			},
-			
-			//TODO filter() functionality 
-			/**
-			 * 
-			 * @param	selector	
-			 * @returns		
-			 */
-			filter:function(selector)
-			{
 				
 			},
 			
@@ -458,12 +506,108 @@
 		
 		filter:
 		{
+			/**
+			 * 
+			 * @param	item	{Item}		An Element
+			 * @param	rx		{RegExp}	A regular expression to match against the item name
+			 * @returns			{Boolean}	True if matched, false if failed
+			 */
+			name:function(item, rx, range)
+			{
+				return Selectors.item.filter.path(item, rx, range);
+			},
 			
+			/**
+			 * 
+			 * @param	item	{Item}		An Element
+			 * @param	rx		{RegExp}	A regular expression to match against the item path
+			 * @returns			{Boolean}	True if matched, false if failed
+			 */
+			path:function(item, rx, range)
+			{
+				if(item.libraryItem)
+				{
+					return Selectors.item.filter.path(item.libraryItem, rx, range);
+				}
+				else
+				{
+					return false;
+				}
+			},
+			
+			/**
+			 * 
+			 * @param	item	{Item}		An Element
+			 * @param	type	{String}	A valid Item itemType
+			 * @returns			{Boolean}	True if matched, false if failed
+			 */
+			type:function(item, type)
+			{
+				switch(item.elementType)
+				{
+					// --------------------------------------------------------------------------------
+					// instance: symbol, bitmap, embedded video, linked video, video, compiled clip
+					
+						//TODO Add video
+						
+						case 'instance':
+							
+							// symbol: button, movieclip, graphic
+								if(item.symbolType)
+								{
+									if(type === 'symbol')
+									{
+										return true;
+									}
+									return item.symbolType.replace(/ /g, '') == type;
+								}
+								
+							// instance
+								return item.instanceType.replace(/ /g, '') == type;
+							
+						break;
+					
+					// --------------------------------------------------------------------------------
+					// text: text, static, dynamic, input
+					
+						case 'text':
+							
+							if(type === 'text')
+							{
+								return true;
+							}
+							return item.textType.replace(/ /g, '') == type;
+							
+						break;
+					
+					// --------------------------------------------------------------------------------
+					// shape: group, shape
+					
+						case 'shape':
+							if(item.isRectangleObject || item.isOvalObject)
+							{
+								return type == 'primitive';
+							}
+							if(item.isGroup)
+							{
+								return type == 'group';
+							}
+							return type == 'shape';
+						break;
+				}
+				
+				return false;
+					
+			}
+
 		},
 		
 		find:
 		{
-			
+			selected:function(items)
+			{
+				return this.selection;
+			}
 		},
 		
 		pseudo:
@@ -475,7 +619,11 @@
 			 */
 			empty:function(element)
 			{
-				return ! Iterators.layers(element, null, function (frame){ return frame.elements.length > 0; });
+				if(element.symbolType)
+				{
+					return Selectors.timeline.pseudo.empty(element.libraryItem.timeline);
+				}
+				return false;
 			},
 			
 			/**
@@ -485,7 +633,25 @@
 			 */
 			animated:function(element)
 			{
-				return Iterators.layers(element, null, function (frame){ return frame.tweenType != 'none'; } );
+				if(element.symbolType)
+				{
+					return Selectors.timeline.pseudo.animated(element.libraryItem.timeline);
+				}
+				return false;
+			},
+			
+			/**
+			 * 
+			 * @param	element	
+			 * @returns		
+			 */
+			keyframed:function(element)
+			{
+				if(element.symbolType)
+				{
+					return Selectors.timeline.pseudo.keyframed(element.libraryItem.timeline);
+				}
+				return false;
 			},
 			
 			/**
@@ -495,7 +661,11 @@
 			 */
 			scripted:function(element)
 			{
-				return Iterators.layers(element, null, function (frame){ return frame.actionScript != ''; });
+				if(element.symbolType)
+				{
+					return Selectors.timeline.pseudo.scripted(element.libraryItem.timeline);
+				}
+				return false;
 			},
 			
 			/**
@@ -505,7 +675,11 @@
 			 */
 			audible:function(element)
 			{
-				return Iterators.layers(element, null, function (frame){ return frame.soundLibraryItem != null; });
+				if(element.symbolType)
+				{
+					return Selectors.timeline.pseudo.audible(element.libraryItem.timeline);
+				}
+				return false;
 			}
 		}
 
@@ -596,7 +770,7 @@
 			{
 				// remove spaces from item type
 					var itemType = item.itemType.replace(/ /g, '');
-					
+
 				// common selector for symbols
 					if(type === 'symbol')
 					{
@@ -783,9 +957,9 @@
 					var children = Selectors.item.find.children.apply(this, [[item]]);
 					return children.length == 0;;
 				}
-				else if(Selectors.item.pseudo.timeline(item))
+				else if(Selectors.item.filter.type(item, 'symbol'))
 				{
-					return Selectors.element.pseudo.empty(item.timeline);
+					return Selectors.timeline.pseudo.empty(item.timeline);
 				}
 				return false;
 			},
@@ -797,9 +971,23 @@
 			 */
 			animated:function(item)
 			{
-				if(Selectors.item.pseudo.timeline(item))
+				if(Selectors.item.filter.type(item, 'symbol'))
 				{
-					return Selectors.element.pseudo.animated(item.timeline);
+					return Selectors.timeline.pseudo.animated(item.timeline);
+				}
+				return false;
+			},
+			
+			/**
+			 * 
+			 * @param	item	
+			 * @returns		
+			 */
+			keyframed:function(item)
+			{
+				if(Selectors.item.filter.type(item, 'symbol'))
+				{
+					return Selectors.timeline.pseudo.keyframed(item.timeline);
 				}
 				return false;
 			},
@@ -811,9 +999,9 @@
 			 */
 			scripted:function(item)
 			{
-				if(Selectors.item.pseudo.timeline(item))
+				if(Selectors.item.filter.type(item, 'symbol'))
 				{
-					return Selectors.element.pseudo.scripted(item.timeline);
+					return Selectors.timeline.pseudo.scripted(item.timeline);
 				}
 				return false;
 			},
@@ -825,14 +1013,71 @@
 			 */
 			audible:function(item)
 			{
-				if(Selectors.item.pseudo.timeline(item))
+				if(Selectors.item.filter.type(item, 'symbol'))
 				{
-					return Selectors.element.pseudo.audible(item.timeline);
+					return Selectors.timeline.pseudo.audible(item.timeline);
 				}
 				return false;
 			}
 			
 		}				
 	}
+
+	Selectors.timeline =
+	{
+		pseudo:
+		{
+			/**
+			 * 
+			 * @param	item	
+			 * @returns		
+			 */
+			empty:function(timeline)
+			{
+				return ! Iterators.layers(timeline, null, function (frame){ return frame.elements.length > 0; });
+			},
+			
+			/**
+			 * 
+			 * @param	element	
+			 * @returns		
+			 */
+			animated:function(timeline)
+			{
+				return Iterators.layers(timeline, null, function (frame){ return frame.tweenType != 'none'; } );
+			},
+			
+			/**
+			 * 
+			 * @param	element	
+			 * @returns		
+			 */
+			keyframed:function(timeline)
+			{
+				return Iterators.layers(timeline, null, function (frame){ return frame.startFrame > 0 && frame.elements.length > 0; } );
+			},
+			
+			/**
+			 * 
+			 * @param	element	
+			 * @returns		
+			 */
+			scripted:function(timeline)
+			{
+				return Iterators.layers(timeline, null, function (frame){ return frame.actionScript != ''; });
+			},
+			
+			/**
+			 * 
+			 * @param	element	
+			 * @returns		
+			 */
+			audible:function(timeline)
+			{
+				return Iterators.layers(timeline, null, function (frame){ return frame.soundLibraryItem != null; });
+			}
+		}
+	}
+
 	
 	xjsfl.classes.register('Selectors', Selectors);
