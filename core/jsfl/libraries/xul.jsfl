@@ -1475,87 +1475,94 @@
 				 */
 				show:function(accept, cancel)
 				{
-					if(xjsfl.get.dom('A document (.fla file) needs to be open before a dialog can be shown.'))
-					{
-						// --------------------------------------------------------------------------------
-						// build and show panel
+					
+					// --------------------------------------------------------------------------------
+					// force a document open if none is
+					
+						if( ! dom )
+						{
+							fl.createDocument();
+						}
 						
-							// build XML
-								if(this.built == false)
-								{
-									this._build();
-								}
+					// --------------------------------------------------------------------------------
+					// build and show panel
+					
+						// build XML
+							if(this.built == false)
+							{
+								this._build();
+							}
+							
+						// clear settings
+							delete this.settings.dismiss;
+							
+						// show panel
+							this.open		= true;
+							this.settings	= xjsfl.ui.show(this);
+							this.open		= false;
+							
+					// --------------------------------------------------------------------------------
+					// process result
+							
+							//Output.inspect(this.settings)
+							
+						// get control values and convert to array for callbacks
+							if(accept || cancel)
+							{
+								var args = xjsfl.utils.getValues(this.values);
+							}
+
+						// test for validation
+							if(this.settings && this.settings.dismiss == 'accept')
+							{
+								// validate
 								
-							// clear settings
-								delete this.settings.dismiss;
+									// prevalidate event
+										this.handleEvent('prevalidate');
 								
-							// show panel
-								this.open		= true;
-								this.settings	= xjsfl.ui.show(this);
-								this.open		= false;
-								
-						// --------------------------------------------------------------------------------
-						// process result
-								
-								//Output.inspect(this.settings)
-								
-							// get control values and convert to array for callbacks
-								if(accept || cancel)
-								{
-									var args = xjsfl.utils.getValues(this.values);
-								}
-	
-							// test for validation
-								if(this.settings && this.settings.dismiss == 'accept')
-								{
-									// validate
-									
-										// prevalidate event
-											this.handleEvent('prevalidate');
-									
-										// reset last error message
-											this.error = null;
-											
-										// loop over controls and request validation
-											for each(var control in this.controls)
-											{
-												var error = control.validate();
-												if(error != null)
-												{
-													this.error = error;
-													break;
-												}
-											}
-											
-										// postvalidate event
-											this.handleEvent('postvalidate');
-									
-									// didn't validate - alert error and show again
-										if(this.error)
+									// reset last error message
+										this.error = null;
+										
+									// loop over controls and request validation
+										for each(var control in this.controls)
 										{
-											alert(this.error);
-											this.show(accept, cancel);
+											var error = control.validate();
+											if(error != null)
+											{
+												this.error = error;
+												break;
+											}
 										}
 										
-									// validated - update settings and call accept callback
-										else
-										{
-											if(accept)
-											{
-												accept.apply(this, args);
-											}
-										}
-								}
+									// postvalidate event
+										this.handleEvent('postvalidate');
 								
-							// cancel
-								else if(cancel)
-								{
-									cancel.apply(this, args);
-									this.settings = null;
-								}
-					}
+								// didn't validate - alert error and show again
+									if(this.error)
+									{
+										alert(this.error);
+										this.show(accept, cancel);
+									}
+									
+								// validated - update settings and call accept callback
+									else
+									{
+										if(accept)
+										{
+											accept.apply(this, args);
+										}
+									}
+							}
+							
+						// cancel
+							else if(cancel)
+							{
+								cancel.apply(this, args);
+								this.settings = null;
+							}
 						
-					return this;
+						// return
+							return this;
 				},
 				
 				/**
