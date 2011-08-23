@@ -22,21 +22,6 @@
 	// --------------------------------------------------------------------------------
 	// setup
 	
-		// temp functions
-			trace = fl.trace;
-			clear = fl.outputPanel.clear;
-	
-		// temp output object, needed before libraries are loaded
-			if( ! xjsfl.settings )
-			{
-				xjsfl.settings	= {debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)};
-				xjsfl.output =
-				{
-					trace: function(message){ if(xjsfl.settings.debugLevel > 0){ fl.trace('> xjsfl: ' + message) } },
-					error: function(message){ fl.trace('> xjsfl: error "' + message + '"') }
-				}
-			}
-	
 		 // if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
 			if( ! FLfile['platformPathToURI'] )
 			{
@@ -45,15 +30,6 @@
 				fl.runScript(xjsfl.uri + path);
 			}
 			
-	// --------------------------------------------------------------------------------
-	// methods
-	
-		// toString function
-			xjsfl.toString = function()
-			{
-				return '[object xJSFL]';
-			}
-	
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -1165,10 +1141,10 @@
 				// switch type
 					switch(type)
 					{
-						// for modules, immediately return the module path or null
+						// for modules, immediately return the module bootstrap
 						case 'module':
 						case 'modules':
-							uri	= xjsfl.uri + 'modules/' + name + '/' + 'jsfl/' + name + '.jsfl';
+							var uri = xjsfl.uri + 'modules/' + name + '/jsfl/bootstrap.jsfl';
 							return FLfile.exists(uri) ? uri : null;
 						break;
 							
@@ -1321,16 +1297,16 @@
 				// debug
 					// alert('Loading ' + path);
 		
-				// if uris.length is 0, no files were found
+				// if result is null, no files were found
 					if(result == null)
 					{
 						if(type == null || type === true || type === false)
 						{
-							xjsfl.output.trace('Error in xjsfl.file.load: The file "' +path+ '" could not be found');
+							xjsfl.output.trace('Error in xjsfl.file.load(): The file "' +path+ '" could not be found');
 						}
 						else
 						{
-							xjsfl.output.trace('Error in xjsfl.file.load: Could not resolve type "' +type+ '" and name "' +path+ '" to an existing file');
+							xjsfl.output.trace('Error in xjsfl.file.load(): Could not resolve type "' +type+ '" and name "' +path+ '" to an existing file');
 						}
 					}
 					
@@ -1344,10 +1320,10 @@
 						{
 							// variables
 								var uri		= uris[i];
-								var _path	= xjsfl.file.makePath(uri, true);
 								var ext		= uri.match(/(\w+)$/)[1];
 	
 							// debug
+								var _path	= xjsfl.file.makePath(uri, true);
 								if(xjsfl.loading)
 								{
 									var state = catchErrors ? 'testing' : 'loading';
@@ -1390,19 +1366,6 @@
 												return uri;
 											}
 											
-										// if the type was a module, ensure any panels are copied to the WindowSWF folder
-											if(type.match(/modules?/))
-											{
-												var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI('modules/' + type + '/ui/'));
-												for each(var file in folder.contents)
-												{
-													if(file.extension == 'swf')
-													{
-														file.copy(fl.configURI + 'WindowSWF/');
-													}
-												}
-											}
-
 									break;
 								
 									case 'xml':
@@ -1713,12 +1676,35 @@
 		 * @param	name	{String}	A module name
 		 * @param	name	{Array}		An Array of module names
 		 */
-		load:function(name)
+		load:function(path)
 		{
-			if(name && name != '')
-			{
-				xjsfl.file.load(name, 'module');
-			}
+			// arrayize paths
+				var paths = path instanceof Array ? path : [path];
+				
+			// load classes
+				for(var i = 0; i < paths.length; i++)
+				{
+					path = paths[i];
+					
+					if(path && path != '')
+					{
+						// load module
+							var uri = xjsfl.file.load(path, 'module');
+							
+						// copy any module panels to the WindowSWF folder
+							var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI('modules/' + path + '/ui/'));
+							for each(var file in folder.contents)
+							{
+								if(file.extension === 'swf')
+								{
+									file.copy(fl.configURI + 'WindowSWF/');
+								}
+							}
+					}
+				}
+				
+			// return
+				return this;
 		},
 		
 		/**
@@ -1850,7 +1836,10 @@
 			}
 		}
 		
+	// add event stub
 	// event code will be added in core/jsfl/libraries/events.jsfl
+	
+		xjsfl.events = {};
 	//TODO Can this code be moved to events, or does it need to execute here?
 
 
@@ -1867,6 +1856,12 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Initialize
 	
+		// toString function
+			xjsfl.toString = function()
+			{
+				return '[object xJSFL]';
+			}
+	
 	/**
 	 * Reload the framework from disk
 	 */
@@ -1875,62 +1870,37 @@
 		//TODO Possibly add in an alert box which is controlled by debug level
 		if( ! xjsfl.loading)
 		{
-				//alert('Reloading xJSFL...:' + xjsfl.utils.getStack())
-				delete xjsfl.uri;
-				fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
+			//alert('Reloading xJSFL...:' + xjsfl.utils.getStack())
+			delete xjsfl.uri;
+			fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
 		}
 	}
 
 	/**
 	 * Initialize the environment by extracting variables / objects / functions to global scope
-	 * @param	scope	{Object}	The scope into which the framework should be extracted
-	 * @param	force	{Boolean}	An optional Boolean to force extraction of the framework, even if already extracted
-	 * @param	trace	{Boolean}	An optional Boolean to output an initializion message
+	 * @param	scope		{Object}	The scope into which the framework should be extracted
+	 * @param	id			{String}	An optional id, which when supplied, traces a short message to the Output panel 
 	 * @returns		
 	 */
-	xjsfl.init = function(scope, trace)
+	xjsfl.init = function(scope, id)
 	{
 		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined
 			if( ! scope.xJSFL )
 			{
-				// debug
-					if(trace)
-					{
-						xjsfl.output.trace('initializing...');
-					}
+				// vars
+					xjsfl.initVars(scope, id);
 				
-				// dom getter
-					scope.__defineGetter__( 'dom', function(){ return fl.getDocumentDOM(); } );
-					
-				// script dir
-					scope.__defineGetter__
-					(
-						'scriptDir',
-						function()
-						{
-							var stack = xjsfl.utils.getStack();
-							return xjsfl.file.makeURI(stack[3].path);
-						}
-					);
-					
-				// functions
-					scope.trace		= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
-					scope.clear		= fl.outputPanel.clear;
-					
-				// methods
-					xjsfl.trace		= xjsfl.output.trace;
+				// debug
+					if(id)
+					{
+						xjsfl.output.trace('copying classes to ' +id);
+					}
 					
 				// classes
 					xjsfl.classes.restore(scope);
 					
 				// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 					scope.xJSFL		= xjsfl;
-			}
-			
-		// debug
-			else
-			{
-				//xjsfl.output.trace('already initialized...');
 			}
 	}
 
