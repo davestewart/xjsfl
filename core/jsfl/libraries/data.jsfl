@@ -80,7 +80,7 @@
 			 * Recursively trawl a folder's contents, optionally calling a callback per element. (NB, arguments 2 and 3 may be swapped)
 			 * @param	folder		{String}	The path or uri to a valid folder
 			 * @param	folder		{Folder}	A valid Folder object
-			 * @param	arg2		{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element
+			 * @param	arg2		{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
 			 * @param	arg3		{Number}	An optional max depth to recurse to, defaults to 100 
 			 * @returns				(Array}		An array of paths
 			 */
@@ -96,22 +96,38 @@
 						// callback
 							var state = callback ? callback(element, index, level, indent) : true;
 							
-						// process
+						// process if the callback didn't return false (false = skip element)
 							if(state !== false)
 							{
 								// path
 									paths.push(element.path);
+									
+								// return if callback passed back true (true = stop all processing)
+									if(state === true)
+									{
+										return true;
+									}
 									
 								// children
 									if(element instanceof Folder && level < depth)
 									{
 										level ++;
 										indent += '	';
-										element.each(process);
+										var contents = element.contents;
+										for(var i = 0 ; i < contents.length; i++)
+										{
+											if(process(contents[i], i))
+											{
+												return true;
+											}
+										}
 										indent = indent.substring(1);
 										level--;
 									}
 							}
+							
+						// return
+							return null;							
 					}
 					
 				// ------------------------------------------------------------
@@ -144,7 +160,7 @@
 					// process
 						if(folder instanceof Folder && folder.exists)
 						{
-							process(folder);
+							process(folder, 0);
 						}
 					
 				// return
