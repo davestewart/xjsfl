@@ -179,9 +179,10 @@
 			
 				/**
 				 * Renders the data in the class as an ASCII table
+				 * @param	{Boolean}	An optional flag to print the tabel table to the Output panel
 				 * @return 	{String}	The String output of the table
 				 */
-				render:function()
+				render:function(output)
 				{
 					// header
 						this.addLine();
@@ -195,6 +196,12 @@
 						
 					// footer
 						this.addLine(false);
+						
+					// print
+						if(output)
+						{
+							trace(this.output);
+						}
 						
 					// return
 						return this.output;
