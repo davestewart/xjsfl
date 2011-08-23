@@ -40,13 +40,17 @@
 					//'utils',
 					'timer',
 					
-				// elements
+				// flash
 					'superdoc',
 					'context',
 					'iterators',
-					'collections',
-					'library',
-					'stage',
+					'collection',
+					'element-collection',
+					'item-collection',
+					'selector',
+					'selectors',
+					'item-selector',
+					'element-selector',
 					
 				// text
 					'output',
@@ -59,7 +63,7 @@
 					'xul',
 					'module',
 					'validate',
-			]);
+			], true);
 			
 		// modules
 			xjsfl.modules.load
@@ -68,7 +72,7 @@
 			]);
 			
 		// initialize
-			xjsfl.init(this, true);
+			xjsfl.init(this);
 			
 	}
 	catch(err)
