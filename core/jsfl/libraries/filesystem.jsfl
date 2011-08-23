@@ -95,7 +95,7 @@
 				 */
 				get exists()
 				{
-					return FLfile.exists(this.uri);
+					return this.uri && FLfile.exists(this.uri);
 				},
 		
 				/**
@@ -306,7 +306,7 @@
 				 */
 				toString:function(path)
 				{
-					var items	= this.contents.length;
+					var items	= this.contents ? this.contents.length : 0;
 					var label	= path ? 'path' : 'name';
 					var value	= path ? this.path : this.name;
 					return '[object Folder ' +label+ '="' +value+ '" items=' +items+ ']';
@@ -325,14 +325,18 @@
 				 */
 				get contents ()
 				{
-					var uri;
-					var items = FLfile.listFolder(this.uri);
-					for(var i = 0; i < items.length; i++)
+					if(this.exists)
 					{
-						uri = this.uri + '/' + encodeURI(items[i]);
-						items[i] = items[i].match(/\.[^\/]+$/) ? new File(uri) : new Folder(uri);
+						var uri;
+						var items = FLfile.listFolder(this.uri);
+						for(var i = 0; i < items.length; i++)
+						{
+							uri = this.uri + '/' + encodeURI(items[i]);
+							items[i] = items[i].match(/\.[^\/]+$/) ? new File(uri) : new Folder(uri);
+						}
+						return items;
 					}
-					return items;
+					return null;
 				},
 				
 				/**
@@ -340,13 +344,17 @@
 				 */
 				get folders ()
 				{
-					var items = FLfile.listFolder(this.uri, "directories");
-					for(var i = 0; i < items.length; i++)
+					if(this.exists)
 					{
-						uri = this.uri + '/' + encodeURI(items[i]);
-						items[i] = new Folder(uri);
+						var items = FLfile.listFolder(this.uri, "directories");
+						for(var i = 0; i < items.length; i++)
+						{
+							uri = this.uri + '/' + encodeURI(items[i]);
+							items[i] = new Folder(uri);
+						}
+						return items;
 					}
-					return items;
+					return null;
 				},
 				
 				/**
@@ -354,13 +362,17 @@
 				 */
 				get files ()
 				{
-					var items = FLfile.listFolder(this.uri, "files");
-					for(var i = 0; i < items.length; i++)
+					if(this.exists)
 					{
-						uri = this.uri + '/' + encodeURI(items[i]);
-						items[i] = new File(uri);
+						var items = FLfile.listFolder(this.uri, "files");
+						for(var i = 0; i < items.length; i++)
+						{
+							uri = this.uri + '/' + encodeURI(items[i]);
+							items[i] = new File(uri);
+						}
+						return items;
 					}
-					return items;
+					return null;
 				}
 		}
 
@@ -566,11 +578,12 @@
 				 */
 				write:function(data, append)
 				{
-					// write
-						var result = append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
-						
-					// return
-						return result ? this : false;
+					var result;
+					if(this.exists)
+					{
+						result = append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
+					}
+					return result ? this : false;
 				},
 				
 				/**
@@ -603,15 +616,18 @@
 				 */
 				reveal:function()
 				{
-					if(fl.version.indexOf('WIN') != -1)
+					if(this.exists)
 					{
-						var exec	= 'start %SystemRoot%\\explorer.exe /select, "' +this.path.replace(/\//g, '\\') + '"'
+						if(fl.version.indexOf('WIN') != -1)
+						{
+							var exec	= 'start %SystemRoot%\\explorer.exe /select, "' +this.path.replace(/\//g, '\\') + '"'
+						}
+						else
+						{
+							var exec = 'reveal "' +this.path+ '"';
+						}
+						FLfile.runCommandLine(exec);
 					}
-					else
-					{
-						var exec = 'reveal "' +this.path+ '"';
-					}
-					FLfile.runCommandLine(exec);
 					return this;
 				},
 				
@@ -659,12 +675,12 @@
 				/** 
 				 * @type {String} get the contents of the file
 				 */
-				get contents (){ return FLfile.read(this.uri).replace(/\r\n/g, '\n'); },
+				get contents (){ return this.exists ? FLfile.read(this.uri).replace(/\r\n/g, '\n') : ''; },
 				
 				/** 
 				 * @type {String} Set the contents of the file
 				 */
-				set contents (data){ return this.write(data); },
+				set contents (data){ if(this.exists && data != null) this.write(data); },
 				/** 
 				 * @type {String} The file extension of the file
 				 */
