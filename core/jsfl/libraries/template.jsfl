@@ -20,8 +20,7 @@
 		 * Handes loading and population of text data, including nested templating and indentation
 		 * @param	uri		{String}	A URI or path to the template file
 		 * @param	data	{Object}	An object of key:value pairs
-		 * @returns		
-		 * @author	Dave Stewart	
+		 * @returns			{Template}	A new Template instance
 		 */
 		function Template(uri, data)
 		{
@@ -92,7 +91,6 @@
 				 * Loads the template source text file
 				 * @param	uri		{String}	A URI or path to the template file
 				 * @returns			{Template}	Itself
-				 * @author	Dave Stewart	
 				 */
 				load:function(uri)
 				{
@@ -109,7 +107,7 @@
 							var file = new File(uri);
 							if( ! file.exists )
 							{
-								throw new Error('The file "' +file.path+ '" does not exist')
+								throw new ReferenceError('ReferenceError in Template.load(): The file "' +file.path+ '" does not exist')
 							}
 							this.input	= Template.templates[uri] = file.contents;
 						}
@@ -122,7 +120,6 @@
 				 * Saves the rendered template to a file
 				 * @param	uri			{String}	The uri of where to save the file
 				 * @param	overwrite	{Boolean}	An optional Boolean specifying whether to overwrite an existing file or not
-				 * @returns				{Template}	Itself
 				 */
 				save:function(uri, overwrite)
 				{
@@ -153,7 +150,6 @@
 				 * @param	value	{mixed}		Any value that can be converted to a string, even another Template instance
 				 * @param	append	{Boolean}	Append teh value, rather than replacing it
 				 * @returns			{Template}	Itself
-				 * @author	Dave Stewart	
 				 */
 				set:function(data, value, append)
 				{
@@ -189,8 +185,7 @@
 				 * @param	indent	{Number}	The number of tabs to indent
 				 * @param	indent	{String}	A string that will be used as the indent
 				 * @returns			{Template}	Itself
-				 * @author	Dave Stewart	
-				 */
+			 */
 				indent:function(indent)
 				{
 					// indent
@@ -215,7 +210,6 @@
 				/**
 				 * Renders the Template and all its placeholder values
 				 * @returns		{String}	The rendered template
-				 * @author	Dave Stewart	
 				 */
 				render:function(_stack)
 				{
@@ -323,7 +317,6 @@
 				/**
 				 * Returna copy of the object
 				 * @returns		{Template}	An independant copy of the object
-				 * @author	Dave Stewart	
 				 */
 				clone:function()
 				{
@@ -341,7 +334,6 @@
 				/**
 				 * Returns the String representation of the Template
 				 * @returns		
-				 * @author	Dave Stewart	
 				 */
 				toString:function()
 				{
