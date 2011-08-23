@@ -97,7 +97,20 @@
 					context.dom.livePreview = true;
 				}
 				return context;
-		}	
+		}
+		
+		/**
+		 * Creates a context from a supplied element
+		 * @param	value	
+		 * @returns		
+		 */
+		Context.from = function(value)
+		{
+			switch(xjsfl.utils.getClass(value))
+			{
+				
+			}
+		}
 	
 	// --------------------------------------------------------------------------------
 	// Prototype

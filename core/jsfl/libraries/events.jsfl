@@ -43,7 +43,7 @@
 				this.type		= type;
 				this.document	= xjsfl.events.current.document;
 			}
-			DocumentEvent.prototype.toString	= function(){ return '[object DocumentEvent type="' +this.type+ '" name="' +this.document.name+ '" id="' +this.document.id+ '"]'; }
+			DocumentEvent.prototype.toString	= function(){ return '[object DocumentEvent type="' +this.type+ '" name="' +(this.document ? this.document.name : '')+ '" id="' +(this.document ? this.document.id : '')+ '"]'; }
 			
 			/**
 			 * An object representing a the JSFL Event that fires when a user changes a layer
@@ -59,7 +59,7 @@
 				this.timeline	= xjsfl.events.current.timeline;
 				this.layer		= xjsfl.events.current.layer;
 			}
-			LayerEvent.prototype.toString	= function(){ return '[object LayerEvent timeline="' +this.timeline.name+ '" layer="' +this.layer.name+ '"]'; }
+			LayerEvent.prototype.toString	= function(){ return '[object LayerEvent timeline="' +(this.timeline ? this.timeline.name : '')+ '" layer="' +(this.layer ? this.layer.name : '')+ '"]'; }
 			
 			/**
 			 * An object representing a the JSFL Event that fires when a user changes a frame
@@ -77,7 +77,7 @@
 				this.layer		= xjsfl.events.current.layer;
 				this.frame		= this.layer.frames[this.timeline.currentFrame];
 			}
-			FrameEvent.prototype.toString	= function(){ return '[object FrameEvent timeline="' +this.timeline.name+ '" layer="' +this.layer.name+ '" frame="' +this.timeline.currentFrame+ '"]'; }
+			FrameEvent.prototype.toString	= function(){ return '[object FrameEvent timeline="' +(this.timeline ? this.timeline.name : '')+ '" layer="' +(this.layer ? this.layer.name : '')+ '" frame="' +(this.timeline ? this.timeline.currentFrame : '')+ '"]'; }
 			
 			/**
 			 * An object representing a the JSFL Event that fires when a user move the mouse

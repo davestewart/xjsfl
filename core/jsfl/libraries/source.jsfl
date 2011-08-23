@@ -16,6 +16,11 @@
 
 		Source =
 		{
+			/**
+			 * 
+			 * @param	source	
+			 * @returns		
+			 */
 			parseDocComment:function(source)
 			{
 				// derive content
@@ -68,6 +73,11 @@
 					return null;
 			},
 			
+			/**
+			 * Parses a function source into an object
+			 * @param	fn	{Function}	A reference to a function
+			 * @returns		{Object}	An Object with name and params properties
+			 */
 			parseFunction:function(fn)
 			{
 				var matches = fn.toSource().match(/function(\s+\w*)\s*\(([^\)]*)\)/);

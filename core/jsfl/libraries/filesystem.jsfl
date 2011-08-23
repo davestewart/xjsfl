@@ -671,7 +671,7 @@
 				
 				get extension()
 				{
-					return this.uri.substr(this.uri.lastIndexOf('.') + 1);
+					return this.uri ? this.uri.substr(this.uri.lastIndexOf('.') + 1) : '';
 				},
 		
 				/** 

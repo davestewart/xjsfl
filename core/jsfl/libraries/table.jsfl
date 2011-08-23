@@ -29,7 +29,7 @@
 			//TODO Add a setHeading() method to add a tabel eading row
 			//TODO Update constructor to allow setting of heading
 			
-			if(rows instanceof Array && rows.length > 0)
+			if(rows instanceof Array)
 			{
 				// variables
 					this.rows			= rows;
@@ -209,7 +209,7 @@
 				
 				toString:function()
 				{
-					return '[object Table rows:' +this.rows.length+ ']';
+					return '[object Table rows="' +(this.rows ? this.rows.length : 0)+ '"]';
 				},
 			
 			// ---------------------------------------------------------------------------------------------------------------

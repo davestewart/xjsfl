@@ -1677,7 +1677,7 @@
 				 */
 				toString:function()
 				{
-					return '[object XUL id="' +this.id+ '" title="' +xjsfl.utils.trim(this.xml.@title)+ '" controls:' +xjsfl.utils.getKeys(this.controls).length+ ']';
+					return '[object XUL id="' +this.id+ '" title="' +xjsfl.utils.trim((this.xml ? this.xml.@title : ''))+ '" controls:' +xjsfl.utils.getKeys(this.controls).length+ ']';
 				}
 		}
 		
