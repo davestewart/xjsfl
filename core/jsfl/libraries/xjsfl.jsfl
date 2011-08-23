@@ -22,6 +22,10 @@
 	// --------------------------------------------------------------------------------
 	// setup
 	
+		// temp functions
+			trace = fl.trace;
+			clear = fl.outputPanel.clear;
+	
 		// temp output object, needed before libraries are loaded
 			if( ! xjsfl.settings )
 			{
@@ -185,7 +189,7 @@
 			core:		xjsfl.uri + 'core/',
 			modules:	xjsfl.uri + 'modules/',
 			user:		xjsfl.uri + 'user/',
-			config:		fl.configURI,
+			flash:		fl.configURI,
 			swf:		fl.configURI + 'WindowSWF/'
 		},
 
@@ -204,6 +208,18 @@
 			// methods
 				add:function(uri, type)
 				{
+					// check uri is valid
+						if(uri.indexOf('file:///') !== 0)
+						{
+							throw new URIError('Error in xjsfl.settings.uris.add(): URI "' +uri+ '" is not a valid URI');
+						}
+						
+					// check URI exists
+						if( ! FLfile.exists(uri))
+						{
+							throw new URIError('Error in xjsfl.settings.uris.add(): URI "' +uri+ '" does not exist');
+						}
+						
 					// variables
 						type	= type || 'user';
 						uri		= uri.replace(/[\/]+$/g, '') + '/';	// ensure a single trailing slash
@@ -967,7 +983,7 @@
 		 * @param	fn		{Function}	The function to test
 		 * @param	params	{Array}		An array or arguments to pass to the function
 		 * @param	scope	{Object}	An alternative scope to run the function in
-		 * @returns		
+		 * @returns			{Value}		The result of the function if successful
 		 */
 		test:function(fn, params, scope)
 		{
@@ -1435,7 +1451,7 @@
 				if(typeof context === 'string')
 				{
 					context 	= context.replace(/[^\/\\]+$/, '');
-					path			= xjsfl.file.makePath(context) + path;
+					path		= xjsfl.file.makePath(context) + path;
 				}
 				
 			// if context is true, then the returned URI will be relative to the calling script
@@ -1443,7 +1459,7 @@
 				else if(context === true || path === true)
 				{
 					var stack	= xjsfl.utils.getStack();
-					path			= xjsfl.file.makePath(stack[3].path) + (path === true ? '' : path);
+					path		= xjsfl.file.makePath(stack[3].path) + (path === true ? '' : path);
 				}
 				
 			//TODO IMPORTANT! Throw error / passback false on empty string
@@ -1479,19 +1495,29 @@
 		makePath:function(str, shorten)
 		{
 			// if a URI is passed in, just convert it
-				if(str.match(/^file:\/\/\//))
+				if(str.indexOf('file:///') === 0)
 				{
-					path = FLfile.uriToPlatformPath(String(str));
+					var path = FLfile.uriToPlatformPath(String(str));
 				}
 				else
 				{
-					path = String(str);
+					var path = String(str);
 				}
 				
 			// convert {config} and {xjsfl} tokens
-				path = path
-					.replace(/.*{config}/g, xjsfl.settings.folders.config)
-					.replace(/.*{xjsfl}/g, xjsfl.settings.folders.xjsfl);
+				var matches = path.match(/{(\w+)}/);
+				if(matches)
+				{
+					var uri = xjsfl.settings.folders[matches[1]];
+					if(uri)
+					{
+						path = path.replace(matches[0], FLfile.uriToPlatformPath(uri))
+					}
+					else
+					{
+						throw new URIError('URIError in xjsfl.file.makePath(): Unrecognised placeholder in path "' +path+ '"');
+					}
+				}
 				
 			// if a relative path is passed in, convert it to absolute from the xJSFL root
 				if( ! xjsfl.file.isAbsolutePath(path))
@@ -1515,7 +1541,7 @@
 				if(shorten)
 				{
 					path = path
-						.replace(FLfile.uriToPlatformPath(xjsfl.settings.folders.config).replace(/\\+/g, '/'), 'Configuration/')
+						.replace(FLfile.uriToPlatformPath(xjsfl.settings.folders.flash).replace(/\\+/g, '/'), 'Configuration/')
 						.replace(FLfile.uriToPlatformPath(xjsfl.settings.folders.xjsfl).replace(/\\+/g, '/'), 'xJSFL/')
 				}
 				
