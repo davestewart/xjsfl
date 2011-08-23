@@ -3,8 +3,12 @@
  * @icon {iconsURI}Feedback/action/action_help.png
  */
 
-var varName = prompt("Enter a variable name");
-if(window[varName])
+(function()
 {
-	Output.inspect(window[varName]);
-}
+	var varName = prompt("Enter a variable name");
+	if(window[varName])
+	{
+		Output.inspect(window[varName], true);
+	}
+	
+})()
