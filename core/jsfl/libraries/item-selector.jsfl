@@ -22,28 +22,8 @@
 	 * @param	context		{Context}	A Context object with a valid item property
 	 * @returns				{Array}		An array of library Items
 	 */
-	$$ = function(expression, context)
+	$$ = function(expression, context, debug)
 	{
-		// --------------------------------------------------------------------------------
-		// recursively handle multiple rules
-		
-			var expressions	= xjsfl.utils.trim(expression).split(/,/g);
-			var items		= [];
-			if(expressions.length > 1)
-			{
-				// callback
-					for(var i = 0; i < expressions.length; i++)
-					{
-						items = items.concat($$(expressions[i], context).elements);
-					}
-				
-				// ensure items are unique
-					items = xjsfl.utils.toUniqueArray(items);
-					
-				// return
-					return new ItemCollection(items);
-			}
-				
 		// --------------------------------------------------------------------------------
 		// setup
 		
@@ -57,6 +37,8 @@
 				
 		// --------------------------------------------------------------------------------
 		// resolve context
+		
+			//TODO Review the use of context here
 		
 			// check context is a library item or valid path
 				if(context)
@@ -94,7 +76,7 @@
 				items		= context ? Selectors.tests.items.find.decendents(library.items, context) : library.items;
 	
 			// filter items
-				items		= Selectors.select(expression, items, library);
+				items		= Selectors.select(expression, items, library, debug);
 				
 			// return
 				return new ItemCollection(items);
