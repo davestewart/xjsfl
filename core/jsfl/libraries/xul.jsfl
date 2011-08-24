@@ -1852,6 +1852,10 @@
 							case 'textbox':
 							case 'targetlist':
 								value = xjsfl.utils.parseValue(value);
+								if(this.type == 'textbox' && value !== null)
+								{
+									value = value.replace(/\r\n/g, '\n');
+								}
 							break;
 						
 							case 'choosefile':
