@@ -722,9 +722,10 @@
 		 */
 		getPanel:function(name)
 		{
+			name = name.toLowerCase();
 			for(var i = 0; i < fl.swfPanels.length; i++)
 			{
-				if(fl.swfPanels[i].name == name)
+				if(fl.swfPanels[i].name.toLowerCase() === name)
 				{
 					return fl.swfPanels[i];
 				}
@@ -1078,8 +1079,8 @@
 				}
 				
 			// template uris
-				var uriErrors	= xjsfl.file.makeURI('core/config/templates/errors/errors.txt');
-				var uriError	= xjsfl.file.makeURI('core/config/templates/errors/error.txt');
+				var uriErrors	= xjsfl.file.makeURI('core/assets/templates/errors/errors.txt');
+				var uriError	= xjsfl.file.makeURI('core/assets/templates/errors/error.txt');
 				
 			// build errors
 				var content = '';
@@ -1184,7 +1185,7 @@
 						
 						// for templates, return the last file found, from: core, modules, user (txt, or supplied extension)
 						case 'template':
-							path	= 'config/templates/' + name;
+							path	= 'assets/templates/' + name;
 							ext		= '.txt';
 							which	= -1;
 						break;
@@ -1721,6 +1722,8 @@
 				//trace('Registering MODULE:' + module.key)
 				xjsfl.settings.uris.add(xjsfl.uri + 'modules/' + module.name + '/', 'module');
 				xjsfl.modules[module.key] = module;
+				
+				//TODO Add support for submodule keys, i.e. xjsfl.modules.pocketgod.tools
 			}
 			else
 			{
@@ -1893,7 +1896,7 @@
 				// debug
 					if(id)
 					{
-						xjsfl.output.trace('copying classes to ' +id);
+						xjsfl.output.trace('initializing classes in ' +id);
 					}
 					
 				// classes
