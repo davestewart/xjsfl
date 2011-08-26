@@ -403,38 +403,6 @@
 // ------------------------------------------------------------------------------------------------
 // create module
 	
-	var module = new xjsfl.classes.Module('Snippets', snippets);
+	var module = new xjsfl.classes.Module('Snippets', 'snippets', snippets);
+	delete snippets;
 	
-// -----------------------------------------------------------------------------------------------------------------------------------------
-// Demo code
-	
-	if( ! xjsfl.loading )
-	{
-		// initialize
-			xjsfl.init(this);
-			clear();
-			try
-			{
-		
-		// --------------------------------------------------------------------------------
-		// Test
-		
-			if(0)
-			{
-				
-			}
-		
-		// --------------------------------------------------------------------------------
-		// Test
-		
-			if(0)
-			{
-				var module = new Module('Snippets', snippets);
-				//Output.inspect(module);
-				trace(module)
-							
-			}
-		
-		// catch
-			}catch(err){xjsfl.output.debug(err);}
-	}
