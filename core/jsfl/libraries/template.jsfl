@@ -95,6 +95,7 @@
 				load:function(uri)
 				{
 					// input
+						uri			= xjsfl.file.makeURI(uri);
 						this.uri	= uri;
 						this.file	= uri.substr(uri.lastIndexOf('/') + 1)
 						
