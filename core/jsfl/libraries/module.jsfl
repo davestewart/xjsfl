@@ -20,7 +20,6 @@
 		 * @param	name		{String}	The name of your module - this should match the folder path
 		 * @param 	key			{String}	The key of the module in the xjsfl.modules object
 		 * @param 	properties	{object}	The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
-		 * @author	Dave Stewart	
 		 */
 		Module = function(name, key, properties)
 		{
@@ -39,8 +38,8 @@
 				xjsfl.modules.register(this);
 				
 			// instantiate default settings and data
-				this.settings	= new Config('settings/' + this.key);
-				this.data		= new Config('data/' + this.key);
+				this.settings	= new Config('settings/' + this.name.toLowerCase());
+				this.data		= new Config('data/' + this.name.toLowerCase());
 				
 			// call a constructor if provided
 				if(this.init)
