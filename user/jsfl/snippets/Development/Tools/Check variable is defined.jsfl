@@ -5,10 +5,11 @@
 
 (function()
 {
-	var varName = prompt("Enter a variable name");
-	if(window[varName])
+	var name	= prompt("Enter a variable name");
+	var value	= eval(name)
+	if(value !== undefined)
 	{
-		Output.inspect(window[varName], true);
+		Output.inspect(value, name, true);
 	}
 	
 })()

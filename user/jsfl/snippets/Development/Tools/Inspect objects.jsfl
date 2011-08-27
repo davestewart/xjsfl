@@ -4,11 +4,18 @@
  */
 (function()
 {
+	// force a document open if none is
+		if( ! dom )
+		{
+			fl.createDocument();
+		}
+	
 	// values
 		var context = Context.create();
 		var scopes = 
 		{
 			xJSFL:		xjsfl,
+			Flash:		fl,
 			Window:		window,
 			Document:	context.dom,
 			Library:	context.dom.library,
@@ -23,7 +30,7 @@
 		[
 			'title:Show variables...',
 			'radios:Scope=[' +xjsfl.utils.getKeys(scopes).join(',')+ ']',
-			'radios:From={Top-level only:1,2 levels down:2,3 levels down:3,4 levels down:4,5 levels down:5,6 levels down:6}',
+			'radios:Depth={Top-level only:1,2 levels down:2,3 levels down:3,4 levels down:4,5 levels down:5,6 levels down:6}',
 			'checkbox:Clear output panel=true'
 		]
 		.join(',');
@@ -34,13 +41,13 @@
 			.show();
 			
 	// process input
-		if(xul.values.from)
+		if(xul.values.depth)
 		{
 			if(xul.values.clearoutputpanel)
 			{
 				fl.outputPanel.clear();
 			}
-			Output.inspect(scopes[xul.values.scope], true, xul.values.from);
+			Output.inspect(scopes[xul.values.scope], true, xul.values.depth);
 		}
-	
+
 })()
