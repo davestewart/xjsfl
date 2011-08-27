@@ -12,6 +12,9 @@ function makeSquares(num, cols, gutter, setStage, clearStage)
 		var lib			= dom.library;
 		var context		= Context.create();
 		
+	// debug
+		fl.enableImmediateUpdates(false);
+		
 	// clear stage
 		if(clearStage)
 		{
@@ -70,6 +73,10 @@ function makeSquares(num, cols, gutter, setStage, clearStage)
 				}
 		}
 		dom.selectNone();
+		
+	// debug
+		fl.enableImmediateUpdates(true);
+
 }
 
 XUL.create('title:Create squares,numeric:Total=[10,0,100],numeric:Columns=[5,1,100],numeric:Gutter=[5,0,100],checkbox:Set stage size=true,checkbox:Clear stage=true', makeSquares);
