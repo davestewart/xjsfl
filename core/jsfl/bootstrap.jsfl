@@ -82,22 +82,26 @@
 				xjsfl.loading = true;
 
 			// core
-				xjsfl.trace('loading "xJSFL/core/jsfl/libraries/xjsfl.jsfl"');
+				xjsfl.trace('loading xJSFL...', true);
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 	
 			// load key libraries
+				xjsfl.trace('loading core libraries...');
 				xjsfl.classes.load(['filesystem', 'template', 'class', 'output']);
 				
 			// load other libraries
 				xjsfl.classes.loadFolder('core/jsfl/libraries/');
 
 			// modules			
+				xjsfl.trace('loading Modules...', true);
 				xjsfl.modules.loadAll();
 				
 			// user bootstrap
+				xjsfl.trace('loading user bootstrap...', true);
 				xjsfl.file.load('user/jsfl/bootstrap.jsfl');
 				
 			// load user libraries
+				xjsfl.trace('loading user libraries...');
 				xjsfl.classes.loadFolder('user/jsfl/libraries/');
 
 			// flags
