@@ -1007,15 +1007,19 @@
 	 */
 	xjsfl.output =
 	{
-		OUTPUT_TYPE_TRACE:1,
-		OUTPUT_TYPE_ALERT:2,
+		OUTPUT_TYPE_TRACE:	'trace',
+		OUTPUT_TYPE_ALERT:	'alert',
 		
 		/**
 		 * Framework-only output function
 		 */
-		trace:function()
+		trace:function(message, newLine)
 		{
-			fl.trace('> xjsfl: ' + Array.prototype.slice.call(arguments).join(', '));
+			if(newLine)
+			{
+				trace('\n=================================================================\n');
+			}
+			fl.trace('> xjsfl: ' + message);
 		},
 		
 		/**
@@ -1569,9 +1573,10 @@
 		/**
 		 * Load a class or array of classes from disk
 		 * 
-		 * @param	filename	{String}	A class filename or path, relative to the jsfl/libraries folder
-		 * @param	path		{Array}		An Array of class filepaths
-		 * @param	debugType	{Number}	An optional debug switch. Pass xjsfl.output.OUTPUT_TYPE constants here
+		 * @param	filename	{String}	A class filename or path, relative to any jsfl/libraries folder
+		 * @param	filename	{Array}		An Array of class filepaths
+		 * @param	debugType	{String}	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
+		 * @returns				{xjsfl}		The main xJSFL object
 		 */
 		load:function(filename, debugType)
 		{
@@ -1583,7 +1588,7 @@
 			// load classes
 				for(var i = 0; i < paths.length; i++)
 				{
-					if(paths[i].indexOf('xjsfl') == -1)
+					if(paths[i].indexOf('xjsfl') == -1) // don't reload load xjsfl //TODO consider moving xjsfl out of libraries
 					{
 						if(debugType != undefined)
 						{
@@ -1599,27 +1604,43 @@
 				return this;
 		},
 		
+		/**
+		 * Load an entire folder of libraries
+		 * @param	filename	{String}	A class filename or path, relative to any jsfl/libraries folder
+		 * @param	debugType	{String}	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
+		 * @returns				{xjsfl}		The main xJSFL object
+		 */
 		loadFolder:function(path, debugType)
 		{
-			var uri		= xjsfl.file.makeURI(path);
-			var files	= FLfile.listFolder(uri, 'file').map( function(file){ return file.replace('.jsfl', ''); } );
-			xjsfl.classes.load(files);
+			// grab files
+				var uri		= xjsfl.file.makeURI(path);
+				var files	= FLfile.listFolder(uri, 'file')
+								.filter( function(file){ return /.jsfl$/.test(file); } )
+								.map( function(file){ return file.replace('.jsfl', ''); } );
+								
+			// load files
+				xjsfl.classes.load(files);
+				
+			// return
+				return this;
 		},
 		
 		/**
-		 * Loads a class if not already defined in the supplied scope
-		 * @param	scope		{Object}	A valid scope to extract the class definition to, normally 'this' (without the quotes)
-		 * @param	name		{String}	The class name, such as 'Template', or 'Table'
+		 * Loads a class only if not already defined
+		 * @param	filename	{String}	The class name, such as 'Template', or 'Table'
 		 * @returns		
 		 */
-		require:function(scope, filename)
+		require:function(filename)
 		{
-			var path = this.paths[name];
-			if( ! path )
-			{
-				this.load(name);
-			}
-			return this;
+			// load path
+				var path = this.paths[name];
+				if( ! path )
+				{
+					this.load(name);
+				}
+				
+			// return
+				return this;
 		},
 		
 		/**
@@ -1703,16 +1724,20 @@
 		 */
 		load:function(path)
 		{
+			// unescpae
+				path = unescape(path);
+				xjsfl.trace('loading module "' +path+ '"...');
+			
 			// load module bootstrap
-				var uri = xjsfl.file.load(unescape(path), 'module');
+				var uri = xjsfl.file.load(path, 'module');
 				
 			// copy any module panels to the WindowSWF folder
 				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI('modules/' + path + '/ui/'));
-				for each(var file in folder.contents)
+				for each(var file in folder.files)
 				{
 					if(file.extension === 'swf')
 					{
-						file.copy(fl.configURI + 'WindowSWF/');
+						file.copy(fl.configURI + 'WindowSWF/', true);
 					}
 				}
 
@@ -1764,11 +1789,17 @@
 		{
 			if( ! module.name.match(/register|load/) )
 			{
-				//trace('Registering MODULE:' + module.key)
-				xjsfl.settings.uris.add(xjsfl.uri + 'modules/' + module.name + '/', 'module');
-				xjsfl.modules[module.key] = module;
+				// debug
+					xjsfl.trace('registering xjsfl.modules.' + module.key, true)
+					
+				// add module path to xjsfl list of search paths
+					xjsfl.settings.uris.add(xjsfl.uri + 'modules/' + module.name + '/', 'module');
 				
-				//TODO Add support for submodule keys, i.e. xjsfl.modules.pocketgod.tools
+				// add module instance to xjsfl.modules
+					//TODO Add support for submodule keys, i.e. xjsfl.modules.pocketgod.tools
+					delete xjsfl.modules[module.key];
+					xjsfl.modules[module.key] = module;
+				
 			}
 			else
 			{
@@ -1937,22 +1968,23 @@
 	xjsfl.init = function(scope, id)
 	{
 		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined
+		
+		// vars
+			xjsfl.initVars(scope, id);
+		
+		// debug
+			if(id)
+			{
+				xjsfl.output.trace('initializing classes in [' +id+ ']');
+			}
+			
+		// classes
+			xjsfl.classes.restore(scope);
+			
+		// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
+			scope.xJSFL		= xjsfl;
 			if( ! scope.xJSFL )
 			{
-				// vars
-					xjsfl.initVars(scope, id);
-				
-				// debug
-					if(id)
-					{
-						xjsfl.output.trace('initializing classes in ' +id);
-					}
-					
-				// classes
-					xjsfl.classes.restore(scope);
-					
-				// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
-					scope.xJSFL		= xjsfl;
 			}
 	}
 
