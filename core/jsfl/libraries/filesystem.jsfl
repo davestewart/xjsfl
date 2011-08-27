@@ -315,7 +315,7 @@
 					var items	= this.contents ? this.contents.length : 0;
 					var label	= path ? 'path' : 'name';
 					var value	= path ? this.path : this.name;
-					return '[object Folder ' +label+ '="' +value+ '" items=' +items+ ']';
+					return '[object Folder ' +label+ '="' +value+ '" items=' +items+ ' exists="' +this.exists+ '"]';
 				},
 					
 			// -------------------------------------------------------------------------------------------------------------------
@@ -551,6 +551,12 @@
 								uriCopy =  xjsfl.file.makeURI(uriCopy);
 								
 							// remove target if file should overwrite
+								if(overWrite == undefined)
+								{
+									var str = 'Copying "' +xjsfl.file.makePath(this.uri, true)+ '" to "' +xjsfl.file.makePath(uriCopy, true)+ '".\n\nThe target file exists. Do you wish to overwrite?';
+									overWrite = confirm(str);
+								}
+								
 								if(overWrite)
 								{
 									FLfile.remove(uriCopy);
@@ -675,7 +681,7 @@
 				 */
 				toString:function(path)
 				{
-					return '[object File ' +(path ? 'path' : 'name')+ '="' +(path ? this.path : this.name)+ '"]';
+					return '[object File ' +(path ? 'path' : 'name')+ '="' +(path ? this.path : this.name)+ '" exists="' +this.exists+ '"]';
 				},
 				
 			// -------------------------------------------------------------------------------------------------------------------
