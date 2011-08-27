@@ -741,15 +741,18 @@
 		
 		layout:function(columns, gutter, spacing)
 		{
-			var element	= this.elements[0];
-			var x		= element.x;
-			var y		= element.y;
-			
-			for(var i = 0; i < this.elements.length; i++)
+			if(this.elements.length)
 			{
-				px			= i % cols;
-				py			= (i - x) / cols;
-				element		= this.elements[i];
+				var element	= this.elements[0];
+				var x		= element.x;
+				var y		= element.y;
+				
+				for(var i = 0; i < this.elements.length; i++)
+				{
+					px			= i % cols;
+					py			= (i - x) / cols;
+					element		= this.elements[i];
+				}
 			}
 		},
 		
@@ -936,6 +939,30 @@
 		},
 		
 		/**
+		 * Run a function in each item in the collection by entering edit mode, running the function, then moving onto the next item
+		 * @param	callback	{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
+		 * @param	params		{Array}				An array of optional parameters to pass to the callback
+		 * @param	scope		{Object}			An optional scope to call the method in
+		 * @returns				{ItemCollection}	The original ItemCollection
+		 */
+		exec:function(callback, params, scope)
+		{
+			var that = this;
+			this.elements.forEach
+			(
+				function(element, index, array)
+				{
+					if(element.symbolType)
+					{
+						dom.library.editItem(element.libraryItem.name);
+						callback.apply(scope || that, [element, index].concat(params));
+					}
+				}
+			)
+			return this;
+		},
+		
+		/**
 		 * Forces the a refreshes of the display after a series of operations
 		 * @returns				{ElementCollection}	The original ElementCollection object
 		 */
@@ -951,7 +978,12 @@
 		 */
 		list:function()
 		{
-			Output.list(this.elements, 'name', this.toString());
+			function getName(element)
+			{
+				return element.name ? 'name: ' + element.name : (element.libraryItem ? 'item: ' + element.libraryItem.name : 'type: ' + element.elementType);
+			}
+			
+			Output.list(this.elements, getName, this.toString());
 			return this;
 		}
 
