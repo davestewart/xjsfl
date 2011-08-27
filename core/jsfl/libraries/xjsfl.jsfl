@@ -187,7 +187,8 @@
 					// check uri is valid
 						if(uri.indexOf('file:///') !== 0)
 						{
-							throw new URIError('Error in xjsfl.settings.uris.add(): URI "' +uri+ '" is not a valid URI');
+							uri = FLfile.platformPathToURI(uri);
+							//throw new URIError('Error in xjsfl.settings.uris.add(): URI "' +uri+ '" is not a valid URI');
 						}
 						
 					// check URI exists
@@ -1006,6 +1007,9 @@
 	 */
 	xjsfl.output =
 	{
+		OUTPUT_TYPE_TRACE:1,
+		OUTPUT_TYPE_ALERT:2,
+		
 		/**
 		 * Framework-only output function
 		 */
@@ -1278,15 +1282,22 @@
 			// --------------------------------------------------------------------------------
 			// Load file
 			
-				// single argument so just convert the path to a uri
-					if(type == undefined || type === true || type === false)
+				// a URI was passed in
+					if(path.indexOf('file://') === 0)
+					{
+						catchErrors	= type;
+						result		= FLfile.exists(path) ? path : null;
+					}
+			
+				// a single path was passed in, so it to a uri
+					else if(type == undefined || type === true || type === false)
 					{
 						catchErrors	= type;
 						var uri		= xjsfl.file.makeURI(path);
 						result		= FLfile.exists(uri) ? uri : null;
 					}
 					
-				// type and name supplied, so find the file we need in the cascading file system
+				// name and type supplied, so find the file we need in the cascading file system
 					else
 					{
 						result = xjsfl.file.find(type, path);
@@ -1307,7 +1318,7 @@
 						}
 						else
 						{
-							xjsfl.output.trace('Error in xjsfl.file.load(): Could not resolve type "' +type+ '" and name "' +path+ '" to an existing file');
+							xjsfl.output.trace('Error in xjsfl.file.load(): Could not resolve type "' +type+ '" and path "' +path+ '" to an existing file');
 						}
 					}
 					
@@ -1553,48 +1564,60 @@
 	 */
 	xjsfl.classes =
 	{
+		paths:{},
+		
 		/**
 		 * Load a class or array of classes from disk
 		 * 
-		 * @param	path		{String}	A class filepath, relative to the jsfl/libraries folder
+		 * @param	filename	{String}	A class filename or path, relative to the jsfl/libraries folder
 		 * @param	path		{Array}		An Array of class filepaths
-		 * @param	debugType	{Number}	An optional debug switch 1:alert, 2:eval
+		 * @param	debugType	{Number}	An optional debug switch. Pass xjsfl.output.OUTPUT_TYPE constants here
 		 */
-		load:function(path, debugType)
+		load:function(filename, debugType)
 		{
 			// arrayize paths
-				var paths = path instanceof Array ? path : [path];
+				var paths = filename instanceof Array ? filename : [filename];
 				
 			//TODO Add a check to see if we are loading, and if so, only load classes that are not yet defined. Can we do that? Do we need to cache load paths in that case?
 				
 			// load classes
 				for(var i = 0; i < paths.length; i++)
 				{
-					if(debugType != undefined)
+					if(paths[i].indexOf('xjsfl') == -1)
 					{
-						var str = 'Loading class file ' +(i + 1)+ '/' +paths.length+ ': ' + paths[i];
-						(debugType == 1 ? xjsfl.output.trace : alert)(str);
+						if(debugType != undefined)
+						{
+							var str = 'Loading class file ' +(i + 1)+ '/' +paths.length+ ': ' + paths[i];
+							(debugType == xjsfl.output.OUTPUT_TYPE_TRACE ? xjsfl.output.trace : alert)(str);
+						}
+						
+						xjsfl.file.load(paths[i], 'library', debugType === 2);
 					}
-					xjsfl.file.load(paths[i], 'library', debugType === 2);
 				}
 				
 			// return
 				return this;
 		},
 		
+		loadFolder:function(path, debugType)
+		{
+			var uri		= xjsfl.file.makeURI(path);
+			var files	= FLfile.listFolder(uri, 'file').map( function(file){ return file.replace('.jsfl', ''); } );
+			xjsfl.classes.load(files);
+		},
+		
 		/**
 		 * Loads a class if not already defined in the supplied scope
 		 * @param	scope		{Object}	A valid scope to extract the class definition to, normally 'this' (without the quotes)
-		 * @param	className	{String}	The class name, such as 'Template', or 'Table'
-		 * @param	path		{String}	The class filepath, relative to the jsfl/libraries folder
+		 * @param	name		{String}	The class name, such as 'Template', or 'Table'
 		 * @returns		
 		 */
-		require:function(scope, className, path)
+		require:function(scope, filename)
 		{
-			//TODO change require() to take a library file name or path fragments
-			if( ! scope[className])
+			var path = this.paths[name];
+			if( ! path )
 			{
-				this.load(path, 1);
+				this.load(name);
 			}
 			return this;
 		},
@@ -1608,9 +1631,11 @@
 		 */
 		register:function(name, obj)
 		{
-			if( ! /^load|require|register|restore$/.test(name) )
+			if( ! /^(paths|load|loadFolder|require|register|restore)$/.test(name) )
 			{
 				xjsfl.classes[name] = obj;
+				var object = xjsfl.utils.getStack().pop();
+				this.paths[name] =object.path + object.file;
 			}
 			return this;
 		},
@@ -1672,42 +1697,62 @@
 	{
 
 		/**
-		 * Load a module or array of modules
+		 * Load a module
 		 * 
-		 * @param	name	{String}	A module name
-		 * @param	name	{Array}		An Array of module names
+		 * @param	path	{String}	The module root path, relative to from xJSFL/modules/ i.e. "Snippets", or an absolute URI
 		 */
 		load:function(path)
 		{
-			// arrayize paths
-				var paths = path instanceof Array ? path : [path];
+			// load module bootstrap
+				var uri = xjsfl.file.load(unescape(path), 'module');
 				
-			// load classes
-				for(var i = 0; i < paths.length; i++)
+			// copy any module panels to the WindowSWF folder
+				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI('modules/' + path + '/ui/'));
+				for each(var file in folder.contents)
 				{
-					path = paths[i];
-					
-					if(path && path != '')
+					if(file.extension === 'swf')
 					{
-						// load module
-							var uri = xjsfl.file.load(path, 'module');
-							
-						// copy any module panels to the WindowSWF folder
-							var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI('modules/' + path + '/ui/'));
-							for each(var file in folder.contents)
-							{
-								if(file.extension === 'swf')
-								{
-									file.copy(fl.configURI + 'WindowSWF/');
-								}
-							}
+						file.copy(fl.configURI + 'WindowSWF/');
 					}
 				}
-				
+
 			// return
 				return this;
 		},
 		
+		/**
+		 * Finds and loads all module bootstraps in the xJSFL/modules folder
+		 * @param		
+		 * @returns		
+		 */
+		loadAll:function()
+		{
+			// process files and folders 
+				function processFile(element)
+				{
+					if(element instanceof Folder)
+					{
+						if(/assets|config|docs|temp|ui/.test(element.name))
+						{
+							return false;
+						}
+					}
+					else if(element.name === 'bootstrap.jsfl')
+					{
+						var matches = element.uri.match(/xJSFL\/modules\/(.+)\/jsfl\/bootstrap\.jsfl$/);
+						if(matches)
+						{
+							xjsfl.modules.load(matches[1]);
+						}
+					}
+				};
+				
+			// find and load modules automatically
+				Data.recurseFolder('modules', processFile)
+
+		},
+		
+
 		/**
 		 * Register a loaded module in the xjsfl namespace
 		 * 
@@ -1859,12 +1904,16 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Initialize
 	
-		// toString function
-			xjsfl.toString = function()
-			{
-				return '[object xJSFL]';
-			}
 	
+	/**
+	 * Stand toString function
+	 * @returns		
+	 */
+	xjsfl.toString = function()
+	{
+		return '[object xJSFL]';
+	}
+
 	/**
 	 * Reload the framework from disk
 	 */
@@ -1873,7 +1922,7 @@
 		//TODO Possibly add in an alert box which is controlled by debug level
 		if( ! xjsfl.loading)
 		{
-			//alert('Reloading xJSFL...:' + xjsfl.utils.getStack())
+			//alert('RELOADING!')
 			delete xjsfl.uri;
 			fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
 		}
