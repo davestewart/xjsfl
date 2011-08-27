@@ -1,0 +1,1 @@
+xjsfl.file.load(scriptDir + 'sample.jsfl');
