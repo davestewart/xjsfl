@@ -1215,15 +1215,26 @@
 				 */
 				setValues:function(values)
 				{
-					//TODO Add support for checkbox groups
-					//TODO Re-evaluate the logic behind using XMLUI.settings, and think about using XUL.values
 					for(var id in values)
 					{
-						var control = this.controls[id];
-						if(control)
-						{
-							this.settings[id] = String(values[id]);
-						}
+						this.setValue(id, values[id]);
+					}
+					return this;
+				},
+				
+				/**
+				 * Sets the initial value of a control in the dialog
+				 * @param	id		{String}	The name of the control
+				 * @param	value	{value}		The value of the control
+				 * @returns			{XUL}		The XUL dialog
+				 */
+				setValue:function(id, value)
+				{
+					//TODO Add support for checkbox groups
+					//TODO Re-evaluate the logic behind using XMLUI.settings, and think about using XUL.values
+					if(this.controls[id])
+					{
+						this.settings[id] = String(value);
 					}
 					return this;
 				},
