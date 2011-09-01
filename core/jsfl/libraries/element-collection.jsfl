@@ -343,8 +343,9 @@
 		},
 		
 		/**
-		 * Numerically renames elements in order
+		 * Sequentially rename the the items in the collection using an alphanumeric pattern, a callback, or parameters
 		 * @param baseName		{String}			The basename for your objects
+		 * @param baseName		{String}			A single "name_###" name/number pattern string
 		 * @param padding		{Number}			An optional length to pad the numbers to the elements are renamed
 		 * @param padding		{Boolean}			An optional flag to pad the numbers as they are created
 		 * @param startIndex	{Number}			An optional number to start renaming from. Defaults to 1
@@ -353,23 +354,53 @@
 		 */
 		rename:function (baseName, padding, startIndex, separator)
 		{
-			// padding function
-				function rename(element, index, elements)
+			// function supplied as naseName argument
+				if(typeof baseName === 'function')
 				{
-					var num			= index + startIndex;
-					var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
-					element.name	= baseName + str;
+					callback = baseName;
 				}
 				
-			// variables
-				separator	= separator || '_';
-				startIndex	= startIndex || 1;
-				baseName	= baseName + separator;
-				padding		= padding == undefined ? true : padding;
-				padding		= padding === true ? String(this.elements.length).length : padding;
+			// string supplied
+				else
+				{
+					// padding function
+						function rename(element, index, elements)
+						{
+							var num			= index + startIndex;
+							var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
+							return baseName + str;
+						}
+						
+					// assign default callback
+						callback = rename;
+					
+					// determine if baseName is a pattern
+						var matches = baseName.match(/(.+?)(#+|\d+)$/)
+						if(matches)
+						{
+							baseName	= matches[1];
+							padding		= matches[2].length;
+							startIndex	= parseInt(matches[2], 10);
+							startIndex	= isNaN(startIndex) ? 1 : startIndex;
+						}
+						
+					// variables
+						else
+						{
+							baseName	= baseName || 'clip';
+							separator	= separator || '_';
+							startIndex	= startIndex || 1;
+							baseName	= baseName + separator;
+							padding		= padding == undefined ? true : padding;
+							padding		= padding === true ? String(this.elements.length).length : padding;
+						}
+				}
 				
 			// do it
-				this.elements.forEach(rename);
+				for(var i = 0; i < this.elements.length; i++)
+				{
+					this.elements[i].name = callback(this.elements[i], i, this.elements);
+				}
 				
 			// return
 				return this;
