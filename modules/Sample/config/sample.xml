@@ -1,0 +1,6 @@
+<config>
+	<text>
+		<![CDATA[ you can override this file by placing a copy in your "xJSFL/user/config/" folder ]]>
+	</text>
+	<setting id="1"/>
+</config>
