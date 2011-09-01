@@ -16,9 +16,9 @@
 		<color name="file_shadow" value="#E5E5E5"/>
 		<color name="mouseover" value="1.1"/>
 	</colors>
-	<sets current="User snippets">
-		<set name="User snippets" uri="{xjsfl}user/jsfl/Snippets/"/>
-		<set name="Commands folder" uri="{config}Commands/"/>
-		<set name="API examples" uri="{xjsfl}modules/Demo/jsfl/"/>
+	<sets current="Snippets JSFL">
+		<set name="User snippets" uri="{xjsfl}user/jsfl/snippets/"/>
+		<set name="Commands folder" uri="{flash}Commands/"/>
+		<set name="Snippets JSFL" uri="xJSFL/modules/Snippets/jsfl"/>
 	</sets>
 </settings>
