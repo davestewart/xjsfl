@@ -1,0 +1,14 @@
+<settings>
+	<logging>
+		<operations>
+			<log state="1" name="splash" />
+			<log state="1" name="bootstrap" />
+			<log state="1" name="errors" />
+		</operations>
+		<methods>
+			<log state="1" name="xjsfl.file.load" />
+			<log state="0" name="xjsfl.classes.register" />
+			<log state="0" name="xjsfl.classes.restore" />
+		</methods>
+	</logging>
+</settings>
