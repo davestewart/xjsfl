@@ -26,7 +26,7 @@
 		Config = function(configPath, xml)
 		{
 			// absolute uri
-				if(configPath.indexOf('file:') == 0)
+				if(configPath.indexOf('file://') == 0)
 				{
 					var uri = configPath;
 				}
@@ -46,7 +46,11 @@
 				}
 				
 			// file
-				this.file	= new File(uri);
+				var file = new File(uri);
+				this.getFile = function()
+				{
+					return file;
+				}
 				
 			// if data is passed in, save
 				if(xml)
@@ -56,7 +60,7 @@
 				}
 
 			// if not, load if file exists
-				else if(this.file.exists)
+				else if(this.getFile().exists)
 				{
 					this.load();
 				}
@@ -75,7 +79,16 @@
 		Config.prototype =
 		{
 			xml:	null,
-			file:	null,
+			
+			get uri()
+			{
+				return this.getFile().uri;
+			},
+			
+			get path()
+			{
+				return this.getFile().path;
+			},			
 			
 			constructor:Config,
 			
@@ -156,7 +169,7 @@
 			 */
 			load:function()
 			{
-				this.xml = new XML(this.file.contents);
+				this.xml = new XML(this.getFile().contents);
 				return this;
 			},
 			
@@ -167,7 +180,7 @@
 			save:function()
 			{
 				var xml = this.xml.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, xjsfl.settings.newLine);
-				this.file.write(xml);
+				this.getFile().write(xml);
 				return this;
 			},
 			
@@ -177,9 +190,7 @@
 			 */
 			clear:function()
 			{
-				var matches = this.file.uri.match(/(\w+)\/[^\/]+$/);
-				var name	= matches ? matches[1] : 'config';
-				this.xml	= <{name} />;
+				this.xml	= <config />;
 				return this;
 			},
 			
@@ -191,7 +202,7 @@
 			 */
 			toString:function(asXML)
 			{
-				var path	= this.file ? xjsfl.file.makePath(this.file.uri, true) : '';
+				var path	= this.getFile() ? xjsfl.file.makePath(this.getFile().uri, true) : '';
 				var nodes	= this.xml ? this.xml.*.length() : 0;
 				return asXML ? this.xml.toXMLString() : '[object Config path="' +path+ '" nodes=' +nodes+ ']';
 			}
