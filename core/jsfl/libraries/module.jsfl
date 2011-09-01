@@ -17,11 +17,11 @@
 		/**
 		 * Base module class used to create xJSFL modules
 		 * 
-		 * @param	name		{String}	The name of your module - this should match the folder path
-		 * @param 	key			{String}	The key of the module in the xjsfl.modules object
+		 * @param	folder		{String}	The folder/name of your module, i.e. "Tools/Keyframer"
+		 * @param 	namespace	{String}	The namespace of the module in the xjsfl.modules object, i.e. "keyframer"
 		 * @param 	properties	{object}	The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
 		 */
-		Module = function(name, key, properties)
+		Module = function(folder, namespace, properties)
 		{
 			// add class properties
 				for(var prop in properties)
@@ -30,16 +30,12 @@
 				}
 				
 			// core properties
-				this.name		= name;
-				this.key		= key;
-				this.uri		= xjsfl.settings.folders.modules + escape(this.name) + '/';
+				this.name		= folder.replace(/\/*$/, '').split('/').pop();
+				this.namespace	= namespace.replace(/^xjsfl\.modules\./, '');
+				this.uri		= xjsfl.settings.folders.modules + escape(folder) + '/';
 				
-			// register module so the module path is added to global paths before config is created
+			// register module so the module path is added to global paths before init is called
 				xjsfl.modules.register(this);
-				
-			// instantiate default settings and data
-				this.settings	= new Config('settings/' + this.name.toLowerCase());
-				this.data		= new Config('data/' + this.name.toLowerCase());
 				
 			// call a constructor if provided
 				if(this.init)
@@ -66,9 +62,9 @@
 				name:		'',
 				
 				/**
-				 * @type {String} The key the object takes up in the xjsfl.modules object
+				 * @type {String} The namespace of the object in the xjsfl.modules object
 				 */
-				key:		'',
+				namespace:	'',
 				
 				/**
 				 * @type {String} The URI to the module's folder
@@ -76,40 +72,51 @@
 				uri:		'',
 				
 			// ----------------------------------------------------------------------------------------
-			// settings and data
-			
-				/**
-				 * @type {Config} The default settings Config object
-				 */
-				settings:	null,
-				
-				/**
-				 * @type {Config} The default data Config object
-				 */
-				data:		null,
-				
-			// ----------------------------------------------------------------------------------------
 			// accessors
 			
 				/**
-				 * @type {String} The path to the module's folder
+				 * @type {String} The shortened path to the module's folder
 				 */
 				get path(){ return xjsfl.file.makePath(this.uri, true); },
 				
 			// ----------------------------------------------------------------------------------------
 			// methods
 			
-				getURI:function(folder, file)
+				/**
+				 * Get a named module Config object, either a default, or a specific object
+				 * @param	configName	{String}	An optional name syntax i.e. "data" to default to "modules/Tools/config/tools data.xml"
+				 * @param	configName	{String}	An optional leading-slash syntax i.e. "/cache/data" to reference a specific file: "modules/Tools/config/cache/data.xml"
+				 * @returns		
+				 */
+				loadConfig:function(configName)
 				{
-					//TODO update this so it's more intelligent about picking where config files are stored (module or user folders)
-					folder	= folder ? folder + '/' : '';
-					file	= file || '';
-					return this.uri + folder + file;
+					// default path
+						var path = this.name.toLowerCase();
+						
+					// update if config name supplied
+						if(configName)
+						{
+							if(configName.indexOf('/') != -1)
+							{
+								path = configName.replace(/^\//, '');
+							}
+							else
+							{
+								path = this.name.toLowerCase() + ' ' + configName;
+							}
+						}
+						
+					// return config
+						return new Config(path);
 				},
-				
-				log:function()
+			
+				log:function(message, lineBefore)
 				{
-					trace(this.name + ': ' + xjsfl.utils.getArguments(arguments).join(','));
+					if(lineBefore)
+					{
+						trace('');
+					}
+					trace('> ' + this.name + ': ' + message);
 				},
 			
 				toString:function()
