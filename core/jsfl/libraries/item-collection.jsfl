@@ -193,42 +193,64 @@
 		},
 		
 		/**
-		 * Rename the the items in the collection using a numerical pattern or callback
-		 * @param	baseName	{Function}			A callback of the format function(name, index, item) which should return a custom name
-		 * @param	baseName	{String}			A optinoal base name for numerical naming.
-		 * @param	padding		{Number}			An optional length to pad the numeric part of the new name to
+		 * Sequentially rename the the items in the collection using an alphanumeric pattern, a callback, or parameters
+		 * @param baseName		{Function}			A callback of the format function(name, index, item) which should return a custom name
+		 * @param baseName		{String}			A single "name_###" name/number pattern string
+		 * @param baseName		{String}			The basename for your objects
+		 * @param padding		{Number}			An optional padding length for the numeric part of the name
+		 * @param padding		{Boolean}			An optional flag to automatically pad the numeric part of the name to the correct length
+		 * @param startIndex	{Number}			An optional number to start renaming from. Defaults to 1
+		 * @param separator		{String}			An optional separator between the numeric part of the name. Defaults to '_'
 		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
-		rename:function(baseName, padding)
+		rename:function(baseName, padding, startIndex, separator)
 		{
-			// default callback function
-				function callback(item, name, index)
+			// padding function
+				function rename(element, index, elements, name)
 				{
-					return baseName + ' ' + xjsfl.utils.pad(index + 1, padding);
+					var num			= index + startIndex;
+					var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
+					return baseName + str;
 				}
 				
-			// default pattern
+			// function supplied as naseName argument
 				if(typeof baseName === 'function')
 				{
 					callback = baseName;
 				}
+				
+			// string supplied
 				else
 				{
-					baseName	= baseName || 'Item';
-					padding		= padding || String(this.elements.length).length + 1;
+					// assign default callback
+						callback	= rename;
+						baseName	= baseName || 'clip';
+					
+					// determine if baseName is a pattern
+						var matches = baseName.match(/(.+?)(#+|\d+)$/)
+						if(matches)
+						{
+							baseName	= matches[1];
+							padding		= matches[2].length;
+							startIndex	= parseInt(matches[2], 10);
+							startIndex	= isNaN(startIndex) ? 1 : startIndex;
+						}
+						
+					// variables
+						else
+						{
+							separator	= separator || '_';
+							startIndex	= startIndex || 1;
+							baseName	= baseName + separator;
+							padding		= padding == undefined ? true : padding;
+							padding		= padding === true ? String(this.elements.length).length : padding;
+						}
 				}
 				
-			// start
+			// do it
 				for(var i = 0; i < this.elements.length; i++)
 				{
-					// get item path and name
-						var parts	= this.elements[i].name.split('/');
-						var name	= parts.pop();
-						
-					// run via renaming callback
-						name		= callback(this.elements[i], name, i);
-						//var path	= parts.join('/') + '/' + name;
-						this.elements[i].name = name;
+					this.elements[i].name = callback(this.elements[i], i, this.elements, this.elements[i].name.split('/').pop());
 				}
 				
 				return this;
