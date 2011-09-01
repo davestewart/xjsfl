@@ -1,4 +1,6 @@
-﻿var snippets =
+﻿xjsfl.init(this)
+
+var snippets =
 {
 	
 	// ------------------------------------------------------------------------------------------------
@@ -6,8 +8,12 @@
 	
 		init:function()
 		{
-			var set = this.getCurrentSet();
-			this.changeSet(set.@name);
+			// load settings
+				this.settings	= this.loadConfig();
+			
+			// setup
+				var set			= this.getCurrentSet();
+				this.changeSet(set.@name);
 		},
 		
 	// ------------------------------------------------------------------------------------------------
@@ -21,24 +27,19 @@
 		changeSet:function(name, force)
 		{
 			// grab config for set
-				var dataURI		= this.uri + 'config/data/snippets.xml';
-				var cacheURI	= this.uri + 'config/data/cache/' + name + '.xml';
-				var file		= new File(cacheURI);
+				var dataURI		= this.uri + 'config/data/' + name + '.xml';
+				var file		= new File(dataURI);
 				var sets		= this.settings.get('sets');
 				
 			// if the config file doesn't exist, create it
 				if( ! file.exists || force)
 				{
 					var folderURI = sets.find(function(node){ return node.@name == name; }).@uri;
-					this.createData(folderURI, cacheURI);
+					this.createData(folderURI, dataURI);
 				}
 				
-			// copy file
-				file.copy(dataURI, true);
-				
 			// update and save settings
-				sets.@current = name;
-				this.settings.save();
+				this.settings.set('sets.@current', name);
 				
 			// return
 				return true;
@@ -83,7 +84,7 @@
 			if(confirm('Are you sure you want to remove set ' +name+ '?'))
 			{
 				// remove file
-					var file = new File(this.uri + 'config/data/cache/' +name+ '.xml');
+					var file = new File(this.uri + 'config/data/' +name+ '.xml');
 					file.remove(true);
 					
 				// remove setting
@@ -103,6 +104,61 @@
 			}
 
 			return false;
+		},
+		
+		/**
+		 * 
+		 * @param		
+		 * @returns		
+		 */
+		manageSets:function()
+		{
+			// grab set names
+				var names		= [];
+				var sets		= this.settings.get('sets');
+				var selected	= sets.@current;
+				for each(var set in sets.set)
+				{
+					names.push(String(set.@name));
+				}
+				
+			// create XUL dialog
+				var xul = XUL.factory()
+					.setTitle('Snippets')
+					.addRadiogroup('Set', 'set', names)
+					.addDropdown('Action', 'action', ['Load', 'Add', 'Remove'])
+					.setValue('set', selected)
+					.show();
+
+			// take action
+				if(xul.values.accept)
+				{
+					switch(xul.values.action)
+					{
+						case 'Load':
+							var state = this.changeSet(xul.values.set);
+						break;
+					
+						case 'Add':
+							var state = this.addSet(xul.controls.set.value);
+						break;
+					
+						case 'Remove':
+							var state = this.removeSet(xul.controls.set.value);
+						break;
+					}
+				}
+
+			// update
+				/*
+					This is a hack, as Flash appears to forget about the XUL dialog after 
+					a short while so the panel needs to be reminded to update manually.
+					Ordinarily, we should return true or false.
+				*/
+				if(state)
+				{
+					xjsfl.utils.getPanel('xJSFL Snippets').call('loadSet', xul.values.set);
+				}
 		},
 		
 		/**
@@ -138,61 +194,7 @@
 				return set;
 		},
 		
-		/**
-		 * 
-		 * @param		
-		 * @returns		
-		 */
-		manageSets:function()
-		{
-			// grab set names
-				var names		= [];
-				var sets		= this.settings.get('sets');
-				var selected	= sets.@current;
-				for each(var set in sets.set)
-				{
-					names.push(String(set.@name));
-				}
-				
-			// create XUL dialog
-				var xul = XUL.factory()
-					.setTitle('Snippets')
-					.addRadiogroup('Set', 'set', names)
-					.addDropdown('Action', 'action', ['Load', 'Add', 'Remove'])
-					.addEvent('initialize', function(event){ event.xul.controls.set.value = selected; })
-					.show();
-			
-			// take action
-				if(xul.values.accept)
-				{
-					switch(xul.values.action)
-					{
-						case 'Load':
-							var state = this.changeSet(xul.values.set);
-						break;
-					
-						case 'Add':
-							var state = this.addSet(xul.controls.set.value);
-						break;
-					
-						case 'Remove':
-							var state = this.removeSet(xul.controls.set.value);
-						break;
-					}
-				}
-				
-			// update
-				/*
-					This is a hack, as Flash appears to forget about the XUL dialog after 
-					a short while so the panel needs to be reminded to update manually.
-					Ordinarily, we should return true or false.
-				*/
-				if(state)
-				{
-					xjsfl.utils.getPanel('xJSFL Snippets').call('update');
-				}
-				//xjsfl.utils.getPanel('xJSFL Snippets').call('update');
-		},
+
 		
 		rebuild:function()
 		{
@@ -210,7 +212,7 @@
 		 * @param	uri	
 		 * @returns		
 		 */
-		createData:function(folderURI, cacheURI)
+		createData:function(folderURI, dataURI)
 		{
 			// callack for recusrsive function
 				function callback(element, index, level, indent)
@@ -284,11 +286,14 @@
 				var xml				= <files type="folder" label="scripts" />;
 				xml.@path			= folderURI;
 				
+			// debug
+				trace('Building snippet set for "' + xjsfl.file.makePath(folderURI, true)+ '"');
+				
 			// process files
 				Data.recurseFolder(folderURI, callback);
 				
 			// save config
-				var file			= new File(cacheURI, xml).save();
+				var file			= new File(dataURI, xml).save();
 		},
 		
 	
@@ -402,7 +407,6 @@
 
 // ------------------------------------------------------------------------------------------------
 // create module
-	
 	var module = new xjsfl.classes.Module('Snippets', 'snippets', snippets);
 	delete snippets;
 	
