@@ -1183,14 +1183,6 @@
 							which	= -1;
 						break;
 						
-						// for data or settings, return the last file found, from: core, modules, user (xml)
-						case 'data':
-						case 'settings':
-							path	= 'config/' + type + '/' + name;
-							ext		= '.xml';
-							which	= -1;
-						break;
-						
 						// for templates, return the last file found, from: core, modules, user (txt, or supplied extension)
 						case 'template':
 							path	= 'assets/templates/' + name;
@@ -1473,14 +1465,17 @@
 		 */
 		makePath:function(str, shorten)
 		{
+			// make sure path is a string
+				var path = String(str);
+				
 			// if a URI is passed in, just convert it
 				if(str.indexOf('file:///') === 0)
 				{
-					var path = FLfile.uriToPlatformPath(String(str));
+					path = FLfile.uriToPlatformPath(str);
 				}
 				else
 				{
-					var path = String(str);
+					path = str;
 				}
 				
 			// convert {config} and {xjsfl} tokens
@@ -1536,13 +1531,13 @@
 		 */
 		isAbsolutePath:function(path)
 		{
-			if(xjsfl.settings.platform === 'mac')
+			if(xjsfl.settings.app.platform === 'mac')
 			{
 				return path.substr(0, 1).replace('\\', '/') === '/';
 			}
 			else
 			{
-				return path.match(/^[A-Z]:/i) !== null;
+				return /^[A-Z]:/i.test(path);
 			}
 		}
 		
@@ -1790,15 +1785,14 @@
 			if( ! module.name.match(/register|load/) )
 			{
 				// debug
-					xjsfl.trace('registering xjsfl.modules.' + module.key, true)
+					xjsfl.trace('registering xjsfl.modules.' + module.namespace, true)
 					
 				// add module path to xjsfl list of search paths
 					xjsfl.settings.uris.add(xjsfl.uri + 'modules/' + module.name + '/', 'module');
 				
 				// add module instance to xjsfl.modules
 					//TODO Add support for submodule keys, i.e. xjsfl.modules.pocketgod.tools
-					delete xjsfl.modules[module.key];
-					xjsfl.modules[module.key] = module;
+					xjsfl.modules[module.namespace] = module;
 				
 			}
 			else
