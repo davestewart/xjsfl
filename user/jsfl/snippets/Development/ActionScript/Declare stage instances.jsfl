@@ -178,9 +178,7 @@
 					}
 					else if(type == 'movie clip')
 					{
-						lib.editItem(element.libraryItem.name);
-						
-						if(fl.getDocumentDOM().getTimeline().frameCount > 1)
+						if(element.libraryItem.timeline.frameCount > 1)
 						{
 							addElement(element.name, 'MovieClip', 'flash.display.MovieClip');
 						}
@@ -188,8 +186,6 @@
 						{
 							addElement(element.name, 'Sprite', 'flash.display.Sprite');
 						}
-						
-						lib.editItem(currentTimelineName);
 					}
 				}
 			break;

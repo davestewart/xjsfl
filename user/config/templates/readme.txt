@@ -1,1 +1,0 @@
-Place any template files for use alone or with the  Template class in here.
