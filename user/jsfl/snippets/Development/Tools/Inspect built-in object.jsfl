@@ -4,12 +4,12 @@
  */
 (function()
 {
-	// force a document open if none is
-		if( ! dom )
+	// force a document open
+		if(! dom)
 		{
 			fl.createDocument();
 		}
-	
+		
 	// values
 		var context = Context.create();
 		var scopes = 
@@ -47,7 +47,7 @@
 			{
 				fl.outputPanel.clear();
 			}
-			Output.inspect(scopes[xul.values.scope], true, xul.values.depth);
+			Output.inspect(scopes[xul.values.scope], true, xul.values.scope, xul.values.depth);
 		}
 
 })()

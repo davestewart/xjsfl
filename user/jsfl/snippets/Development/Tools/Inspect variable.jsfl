@@ -5,9 +5,9 @@
 
 (function()
 {
-	var name	= prompt("Enter a variable name");
+	var name	= prompt("Enter a variable name / namespace");
 	var value	= eval(name)
-	if(value !== undefined)
+	if(value != null)
 	{
 		Output.inspect(value, name, true);
 	}
