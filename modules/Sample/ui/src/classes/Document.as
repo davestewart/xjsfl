@@ -46,7 +46,7 @@ package
 					module			= AbstractModule.create(SampleModule, this) as SampleModule;
 					
 				// assign handler to module, which is called when all assets have loaded
-					module.addEventListener(Event.COMPLETE, onModuleComplete);
+					module.addEventListener(Event.COMPLETE, onModuleLoaded);
 					
 				// generic resize handler
 					addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -75,7 +75,7 @@ package
 			 * Add button event listeners only when the module has loaded all its assets
 			 * @param	event
 			 */
-			protected function onModuleComplete(event:Event):void 
+			protected function onModuleLoaded(event:Event):void 
 			{
 				btnMethod.addEventListener(MouseEvent.CLICK, onButtonClick);
 				btnConfig.addEventListener(MouseEvent.CLICK, onButtonClick);
@@ -93,7 +93,7 @@ package
 				{
 					// call module method
 						case btnMethod:
-							tfResults.text = module.doSomething();
+							tfResults.text = module.test();
 						break;
 					
 					// trace module config
