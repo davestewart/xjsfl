@@ -775,7 +775,8 @@
 							code:parts[1] || '',
 							line:parseInt(parts[3]) || '',
 							file:file,
-							path:(xjsfl.file.makePath(path, shorten))
+							path:(xjsfl.file.makePath(path, shorten)),
+							uri:FLfile.platformPathToURI(path)
 						};
 				}
 				
@@ -1150,13 +1151,6 @@
 				// switch type
 					switch(type)
 					{
-						// for modules, immediately return the module bootstrap
-						case 'module':
-						case 'modules':
-							var uri = xjsfl.uri + 'modules/' + name + '/jsfl/bootstrap.jsfl';
-							return FLfile.exists(uri) ? uri : null;
-						break;
-							
 						// for scripts, return the last file found, from: core, modules, user (jsfl)
 						case 'script':
 						case 'scripts':
@@ -1475,7 +1469,7 @@
 				}
 				else
 				{
-					path = str;
+					path = unescape(str);
 				}
 				
 			// convert {config} and {xjsfl} tokens
@@ -1539,6 +1533,11 @@
 			{
 				return /^[A-Z]:/i.test(path);
 			}
+		},
+		
+		isURI:function(str)
+		{
+			return str.indexOf('file://') === 0;
 		}
 		
 	}
@@ -1719,15 +1718,20 @@
 		 */
 		load:function(path)
 		{
-			// unescpae
-				path = unescape(path);
-				xjsfl.trace('loading module "' +path+ '"...');
-			
-			// load module bootstrap
-				var uri = xjsfl.file.load(path, 'module');
+			// debug
+				xjsfl.trace('loading module "' +xjsfl.file.makePath(path, true)+ '"...');
 				
-			// copy any module panels to the WindowSWF folder
-				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI('modules/' + path + '/ui/'));
+			// if path is not a URI, it will probably be a path fragment, so default to the modules folder
+				if( ! xjsfl.file.isURI(path))
+				{
+					path = xjsfl.settings.folders.modules + path;
+				}
+			
+			// load bootstrap
+				xjsfl.file.load(xjsfl.file.makeURI(path + '/jsfl/bootstrap.jsfl'));
+				
+			// copy any panels to the WindowSWF folder
+				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + '/ui/'));
 				for each(var file in folder.files)
 				{
 					if(file.extension === 'swf')
@@ -1742,10 +1746,10 @@
 		
 		/**
 		 * Finds and loads all module bootstraps in the xJSFL/modules folder
-		 * @param		
-		 * @returns		
+		 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
+		 * @returns	{xjsfl}				The main xJSFL object
 		 */
-		loadAll:function()
+		loadFolder:function(uri)
 		{
 			// process files and folders 
 				function processFile(element)
@@ -1759,7 +1763,7 @@
 					}
 					else if(element.name === 'bootstrap.jsfl')
 					{
-						var matches = element.uri.match(/xJSFL\/modules\/(.+)\/jsfl\/bootstrap\.jsfl$/);
+						var matches = element.uri.match(/(.+)\/jsfl\/bootstrap\.jsfl$/);
 						if(matches)
 						{
 							xjsfl.modules.load(matches[1]);
@@ -1768,8 +1772,10 @@
 				};
 				
 			// find and load modules automatically
-				Data.recurseFolder('modules', processFile)
+				Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
 
+			// return
+				return this;
 		},
 		
 
@@ -1782,18 +1788,34 @@
 		 */
 		register:function(module)
 		{
-			if( ! module.name.match(/register|load/) )
+			if( ! /^(register|load|loadFolder)\b/.test(module.namespace) )
 			{
 				// debug
-					xjsfl.trace('registering xjsfl.modules.' + module.namespace, true)
-					
+					xjsfl.trace('registering "xjsfl.modules.' + module.namespace + '"')
+
 				// add module path to xjsfl list of search paths
-					xjsfl.settings.uris.add(xjsfl.uri + 'modules/' + module.name + '/', 'module');
-				
-				// add module instance to xjsfl.modules
-					//TODO Add support for submodule keys, i.e. xjsfl.modules.pocketgod.tools
-					xjsfl.modules[module.namespace] = module;
-				
+					xjsfl.settings.uris.add(module.uri, 'module');
+		
+				// namespace module under xjsfl.modules
+					var target		= xjsfl.modules;
+					var keys		= module.namespace.split('.');
+					do
+					{
+						var key = keys.shift();
+						if(keys.length > 0)
+						{
+							if(typeof target[key] === 'undefined')
+							{
+								target[key] = {};
+							}
+							target = target[key];
+						}
+						else
+						{
+							target[key] = module;
+						}
+					}
+					while(keys.length);
 			}
 			else
 			{
