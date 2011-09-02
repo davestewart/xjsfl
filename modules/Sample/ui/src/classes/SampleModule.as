@@ -35,14 +35,19 @@
 			{
 				setup
 				(
-					'xjsfl.modules.sample', // JSFL module namespace
-					'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/modules/Sample/', // Authoring-time module folder
-					'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/' // Authoring-time xJSFL folder
+					 // JSFL module namespace
+						'xjsfl.modules.sample',
+						
+					// Authoring-time module folder
+						'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/modules/Sample/',
+						
+					// Authoring-time xJSFL folder
+						'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/' 
 				);
 			}
 			
 			/**
-			 * Initialize is automatically called right after setup has run
+			 * Initialize function, called immediately after AbstractModule.setup()
 			 */
 			override protected function initialize():void 
 			{
@@ -91,8 +96,7 @@
 			 */
 			public function test():String 
 			{
-				var result:String = call('test');
-				return 'This module was instantiated on: ' + result;
+				return 'This module was instantiated on: ' + call('test');
 			}
 			
 	}
