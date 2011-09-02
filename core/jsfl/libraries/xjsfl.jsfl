@@ -1018,7 +1018,8 @@
 		{
 			if(newLine)
 			{
-				trace('\n=================================================================\n');
+				trace('');
+				message = message.toUpperCase();
 			}
 			fl.trace('> xjsfl: ' + message);
 		},
@@ -1719,7 +1720,7 @@
 		load:function(path)
 		{
 			// debug
-				xjsfl.trace('loading module "' +xjsfl.file.makePath(path, true)+ '"...');
+				xjsfl.trace('searching "' +xjsfl.file.makePath(path, true)+ '"...');
 				
 			// if path is not a URI, it will probably be a path fragment, so default to the modules folder
 				if( ! xjsfl.file.isURI(path))
@@ -1731,11 +1732,12 @@
 				xjsfl.file.load(xjsfl.file.makeURI(path + '/jsfl/bootstrap.jsfl'));
 				
 			// copy any panels to the WindowSWF folder
-				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + '/ui/'));
+				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + 'ui/'));
 				for each(var file in folder.files)
 				{
 					if(file.extension === 'swf')
 					{
+						xjsfl.output.trace('copying "' + xjsfl.file.makePath(file.uri, true) + '" to WindowSWF');
 						file.copy(fl.configURI + 'WindowSWF/', true);
 					}
 				}
