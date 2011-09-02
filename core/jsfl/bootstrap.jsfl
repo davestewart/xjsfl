@@ -47,7 +47,15 @@
 								xjsfl.settings	= {debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)};
 								xjsfl.output =
 								{
-									trace: function(message){ if(xjsfl.settings.debugLevel > 0){ fl.trace('> xjsfl: ' + message) } },
+									trace:function(message, newLine)
+									{
+										if(newLine)
+										{
+											trace('');
+											message = message.toUpperCase();
+										}
+										fl.trace('> xjsfl: ' + message);
+									},
 									error: function(message){ fl.trace('> xjsfl: error "' + message + '"') }
 								}
 							}
