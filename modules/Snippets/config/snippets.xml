@@ -1,24 +1,12 @@
 <settings>
-	<user name="Dave Stewart" url="www.xjsfl.com" email="dave@xjsfl.com"/>
 	<icons uri="{xjsfl}modules/Snippets/assets/icons/16x16">
 		<icon name="folder_closed" value="Filesystem/folder/folder_closed.png"/>
 		<icon name="folder_open" value="Filesystem/folder/folder.png"/>
 		<icon name="file" value="Filesystem/file/file_code.png"/>
 		<icon name="function" value="Filesystem/file/file_actionscript.png"/>
 	</icons>
-	<colors>
-		<color name="background" value="#DDDDDD"/>
-		<color name="folder_highlight" value="#F6F6F6"/>
-		<color name="folder_background" value="#E5E5E5"/>
-		<color name="folder_shadow" value="#E5E5E5"/>
-		<color name="file_highlight" value="#F6F6F6"/>
-		<color name="file_background" value="#ECECEC"/>
-		<color name="file_shadow" value="#E5E5E5"/>
-		<color name="mouseover" value="1.1"/>
-	</colors>
-	<sets current="Snippets JSFL">
+	<sets current="User snippets">
 		<set name="User snippets" uri="{xjsfl}user/jsfl/snippets/"/>
 		<set name="Commands folder" uri="{flash}Commands/"/>
-		<set name="Snippets JSFL" uri="xJSFL/modules/Snippets/jsfl"/>
 	</sets>
 </settings>

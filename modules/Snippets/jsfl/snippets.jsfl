@@ -1,4 +1,4 @@
-﻿xjsfl.init(this)
+﻿//xjsfl.init(this)
 
 var snippets =
 {
