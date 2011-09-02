@@ -34,7 +34,12 @@
 		
 			public function SampleModule()
 			{
-				setup('Sample', 'xjsfl.modules.sample', 'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/');
+				setup
+				(
+					'xjsfl.modules.sample', 
+					'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/modules/Sample/', 
+					'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/'
+				);
 			}
 			
 			/**
