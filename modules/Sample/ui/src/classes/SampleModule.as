@@ -83,10 +83,10 @@
 			/**
 			 * Public API to JSFL module method
 			 */
-			public function doSomething():void 
+			public function doSomething():String 
 			{
-				var result = call('test');
-				JSFL.alert('This module was instantiated on: ' + result);
+				var result:String = call('test');
+				return 'This module was instantiated on: ' + result;
 			}
 			
 	}

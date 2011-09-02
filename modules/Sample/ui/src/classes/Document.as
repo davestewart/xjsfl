@@ -93,7 +93,7 @@ package
 				{
 					// call module method
 						case btnMethod:
-							module.doSomething();
+							tfResults.text = module.doSomething();
 						break;
 					
 					// trace module config
