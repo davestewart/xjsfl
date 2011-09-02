@@ -18,6 +18,9 @@
 		//--------------------------------------------------------------------------------
 		// initialize
 		
+			// flags
+				xjsfl.loading = false;
+
 			/**
 			 * Pre-initialization of the environment, extractinging key variables / functions to global scope
 			 * @param	scope	{Object}	The scope into which the framework should be extracted
@@ -94,7 +97,7 @@
 
 			// modules			
 				xjsfl.trace('loading Modules...', true);
-				xjsfl.modules.loadAll();
+				xjsfl.modules.loadFolder();
 				
 			// user bootstrap
 				xjsfl.trace('loading user bootstrap...', true);
