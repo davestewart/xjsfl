@@ -17,11 +17,11 @@
 		/**
 		 * Base module class used to create xJSFL modules
 		 * 
-		 * @param	folder		{String}	The folder/name of your module, i.e. "Tools/Keyframer"
+		 * @param	name		{String}	The name of your module, i.e. "Keyframer" - this MUST match the module folder name!
 		 * @param 	namespace	{String}	The namespace of the module in the xjsfl.modules object, i.e. "keyframer"
 		 * @param 	properties	{object}	The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
 		 */
-		Module = function(folder, namespace, properties)
+		Module = function(name, namespace, properties)
 		{
 			// add class properties
 				for(var prop in properties)
@@ -30,9 +30,9 @@
 				}
 				
 			// core properties
-				this.name		= folder.replace(/\/*$/, '').split('/').pop();
+				this.name		= name;
 				this.namespace	= namespace.replace(/^xjsfl\.modules\./, '');
-				this.uri		= xjsfl.settings.folders.modules + escape(folder) + '/';
+				this.uri		= xjsfl.utils.getStack().pop().uri.replace(new RegExp('/' + name + '/.*$'), '/' + name + '/');
 				
 			// register module so the module path is added to global paths before init is called
 				xjsfl.modules.register(this);
