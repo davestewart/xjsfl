@@ -82,12 +82,12 @@
 			
 			get uri()
 			{
-				return this.getFile().uri;
+				return this.getFile ? this.getFile().uri : '';
 			},
 			
 			get path()
 			{
-				return this.getFile().path;
+				return this.getFile ? this.getFile().path : '';
 			},			
 			
 			constructor:Config,
@@ -202,9 +202,8 @@
 			 */
 			toString:function(asXML)
 			{
-				var path	= this.getFile() ? xjsfl.file.makePath(this.getFile().uri, true) : '';
 				var nodes	= this.xml ? this.xml.*.length() : 0;
-				return asXML ? this.xml.toXMLString() : '[object Config path="' +path+ '" nodes=' +nodes+ ']';
+				return asXML ? this.xml.toXMLString() : '[object Config path="' +this.path+ '" nodes=' +nodes+ ']';
 			}
 			
 		}
