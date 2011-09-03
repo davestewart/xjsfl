@@ -35,13 +35,16 @@
 			{
 				setup
 				(
-					 // JSFL module namespace
-						'xjsfl.modules.sample',
+					 // the module's namespace in xjsfl.modules (JSFL, not AS3)
+						'sample',
 						
-					// Authoring-time module folder
+					 // the name of the module's panel
+						'Sample',
+						
+					// authoring-time module folder
 						'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/modules/Sample/',
 						
-					// Authoring-time xJSFL folder
+					// authoring-time xJSFL folder
 						'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/' 
 				);
 			}
