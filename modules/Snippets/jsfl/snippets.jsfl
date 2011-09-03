@@ -1,6 +1,4 @@
-﻿//xjsfl.init(this)
-
-var snippets =
+﻿var snippets =
 {
 	
 	// ------------------------------------------------------------------------------------------------
@@ -10,7 +8,7 @@ var snippets =
 		{
 			// load settings
 				this.settings	= this.loadConfig();
-			
+				
 			// setup
 				var set			= this.getCurrentSet();
 				this.changeSet(set.@name);
@@ -20,7 +18,7 @@ var snippets =
 	// public functions for Flash Panel
 	
 		/**
-		 * Change the 
+		 * Change the current snippets set
 		 * @param	name	{String}	
 		 * @returns		
 		 */
@@ -407,6 +405,6 @@ var snippets =
 
 // ------------------------------------------------------------------------------------------------
 // create module
-	var module = new xjsfl.classes.Module('Snippets', 'snippets', snippets);
+	var module = new xjsfl.classes.Module('snippets', snippets, 'xJSFL Snippets');
 	delete snippets;
 	
