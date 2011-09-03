@@ -19,13 +19,17 @@
 	 */
 	XML.makeCallback = function(callback)
 	{
-		// variables
-			var rxAttr	= /^@(\w+)=(.+)$/;
-					
-		// prepare callbacks
-			if(typeof callback == 'string')
+		// function
+			if(typeof callback === 'function')
 			{
-				var value = callback;
+				return callback;
+			}
+			
+		// prepare callbacks
+			else if(typeof callback == 'string')
+			{
+				var rxAttr	= /^@(\w+)=(.+)$/;
+				var value	= callback;
 				
 				// class name (.class)
 				if(/^\.\w+$/.test(callback))
@@ -57,6 +61,12 @@
 				{
 					callback = function(node, i){ return node.name() == value; }
 				}
+			}
+			
+		// if not, fail!
+			else
+			{
+				throw new ReferenceError('ReferenceError in XML: callback "' +callback+ '" is not a valid pattern or function');
 			}
 			
 		// return
