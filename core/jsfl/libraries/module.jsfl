@@ -17,22 +17,35 @@
 		/**
 		 * Base module class used to create xJSFL modules
 		 * 
-		 * @param	name		{String}	The name of your module, i.e. "Keyframer" - this MUST match the module folder name!
 		 * @param 	namespace	{String}	The namespace of the module in the xjsfl.modules object, i.e. "keyframer"
 		 * @param 	properties	{object}	The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
+		 * @param	panelName	{String}	An optional name for your module, i.e. "Keyframer", defaults to the folder name
 		 */
-		Module = function(name, namespace, properties)
+		Module = function(namespace, properties, panelName)
 		{
+			//TODO replace name with panelName and add new prototype .panel property
+			
 			// add class properties
 				for(var prop in properties)
 				{
 					this[prop] = properties[prop];
 				}
 				
-			// core properties
-				this.name		= name;
-				this.namespace	= namespace.replace(/^xjsfl\.modules\./, '');
-				this.uri		= xjsfl.utils.getStack().pop().uri.replace(new RegExp('/' + name + '/.*$'), '/' + name + '/');
+			// namespace
+				this.namespace	= namespace;
+				
+			// uri				// one level up from the last "/jsfl/" folder
+				this.uri		= xjsfl.utils.getStack().pop().uri.replace(/\/jsfl\/.*/, '/')
+				
+			// name				// default to folder name if unsupplied
+				this.name		= panelName || unescape(this.uri.replace(/\/$/, '').split('/').pop());
+				
+			// panel			// use panel name, or default to folder name if missing
+				var panel		= xjsfl.utils.getPanel(panelName || this.name);
+				if(panel)
+				{
+					this.panel = panel;
+				}
 				
 			// register module so the module path is added to global paths before init is called
 				xjsfl.modules.register(this);
@@ -57,19 +70,24 @@
 			
 			
 				/**
-				 * @type {String} The English name of the module, ie "Animation Tools"
-				 */
-				name:		'',
-				
-				/**
 				 * @type {String} The namespace of the object in the xjsfl.modules object
 				 */
 				namespace:	'',
 				
 				/**
-				 * @type {String} The URI to the module's folder
+				 * @type {String} The URI to the module's root folder
 				 */
 				uri:		'',
+				
+				/**
+				 * @type {String} The English name of the module or if it exists, the panel, ie "Keyframer"
+				 */
+				name:		'',
+				
+				/**
+				 * @type {swfPanel} A reference to the panel, if t exists
+				 */
+				panel:		null,
 				
 			// ----------------------------------------------------------------------------------------
 			// accessors
@@ -88,26 +106,9 @@
 				 * @param	configName	{String}	An optional leading-slash syntax i.e. "/cache/data" to reference a specific file: "modules/Tools/config/cache/data.xml"
 				 * @returns		
 				 */
-				loadConfig:function(configName)
+				loadConfig:function(path)
 				{
-					// default path
-						var path = this.name.toLowerCase();
-						
-					// update if config name supplied
-						if(configName)
-						{
-							if(configName.indexOf('/') != -1)
-							{
-								path = configName.replace(/^\//, '');
-							}
-							else
-							{
-								path = this.name.toLowerCase() + ' ' + configName;
-							}
-						}
-						
-					// return config
-						return new Config(path);
+					return new Config(path || this.namespace);
 				},
 			
 				log:function(message, lineBefore)
