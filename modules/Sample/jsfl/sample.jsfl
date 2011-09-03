@@ -46,4 +46,4 @@ var sample =
 // ------------------------------------------------------------------------------------------------
 // create module
 
-	var module = new xjsfl.classes.Module('sample', sample, 'Sample');
+	var module = new xjsfl.classes.Module('sample', sample, 'xJSFL Sample');
