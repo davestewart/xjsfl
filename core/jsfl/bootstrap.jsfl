@@ -18,24 +18,24 @@
 		//--------------------------------------------------------------------------------
 		// initialize
 		
-			// flags
+			// reset loading flag
 				xjsfl.loading = false;
 
 			/**
-			 * Pre-initialization of the environment, extractinging key variables / functions to global scope
-			 * @param	scope	{Object}	The scope into which the framework should be extracted
-			 * @param	id		{String}	An optional id, which when supplied, traces a short message to the Output panel 
+			 * Pre-initialization of the environment, extractinging key variables / functions to supplied scope
+			 * @param	scope		{Object}	The scope into which the framework should be extracted
+			 * @param	scopeName	{String}	An optional scopeName, which when supplied, traces a short message to the Output panel 
 			 * @returns		
 			 */
-			xjsfl.initVars = function(scope, id)
+			xjsfl.initVars = function(scope, scopeName)
 			{
 				// initialize only if scriptDir method is not yet defined
 					if(typeof scope.scriptDir === 'undefined')
 					{
 						// debug
-							if(id)
+							if(scopeName)
 							{
-								fl.trace('> xjsfl: initializing ' +id);
+								fl.trace('> xjsfl: initializing [' +scopeName+ ']');
 							}
 							
 						// palceholder variables
@@ -44,7 +44,6 @@
 						// temp output object, needed before libraries are loaded
 							if( ! xjsfl.settings )
 							{
-								xjsfl.settings	= {debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1)};
 								xjsfl.output =
 								{
 									trace:function(message, newLine)
@@ -67,7 +66,7 @@
 						// dom getter
 							scope.__defineGetter__( 'dom', function(){ return fl.getDocumentDOM(); } );
 							
-						// script dir
+						// script dir getter (can't use until after main xjsfl class has loaded!)
 							scope.__defineGetter__
 							(
 								'scriptDir',
@@ -88,7 +87,7 @@
 		
 		//--------------------------------------------------------------------------------
 		// load
-		
+
 			// flags
 				xjsfl.loading = true;
 
