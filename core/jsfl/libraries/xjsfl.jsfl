@@ -1950,26 +1950,11 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Events
 
-	// Remove any prior event handlers
-		
-		if(xjsfl.events)
+	// add events stub. event code will be added in core/jsfl/libraries/events.jsfl
+		if( ! xjsfl.events )
 		{
-			for(var type in xjsfl.events.objects)
-			{
-				var callbacks = xjsfl.events.objects[type].callbacks;
-				if(callbacks != null)
-				{
-					var id = xjsfl.events.objects[type].id;
-					fl.removeEventListener(type, id);
-				}
-			}
+			xjsfl.events = {};
 		}
-		
-	// add event stub
-	// event code will be added in core/jsfl/libraries/events.jsfl
-	
-		xjsfl.events = {};
-	//TODO Can this code be moved to events, or does it need to execute here?
 
 
 // ------------------------------------------------------------------------------------------------------------------------
