@@ -18,7 +18,7 @@
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Variables
 		
-			// Singleton constant
+			// Create a static instance property as the class is accessed for the first time
 				public static const instance:SampleModule = new SampleModule();
 				
 			// config

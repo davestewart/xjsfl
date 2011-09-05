@@ -9,8 +9,6 @@ package
 	
 	import fl.controls.Button;
 	
-	import com.greensock.TweenLite;
-	
 	import com.xjsfl.modules.AbstractModule;
 	
 	import SampleModule;
@@ -96,7 +94,7 @@ package
 							tfResults.text = module.test();
 						break;
 					
-					// trace module config
+					// trace module config (demonstrates accessing SampleModule using its static instance property)
 						case btnConfig:
 							tfResults.text = SampleModule.instance.settings.toXMLString();
 						break;
