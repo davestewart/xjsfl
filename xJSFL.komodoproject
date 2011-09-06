@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Komodo Project File - DO NOT EDIT -->
 <project id="2ebb994f-d28f-4973-9834-dd34c466c301" kpf_version="5" name="xJSFL.komodoproject">
-<livefolder id="aca21ec5-dc23-47bd-86c0-6f2d83a48760" idref="2ebb994f-d28f-4973-9834-dd34c466c301" name="5 - JSFL" url="file:///E:/05%20-%20Commercial%20Projects/xJSFL/2%20-%20source/5%20-%20JSFL">
-</livefolder>
 <preference-set idref="2ebb994f-d28f-4973-9834-dd34c466c301">
   <string relative="path" id="import_dirname"></string>
-  <string id="import_exclude_matches">*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;_svn;*%*;tmp*.html;.DS_Store; .git;*.komodo*;.git*;README;desktop.ini;</string>
+  <string id="import_exclude_matches">*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;_svn;*%*;tmp*.html;.DS_Store; .git;*.komodo*;.git*;README;desktop.ini;*.as3proj;</string>
   <string id="import_include_matches"></string>
   <boolean id="import_live">1</boolean>
   <string id="javascriptExtraPaths"></string>
