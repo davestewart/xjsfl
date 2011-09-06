@@ -52,16 +52,23 @@
 		 */
 		Context = function(dom, timeline, layer, frame, element)
 		{
-			if(dom)
-				this.setDOM(dom);
-			if(timeline)
-				this.setTimeline(timeline);
-			if(layer)
-				this.setLayer(layer);
-			if(frame)
-				this.setFrame(frame);
-			if(element)
-				this.setElement(element);
+			if(dom)this.setDOM(dom);
+			if(this.dom)
+			{
+				if(timeline)this.setTimeline(timeline);
+				if(this.timeline)
+				{
+					if(layer)this.setLayer(layer);
+					if(this.layer.layerType !== 'folder')
+					{
+						this.setFrame(frame);
+						if(this.frame)
+						{
+							if(element)this.setElement(element);
+						}
+					}
+				}
+			}
 			return this;
 		}
 		
@@ -119,6 +126,8 @@
 		{
 			// --------------------------------------------------------------------------------
 			// public Context properties
+			
+			//TODO add layers and frames properties on timeline and layer changes
 			
 				/**
 				 * @type {Document}	A Document Object
