@@ -155,7 +155,7 @@
 				*/
 				if(state)
 				{
-					xjsfl.utils.getPanel('xJSFL Snippets').call('loadSet', xul.values.set);
+					this.panel.call('loadSet', xul.values.set);
 				}
 		},
 		
@@ -198,7 +198,7 @@
 		{
 			var set = this.getCurrentSet();
 			this.changeSet(set.@name, true);
-			xjsfl.utils.getPanel('xJSFL Snippets').call('update');
+			this.panel.call('update');
 		},
 		
 	// ------------------------------------------------------------------------------------------------
