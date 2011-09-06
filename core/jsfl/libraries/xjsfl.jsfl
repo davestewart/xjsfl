@@ -453,6 +453,19 @@
 		},
 		
 		/**
+		 * Basic numeric Array sort function - JSFL one seems to default to string by default
+		 * @param	arr		{Array}		An array to sort
+		 * @param	reverse	{Boolean}	An optional flag to sort in reverse (descending) order
+		 * @returns		
+		 */
+		sort:function(arr, reverse)
+		{
+			function asc(a, b)  { return a < b ? -1 : (a > b ? 1 : 0); }
+			function desc(a, b) { return a < b ? 1 : (a > b ? -1 : 0); }
+			return arr.sort(reverse == true ? desc : asc);
+		},
+		
+		/**
 		 * Optimized Array sortOn method, for sorting Arrays by child property. This function modifies the input Array
 		 * @param	arr		{Array}		An Array of Objects
 		 * @param	prop	{String}	A property name to sort on; defaults to 'name'
