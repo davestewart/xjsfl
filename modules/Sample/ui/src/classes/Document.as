@@ -9,7 +9,7 @@ package
 	
 	import fl.controls.Button;
 	
-	import com.xjsfl.modules.AbstractModule;
+	import com.xjsfl.jsfl.modules.AbstractModule;
 	
 	import SampleModule;
 	

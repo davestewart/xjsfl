@@ -13,7 +13,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <!-- example: <class path="..." /> -->
+    <class path="..\..\..\..\core\as3\lib" />
   </classpaths>
   <!-- Build options -->
   <build>

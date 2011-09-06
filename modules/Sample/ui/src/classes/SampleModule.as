@@ -5,9 +5,9 @@
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	
-	import com.xjsfl.modules.AbstractModule;
-	import com.xjsfl.modules.JSFL;
-	import com.xjsfl.modules.Loader;
+	import com.xjsfl.jsfl.JSFL;
+	import com.xjsfl.jsfl.modules.AbstractModule;
+	import com.xjsfl.jsfl.modules.Loader;
 	
 	/**
 	 * ...
