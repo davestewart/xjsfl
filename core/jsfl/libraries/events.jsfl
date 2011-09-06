@@ -33,14 +33,17 @@
 	// --------------------------------------------------------------------------------
 	// Event classes
 	
-			Event = function(type)
+			Event = function(type, subtype)
 			{
-				this.type = type;
+				this.type		= type;
+				this.subtype	= subtype;
+				this.time		= new Date();
 			}
 			Event.prototype =
 			{
 				type:null,
-				id:null
+				subtype:null,
+				time:null
 			}
 	
 			/**
@@ -48,9 +51,9 @@
 			 * @param type		{String}	The type of event, can be 'new,open,closed,changed' and in CS5 'published,saved'
 			 * @param document	{Document}	The Document object the event occured in
 			 */
-			DocumentEvent = function(type)
+			DocumentEvent = function(type, subtype)
 			{
-				Event.call(this, type);
+				Event.call(this, type, subtype);
 				this.document	= fl.getDocumentDOM();
 			}
 			DocumentEvent.prototype = new Event;
@@ -66,7 +69,7 @@
 			 */
 			LayerEvent = function()
 			{
-				Event.call(this, 'changed');
+				Event.call(this, LayerEvent.CHANGED, 'changed');
 				this.document	= fl.getDocumentDOM();
 				this.timeline	= this.document.getTimeline();
 				this.layer		= this.timeline.layers[this.timeline.currentLayer];
@@ -85,7 +88,7 @@
 			 */
 			FrameEvent = function()
 			{
-				Event.call(this, 'changed');
+				Event.call(this, FrameEvent.CHANGED, 'changed');
 				this.document	= fl.getDocumentDOM();
 				this.timeline	= this.document.getTimeline();
 				this.layer		= this.timeline.layers[this.timeline.currentLayer];
@@ -106,7 +109,7 @@
 			 */
 			MouseEvent = function()
 			{
-				Event.call(this, 'move');
+				Event.call(this, MouseEvent.MOVE, 'move');
 				this.shift		= fl.tools.shiftIsDown;
 				this.ctrl		= fl.tools.ctlIsDown;
 				this.alt		= fl.tools.altIsDown;
@@ -227,7 +230,7 @@
 							 * then fired.
 							 */
 							
-							// add parent event handler if not already added
+							// add gateway event handler if not already added
 								if(this.handlers[type].callbacks == null)
 								{
 									// all handlers
@@ -354,9 +357,9 @@
 			// --------------------------------------------------------------------------------
 			// private functions
 			
-				fire:function(type, event)
+				fire:function(event)
 				{
-					for each(var callback in xjsfl.events.handlers[type].callbacks)
+					for each(var callback in xjsfl.events.handlers[event.type].callbacks)
 					{
 						//trace('Firing "' +type+ '" event: ' + callback);
 						callback(event);
@@ -373,14 +376,14 @@
 						documentPublished:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( DocumentEvent.PUBLISHED, new DocumentEvent('published') ); },
+							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.PUBLISHED, 'published') ); },
 							id:			-1
 						},
 						
 						documentSaved:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( DocumentEvent.SAVED, new DocumentEvent('saved') ); },
+							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.SAVED, 'saved') ); },
 							id:			-1
 						},
 						
@@ -389,28 +392,28 @@
 						documentNew:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( DocumentEvent.NEW, new DocumentEvent('new') ); },
+							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.NEW, 'new') ); },
 							id:			-1
 						},
 						
 						documentOpened:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( DocumentEvent.OPENED, new DocumentEvent('opened') ); },
+							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.OPENED, 'opened') ); },
 							id:			-1
 						},
 						
 						documentClosed:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( DocumentEvent.CLOSED, new DocumentEvent('closed') ); },
+							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.CLOSED, 'closed') ); },
 							id:			-1
 						},
 						
 						documentChanged:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( DocumentEvent.CHANGED, new DocumentEvent('changed') ); },
+							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.CHANGED, 'changed') ); },
 							id:			-1
 						},
 						
@@ -419,14 +422,14 @@
 						layerChanged:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( LayerEvent.CHANGED, new LayerEvent() ); },
+							handler:	function(){ xjsfl.events.fire( new LayerEvent() ); },
 							id:			-1
 						},
 						
 						frameChanged:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( FrameEvent.CHANGED, new FrameEvent() ); },
+							handler:	function(){ xjsfl.events.fire( new FrameEvent() ); },
 							id:			-1
 						},
 						
@@ -435,7 +438,7 @@
 						mouseMove:
 						{
 							callbacks:	null,
-							handler:	function(){ xjsfl.events.fire( MouseEvent.MOVE, new MouseEvent() ); },
+							handler:	function(){ xjsfl.events.fire( new MouseEvent() ); },
 							id:			-1
 						}
 
@@ -488,26 +491,34 @@
 		
 			function onEvent(event)
 			{
-				Output.inspect(event, 2);
+				trace(event);
 			}
 				
 		// --------------------------------------------------------------------------------
-		// Document events
+		// All events
 		
 			if(0)
 			{
 				// CS4 events
-					xjsfl.events.add(DocumentEvent.CHANGED, onEvent);
-					xjsfl.events.add(DocumentEvent.CLOSED, onEvent);
-					xjsfl.events.add(DocumentEvent.NEW, onEvent);
-					xjsfl.events.add(DocumentEvent.OPENED, onEvent);
+					xjsfl.events.add(DocumentEvent.CHANGED, onEvent, 'onDocument');
+					xjsfl.events.add(LayerEvent.CHANGED, onEvent, 'onLayer');
+					xjsfl.events.add(FrameEvent.CHANGED, onEvent, 'onFrame');
+					//xjsfl.events.add(MouseEvent.MOVE, onEvent, 'onMouse');
 					
 				// CS5 events
 					if(xjsfl.settings.app.csVersion > 4)
 					{
-						xjsfl.events.add(DocumentEvent.PUBLISHED, onEvent);
-						xjsfl.events.add(DocumentEvent.SAVED, onEvent);
+						xjsfl.events.add(DocumentEvent.PUBLISHED, onEvent, 'onPublished');
+						xjsfl.events.add(DocumentEvent.SAVED, onEvent, 'onSaved');
 					}
+
+				// remove
+					/*
+					xjsfl.events.remove(DocumentEvent.CHANGED, 'onDocument');
+					xjsfl.events.remove(LayerEvent.CHANGED, 'onLayer');
+					xjsfl.events.remove(FrameEvent.CHANGED, 'onFrame');
+					xjsfl.events.remove(MouseEvent.MOVE, 'onMouse');
+					*/
 			}
 		
 		// --------------------------------------------------------------------------------
