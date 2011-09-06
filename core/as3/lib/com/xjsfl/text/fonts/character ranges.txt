@@ -1,0 +1,28 @@
+/**
+ * Named character ranges
+ * @url	http://blog.flexexamples.com/2008/01/24/specifying-custom-named-unicode-ranges-in-flex/
+ */
+
+// 0-9
+	'U+0030-U+0039'
+
+// uppercase
+	'U+0041-U+0051'
+
+// lowercase
+	'U+0052-U+007A'
+	
+// latin-1
+	'U+0020-U+00FF'
+	
+// basic-latin
+	'U+0020-U+007E'
+
+// uppercase, lowercase, numbers:
+	'U+0030-U+0039,U+0041-U+0051,U+0052-U+007A'
+
+// uppercase, lowercase, symbols and punctuation
+	'U+0021-U+007B'
+
+// english
+	'U+0020-U+007E'
