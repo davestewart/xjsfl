@@ -1,45 +1,50 @@
-package com.xjsfl.ui.components.test
+package com.xjsfl.geom 
 {
 
 	/**
 	 * ...
 	 * @author Dave Stewart
 	 */
-	public class AssetComponent extends SimpleComponent
+	public class Size
 	{
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Variables
 		
+			// constants
+				
+			
 			// stage instances
-				public var grad	:Gradient;
+				
 			
 			// properties
+				public var width		:Number;
+				public var height		:Number;
 				
 			
 			// variables
 				
 		
 		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Instantiation
+		// { region: Instatiation
 		
-			public function AssetComponent() 
+			public function Size(width:Number = 0, height:Number = 0) 
 			{
-				super();
-				initialize();
+				this.width		= width;
+				this.height		= height;
 			}
 			
-			public function initialize() 
-			{
-				grad = new Gradient();
-				addChild(grad);
-			}
-			
+		// ---------------------------------------------------------------------------------------------------------------------
+		// { region: Configuration
+		
 			
 		
 		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Public Methods
+		// { region: Public methods
 		
-			
+			public function get area():Number
+			{
+				return width * height;
+			}
 
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Accessors
@@ -47,12 +52,12 @@ package com.xjsfl.ui.components.test
 			
 
 		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Protected Methods
+		// { region: Handlers
 		
 			
 
 		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Handlers
+		// { region: Protected methods
 		
 			
 

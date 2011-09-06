@@ -1,5 +1,6 @@
 ﻿package com.xjsfl.ui
 {
+	import com.xjsfl.geom.Size;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	
@@ -10,6 +11,9 @@
 	import com.xjsfl.text.fonts.ReferenceSans;
 	
 
+	/**
+	 * Basic component 
+	 */
 	public class Component extends Sprite
 	{
 		
@@ -28,13 +32,10 @@
 				// layout
 					protected var _width				:Number;
 					protected var _height				:Number;
-					protected var _minWidth				:Number;
-					protected var _minHeight			:Number;
-					protected var _startWidth			:Number;
-					protected var _startHeight			:Number;
 					
-					protected var _size					:Rectangle;
-					protected var _minSize				:Rectangle;
+					protected var _size					:Size;
+					protected var _minSize				:Size;
+					protected var _startSize			:Size;
 					
 				// visible
 					protected var _enabled				:Boolean;
@@ -70,12 +71,10 @@
 				// set basic size properties
 					_width			= width;
 					_height			= height;
-					_minWidth		= 0;
-					_minHeight		= 0;
-					_startWidth		= width;
-					_startHeight	= height;
-					_size			= new Rectangle();
-					_minSize		= new Rectangle();
+					
+					_size			= new Size(width, height);
+					_minSize		= new Size();
+					_startSize		= new Size(width, height);
 
 				// enabled
 					_enabled		= true;
@@ -136,7 +135,7 @@
 			 * Gets the size of the component
 			 * @return Rectange
 			 */
-			public function getSize():Rectangle
+			public function getSize():Size
 			{
 				return _size;
 			}
@@ -206,26 +205,6 @@
 				super.y = Math.round(value);
 			}
 
-			/// Sets/gets the width of the component
-			/*
-			override public function get width():Number { return _width; }			
-			override public function set width(width:Number):void
-			{
-				_width = width;
-				invalidate();
-				dispatchEvent(new Event(Component.RESIZE));
-			}
-			
-			/// Sets/gets the height of the component
-			override public function get height():Number { return super.height; }
-			override public function set height(height:Number):void
-			{
-				_height = height;
-				invalidate();
-				dispatchEvent(new Event(Component.RESIZE));
-			}
-			*/
-			
 			/// make scale read-only - or, set it so that it sets the width?
 			override public function set scaleX(value:Number):void { }
 			override public function set scaleY(value:Number):void { }

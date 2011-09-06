@@ -6,7 +6,7 @@ package com.xjsfl.ui.controls.tree
 	import com.xjsfl.ui.containers.ScrollPane;
 	import com.xjsfl.ui.controls.Control;
 	
-	import com.xjsfl.utils.Output;
+	import com.xjsfl.utils.debugging.Output;
 	
 	import com.xjsfl.ui.controls.rightclickmenu.RightClickMenu;
 	import com.xjsfl.ui.controls.rightclickmenu.RightClickMenuEvent;
@@ -113,17 +113,17 @@ package com.xjsfl.ui.controls.tree
 					// action events
 					
 						// tray events
-							tray.addEventListener(TreeEvent.NEW_FILE, onNewTreeItem);
-							tree.addEventListener(TreeEvent.NEW_FILE, onNewTreeItem);
+							//tray.addEventListener(TreeEvent.NEW_FILE, onNewTreeItem);
+							//tree.addEventListener(TreeEvent.NEW_FILE, onNewTreeItem);
 							
-							tray.addEventListener(TreeEvent.NEW_FOLDER, onNewTreeItem);
-							tree.addEventListener(TreeEvent.NEW_FOLDER, onNewTreeItem);
+							//tray.addEventListener(TreeEvent.NEW_FOLDER, onNewTreeItem);
+							//tree.addEventListener(TreeEvent.NEW_FOLDER, onNewTreeItem);
 							
-							tray.addEventListener(TreeEvent.ITEM_INFO, onItemInfo);
-							tree.addEventListener(TreeEvent.ITEM_INFO, onItemInfo);
+							//tray.addEventListener(TreeEvent.ITEM_INFO, onItemInfo);
+							//tree.addEventListener(TreeEvent.ITEM_INFO, onItemInfo);
 							
-							tray.addEventListener(TreeEvent.ITEM_DELETE, onItemDelete);
-							tree.addEventListener(TreeEvent.ITEM_DELETE, onItemDelete);
+							//tray.addEventListener(TreeEvent.ITEM_DELETE, onItemDelete);
+							//tree.addEventListener(TreeEvent.ITEM_DELETE, onItemDelete);
 							
 			}
 			

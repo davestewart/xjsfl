@@ -51,7 +51,12 @@ package com.xjsfl.text
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Accessors
 
-			
+			override public function get width():Number { return super.width; }
+			override public function set width(value:Number):void 
+			{
+				super.width		= value;
+				autoSize		= value < 0 ? TextFieldAutoSize.LEFT : TextFieldAutoSize.NONE;
+			}
 
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Handlers
@@ -63,20 +68,20 @@ package com.xjsfl.text
 		
 			protected function initialize(size:Number, color:Number):void 
 			{
+				// set properties
+					width				= -1;
+					antiAliasType		= AntiAliasType.ADVANCED;
+					thickness			= -50;
+					sharpness			= 300;
+					embedFonts			= true;
+					selectable			= false;
+					textColor			= color;
+					
 				// text format
 					var fmt:TextFormat		= new TextFormat(ReferenceSans.name, size, color);
 					fmt.align				= TextFormatAlign.LEFT;
-					
-				// set properties
-					this.autoSize			= TextFieldAutoSize.LEFT;
-					this.antiAliasType		= AntiAliasType.ADVANCED;
-					this.thickness			= -50;
-					this.sharpness			= 300;
-					this.embedFonts			= true;
-					this.selectable			= false;
-					this.textColor			= color;
-					this.defaultTextFormat	= fmt;
-					this.setTextFormat(fmt);
+					defaultTextFormat	= fmt;
+					setTextFormat(fmt);
 			}
 			
 

@@ -87,7 +87,7 @@ package com.xjsfl.ui.containers
 					addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 					
 				// set size
-					setSize(_startWidth, _startHeight);
+					setSize(_startSize.width, _startSize.height);
 			}
 			
 		// ---------------------------------------------------------------------------------------------------------------------

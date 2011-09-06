@@ -10,7 +10,7 @@
 	import flash.text.TextFormatAlign;
 	
 	import com.xjsfl.geom.Geom;
-	import com.xjsfl.fonts.ReferenceSans;
+	import com.xjsfl.text.fonts.ReferenceSans;
 	import com.xjsfl.ui.Component;
 	
 	/**

@@ -1,5 +1,6 @@
 ﻿package com.xjsfl.ui.containers
 {
+	import com.xjsfl.geom.Size;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -184,9 +185,9 @@
 			 * @param	width	The desired width
 			 * @param	height	The desired height
 			 */
-			override public function getSize():Rectangle 
+			override public function getSize():Size
 			{
-				return new Rectangle(0, 0, container.width, container.height);
+				return new Size(container.width, container.height);
 			}
 			
 			/**

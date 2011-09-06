@@ -10,7 +10,7 @@
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 
-	import com.xjsfl.utils.Output;
+	import com.xjsfl.utils.debugging.Output;
 	import com.xjsfl.ui.controls.tree.items.TreeItem
 	import com.xjsfl.ui.controls.tree.icons.TreeFolderItemIcon;
 	import com.xjsfl.ui.controls.tree.events.*;
