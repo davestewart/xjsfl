@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	<menu type="folder">
+			<menuitem id="openFile">Open</menuitem>
+	</menu>
+	<menu type="file">
+			<menuitem id="runFile">Run</menuitem>
+			<menuitem id="editFile">Edit</menuitem>
+			<menuitem id="properties">Properties</menuitem>
+			<menuitem id="openFileLocation">Open file location</menuitem>
+	</menu>
+	<menu type="folder|file">
+			<menuitem id="rename">Rename</menuitem>
+			<menuitem id="delete">Delete</menuitem>
+	</menu>
+	<menu type="other">
+			<menuitem id="openUserFolder">Open user folder</menuitem>
+			<menuitem id="openDevFolder">Open dev folder</menuitem>
+	</menu>
+</data>

@@ -1,0 +1,17 @@
+Folder
+	Open
+
+
+File
+	Run
+	Edit
+	Properties
+	Open File location
+
+Both
+	Rename
+	Delete
+
+Other
+	Open user folder
+	Open dev folder
