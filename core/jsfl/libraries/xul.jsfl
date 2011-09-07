@@ -243,7 +243,7 @@
 
 							if(xml.label && xml.label.length())
 							{
-								xml.label.@value = label ? label + ':' : '';
+								xml.label.@value = label ? label + ':' : ' ';
 							}
 							
 						// check id is not already defined
@@ -790,6 +790,8 @@
 							var xml				= XUL.templates.colorchip.copy();
 							
 						// values
+							attributes = attributes || {};
+							
 							var value = attributes.value;
 							if(value)
 							{
@@ -1165,6 +1167,9 @@
 					 */
 					setFlash:function(src, width, height, properties)
 					{
+						//TODO add functinality to save a string of variables to a hard-coded location, as you can't pass in query strings, which you then load in manually
+						//TODO Can the SWF determine its location using ExternalInterface, or do we need to use a hardcoded URL? Does MMExecute work in a XUL dialog?
+						
 						// build xml
 							var xml			= XUL.templates.flash.copy();
 							var uri			= xjsfl.file.makeURI(src);
@@ -1177,7 +1182,7 @@
 						// properties
 							for each(var property in properties)
 							{
-								this.addProperty(property);
+								this.addProperty(property); // TODO check if we need to first set() the property to have it work
 							}
 							
 						// update size
