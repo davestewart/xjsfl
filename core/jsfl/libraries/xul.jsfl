@@ -1868,7 +1868,7 @@
 							case 'textbox':
 							case 'targetlist':
 								value = xjsfl.utils.parseValue(value);
-								if(this.type == 'textbox' && value !== null)
+								if(this.type == 'textbox' && typeof value === 'string')
 								{
 									value = value.replace(/\r\n/g, '\n');
 								}
