@@ -40,7 +40,7 @@
 		
 			//TODO Review the use of context here
 		
-			// check context is a library item or valid path
+			// check context is a library item (should be a folder) or valid path
 				if(context)
 				{
 					if(typeof context === 'string')
@@ -68,6 +68,23 @@
 						throw new Error('Library Selector Error: invalid context supplied');
 					}
 				}
+				
+		// --------------------------------------------------------------------------------
+		// convert arrays, element collections, single items, etc
+
+			// TODO Handle arrays, element collections, single items, etc
+
+			/*		
+				var item = $(':selected').get(0).libraryItem;
+				
+				var elements = $(':selected').elements.filter( function(element){ return element.elementType == 'instance'; } )
+				var items = [];
+				elements.forEach(function(e){items.push(e.libraryItem)})
+				
+				trace(items)
+				var collection = new ItemCollection(items)
+			*/
+		
 				
 		// --------------------------------------------------------------------------------
 		// calculate selection and return

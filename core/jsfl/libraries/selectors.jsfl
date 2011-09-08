@@ -9,7 +9,7 @@
 //  ██████ █████ ██ █████ █████  ████ █████ ██   █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Selectors - global selector functions to be used by all Selector functions
+// Selectors - static repository of tests used by the Selector class
 
 	var Selectors =
 	{

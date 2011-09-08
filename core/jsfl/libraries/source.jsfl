@@ -94,6 +94,3 @@
 	// register class
 		xjsfl.classes.register('Source', Source);
 		
-		
-
-		

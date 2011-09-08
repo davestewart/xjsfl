@@ -11,309 +11,165 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Data - The Data class is designed to munge data in a variety of ways
 
-	// ------------------------------------------------------------------------------------------------
-	// Class
+	//TODO Assess feasibility of moving Output.inspect functions to Data as a generic recurse method
+
 	
-		//TODO Assess fesibility of moving Output.inspect functions to Data as a generic recurse method
-	
+	/**
+	 * The Data class is designed to munge data in a variety of ways
+	 */
+	Data =
+	{
+		//TODO review recursive function signatures & implementation, & provide default callbacks if appropriate. @see Data#recurseFolder
 		
 		/**
-		 * The Data class is designed to munge data in a variety of ways
+		 * Utility function to recurse / walk hierarchical structures calling user-supplied calllbacks on traversed elements
 		 */
-		Data =
+		/*
+		*/
+		recurse2:function(rootElement, fnChild, fnTestChildren)
 		{
-			//TODO review recursive function signatures & implementation, & provide default callbacks if appropriate. @see Data#recurseFolder
-			
-			/**
-			 * Utility function to recurse / walk hierarchical structures calling user-supplied calllbacks on traversed elements
-			 */
-			/*
-			*/
-			recurse2:function(rootElement, fnChild, fnTestChildren)
+			function process(element, index)
 			{
-				function process(element, index)
-				{
-					fnChild(element, index, level);
-					
-					if(fnTestChildren ? fnTestChildren(element, index, level) : element.length > 0)
-					{
-						level ++;
-						for(var i = 0; i < element.length; i++)
-						{
-							process(element[i], i);
-						}
-						level--;
-					}
-				}
+				fnChild(element, index, level);
 				
-				var level = 0;
-				process(rootElement, 0);
-			},
-			
-			recurse:function(rootElement, fnChild, fnTestChildren, scope)
-			{
-				fl.trace(this);
-				function process(element, index)
+				if(fnTestChildren ? fnTestChildren(element, index, level) : element.length > 0)
 				{
-					//fl.trace('Processing:' + element)
+					level ++;
+					for(var i = 0; i < element.length; i++)
+					{
+						process(element[i], i);
+					}
+					level--;
+				}
+			}
+			
+			var level = 0;
+			process(rootElement, 0);
+		},
 		
-					fnChild.apply(scope, [element, index, level]);
-					
-					if(fnTestChildren ? fnTestChildren.apply(scope, [element, index, level]) : element.length > 0)
-					{
-						level ++;
-						for(var i = 0; i < element.length; i++)
-						{
-							//fl.trace('Processing folder item ' +element[i]+ ':' + [element, element.length, index, level])
-							process(element[i], i);
-						}
-						level--;
-					}
-				}
-				
-				scope = scope || window;
-				var level = 0;
-				process(rootElement, 0);
-			},
-			
-			/**
-			 * Recursively trawl a folder's contents, optionally calling a callback per element. (NB, arguments 2 and 3 may be swapped)
-			 * @param	folder		{String}	The path or uri to a valid folder
-			 * @param	folder		{Folder}	A valid Folder object
-			 * @param	arg2		{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
-			 * @param	arg3		{Number}	An optional max depth to recurse to, defaults to 100 
-			 * @returns				(Array}		An array of paths
-			 */
-			recurseFolder:function(folder, arg2, arg3)
+		recurse:function(rootElement, fnChild, fnTestChildren, scope)
+		{
+			fl.trace(this);
+			function process(element, index)
 			{
-				// ------------------------------------------------------------
-				// functions
+				//fl.trace('Processing:' + element)
+	
+				fnChild.apply(scope, [element, index, level]);
 				
-					function process(element, index)
+				if(fnTestChildren ? fnTestChildren.apply(scope, [element, index, level]) : element.length > 0)
+				{
+					level ++;
+					for(var i = 0; i < element.length; i++)
 					{
-						//BUG Errors when file URIs go beyond 260 chars. @see FileSystem for more info
+						//fl.trace('Processing folder item ' +element[i]+ ':' + [element, element.length, index, level])
+						process(element[i], i);
+					}
+					level--;
+				}
+			}
+			
+			scope = scope || window;
+			var level = 0;
+			process(rootElement, 0);
+		},
+		
+		/**
+		 * Recursively trawl a folder's contents, optionally calling a callback per element. (NB, arguments 2 and 3 may be swapped)
+		 * @param	folder		{String}	The path or uri to a valid folder
+		 * @param	folder		{Folder}	A valid Folder object
+		 * @param	arg2		{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
+		 * @param	arg3		{Number}	An optional max depth to recurse to, defaults to 100 
+		 * @returns				(Array}		An array of paths
+		 */
+		recurseFolder:function(folder, arg2, arg3)
+		{
+			// ------------------------------------------------------------
+			// functions
+			
+				function process(element, index)
+				{
+					//BUG Errors when file URIs go beyond 260 chars. @see FileSystem for more info
+					
+					// callback
+						var state = callback ? callback(element, index, level, indent) : true;
 						
-						// callback
-							var state = callback ? callback(element, index, level, indent) : true;
-							
-						// process if the callback didn't return false (false = skip element)
-							if(state !== false)
-							{
-								// path
-									paths.push(element.path);
-									
-								// return if callback passed back true (true = stop all processing)
-									if(state === true)
+					// process if the callback didn't return false (false = skip element)
+						if(state !== false)
+						{
+							// path
+								paths.push(element.path);
+								
+							// return if callback passed back true (true = stop all processing)
+								if(state === true)
+								{
+									return true;
+								}
+								
+							// children
+								if(element instanceof Folder && level < depth)
+								{
+									level ++;
+									indent += '	';
+									var contents = element.contents;
+									for(var i = 0 ; i < contents.length; i++)
 									{
-										return true;
-									}
-									
-								// children
-									if(element instanceof Folder && level < depth)
-									{
-										level ++;
-										indent += '	';
-										var contents = element.contents;
-										for(var i = 0 ; i < contents.length; i++)
+										if(process(contents[i], i))
 										{
-											if(process(contents[i], i))
-											{
-												return true;
-											}
+											return true;
 										}
-										indent = indent.substring(1);
-										level--;
 									}
-							}
-							
-						// return
-							return null;							
-					}
-					
-				// ------------------------------------------------------------
-				// code
-				
-					// defaults
-						var depth		= depth || 100;
-						var callback	= null;
-						
-					// parameter shift
-						for each(var arg in [arg2, arg3])
-						{
-							if(typeof arg === 'number')
-								depth = arg;
-							else if(typeof arg === 'function')
-								callback = arg;
-						}
-
-					// folder
-						if(typeof folder === 'string')
-						{
-							folder = new Folder(folder);
+									indent = indent.substring(1);
+									level--;
+								}
 						}
 						
-					// variables
-						var paths		= [];
-						var indent		= '';
-						var level		= 0;
-						
-					// process
-						if(folder instanceof Folder && folder.exists)
-						{
-							process(folder, 0);
-						}
-					
-				// return
-					return paths;
-			},
-			
-			toString:function()
-			{
-				return '[class Data]';
-			}
-			
-		};
-		
-			
-		xjsfl.classes.register('Data', Data);
-	
-		
-		
-// -----------------------------------------------------------------------------------------------------------------------------------------
-// Demo code
-	
-	if( ! xjsfl.loading )
-	{
-		// initialize
-			xjsfl.init(this);
-			clear();
-			try
-			{
-				
-		// --------------------------------------------------------------------------------
-		// Default iteration returns the array of iterated paths
-		
-			if(0)
-			{
-				var paths = Data.recurseFolder('c:/temp/test/');
-				trace(paths.join('\n'));
-			}
-					
-		
-		// --------------------------------------------------------------------------------
-		// Call a callback function on each of the iterated items
-		
-			if(0)
-			{
-				function callback(element, index, level, indent)
-				{
-					trace (indent + '/' + element.name);
+					// return
+						return null;							
 				}
 				
-				Data.recurseFolder('c:/temp/test/', callback);
-			}
+			// ------------------------------------------------------------
+			// code
+			
+				// defaults
+					var depth		= depth || 100;
+					var callback	= null;
 					
-		// --------------------------------------------------------------------------------
-		// Skip subfolders with the letter a in them
-		
-			if(1)
-			{
-				function callback(element, index, level, indent)
-				{
-					return element.name.indexOf('a') == -1;
-				}
-				
-				var paths = Data.recurseFolder('c:/temp/test/', callback);
-				trace(paths.join('\n'));
-			}
-					
-		
-		// --------------------------------------------------------------------------------
-		// Test
-		
-			if(0)
-			{
-				// stuff
-					//Data.recurse (new Folder('c:/temp/'))
-							 
-					function traceElement(element, index, level)
+				// parameter shift
+					for each(var arg in [arg2, arg3])
 					{
-						var indent = Array(level).join('\t')
-						fl.trace (indent + '/' + element.name);
+						if(typeof arg === 'number')
+							depth = arg;
+						else if(typeof arg === 'function')
+							callback = arg;
 					}
-					
-					function testFolder(element)
-					{
-						return element instanceof Folder;
-					}
-					
-						
-					Data.recurse (new Folder ('c:/temp/'), traceElement, testFolder)
-					
-					
-				/*
-				*/
-				
-				/*
-					// object & scope example
-					
-					fl.outputPanel.clear();
-					
-					var obj =
-					{
-						str:'',
-						
-						arr:[1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7],
-					
-						traceElement:function(element, index, level)
-						{
-							var indent = new Array(level + 1).join('\t');
-							var str = indent + level + ' : ' + element + '\n';
-							this.str += str;
-						},
-						
-						testElement:function(element, level, index)
-						{
-							return element instanceof Array;
-						},
-						
-						start:function()
-						{
-							Data.recurse(this.arr, this.traceElement, this.testElement, this)
-						}
-						
-					}
-					
-					//obj.start();
-					//fl.trace(obj.str);
-				*/
-				
-				/*
-					// function example
-					
-					function traceElement(element, index, level)
-					{
-						var indent = new Array(level + 1).join('\t');
-						fl.trace (indent + level + ' : ' + element);
-					}
-					
-					function testElement(element, level, index)
-					{
-						return element instanceof Array;
-					}
-					
-					fl.outputPanel.clear();
-					
-					var arr = [1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7];
-					
-					Data.recurse(arr, traceElement, testElement)
-					
-				
-				*/
-			}
-		
-		// catch
-			}catch(err){xjsfl.output.debug(err);}
-	}
-		
 
+				// folder
+					if(typeof folder === 'string')
+					{
+						folder = new Folder(folder);
+					}
+					
+				// variables
+					var paths		= [];
+					var indent		= '';
+					var level		= 0;
+					
+				// process
+					if(folder instanceof Folder && folder.exists)
+					{
+						process(folder, 0);
+					}
+				
+			// return
+				return paths;
+		},
+		
+		toString:function()
+		{
+			return '[class Data]';
+		}
+		
+	};
+	
+		
+	xjsfl.classes.register('Data', Data);

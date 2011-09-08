@@ -34,7 +34,7 @@
 			// namespace
 				this.namespace	= namespace;
 				
-			// uri				// one level up from the last "/jsfl/" folder
+			// uri				// grab the folder one level up from the last "/jsfl/" folder
 				this.uri		= xjsfl.utils.getStack().pop().uri.replace(/\/jsfl\/.*/, '/')
 				
 			// name				// default to folder name if unsupplied
@@ -97,6 +97,16 @@
 				 */
 				get path(){ return xjsfl.file.makePath(this.uri, true); },
 				
+				/**
+				 * 
+				 * @param		
+				 * @returns		
+				 */
+				getWindow:function()
+				{
+					return window;
+				},
+			
 			// ----------------------------------------------------------------------------------------
 			// methods
 			
@@ -110,7 +120,7 @@
 				{
 					return new Config(path || this.namespace);
 				},
-			
+				
 				log:function(message, lineBefore)
 				{
 					if(lineBefore)
@@ -137,29 +147,3 @@
 	
 		xjsfl.classes.register('Module', Module);
 		
-		
-		
-// -----------------------------------------------------------------------------------------------------------------------------------------
-// Demo code
-	
-	if( ! xjsfl.loading )
-	{
-		// initialize
-			xjsfl.init(this);
-			clear();
-			try
-			{
-		
-		// --------------------------------------------------------------------------------
-		// Test
-		
-			if(1)
-			{
-				xjsfl.init(this);
-				var module = new Module('Test');
-				trace(module);
-			}
-		
-		// catch
-			}catch(err){xjsfl.output.debug(err);}
-	}

@@ -16,6 +16,12 @@
 	if( ! FLfile['platformPathToURI'])
 	{
 	
+		//TODO need to add spport for network paths
+		/*
+		network = file://COMPUTER/
+		local   = file:///drive
+		*/
+	
 		/**
 		 * Converts a platform-specific path to a URI
 		 * @param path	{String}	A string, expressed in a platform-specific format, specifying the filename you want to convert

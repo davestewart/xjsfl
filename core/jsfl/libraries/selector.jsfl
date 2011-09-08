@@ -9,7 +9,7 @@
 //  ██████ █████ ██ █████ █████  ████ █████ ██   
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Selector - Selector class for CSS-style selections
+// Selector - Class which holds JSFL rules (methods) and other parameters to compare against potentially-selected objects
 
 	function Selector(pattern)
 	{
