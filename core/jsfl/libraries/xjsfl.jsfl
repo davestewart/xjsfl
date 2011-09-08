@@ -801,7 +801,7 @@
 		},
 		
 		/**
-		 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, Array notation, Object notation, JSON, Date, undefined, null
+		 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
 		 * @param	value	{String}	An input string
 		 * @param	trim	{Boolean}	An optional flag to trim the string, on by default
 		 * @returns			{Mixed}		The parsed value of the original value
@@ -833,7 +833,13 @@
 				
 			// XML
 				if(/^<(\w+)\b[\s\S]*(<\/\1>|\/>)$/.test(value))
-					return new XML(value);
+					try { var xml = new XML(value); } // attempt to create XML
+					catch(err)
+					{
+						try { var xml = new XMLList(value); } // fall back to XMLList
+						catch(err) { var xml = value; } // fall back to text
+					};
+					return xml
 				
 			// Array notation
 				if(/^\[.+\]$/.test(value))
