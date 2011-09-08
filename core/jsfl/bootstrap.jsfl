@@ -38,7 +38,7 @@
 								fl.trace('> xjsfl: initializing [' +scopeName+ ']');
 							}
 							
-						// palceholder variables
+						// placeholder variable for trace
 							xjsfl.trace = null;
 							
 						// temp output object, needed before libraries are loaded
