@@ -195,18 +195,27 @@
 					 */
 					get values()
 					{
-						var values = {};
-						for(var id in this.controls)
-						{
-							var control = this.controls[id];
-							if(control.enumerable)
+						// return null if a settings object doesn't exist (the user cancelled)
+							if( ! this.settings )
 							{
-								values[id] = control.value;
+								return null;
 							}
-						}
-						values.accept = this.settings && this.settings.dismiss == 'accept';
-						return values;
+							
+						// if not, grab values
+							var values = {};
+							for(var id in this.controls)
+							{
+								var control = this.controls[id];
+								if(control.enumerable)
+								{
+									values[id] = control.value;
+								}
+							}
+							
+						// return
+							return values;
 					},
+					
 					
 			// --------------------------------------------------------------------------------
 			// methods
@@ -1886,7 +1895,7 @@
 						//Output.inspect(value)
 						
 					// return
-						return value === '' ? null : value;
+						return value == '' ? null : value;
 				},
 				
 				set value(value)
