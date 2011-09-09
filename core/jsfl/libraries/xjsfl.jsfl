@@ -833,6 +833,7 @@
 				
 			// XML
 				if(/^<(\w+)\b[\s\S]*(<\/\1>|\/>)$/.test(value))
+				{
 					try { var xml = new XML(value); } // attempt to create XML
 					catch(err)
 					{
@@ -840,6 +841,7 @@
 						catch(err) { var xml = value; } // fall back to text
 					};
 					return xml
+				}
 				
 			// Array notation
 				if(/^\[.+\]$/.test(value))
