@@ -1639,6 +1639,8 @@
 		 */
 		loadFolder:function(path, debugType)
 		{
+            //TODO add a list of filesnames to load first
+            
 			// grab files
 				var uri		= xjsfl.file.makeURI(path);
 				var files	= FLfile.listFolder(uri, 'file')
@@ -1751,6 +1753,9 @@
 		 */
 		load:function(path)
 		{
+            //TODO Setup modules so that modules are only found, and only when called are they loaded
+            //      this means only the code necessary will be loaded into the modules panel (rather than ALL code)
+        
 			// ensure path has a trailing slash
 				path = path.replace(/\/*$/, '/');
 				
