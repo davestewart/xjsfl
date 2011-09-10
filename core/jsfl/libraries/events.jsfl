@@ -456,20 +456,25 @@
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// assign event code to xjsfl.events
 	
-		for(var name in events)
+		(function()
 		{
-			// add all properties...
-				if(name !== 'handlers')
-				{
-					xjsfl.events[name] = events[name];
-				}
-				
-			// ...but don't overwrite existing event handlers (so on reloading the framework, they survive)
-				else
-				{
-					if( ! xjsfl.events.handlers )
+			
+			for(var name in events)
+			{
+				// add all properties...
+					if(name !== 'handlers')
 					{
-						xjsfl.events.handlers = events.handlers;
+						xjsfl.events[name] = events[name];
 					}
-				}
-		}
+					
+				// ...but don't overwrite existing event handlers (so on reloading the framework, they survive)
+					else
+					{
+						if( ! xjsfl.events.handlers )
+						{
+							xjsfl.events.handlers = events.handlers;
+						}
+					}
+			}
+			
+		})()
