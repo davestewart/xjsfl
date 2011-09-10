@@ -1671,7 +1671,7 @@
 						this.xml	= new XML(str);
 						
 					// add xulid, so we can test for existance of dialog boxes in future
-						this.xml.*	+= new XML('<textbox id="xulid" value="{xulid}" visible="false" />');
+						this.xml.*	+= new XML('<property id="xulid" value="{xulid}" />');
 						
 					// debug
 						//trace(this.xml.toXMLString())
