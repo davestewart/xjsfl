@@ -1,14 +1,14 @@
 ﻿// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████ ██ ██       ██████              ██                  ██████ ██    ██              ██   
-//  ██        ██       ██                  ██                  ██  ██ ██                    ██   
-//  ██     ██ ██ █████ ██     ██ ██ █████ █████ █████ ████████ ██  ██ █████ ██ █████ █████ █████ 
-//  █████  ██ ██ ██ ██ ██████ ██ ██ ██     ██   ██ ██ ██ ██ ██ ██  ██ ██ ██ ██ ██ ██ ██     ██   
-//  ██     ██ ██ █████     ██ ██ ██ █████  ██   █████ ██ ██ ██ ██  ██ ██ ██ ██ █████ ██     ██   
-//  ██     ██ ██ ██        ██ ██ ██    ██  ██   ██    ██ ██ ██ ██  ██ ██ ██ ██ ██    ██     ██   
-//  ██     ██ ██ █████ ██████ █████ █████  ████ █████ ██ ██ ██ ██████ █████ ██ █████ █████  ████ 
-//                               ██                                         ██                   
-//                            █████                                       ████                   
+//  ██████ ██ ██       ██████              ██                  ██████ ██    ██              ██
+//  ██        ██       ██                  ██                  ██  ██ ██                    ██
+//  ██     ██ ██ █████ ██     ██ ██ █████ █████ █████ ████████ ██  ██ █████ ██ █████ █████ █████
+//  █████  ██ ██ ██ ██ ██████ ██ ██ ██     ██   ██ ██ ██ ██ ██ ██  ██ ██ ██ ██ ██ ██ ██     ██
+//  ██     ██ ██ █████     ██ ██ ██ █████  ██   █████ ██ ██ ██ ██  ██ ██ ██ ██ █████ ██     ██
+//  ██     ██ ██ ██        ██ ██ ██    ██  ██   ██    ██ ██ ██ ██  ██ ██ ██ ██ ██    ██     ██
+//  ██     ██ ██ █████ ██████ █████ █████  ████ █████ ██ ██ ██ ██████ █████ ██ █████ █████  ████
+//                               ██                                         ██
+//                            █████                                       ████
 //
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // FileSystemObject - Base FileSystem class for Folder and File classes
@@ -23,7 +23,7 @@
 		FileSystemObject = function(pathOrUri)
 		{
 			//BUG Errors when file URIs go beyond 260 chars. Need to implement fix (replace FLfile methods?) or workaround.
-			
+
 			if(pathOrUri)
 			{
 				this.uri = xjsfl.file.makeURI(pathOrUri);
@@ -33,19 +33,19 @@
 				this.name = decodeURI(this.uri).match(/([^/]+)[/]*$/)[1];
 			}
 		}
-		
+
 		FileSystemObject.toString = function()
 		{
 			return '[class FileSystemObject]';
 		}
-		
-	
+
+
 	// -------------------------------------------------------------------------------------------------------------------
 	// prototype
 
 		FileSystemObject.prototype =
 		{
-			
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// properties
 
@@ -53,15 +53,15 @@
 				 * @type {String} The uri-formatted string to the item
 				 */
 				uri:null,
-			
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// methods
-		
+
 				/**
 				 * reset constructor
 				 */
 				constructor:FileSystemObject,
-			
+
 				/**
 				 * Deletes the item from the filesystem
 				 * @param skipConfirmation {Boolean} An optional boolean to skip the user-confirmation window
@@ -81,23 +81,23 @@
 					}
 					return this;
 				},
-				
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// accessors
-		
+
 				/**
 				 * @type {String} The platform-specific path to the item
 				 */
 				get path(){ return FLfile.uriToPlatformPath(this.uri).replace(/\\/g, '/') },
-				
+
 				/**
-				 * @type {Boolean} true if the file exists; false otherwise. 
+				 * @type {Boolean} true if the file exists; false otherwise.
 				 */
 				get exists()
 				{
 					return this.uri && FLfile.exists(this.uri);
 				},
-		
+
 				/**
 				 * @type {Number} The number of seconds that have elapsed between January 1, 1970 and the time the file or folder was created, or "00000000" if the file or folder doesn’t exist
 				 */
@@ -105,7 +105,7 @@
 				{
 					var num = parseInt(FLfile.getCreationDate(this.uri), 16); return num ? num : null;
 				},
-		
+
 				/**
 				 * @type {Number} The number of seconds that have elapsed between January 1, 1970 and the time the file or folder was last modified, or "00000000" if the file or folder doesn’t exist
 				 */
@@ -113,7 +113,7 @@
 				{
 					var num = parseInt(FLfile.getModificationDate(this.uri), 16); return num ? num : null;
 				},
-				
+
 				/**
 				 * @type {Date} A JavaScript Date object that represents the date and time when the specified file or folder was created. If the file doesn’t exist, the object contains information indicating that the file or folder was created at midnight GMT on December 31, 1969.
 				 */
@@ -121,7 +121,7 @@
 				{
 					return this.exists ? FLfile.getCreationDateObj(this.uri) : null;
 				},
-		
+
 				/**
 				 * @type {Date} A JavaScript Date object that represents the date and time when the specified file or folder was last modified. If the file or folder doesn’t exist, the object contains information indicating that the file or folder was created at midnight GMT on December 31, 1969.
 				 */
@@ -129,7 +129,7 @@
 				{
 					return this.exists ? FLfile.getModificationDateObj(this.uri) : null;
 				},
-		
+
 				/**
 				 * @type {String} A string that represents the attributes of the specified file or folder.
 				 */
@@ -137,7 +137,7 @@
 				{
 					return this.exists ? FLfile.getAttributes(this.uri) : null;
 				},
-		
+
 				/**
 				 * @type {String} A string specifying values for the attribute(s) you want to set. N: No specific attribute, A: Ready for archiving (Windows only), R: Read-only (on the Macintosh, read-only means “locked”), W: Writable (overrides R), H: Hidden (Windows only), V: Visible (overrides H, Windows only)
 				 */
@@ -145,7 +145,7 @@
 				{
 					return this.exists ? FLfile.setAttributes(this.uri, attributes) : null;
 				},
-				
+
 				/**
 				 * @type {Array} The object's parent folder, or the same folder if the root
 				 */
@@ -158,23 +158,23 @@
 					}
 					return null;
 				}
-			
+
 		}
-				
 
-		
 
-			
-	
+
+
+
+
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████       ██    ██            
-//  ██           ██    ██            
-//  ██     █████ ██ █████ █████ ████ 
-//  █████  ██ ██ ██ ██ ██ ██ ██ ██   
-//  ██     ██ ██ ██ ██ ██ █████ ██   
-//  ██     ██ ██ ██ ██ ██ ██    ██   
-//  ██     █████ ██ █████ █████ ██   
+//  ██████       ██    ██
+//  ██           ██    ██
+//  ██     █████ ██ █████ █████ ████
+//  █████  ██ ██ ██ ██ ██ ██ ██ ██
+//  ██     ██ ██ ██ ██ ██ █████ ██
+//  ██     ██ ██ ██ ██ ██ ██    ██
+//  ██     █████ ██ █████ █████ ██
 //
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Folder - JSFL OO representation of operating system folders
@@ -191,7 +191,7 @@
 		{
 			// remove trailing slash, otherwise it refers to the child folder ''
 				pathOrUri = pathOrUri.replace(/\/+$/, '');
-				
+
 			// constructor
 				FileSystemObject.apply(this, [pathOrUri]);
 				if(create && ! this.exists)
@@ -199,32 +199,32 @@
 					this.create();
 				}
 		}
-		
+
 		Folder.toString = function()
 		{
 			return '[class Folder]';
 		}
-		
+
 	// -------------------------------------------------------------------------------------------------------------------
 	// prototype members
 
 		folder =
 		{
-			
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// methods
-		
+
 				/**
 				 * reset constructor
 				 */
 				constructor:Folder,
-				
+
 				create:function()
 				{
 					FLfile.createFolder(this.uri);
 					return this;
 				},
-			
+
 				/**
 				 * Opens the folder in the Explorer / Finder
 				 * @returns 		{Folder}		The original folder
@@ -236,7 +236,7 @@
 					FLfile.runCommandLine(exec);
 					return this;
 				},
-				
+
 				/**
 				 * alias for open()
 				 */
@@ -244,7 +244,7 @@
 				{
 					File.prototype.open.apply(this);
 				},
-				
+
 				/**
 				 * Copy the folder to a new uri
 				 * @param	toUri	{String}
@@ -254,7 +254,7 @@
 				{
 					//TODO implemement xcopy on windows or the equivilent on a mac
 				},
-				
+
 				/**
 				 * Calls a function on each element in the collection
 				 * @param callback	{Function}		A callback function to fire on each iteraction. Return true at any point to cancel iteration
@@ -288,7 +288,7 @@
 					}
 					return this;
 				},
-				
+
 				/**
 				 * Return a filtered array of the folder's contents, matching against the filenames
 				 * @param	pattern	{RegExp}	A RegExp filename pattern
@@ -305,7 +305,7 @@
 					}
 					return [];
 				},
-				
+
 				/**
 				 * A string representation of the folder name and number of items
 				 * @returns {String} A string representation of the folder
@@ -317,15 +317,15 @@
 					var value	= path ? this.path : this.name;
 					return '[object Folder ' +label+ '="' +value+ '" items=' +items+ ' exists="' +this.exists+ '"]';
 				},
-					
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// accessors
-		
+
 				/**
 				 * @type {Number} The number of items in the folder
 				 */
 				get length (){ return this.exists ? FLfile.listFolder(this.uri).length : 0; },
-					
+
 				/**
 				 * @type {Array} The folder's files and folders
 				 */
@@ -344,7 +344,7 @@
 					}
 					return null;
 				},
-				
+
 				/**
 				 * @type {Array} The folder's subfolders
 				 */
@@ -363,7 +363,7 @@
 					}
 					return null;
 				},
-				
+
 				/**
 				 * @type {Array} The folder's files
 				 */
@@ -389,17 +389,17 @@
 
 		Folder.prototype = new FileSystemObject;
 		xjsfl.utils.extend(Folder.prototype, folder);
-			
+
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████ ██ ██       
-//  ██        ██       
-//  ██     ██ ██ █████ 
-//  █████  ██ ██ ██ ██ 
-//  ██     ██ ██ █████ 
-//  ██     ██ ██ ██    
-//  ██     ██ ██ █████ 
+//  ██████ ██ ██
+//  ██        ██
+//  ██     ██ ██ █████
+//  █████  ██ ██ ██ ██
+//  ██     ██ ██ █████
+//  ██     ██ ██ ██
+//  ██     ██ ██ █████
 //
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // File - JSFL OO representation of operating system files
@@ -418,46 +418,46 @@
 		{
 			// constructor
 				FileSystemObject.apply(this, [pathOrUri]);
-				
+
 			// if there's any data, save it
 				if(contents)
 				{
 					this.create(contents);
 				}
 		}
-		
+
 		File.toString = function()
 		{
 			return '[class File]';
 		}
-		
-		
+
+
 	// -------------------------------------------------------------------------------------------------------------------
 	// properties
-	
+
 		file =
 		{
-			
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// methods
-			
+
 				/**
 				 * reset constructor
 				 */
 				constructor:File,
-				
+
 				create:function(contents)
 				{
 					// folder
 						var uri		= this.uri.replace(/\/[^\/]+$/, '');
 						var folder	= new Folder(uri, true);
-						
+
 					// delete old file if it exists
 						if(this.exists)
 						{
 							this.remove(true);
 						}
-						
+
 					// write new contents
 						if(contents === true)
 						{
@@ -471,7 +471,7 @@
 					// return
 						return this;
 				},
-			
+
 				/**
 				 * Opens the file in the associated application
 				 * @returns {File} The original file
@@ -485,11 +485,11 @@
 							case 'fla':
 								fl.openDocument(this.uri);
 							break;
-						
+
 							case 'jsfl':
 								fl.openScript(this.uri);
 							break;
-						
+
 							default:
 								// osascript -e 'tell application "flash" to open alias "Mac OS X:Users:user:myTestFile.jsfl" '
 								var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
@@ -500,7 +500,7 @@
 					//fl[this.extension == 'fla' ? 'openDocument' : 'openScript'](this.uri);
 					return this;
 				},
-				
+
 				/**
 				 * Executes any JSFL file, or attempts to run any other file type via the OS
 				 * @returns {File}	The original file if it exists
@@ -527,71 +527,89 @@
 						return false;
 					}
 				},
-				
+
 				/**
 				 * Copies the file to a new location
-				 * @param uriCopy	{String}	The new uri to copy the file to. Can be a folder or file.
+				 * @param trgURI	{String}	The new uri to copy the file to. Can be a folder or file.
 				 * @param overWrite	{Boolean}	Optional Boolean indicating whether the target file should be overwritten if it exists, defaults to false
 				 * @returns			{File}		A new File object
 				 */
-				copy:function(uriCopy, overWrite)
+				copy:function(trgURI, overWrite)
 				{
 					//Output.inspect(this)
 					// if the file exists, copy it
 						if(this.exists)
 						{
-							// if the path doesn't have a filename, use the existing filename
+							// if the path doesn't have a filename (i.e. it's a folder) use the existing filename
 								var rx			= /[^\/]+\.[a-z0-9]+$/i;
-								var matches		= uriCopy.match(rx);
+								var matches		= trgURI.match(rx);
 								var filename	= matches ? matches[0] : null;
 								if(filename == null)
 								{
-									uriCopy = uriCopy.replace(/\/*$/, '/') + this.name;
+									trgURI = trgURI.replace(/\/*$/, '/') + this.name;
 								}
-								uriCopy =  xjsfl.file.makeURI(uriCopy);
-								
+								trgURI =  xjsfl.file.makeURI(trgURI);
+
 							// make sure the target folder exists
-								var targetFolder = new Folder(uriCopy.replace(/[^\/]+$/, ''));
+								var targetFolder = new Folder(trgURI.replace(/[^\/]+$/, ''));
 								if( ! targetFolder.exists )
 								{
 									targetFolder.create();
 								}
-								
+
 							// test if the target file exists
-								if(FLfile.exists(uriCopy))
+								if(FLfile.exists(trgURI))
 								{
+									// variable for prompting
+										var trgPath		= xjsfl.file.makePath(this.path, true);
+										var prompt		= 'Copying "' +this.path+ '" to "' +trgPath + '".\n\n';
+										var readOnly	= FLfile.getAttributes(trgURI).indexOf('R');
+
 									// if overwite was not expressly stated as true, ask the user
 										if(overWrite !== true)
 										{
-											var str = 'Copying "' +xjsfl.file.makePath(this.uri, true)+ '" to "' +xjsfl.file.makePath(uriCopy, true)+ '".\n\nThe target file exists. Do you wish to overwrite?';
+											var str = prompt + 'The target file exists. Do you wish to overwrite?';
 											overWrite = confirm(str);
 										}
-										
+
+									// if the file is read only, ask the user
+										/*
+										if(readOnly && ! overWrite)
+										{
+											var str = 'The target file "' +trgPath+ '" is read-only.\n\nDo you want to overwrite?';
+											if( ! confirm(str))
+											{
+												overWrite = false;
+											}
+										}
+										*/
+
 									// remove target if file should overwrite
 										if(overWrite)
 										{
-											if( ! FLfile.remove(uriCopy) )
+											FLfile.setAttributes(trgURI, 'W');
+											if( ! FLfile.remove(trgURI) )
 											{
-												throw new Error('The target file "' +this.path+ '" exists, but could not be deleted');
+												throw new Error('The target file "' +trgPath+ '" exists, but could not be deleted');
 											}
 										}
 										else
 										{
-											throw new Error('The file "' +this.path+ '" was not copied to "' +FLfile.uriToPlatformPath(uriCopy)+ '" because the user cancelled');
+											throw new Error('The file "' +this.path+ '" was not copied to "' +trgPath+ '" because the user cancelled');
 										}
 								}
-								
+
 							// take action on result
-								if(FLfile.copy(this.uri, uriCopy))
+								if(FLfile.copy(this.uri, trgURI))
 								{
-									return new File(uriCopy);
+									return new File(trgURI);
 								}
 								else
 								{
-									throw new Error('The file "' +this.path+ '" was not copied to "' +FLfile.uriToPlatformPath(uriCopy)+ '" because of an unexpected condition');
+									throw new Error('The file "' +this.path+ '" was not copied to "' +trgPath+ '" because of an unexpected condition');
 								}
 						}
-						
+
 					// if not, throw an error, or just save an empty file?
 						else
 						{
@@ -599,7 +617,7 @@
 						}
 						return this;
 				},
-				
+
 				/**
 				 * Append data to the file
 				 * @param data		{String}	The data to append to the file
@@ -616,7 +634,7 @@
 					}
 					return result ? this : false;
 				},
-				
+
 				/**
 				 * Saves the file, optionally as UTF8
 				 * @param utf8	{Boolean}	An optional Boolean indicating to save the file as UTF8
@@ -634,13 +652,13 @@
 					}
 					else
 					{
-						
+
 					}
 					*/
 					this.write('', true);
 					return this;
 				},
-				
+
 				/**
 				 * Reveals the file, selected, in the Explorer or Finder
 				 * @returns {File} The original file
@@ -661,12 +679,12 @@
 					}
 					return this;
 				},
-				
+
 				/**
 				 * Rename the file. You can optionally omit the name and just provide an extension to only rename the extension
 				 * @param	name		{String}	The new name for the file (you can omit the extension)
 				 * @param	extension	{String}	The new etension for the file
-				 * @param	overwrite	{Boolean}	
+				 * @param	overwrite	{Boolean}
 				 * @returns				{File}		The original file
 				 */
 				rename:function(name, extension, overwrite)
@@ -676,20 +694,20 @@
 						{
 							name = this.name.replace(/\w+$/, extension);
 						}
-						
+
 					// otherwise, rename the whole file
 						else if(/\.\w+$/.test(name))
 						{
-							
+
 						}
-						
+
 					// rename by making a copy, then deleting the original file
 						if(name != this.name)
 						{
-							
+
 						}
 				},
-				
+
 				/**
 				 * A string representation of the file
 				 * @param	path	{Boolean}		A flag to show the full path, not just the name
@@ -699,52 +717,51 @@
 				{
 					return '[object File ' +(path ? 'path' : 'name')+ '="' +(path ? this.path : this.name)+ '" exists="' +this.exists+ '"]';
 				},
-				
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// accessors
-			
-				/** 
+
+				/**
 				 * @type {String} get the contents of the file
 				 */
 				get contents (){ return this.exists ? FLfile.read(this.uri).replace(/\r\n/g, '\n') : ''; },
-				
-				/** 
+
+				/**
 				 * @type {String} Set the contents of the file
 				 */
 				set contents (data){ this.write(data); },
-				/** 
+				/**
 				 * @type {String} The file extension of the file
 				 */
-				
+
 				get extension()
 				{
 					return this.uri ? this.uri.substr(this.uri.lastIndexOf('.') + 1) : '';
 				},
-		
-				/** 
+
+				/**
 				 * @type {Number} Get the size of the file
 				 */
 				get size (){ return FLfile.getSize(this.uri); },
-				
-				
+
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// properties
-			
+
 				saved:false
-					
+
 			}
-	
+
 	// -------------------------------------------------------------------------------------------------------------------
 	// inheritance & assign methods
 
 		File.prototype = new FileSystemObject;
 		xjsfl.utils.extend(File.prototype, file);
-	
-	
+
+
 // -----------------------------------------------------------------------------------------------------------------------------------------
 // register classes with xjsfl
-	
+
 	//xjsfl.classes.register('FileSystemObject', FileSystemObject);
 	xjsfl.classes.register('Folder', Folder);
 	xjsfl.classes.register('File', File);
-
