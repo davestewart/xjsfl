@@ -1,28 +1,31 @@
 ﻿// --------------------------------------------------------------------------------
 // load XUL panel inside Flash
 
-	// check for DOM
-		var dom = fl.getDocumentDOM();
-		
-	// if a document is open...
-		if( ! dom)
-		{
-			dom = fl.createDocument();
-		}
-		
-	// grab uri 
-		fl.runScript(fl.scriptURI.replace('/xul.jsfl', '/exec.jsfl'));
-		
-	// run the panel
-		if(uri)
-		{
-			var results = dom.xmlPanel(uri);
-			if(results.dismiss == 'accept')
+	(function()
+	{
+		// check for DOM
+			var dom = fl.getDocumentDOM();
+
+		// if no document is open...
+			if( ! dom)
 			{
-				xjsfl.classes.Output.inspect(results);
+				dom = fl.createDocument();
 			}
-		}
-		else
-		{
-			xjsfl.trace('Error reading XUL');
-		}
+
+		// grab uri
+			var uri = FLfile.read(fl.scriptURI.replace('/xul.jsfl', '/uri.txt'));
+
+		// run the panel
+			if(uri)
+			{
+				var results = dom.xmlPanel(uri);
+				if(results.dismiss == 'accept')
+				{
+					xjsfl.classes.Output.inspect(results);
+				}
+			}
+			else
+			{
+				xjsfl.trace('Error reading XUL');
+			}
+	}())
