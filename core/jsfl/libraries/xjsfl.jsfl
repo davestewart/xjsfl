@@ -1785,11 +1785,7 @@
 						// check exists and compare dates
 							if(! trg.exists || src.modified > trg.modified)
 							{
-                                if(trg.exists)
-                                {
-                                    FLfile.setAttributes(trg.uri, 'W'); // set any existing file as writeable
-                                }
-    							xjsfl.output.trace('copying "' + xjsfl.file.makePath(src.uri, true) + '" to "Flash/Configuration/WindowSWF/"');
+								xjsfl.output.trace('copying "' + xjsfl.file.makePath(src.uri, true) + '" to "Flash/Configuration/WindowSWF/"');
 								src.copy(fl.configURI + 'WindowSWF/', true);
 							}
 
@@ -1937,7 +1933,7 @@
 									.replace(/xjsfl.ui.handleEvent\(0,/g, 'xjsfl.ui.handleEvent(' +xul.id+ ',');
 
 			// save XML to dialog.xml
-				var uri			= xul.uri || xjsfl.file.makeURI('core/ui/dialog.xml');
+				var uri			= xul.uri || xjsfl.file.makeURI('core/ui/dialog.xul');
 				new File(uri, xml);
 
 			// register XUL
