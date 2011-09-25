@@ -91,10 +91,16 @@
 			// flags
 				xjsfl.loading = true;
 
+			// reset file debugging
+				xjsfl.file.debug = false;
+
 			// core
 				xjsfl.trace('loading xJSFL...', true);
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
-	
+				
+			// reset file debugging
+				xjsfl.file.debug = false;
+
 			// load key libraries
 				xjsfl.trace('loading core libraries...');
 				xjsfl.classes.load(['filesystem', 'template', 'class', 'output']);

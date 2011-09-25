@@ -1588,7 +1588,7 @@
 						// variables
 							var evalLine	= 1581;	// this needs to be the actual line number of the eval(jsfl) line above
 							var line		= parseInt(err.lineNumber) - (evalLine) + 1;
-							var error		= [uri, line, err.name, err.message].join('\n');
+							var error		= [uri, line, err.name, err.message].join('\r\n');
 							
 						// write to the error log
 							var state		= FLfile.write(uriErrors, error);
@@ -1992,7 +1992,7 @@
 									.replace(/xjsfl.ui.handleEvent\(0,/g, 'xjsfl.ui.handleEvent(' +xul.id+ ',');
 
 			// save XML to dialog.xml
-				var uri			= xul.uri || xjsfl.file.makeURI('core/ui/dialog.xul');
+				var uri			= xul.uri || xjsfl.file.makeURI('core/temp/dialog.xul');
 				new File(uri, xml);
 
 			// register XUL
