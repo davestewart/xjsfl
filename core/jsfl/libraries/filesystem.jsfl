@@ -531,7 +531,7 @@
 				/**
 				 * Copies the file to a new location
 				 * @param trgURI	{String}	The new uri to copy the file to. Can be a folder or file.
-				 * @param overWrite	{Boolean}	Optional Boolean indicating whether the target file should be overwritten if it exists, defaults to false
+				 * @param overWrite	{Boolean}	Optional Boolean indicating whether the target file should be overwritten without warning
 				 * @returns			{File}		A new File object
 				 */
 				copy:function(trgURI, overWrite)
@@ -544,6 +544,7 @@
 								var rx			= /[^\/]+\.[a-z0-9]+$/i;
 								var matches		= trgURI.match(rx);
 								var filename	= matches ? matches[0] : null;
+
 								if(filename == null)
 								{
 									trgURI = trgURI.replace(/\/*$/, '/') + this.name;
@@ -571,18 +572,6 @@
 											var str = prompt + 'The target file exists. Do you wish to overwrite?';
 											overWrite = confirm(str);
 										}
-
-									// if the file is read only, ask the user
-										/*
-										if(readOnly && ! overWrite)
-										{
-											var str = 'The target file "' +trgPath+ '" is read-only.\n\nDo you want to overwrite?';
-											if( ! confirm(str))
-											{
-												overWrite = false;
-											}
-										}
-										*/
 
 									// remove target if file should overwrite
 										if(overWrite)
@@ -613,7 +602,7 @@
 					// if not, throw an error, or just save an empty file?
 						else
 						{
-							throw new Error('The file "' +this.path+ '" does not exist or has not been saved');
+							throw new Error('The file "' +this.path+ '" cannot be copied as it hasn\'t been saved, or doesn\'t exist');
 						}
 						return this;
 				},
@@ -745,12 +734,24 @@
 				get size (){ return FLfile.getSize(this.uri); },
 
 
+				/**
+				 * @type {Boolean} Set or get the read-only state of the file
+				 */
+				get readOnly (){ return this.exists && FLfile.getAttributes(this.uri).indexOf('R') !== -1; },
+				set readOnly (state)
+				{
+					if(this.exists)
+					{
+						FLfile.setAttributes(this.uri, FLfile.getAttributes(this.uri) + 'W');
+					}
+				},
+
 			// -------------------------------------------------------------------------------------------------------------------
 			// properties
 
 				saved:false
 
-			}
+		}
 
 	// -------------------------------------------------------------------------------------------------------------------
 	// inheritance & assign methods

@@ -236,7 +236,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // register classes with xjsfl
 	
-	Collection = Class.extend(collection);
+	Collection = xjsfl.classes.Class.extend(collection);
 	Collection.toString = function()
 	{
 		return '[class Collection]';

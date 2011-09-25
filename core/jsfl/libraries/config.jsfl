@@ -1,27 +1,27 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████              ████ ██       
-//  ██                  ██            
-//  ██     █████ █████  ██   ██ █████ 
-//  ██     ██ ██ ██ ██ █████ ██ ██ ██ 
-//  ██     ██ ██ ██ ██  ██   ██ ██ ██ 
-//  ██     ██ ██ ██ ██  ██   ██ ██ ██ 
-//  ██████ █████ ██ ██  ██   ██ █████ 
-//                                 ██ 
-//                              █████ 
+//  ██████              ████ ██
+//  ██                  ██
+//  ██     █████ █████  ██   ██ █████
+//  ██     ██ ██ ██ ██ █████ ██ ██ ██
+//  ██     ██ ██ ██ ██  ██   ██ ██ ██
+//  ██     ██ ██ ██ ██  ██   ██ ██ ██
+//  ██████ █████ ██ ██  ██   ██ █████
+//                                 ██
+//                              █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Config - an object oriented wrapper for easily saving and loading settings
 
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
-	
+
 		/**
 		 * Config class, loads and saves XML from the config folders
-		 * 
+		 *
 		 * @param	configPath	{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
 		 * @param	xml			{XML}		An XMl object with which to populate the Config instance
-		 * @author	Dave Stewart	
+		 * @author	Dave Stewart
 		 */
 		Config = function(configPath, xml)
 		{
@@ -30,13 +30,13 @@
 				{
 					var uri = configPath;
 				}
-				
+
 			// relative uri - find in paths
 				else
 				{
 					// find in paths
 						var uri	= xjsfl.file.find('config', configPath);
-						
+
 					// fall back to user config if module or user config doesn't exist
 					//TODO decide if this is what we want. Should null configs be allowed?
 						if(uri == null)
@@ -44,14 +44,14 @@
 							uri = xjsfl.file.makeURI('user/config/' + configPath + '.xml');
 						}
 				}
-				
+
 			// file
 				var file = new File(uri);
 				this.getFile = function()
 				{
 					return file;
 				}
-				
+
 			// if data is passed in, save
 				if(xml)
 				{
@@ -64,34 +64,34 @@
 				{
 					this.load();
 				}
-				
+
 			// otherwise, just initialize XML
 				else
 				{
 					this.clear();
 				}
-					
+
 		}
-		
+
 	// ------------------------------------------------------------------------------------------------
 	// Prototype
-	
+
 		Config.prototype =
 		{
 			xml:	null,
-			
+
 			get uri()
 			{
 				return this.getFile ? this.getFile().uri : '';
 			},
-			
+
 			get path()
 			{
 				return this.getFile ? this.getFile().path : '';
-			},			
-			
+			},
+
 			constructor:Config,
-			
+
 			/**
 			 * Sets data on the wrapped XML data
 			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
@@ -106,13 +106,13 @@
 					var nodeName	= parts.pop();
 					var parent		= parts.length ? eval('this.xml.' + parts.join('.')) : this.xml;
 					var node		= eval('this.xml.' + path);
-					
+
 				// delete any existing childnodes
 					if(node.length())
 					{
 						node.setChildren(new XMLList());
 					}
-					
+
 				// treat differently, depending on datatype
 					switch(typeof value)
 					{
@@ -121,22 +121,22 @@
 						case 'string':
 							parent[nodeName] = value;
 						break;
-					
+
 						case 'xml':
 							node[nodeName] += value
 						break;
-					
+
 						default:
 							node[nodeName] += new XML('<![CDATA[' + String(value) + ']]>');
 					}
-					
+
 				// save
 					this.save();
-					
+
 				// return
 					return this
 			},
-			
+
 			/**
 			 * Gets the value of the specified node path
 			 * @param	path	{Srting}	A dot-notation path to a node or attribute
@@ -160,9 +160,18 @@
 				{
 					var value = eval('this.xml.' + path);
 				}
-				return parse === false ? value : xjsfl.utils.parseValue(value);
+
+				if(path.indexOf('@') != -1)
+				{
+					return parse === false ? value : xjsfl.utils.parseValue(value);
+				}
+				else
+				{
+					return value;
+				}
+
 			},
-			
+
 			/**
 			 * Loads the XML config from disk
 			 * @returns			{Config}	The current Config node
@@ -172,7 +181,7 @@
 				this.xml = new XML(this.getFile().contents);
 				return this;
 			},
-			
+
 			/**
 			 * Saves the internal XML to disk
 			 * @returns			{Config}	The current Config node
@@ -183,7 +192,7 @@
 				this.getFile().write(xml);
 				return this;
 			},
-			
+
 			/**
 			 * Clears all nodes inside the internal XML
 			 * @returns			{Config}	The current Config node
@@ -193,7 +202,7 @@
 				this.xml	= <config />;
 				return this;
 			},
-			
+
 			/**
 			 * Returns either a standard String summary of the Config item or the pretty-printed XML contents
 			 * @param	asXML	{Boolean}		An optional flag to return the XML String
@@ -205,19 +214,18 @@
 				var nodes	= this.xml ? this.xml.*.length() : 0;
 				return asXML ? this.xml.toXMLString() : '[object Config path="' +this.path+ '" nodes=' +nodes+ ']';
 			}
-			
+
 		}
-		
+
 	// ------------------------------------------------------------------------------------------------
 	// Static methods
-	
+
 		Config.toString = function()
 		{
 			return '[class Config]';
 		}
-		
+
 	// ------------------------------------------------------------------------------------------------
 	// register
-	
+
 		xjsfl.classes.register('Config', Config);
-		
