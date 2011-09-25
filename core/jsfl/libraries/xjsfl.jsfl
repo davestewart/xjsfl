@@ -22,13 +22,24 @@
 	// --------------------------------------------------------------------------------
 	// setup
 
-		 // if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
-			if( ! FLfile['platformPathToURI'] )
-			{
-				var path = 'core/jsfl/libraries/flfile.jsfl';
-				xjsfl.output.trace('loading "xJSFL/' +path+ '"');
-				fl.runScript(xjsfl.uri + path);
-			}
+		(function()
+		{
+			// if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
+			   if( ! FLfile['platformPathToURI'] )
+			   {
+				   var path = 'core/jsfl/libraries/flfile.jsfl';
+				   xjsfl.output.trace('loading "xJSFL/' +path+ '"');
+				   fl.runScript(xjsfl.uri + path);
+			   }
+			   
+		   // ensure temp folder exists
+				var uri = xjsfl.uri + 'core/temp/';
+				if( ! FLfile.exists(uri) )
+				{
+					FLfile.createFolder(uri);
+				}
+		})()
+
 
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -1167,7 +1178,7 @@
 		},
 
 		stack:[],
-
+		
 		/**
 		 * Finds all files of a particular type within the cascading file system
 		 *
@@ -1281,17 +1292,15 @@
 		 * Parameters and return type vary depending on file type!
 		 *
 		 * @param path			{String}		The relative or absolute path, or uri to the file
-		 * @param catchErrors	{Boolean}		An optional switch to read and eval contents of jsfl files, which traps errors rather than failing silently
 		 *
 		 * @param name			{String}		The name or path fragment to a file, with or without the file extension
 		 * @param type			{String}		The folder type in which to look (i.e. settings) for the file(s)
-		 * @param catchErrors	{Boolean}		An optional switch to read and eval contents of jsfl files, which traps errors rather than failing silently
 		 *
 		 * @returns				{Boolean}		A Boolean indicating Whether the file was successfully found and loaded
 		 * @returns				{XML}			An XML object of the content of the file, if XML
 		 * @returns				{String}		The string content of the file otherwise
 		 */
-		load:function (path, type, catchErrors)
+		load:function (path, type)
 		{
 			/*
 				// path types
@@ -1312,14 +1321,12 @@
 				// a URI was passed in
 					if(this.isURI(path))
 					{
-						catchErrors	= type;
 						result		= FLfile.exists(path) ? path : null;
 					}
 
 				// a single path was passed in, so it to a uri
 					else if(type == undefined || type === true || type === false)
 					{
-						catchErrors	= type;
 						var uri		= xjsfl.file.makeURI(path);
 						result		= FLfile.exists(uri) ? uri : null;
 					}
@@ -1361,8 +1368,7 @@
 							// debug
 								//TODO Decide whether to display this or not
 								var _path	= xjsfl.file.makePath(uri, true);
-									var operation = catchErrors ? 'testing' : 'loading';
-									xjsfl.output.log('xjsfl.file.load', operation + ' "' + _path + '"');
+								xjsfl.output.log('xjsfl.file.load', 'loading "' + _path + '"');
 								if(xjsfl.loading)
 								{
 								}
@@ -1374,37 +1380,13 @@
 								switch(ext)
 								{
 									case 'jsfl':
-
-										// test script
-											if(catchErrors)
-											{
-												try
-												{
-													trace('Testing file: "' +FLfile.uriToPlatformPath(uri)+ '"');
-													eval(FLfile.read(uri));
-													xjsfl.file.stack.pop();
-													return uri;
-												}
-												catch(err)
-												{
-													xjsfl.output.trace(err);
-													xjsfl.output.debug('xjsfl.file.load(): The file "' +_path+ '" could not be executed');
-													xjsfl.file.stack.pop();
-													return false;
-												}
-											}
-
-										// otherwise, simply run the file
-											else
-											{
-												fl.runScript(uri);
-												//xjsfl.output.trace('Loaded ' + _path);
-												xjsfl.file.stack.pop();
-												return uri;
-											}
-
+										fl.runScript(uri);
+										//xjsfl.output.trace('Loaded ' + _path);
+										xjsfl.file.stack.pop();
+										return uri;
 									break;
 
+									case 'xul':
 									case 'xml':
 										var contents	= FLfile.read(uri);
 										contents		= contents.replace(/<\?.+?>/, ''); // remove any doc type declaration
@@ -1415,7 +1397,6 @@
 									default:
 										xjsfl.file.stack.pop();
 										return FLfile.read(uri);
-
 								}
 
 						}
@@ -1573,10 +1554,88 @@
 		isURI:function(str)
 		{
 			return str.indexOf('file://') === 0;
+		},
+		
+		/**
+		 * Debugs script files by loading and eval-ing them
+		 * @param		{String}		uri		The URI of the file to load
+		 */
+		debugScript:function(uri)
+		{
+			if(FLfile.exists(uri))
+			{
+				// debug
+					xjsfl.output.trace('Debugging "' + FLfile.uriToPlatformPath(uri) + '" ...');
+					
+				// remove any existing errors file
+					var uriErrors = xjsfl.uri + 'core/temp/errors.txt';
+					if(FLfile.exists(uriErrors))
+					{
+						FLfile.remove(uriErrors);
+					}
+					
+				// test the new file
+					try
+					{
+						var jsfl = FLfile.read(uri);
+						eval(jsfl);
+						return true;
+					}
+					
+				// log errors if there are any
+					catch(err)
+					{
+						// variables
+							var evalLine	= 1581;	// this needs to be the actual line number of the eval(jsfl) line above
+							var line		= parseInt(err.lineNumber) - (evalLine) + 1;
+							var error		= [uri, line, err.name, err.message].join('\n');
+							
+						// write to the error log
+							var state		= FLfile.write(uriErrors, error);
+							
+						// trace the "fake" error as usual
+							var str			= "The following JavaScript error occurred:\n\n";
+							str				+= 'At line ' +line+ ' of file "' +uri.split('/').pop()+ '":\n';
+							str				+= err.name + ': ' + err.message + '\n';
+							fl.trace(str);
+							
+						// throw new error so further script execution is halted
+							throw(new Error('\n> xjsfl: Script debugging halted'));
+					}
+			}
+			else
+			{
+				throw(new Error('URIError: The uri "' +uri+ '" does not exist'));
+			}
+			
+		},
+		
+		set debug(state)
+		{
+			// debug
+				xjsfl.output.trace('xjsfl.file.debug = ' + state);
+				
+			// set or reset functions
+				if(state)
+				{
+					if( ! fl._runScript )
+					{
+						fl._runScript = fl.runScript;
+						fl.runScript = xjsfl.file.debugScript;
+					}
+				}
+				else
+				{
+					if(fl._runScript )
+					{
+						fl.runScript = fl._runScript;
+						delete fl._runScript;
+					}
+				}
 		}
 
 	}
-
+	
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -1882,7 +1941,7 @@
 
 		reload:function(namespace)
 		{
-			var module = eval('xjsfl.modules.' + namespace);
+			eval('var module = xjsfl.modules.' + namespace);
 			xjsfl.modules.load(module.uri);
 		}
 
