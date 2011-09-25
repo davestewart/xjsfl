@@ -13,7 +13,7 @@
 			}
 
 		// grab uri
-			var uri = FLfile.read(fl.scriptURI.replace('/xul.jsfl', '/uri.txt'));
+			var uri = FLfile.read(xjsfl.uri + 'core/temp/uri.txt');
 
 		// run the panel
 			if(uri)
@@ -26,6 +26,6 @@
 			}
 			else
 			{
-				xjsfl.trace('Error reading XUL');
+				xjsfl.trace('The file "' +FLfile.uriToPlatformPath(uri)+ '" was not found');
 			}
 	}())

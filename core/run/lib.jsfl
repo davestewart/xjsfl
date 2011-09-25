@@ -10,7 +10,7 @@
 			if(dom)
 			{
 				// grab uri
-					var uri		= FLfile.read(fl.scriptURI.replace('/lib.jsfl', '/uri.txt'));
+					var uri		= FLfile.read(xjsfl.uri + 'core/temp/uri.txt');
 					var path	= FLfile.uriToPlatformPath(uri);
 
 				// exit early if the file doesn't exist
@@ -54,7 +54,7 @@
 					}
 					else
 					{
-						xjsfl.trace('Error running JSFL command');
+						xjsfl.trace('The JSFL command was empty');
 					}
 			}
 
