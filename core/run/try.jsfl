@@ -17,10 +17,14 @@
 					{
 						xjsfl.debug.file(uri);
 					}
+
+				// top-level catch (errors are logged to disk within xjsfl.debug.file)
 					catch(err)
 					{
-						//xjsfl.trace(err.message);
-						//xjsfl.debug.log(err);
+						var str			= "\nThe following JSFL error occurred:\n\n";
+						str				+= 'At line ' +err.lineNumber+ ' of file "' +err.fileName.split('/').pop()+ '":\n';
+						str				+= err.message + '\n';
+						fl.trace(str);
 					}
 			}
 

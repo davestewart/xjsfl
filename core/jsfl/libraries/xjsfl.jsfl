@@ -1498,6 +1498,39 @@
 
 		_runScript:fl.runScript,
 
+		/*init:function(scope, state)
+		{
+			// variables
+				state = state !== false;
+				var fl = scope.flash || flash;
+
+			// set or reset functions
+				if(state)
+				{
+					// delegate loading functionality
+						if(fl.runScript !== xjsfl.debug.file)
+						{
+							xjsfl.output.trace('Turning file debugging: on');
+							fl.runScript = xjsfl.debug.file;
+						}
+
+					// clear the debug log
+						xjsfl.debug.clear();
+				}
+				else
+				{
+					if(xjsfl.debug.state)
+					{
+						xjsfl.output.trace('Turning file debugging: off');
+						fl.runScript = xjsfl.debug._runScript;
+						delete fl._runScript;
+					}
+				}
+
+			// debug
+				xjsfl.output.trace('File debugging is: ' + (state ? 'on': 'off'));
+		},*/
+
 		/**
 		 * Debugs script files by loading and eval-ing them
 		 * @param		{String}		uriOrPath		The URI or path of the file to load
@@ -1541,27 +1574,35 @@
 				// log errors if there are any
 					catch(err)
 					{
-						// only error on the first catched error
+						//Output.inspect(err)
+
+						// create a new error object the first time an error is trapped
 							if( ! xjsfl.debug._error)
 							{
 								// flag
 									xjsfl.debug._error = true;
 
 								// variables
-									var evalLine	= 1527;	// this needs to be the actual line number of the eval(jsfl) line above
+									var evalLine	= 1562;	// this needs to be the actual line number of the eval(jsfl) line above
 									var line		= parseInt(err.lineNumber) - (evalLine) + 1;
-
-								// log the "fake" error
-									xjsfl.debug.log(uri, line, err.name, err.message);
 
 								// turn off debugging
 									this['state'] = false;
 
-								// throw new error so further script execution is halted, and turn off debugging
-									throw(new Error('> xjsfl: Script debugging halted'));
+								// create a new "fake" error
+									var error			= new Error(err.name + ': ' + err.message);
+									error.name			= err.name;
+									error.lineNumber	= line;
+									error.fileName		= uri;
+
+								// log the "fake" error
+									xjsfl.debug.log(error);
+
+								// throw the new error so further script execution is halted
+									throw(error)
 							}
 
-						// re-throw the error
+						// re-throw the fake error (this only occurs in higher catches)
 							else
 							{
 								throw(err);
@@ -1664,17 +1705,10 @@
 		 * @param		{String}		name		The name of the error
 		 * @param		{String}		message		The error message
 		 */
-		log:function(uri, line, name, message)
+		log:function(error)
 		{
-			// write to the error log
-				var error		= [uri, line, name, message].join('\r\n');
-				var state		= FLfile.write(xjsfl.uri + 'core/temp/error.txt', error);
-
-			// trace the "fake" error as usual
-				var str			= "The following JSFL error occurred:\n\n";
-				str				+= 'At line ' +line+ ' of file "' +uri.split('/').pop()+ '":\n';
-				str				+= name + ': ' + message + '\n';
-				fl.trace(str);
+			var data		= [error.fileName, error.lineNumber, error.name, error.message].join('\r\n');
+			var state		= FLfile.write(xjsfl.uri + 'core/temp/error.txt', data);
 		},
 
 		/**
@@ -1694,6 +1728,8 @@
 		 */
 		set state(state)
 		{
+			//TODO Think about making this a simple boolean, then updating file.load() to check for debug.state == true
+
 			// set or reset functions
 				if(state)
 				{
