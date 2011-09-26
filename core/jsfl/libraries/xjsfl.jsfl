@@ -31,7 +31,7 @@
 				   xjsfl.output.trace('loading "xJSFL/' +path+ '"');
 				   fl.runScript(xjsfl.uri + path);
 			   }
-			   
+
 		   // ensure temp folder exists
 				var uri = xjsfl.uri + 'core/temp/';
 				if( ! FLfile.exists(uri) )
@@ -990,37 +990,7 @@
 				a = a[0];
 			}
 			return a + (b - a) * Math.random();
-		},
-
-		/**
-		 * Tests a callback and outputs the error stack if the call fails. Add additional parameters after the callback reference
-		 * @param	fn		{Function}	The function to test
-		 * @param	params	{Array}		An array or arguments to pass to the function
-		 * @param	scope	{Object}	An alternative scope to run the function in
-		 * @returns			{Value}		The result of the function if successful
-		 */
-		test:function(fn, params, scope)
-		{
-			// variables
-				var source	= fn.toSource();
-				source		= source.substring(source.indexOf(' ') + 1, source.indexOf('('));
-				//TODO change function name parsing to recognise function() {...}
-
-			// feedback
-				xjsfl.output.trace('testing function: "' + source + '"');
-
-			// test!
-				try
-				{
-					return fn.apply(scope || this, params);
-				}
-				catch(err)
-				{
-					xjsfl.output.debug(err, true);
-				}
-				return null;
 		}
-
 	}
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -1096,59 +1066,8 @@
 				default:
 					// do nothing
 			}
-		},
-
-		/**
-		 * Traces a human-readable error stack to the Output Panel
-		 *
-		 * @param error		{Error}		A javaScript Error object
-		 * @param testing	{Boolean}	Internal use only. Removes test() stack items
-		 */
-		debug:function(error, testing)
-		{
-			// variables
-				var stack;
-				if(error instanceof Error)
-				{
-					stack	= xjsfl.utils.getStack(error, true);
-					if(testing)
-					{
-						stack.splice(stack.length - 3, 2);
-					}
-				}
-				else
-				{
-					error	= new Error(error);
-					stack	= xjsfl.utils.getStack(error, true);
-					stack	= stack.slice(1);
-				}
-
-			// template uris
-				var uriErrors	= xjsfl.file.makeURI('core/assets/templates/errors/errors.txt');
-				var uriError	= xjsfl.file.makeURI('core/assets/templates/errors/error.txt');
-
-			// reload template if not defined (caused by some kind of bug normally)
-				if( ! xjsfl.classes.Template)
-				{
-					xjsfl.classes.load('filesystem');
-					xjsfl.classes.load('template');
-				}
-
-			// build errors
-				var content = '';
-				for(var i = 0; i < stack.length; i++)
-				{
-					stack[i].index = i;
-					content += new xjsfl.classes.Template(uriError, stack[i]).render();
-				}
-
-			// build output
-				var data = { error:error.toString(), content:content };
-				fl.trace(new xjsfl.classes.Template(uriErrors, data).render());
-
-			// set loading to false
-				xjsfl.loading = false;
 		}
+
 	}
 
     xjsfl.trace = xjsfl.output.trace;
@@ -1178,7 +1097,7 @@
 		},
 
 		stack:[],
-		
+
 		/**
 		 * Finds all files of a particular type within the cascading file system
 		 *
@@ -1554,88 +1473,263 @@
 		isURI:function(str)
 		{
 			return str.indexOf('file://') === 0;
-		},
-		
+		}
+
+	}
+
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  █████        ██
+//  ██  ██       ██
+//  ██  ██ █████ █████ ██ ██ █████
+//  ██  ██ ██ ██ ██ ██ ██ ██ ██ ██
+//  ██  ██ █████ ██ ██ ██ ██ ██ ██
+//  ██  ██ ██    ██ ██ ██ ██ ██ ██
+//  █████  █████ █████ █████ █████
+//                              ██
+//                           █████
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Debug
+
+	xjsfl.debug =
+	{
+		_error:false,
+
+		_runScript:fl.runScript,
+
 		/**
 		 * Debugs script files by loading and eval-ing them
-		 * @param		{String}		uri		The URI of the file to load
+		 * @param		{String}		uriOrPath		The URI or path of the file to load
 		 */
-		debugScript:function(uri)
+		file:function(uriOrPath)
 		{
+			// make uri
+				var uri = xjsfl.file.makeURI(uriOrPath);
+
 			if(FLfile.exists(uri))
 			{
-				// debug
-					xjsfl.output.trace('Debugging "' + FLfile.uriToPlatformPath(uri) + '" ...');
-					
-				// remove any existing errors file
-					var uriErrors = xjsfl.uri + 'core/temp/errors.txt';
-					if(FLfile.exists(uriErrors))
+				// Turn on file debugging if not yet set
+					var state = false;
+					if( ! this.state )
 					{
-						FLfile.remove(uriErrors);
+						xjsfl.debug._error	= false;
+						state				= true;
+						this['state'] = true; // brackets used, otherwise Komodo puts state above func in the code outliner
 					}
-					
+
+				// debug
+					xjsfl.output.trace('Debugging "' + FLfile.uriToPlatformPath(uri) + '"...');
+
 				// test the new file
+					var jsfl = FLfile.read(uri).replace(/\r\n/g, '\n');
 					try
 					{
-						var jsfl = FLfile.read(uri);
-						eval(jsfl);
-						return true;
+						// test file
+							eval(jsfl);
+
+						// turn off file debugging if this load was the initial load
+							if(state)
+							{
+								this['state'] = false;
+							}
+
+						// return
+							return true;
 					}
-					
+
 				// log errors if there are any
 					catch(err)
 					{
-						// variables
-							var evalLine	= 1581;	// this needs to be the actual line number of the eval(jsfl) line above
-							var line		= parseInt(err.lineNumber) - (evalLine) + 1;
-							var error		= [uri, line, err.name, err.message].join('\r\n');
-							
-						// write to the error log
-							var state		= FLfile.write(uriErrors, error);
-							
-						// trace the "fake" error as usual
-							var str			= "The following JavaScript error occurred:\n\n";
-							str				+= 'At line ' +line+ ' of file "' +uri.split('/').pop()+ '":\n';
-							str				+= err.name + ': ' + err.message + '\n';
-							fl.trace(str);
-							
-						// throw new error so further script execution is halted
-							throw(new Error('\n> xjsfl: Script debugging halted'));
+						// only error on the first catched error
+							if( ! xjsfl.debug._error)
+							{
+								// flag
+									xjsfl.debug._error = true;
+
+								// variables
+									var evalLine	= 1527;	// this needs to be the actual line number of the eval(jsfl) line above
+									var line		= parseInt(err.lineNumber) - (evalLine) + 1;
+
+								// log the "fake" error
+									xjsfl.debug.log(uri, line, err.name, err.message);
+
+								// turn off debugging
+									this['state'] = false;
+
+								// throw new error so further script execution is halted, and turn off debugging
+									throw(new Error('> xjsfl: Script debugging halted'));
+							}
+
+						// re-throw the error
+							else
+							{
+								throw(err);
+							}
 					}
 			}
 			else
 			{
-				throw(new Error('URIError: The uri "' +uri+ '" does not exist'));
+				throw(new URIError('URIError: The uri "' +uri+ '" does not exist'));
 			}
-			
+
 		},
-		
-		set debug(state)
+
+		/**
+		 * Tests a callback and outputs the error stack if the call fails. Add additional parameters after the callback reference
+		 * @param	fn		{Function}	The function to test
+		 * @param	params	{Array}		An array or arguments to pass to the function
+		 * @param	scope	{Object}	An alternative scope to run the function in
+		 * @returns			{Value}		The result of the function if successful
+		 */
+		func:function(fn, params, scope)
 		{
-			// debug
-				xjsfl.output.trace('xjsfl.file.debug = ' + state);
-				
-			// set or reset functions
-				if(state)
+			// variables
+				var source	= fn.toSource();
+				source		= source.substring(source.indexOf(' ') + 1, source.indexOf('('));
+				//TODO change function name parsing to recognise function() {...}
+
+			// feedback
+				xjsfl.output.trace('testing function: "' + source + '"');
+
+			// test!
+				try
 				{
-					if( ! fl._runScript )
+					return fn.apply(scope || this, params);
+				}
+				catch(err)
+				{
+					this.error(err, true);
+				}
+				return null;
+		},
+
+		/**
+		 * Traces a human-readable error stack to the Output Panel
+		 *
+		 * @param error		{Error}		A javaScript Error object
+		 * @param testing	{Boolean}	Internal use only. Removes test() stack items
+		 */
+		error:function(error, testing)
+		{
+			// variables
+				var stack;
+				if(error instanceof Error)
+				{
+					stack	= xjsfl.utils.getStack(error, true);
+					if(testing)
 					{
-						fl._runScript = fl.runScript;
-						fl.runScript = xjsfl.file.debugScript;
+						stack.splice(stack.length - 3, 2);
 					}
 				}
 				else
 				{
-					if(fl._runScript )
+					error	= new Error(error);
+					stack	= xjsfl.utils.getStack(error, true);
+					stack	= stack.slice(1);
+				}
+
+			// template uris
+				var uriErrors	= xjsfl.file.makeURI('core/assets/templates/errors/errors.txt');
+				var uriError	= xjsfl.file.makeURI('core/assets/templates/errors/error.txt');
+
+			// reload template if not defined (caused by some kind of bug normally)
+				if( ! xjsfl.classes.Template)
+				{
+					xjsfl.classes.load('filesystem');
+					xjsfl.classes.load('template');
+				}
+
+			// build errors
+				var content = '';
+				for(var i = 0; i < stack.length; i++)
+				{
+					stack[i].index = i;
+					content += new xjsfl.classes.Template(uriError, stack[i]).render(); // reference Template class directly
+				}
+
+			// build output
+				var data = { error:error.toString(), content:content };
+				fl.trace(new xjsfl.classes.Template(uriErrors, data).render());
+
+			// set loading to false
+				xjsfl.loading = false;
+		},
+
+		/**
+		 * Logs the results of an error to the temp directory so Komodo can read in the data
+		 *
+		 * @param		{String}		uri			The URI of the erroring file
+		 * @param		{Number}		line		The line number of the error
+		 * @param		{String}		name		The name of the error
+		 * @param		{String}		message		The error message
+		 */
+		log:function(uri, line, name, message)
+		{
+			// write to the error log
+				var error		= [uri, line, name, message].join('\r\n');
+				var state		= FLfile.write(xjsfl.uri + 'core/temp/error.txt', error);
+
+			// trace the "fake" error as usual
+				var str			= "The following JSFL error occurred:\n\n";
+				str				+= 'At line ' +line+ ' of file "' +uri.split('/').pop()+ '":\n';
+				str				+= name + ': ' + message + '\n';
+				fl.trace(str);
+		},
+
+		/**
+		 * Clears any existing error logs
+		 */
+		clear:function()
+		{
+			var uri = xjsfl.uri + 'core/temp/error.txt';
+			if(FLfile.exists(uri))
+			{
+				FLfile.remove(uri);
+			}
+		},
+
+		/**
+		 * File debugging state
+		 */
+		set state(state)
+		{
+			// set or reset functions
+				if(state)
+				{
+					// delegate loading functionality
+						if(fl.runScript !== xjsfl.debug.file)
+						{
+							xjsfl.output.trace('Turning file debugging: on');
+							fl.runScript = xjsfl.debug.file;
+							//fl.trace('>>' + fl.runScript)
+						}
+
+					// clear the debug log
+						xjsfl.debug.clear();
+				}
+				else
+				{
+					if(xjsfl.debug.state)
 					{
-						fl.runScript = fl._runScript;
+						xjsfl.output.trace('Turning file debugging: off');
+						fl.runScript = xjsfl.debug._runScript;
 						delete fl._runScript;
 					}
 				}
-		}
 
+			// debug
+				xjsfl.output.trace('File debugging is: ' + (state ? 'on': 'off'));
+
+		},
+
+		get state()
+		{
+			return fl.runScript === xjsfl.debug.file;
+		}
 	}
-	
+
+
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -1935,7 +2029,7 @@
 			}
 			else
 			{
-				xjsfl.output.debug('xjsfl.modules.register(): Module names cannot clash with named xjsfl.module methods');
+				xjsfl.debug.error('xjsfl.modules.register(): Module names cannot clash with named xjsfl.module methods');
 			}
 		},
 
@@ -2078,6 +2172,7 @@
 		{
 			//alert('RELOADING!')
 			delete xjsfl.uri;
+			xjsfl.debug.state = false;
 			fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
 		}
 	}
