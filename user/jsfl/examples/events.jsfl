@@ -68,4 +68,4 @@
 	
 
 	// catch
-		}catch(err){xjsfl.output.debug(err);}
+		}catch(err){xjsfl.debug.error(err);}
