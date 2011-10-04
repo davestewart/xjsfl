@@ -34,9 +34,8 @@
 			{
 				setup
 				(
-					'snippets', 
-					'xJSFL Snippets',
-					'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/dev/AS3/4%20-%20modules/Snippets/', 
+					'Snippets', 
+					'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/modules/Snippets/',
 					'file:///E|/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL/'
 				);
 			}
@@ -51,7 +50,7 @@
 					
 				// external panel update
 					ExternalInterface.addCallback('loadSet', loadSet);
-
+					
 				// load settings
 					Loader.create(this, { settings:'snippets.xml' }, null, onSettingsLoaded);
 			}
@@ -74,7 +73,7 @@
 		
 			public function loadSet(name:String):void 
 			{
-				currentSet = name;
+				currentSet		= name;
 				var uri:String	= this.uri + 'config/data/' + name + '.xml';
 				Loader.create(this, {data:uri}, null, onDataLoaded);
 			}

@@ -1,0 +1,18 @@
+<module>
+	<info>
+		<name>Sample</name>
+		<description>A sample module, with all source, demonstrating AS3/JSFL functionality</description>
+		<version>0.1</version>
+		<url>www.xjsfl.com/category/support/tutorials/modules</url>
+	</info>
+	<jsfl>
+		<namespace>Sample</namespace>
+		<panel>xJSFL Sample</panel>
+		<preload>false</preload>
+	</jsfl>
+	<author>
+		<name>Dave Stewart</name>
+		<company>xJSFL</company>
+		<email>dave@xjsfl.com</email>
+	</author>
+</module>
