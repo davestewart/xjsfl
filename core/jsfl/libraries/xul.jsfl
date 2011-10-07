@@ -1834,10 +1834,7 @@
 
 			// accessors
 
-				/**
-				 * @type {Value} Returns the actual vlue of the control, rather than just the string
-				 */
-				get value()
+				get rawValue()
 				{
 					// work out if the dialog is open, or closed (existance of settings.dismiss implies it's closed)
 						var settings	= this.getXUL().settings;
@@ -1846,7 +1843,17 @@
 					// grab the (String) value for the control
 						var value		= open ? fl.xmlui.get(this.id) : settings[this.id];
 
-						//alert(this.type)
+					// return
+						return value;
+				},
+
+				/**
+				 * @type {Value} Returns the actual vlue of the control, rather than just the string
+				 */
+				get value()
+				{
+					// raw value
+						var value = this.rawValue;
 
 					// parse to a real value
 						switch(this.type)
@@ -2086,7 +2093,7 @@
 						case 'textbox':
 						case 'expression':
 						case 'colorchip':
-							if(this.value == null)
+							if(xjsfl.utils.trim(this.rawValue) == '')
 							{
 								valid = false;
 							}
