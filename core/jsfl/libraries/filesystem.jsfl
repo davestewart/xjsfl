@@ -562,8 +562,8 @@
 								if(FLfile.exists(trgURI))
 								{
 									// variable for prompting
-										var trgPath		= xjsfl.file.makePath(this.path, true);
-										var prompt		= 'Copying "' +this.path+ '" to "' +trgPath + '".\n\n';
+										var trgPath		= xjsfl.file.makePath(trgURI);
+										var prompt		= 'Copying: "' +this.path+ '"\n\nTo: "' +trgPath + '".\n\n';
 										var readOnly	= FLfile.getAttributes(trgURI).indexOf('R');
 
 									// if overwite was not expressly stated as true, ask the user
