@@ -88,15 +88,18 @@
 					{
 						return objectToXML(value);
 					}
+					if (type == 'xml')
+					{
+						return '<xml>' + escapeXML(value.toXMLString()) + '</xml>';
+					}
 					else
 					{
 						return '<null />';
 					}
 				}
 
-			// constructor
-
-				return toXML(value)
+			// code
+				return toXML(value);
 
 		},
 
