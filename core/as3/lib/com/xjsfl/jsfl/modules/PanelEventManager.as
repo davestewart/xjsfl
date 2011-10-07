@@ -28,7 +28,7 @@ package com.xjsfl.jsfl.modules
 				protected var _timeline					:String;
 				
 			// variables
-				protected var _stage					:Stage;
+				protected var _root						:DisplayObject;
 				protected var _interval					:int				= 250;
 				protected var _intervalId				:int				= -1;;
 				
@@ -44,9 +44,9 @@ package com.xjsfl.jsfl.modules
 				}
 			}
 		
-			public function initialize(stage:Stage, interval:int = 250):PanelEventManager
+			public function initialize(root:DisplayObject, interval:int = 250):PanelEventManager
 			{
-				_stage		= stage;
+				_root		= root;
 				_interval	= interval;
 				return this;
 			}
@@ -62,15 +62,39 @@ package com.xjsfl.jsfl.modules
 			 */
 			public function addFocusHandler(onEnter:Function, onLeave:Function):PanelEventManager
 			{
-				// events
-					addEventListener(PanelEvent.PANEL_ENTER, onEnter);
-					addEventListener(PanelEvent.PANEL_LEAVE, onLeave);
-				
-				// event listeners
-					_stage.addEventListener(Event.MOUSE_LEAVE, onMouseLeave);
+				// check root
+					if (!_root)
+					{
+						throw new Error('_root has not yet been defined via the initialize() method');
+					}
 					
-				// trigger
-					onMouseLeave(null);
+				// check stage
+					if (_root.stage)
+					{
+						// events
+							addEventListener(PanelEvent.PANEL_ENTER, onEnter);
+							addEventListener(PanelEvent.PANEL_LEAVE, onLeave);
+						
+						// event listeners
+							_root.stage.addEventListener(Event.MOUSE_LEAVE, onMouseLeave);
+							
+						// trigger
+							onMouseLeave(null);
+					}
+					
+				// delay adding listener
+					else
+					{
+						_root.addEventListener
+						(
+							Event.ADDED_TO_STAGE, 
+							function()
+							{
+								//_root.removeEventListener(Event.ADDED_TO_STAGE, this);
+								addFocusHandler(onEnter, onLeave);
+							}
+						)
+					}
 					
 				// return
 					return this;
@@ -112,12 +136,12 @@ package com.xjsfl.jsfl.modules
 			protected function onMouseLeave(event:Event):void 
 			{
 				dispatchEvent(new PanelEvent(PanelEvent.PANEL_LEAVE));
-				_stage.addEventListener(MouseEvent.MOUSE_MOVE, onPanelEnter);
+				_root.stage.addEventListener(MouseEvent.MOUSE_MOVE, onPanelEnter);
 			}
 			
 			protected function onPanelEnter(event:MouseEvent):void 
 			{
-				_stage.removeEventListener(MouseEvent.MOUSE_MOVE, onPanelEnter);
+				_root.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onPanelEnter);
 				dispatchEvent(new PanelEvent(PanelEvent.PANEL_ENTER));
 			}
 			
