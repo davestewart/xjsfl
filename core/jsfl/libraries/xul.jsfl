@@ -1884,7 +1884,7 @@
 							case 'textbox':
 							case 'targetlist':
 								value = xjsfl.utils.parseValue(value);
-								if(this.type == 'textbox' && typeof value === 'string')
+								if(this.type === 'textbox' && typeof value === 'string')
 								{
 									value = value.replace(/\r\n/g, '\n');
 								}
@@ -1902,7 +1902,7 @@
 						//Output.inspect(value)
 
 					// return
-						return value == '' ? null : value;
+						return typeof value === 'string' && value === '' ? null : value;
 				},
 
 				set value(value)
