@@ -1,5 +1,6 @@
 package com.xjsfl.jsfl.modules 
 {
+	import com.xjsfl.jsfl.JSFL;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
@@ -28,9 +29,9 @@ package com.xjsfl.jsfl.modules
 				protected var _loader		:LoaderMax;
 				
 			// assets and config hash
-				protected var _content		:Object;
-				protected var _config		:Object;
-				protected var _assets		:Object;
+				protected var _content		:Object;		// config + assets
+				protected var _config		:Object;		// config
+				protected var _assets		:Object;		// assets
 				
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Instatiation
