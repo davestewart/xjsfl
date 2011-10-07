@@ -38,7 +38,10 @@ package com.xjsfl.jsfl.modules
 		
 			public function EventManager():void 
 			{
-				
+				if (PanelEventManager.instance)
+				{
+					throw new Error('PanelEventManager is a Singleton, and should be accessed using PanelEventManager.instance only');
+				}
 			}
 		
 			public function initialize(stage:Stage, interval:int = 250):PanelEventManager
@@ -120,22 +123,27 @@ package com.xjsfl.jsfl.modules
 			
 			protected function onTimeline():void 
 			{
-				var ui		:Object		= JSFL.call('JSFLInterface.getUIState');
-				var state	:Boolean	= false;
-				if (ui.document != _document)
-				{
-					_document	= ui.document;
-					state		= true;
-				}
-				if (ui.timeline != _timeline)
-				{
-					_timeline	= ui.timeline;
-					state		= true;
-				}
-				if (state)
-				{
-					dispatchEvent(new PanelEvent(PanelEvent.TIMELINE_CHANGED));
-				}
+				// variables
+					var ui		:Object		= JSFL.call('JSFLInterface.getUIState');
+					var state	:Boolean	= false;
+					
+				// states
+					if (ui.document != _document)
+					{
+						_document	= ui.document;
+						state		= true;
+					}
+					if (ui.timeline != _timeline)
+					{
+						_timeline	= ui.timeline;
+						state		= true;
+					}
+					
+				// dispatch if changed
+					if (state)
+					{
+						dispatchEvent(new PanelEvent(PanelEvent.TIMELINE_CHANGED));
+					}
 			}
 			
 			
