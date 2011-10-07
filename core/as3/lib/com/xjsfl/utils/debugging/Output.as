@@ -120,7 +120,7 @@ package com.xjsfl.utils.debugging
 		// static initializer
 		
 		{
-			JSFL.clear();
+			//JSFL.clear();
 			log('Log initialized');
 			if (!JSFL.isPanel)
 			{
