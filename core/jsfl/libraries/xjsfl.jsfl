@@ -350,6 +350,44 @@
 				return obj;
 		},
 
+        /**
+         * Adds properties to an object's namesapce by supplying a dot.syntax.path and properties object
+         * @param	{Object}	target		The object in which to create the new object
+         * @param	{String}	namespace	A string path to that object
+         * @param	{Object}	properties	A properties object to create in the new namespace
+         * @returns	{Object}			    The xJSFL object
+         */
+        namespace:function(target, namespace, properties)
+        {
+            var keys		= namespace.split('.');
+            do
+            {
+                var key = keys.shift();
+                if(keys.length > 0)
+                {
+                    if(typeof target[key] === 'undefined')
+                    {
+                        target[key] = {};
+                    }
+                    target = target[key];
+                }
+                else
+                {
+					if( target[key] == null)
+					{
+						target[key] = properties;
+					}
+					else
+					{
+						this.extend(target[key], properties);
+					}
+
+                }
+            }
+            while(keys.length);
+            return this;
+        },
+
 		/**
 		 * Trims the whitespace from both sides of a string
 		 * @param	string	{String}	The input string to trim
@@ -1262,6 +1300,7 @@
 				// if result is null, no files were found
 					if(result == null)
 					{
+						path = this.makePath(path);
 						if(type == null || type === true || type === false)
 						{
 							xjsfl.output.trace('Error in xjsfl.file.load(): The file "' +path+ '" could not be found');
@@ -1830,13 +1869,15 @@
 		 */
 		loadFolder:function(path, debugType)
 		{
-            //TODO add a list of filesnames to load first
+            //TODO add a list of filenames to prioritize
 
 			// grab files
 				var uri		= xjsfl.file.makeURI(path);
 				var files	= FLfile.listFolder(uri, 'file')
 								.filter( function(file){ return /.jsfl$/.test(file); } )
 								.map( function(file){ return file.replace('.jsfl', ''); } );
+
+								Output.inspect(files)
 
 			// load files
 				xjsfl.classes.load(files);
@@ -1874,9 +1915,9 @@
 		{
 			if( ! /^(paths|load|loadFolder|require|register|restore)$/.test(name) )
 			{
-				xjsfl.classes[name] = obj;
-				var object = xjsfl.utils.getStack().pop();
-				this.paths[name] =object.path + object.file;
+				xjsfl.classes[name]    = obj;
+				var object             = xjsfl.utils.getStack().pop();
+				this.paths[name]       = object.path + object.file;
 			}
 			return this;
 		},
@@ -1936,33 +1977,78 @@
 	 */
 	xjsfl.modules =
 	{
+		/**
+		 * A URI store for found modules
+		 */
+		manifests:{},
 
 		/**
-		 * Load a module
+		 * Finds all module bootstraps in the xJSFL/modules (or supplied) folder
+		 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
+		 * @returns	{xjsfl}				The main xJSFL object
+		 */
+		find:function(uri)
+		{
+			// callback function to process files and folders
+				function processFile(element)
+				{
+					if(element instanceof Folder)
+					{
+						if(/assets|config|docs|temp|ui/.test(element.name))
+						{
+							return false;
+						}
+					}
+					else if(element.name === 'manifest.xml')
+					{
+						xjsfl.modules.init(element.parent.uri);
+                        return false;
+					}
+				};
+
+			// find and load modules automatically
+				Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
+
+			// return
+				return this;
+		},
+
+		/**
+		 * Initialize a module during the bootstrap - find its panels and copy them to the Flash/WindowSWF folder
 		 *
 		 * @param	path	{String}	The module root path, relative to from xJSFL/modules/ i.e. "Snippets", or an absolute URI
 		 */
-		load:function(path)
+		init:function(path)
 		{
-            //TODO Setup modules so that modules are only found, and only when called are they loaded
-            //      this means only the code necessary will be loaded into the modules panel (rather than ALL code)
-
 			// ensure path has a trailing slash
 				path = path.replace(/\/*$/, '/');
-
-			// debug
-				xjsfl.trace('searching "' +xjsfl.file.makePath(path, true)+ '" for module bootstrap...');
 
 			// if path is not a URI, it will probably be a path fragment, so default to the modules folder
 				if( ! xjsfl.file.isURI(path))
 				{
-					path = xjsfl.settings.folders.modules + path;
+					var uri			= xjsfl.settings.folders.modules + path;
+				}
+				else
+				{
+					var uri			= path;
 				}
 
-			// load bootstrap
-				xjsfl.file.load(xjsfl.file.makeURI(path + 'jsfl/bootstrap.jsfl'));
+            // load in the manifest and update with the actual URI
+                var manifest		= xjsfl.file.load(uri + 'manifest.xml');
+				if( ! manifest)
+				{
+					return this;
+				}
 
-			// copy any panels to the WindowSWF folder
+			// store manifest
+				manifest.jsfl.uri	= uri;
+				var namespace		= String(manifest.jsfl.namespace);
+				xjsfl.modules.manifests[namespace]	= manifest;
+
+			// debug
+				xjsfl.trace('registering module "' +String(manifest.info.name)+ '"');
+
+            // copy any panels to the WindowSWF folder
 				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + 'ui/'));
 				for each(var src in folder.files)
 				{
@@ -1981,98 +2067,76 @@
 						// no need to copy if up to date
 							else
 							{
-								xjsfl.output.trace('SWF panel "' + src.name + '" is already up to date');
+								xjsfl.output.trace('panel "' + src.name.replace('.swf', '') + '" is already up to date');
 							}
 					}
+				}
+
+			// preload
+				if(String(manifest.jsfl.preload) == 'true')
+				{
+					this.load(manifest.jsfl.namespace);
 				}
 
 			// return
 				return this;
 		},
 
-		/**
-		 * Finds and loads all module bootstraps in the xJSFL/modules folder
-		 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
-		 * @returns	{xjsfl}				The main xJSFL object
-		 */
-		loadFolder:function(uri)
-		{
-			// process files and folders
-				function processFile(element)
-				{
-					if(element instanceof Folder)
-					{
-						if(/assets|config|docs|temp|ui/.test(element.name))
-						{
-							return false;
-						}
-					}
-					else if(element.name === 'bootstrap.jsfl')
-					{
-						var matches = element.uri.match(/(.+)\/jsfl\/bootstrap\.jsfl$/);
-						if(matches)
-						{
-							xjsfl.modules.load(matches[1]);
-						}
-					}
-				};
-
-			// find and load modules automatically
-				Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
-
-			// return
-				return this;
-		},
-
-
-		/**
-		 * Register a loaded module in the xjsfl namespace
-		 *
-		 * @param	name	{String}	The package name of the module
-		 * @param	module	{Object}	The actual module object to register
-		 * @returns			{xjsfl}		The main xJSFL object
-		 */
-		register:function(module)
-		{
-			if( ! /^(register|load|loadFolder)\b/.test(module.namespace) )
+        /**
+         * Runs the module bootstrap to load code locally into the calling panel
+         * @param	{String}	namespace	The namespace of the module to initialize
+         */
+        load:function(namespace)
+        {
+			var manifest = this.manifests[namespace];
+			if(manifest)
 			{
-				// debug
-					xjsfl.trace('registering "xjsfl.modules.' + module.namespace + '"')
-
-				// add module path to xjsfl list of search paths
-					xjsfl.settings.uris.add(module.uri, 'module');
-
-				// namespace module under xjsfl.modules
-					var target		= xjsfl.modules;
-					var keys		= module.namespace.split('.');
-					do
-					{
-						var key = keys.shift();
-						if(keys.length > 0)
-						{
-							if(typeof target[key] === 'undefined')
-							{
-								target[key] = {};
-							}
-							target = target[key];
-						}
-						else
-						{
-							target[key] = module;
-						}
-					}
-					while(keys.length);
+				xjsfl.file.load(String(manifest.jsfl.uri) + 'jsfl/bootstrap.jsfl');
 			}
 			else
 			{
-				xjsfl.debug.error('xjsfl.modules.register(): Module names cannot clash with named xjsfl.module methods');
+				throw new Error('xjsfl.modules.load(): there is no module registered under the namespace "' +namespace+ '"');
 			}
-		},
+        },
 
-		reload:function(namespace)
+		/**
+		 * Factory method to create an xJSFL module instance
+		 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
+		 * @param	{Object}	properties	The properties of the module
+		 * @returns	{Module}				An xJSFL Module instance
+		 */
+		create:function(namespace, properties)
 		{
-			eval('var module = xjsfl.modules.' + namespace);
-			xjsfl.modules.load(module.uri);
+			// if manifest is not yet loaded (perhaps in development) attempt to initialize
+				if( ! this.manifests[namespace])
+				{
+					this.init(namespace);
+				}
+
+			// create module
+				var manifest = this.manifests[namespace];
+				if(manifest)
+				{
+					try
+					{
+						var module = new xjsfl.classes.Module(namespace, properties);
+						/*
+						if(module)
+						{
+							this.modules[namespace] = module;
+						}
+						*/
+						return module;
+					}
+					catch(err)
+					{
+						xjsfl.debug.error(err);
+					}
+				}
+				else
+				{
+					throw new Error('xjsfl.modules.create(): there is no manifest registered under the namespace "' +namespace+ '"');
+				}
 		}
 
 	}
@@ -2234,6 +2298,9 @@
 
 		// copy registered classes into scope
 			xjsfl.classes.restore(scope);
+
+		// add inspect to global scope for convenience
+			scope.inspect	= Output.inspect;
 
 		// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 			scope.xJSFL		= xjsfl;

@@ -1,12 +1,12 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//     ██ ██████ ██████ ██     
-//     ██ ██     ██     ██     
-//     ██ ██     ██     ██     
-//     ██ ██████ █████  ██     
-//     ██     ██ ██     ██     
-//     ██     ██ ██     ██     
-//  █████ ██████ ██     ██████ 
+//     ██ ██████ ██████ ██
+//     ██ ██     ██     ██
+//     ██ ██     ██     ██
+//     ██ ██████ █████  ██
+//     ██     ██ ██     ██
+//     ██     ██ ██     ██
+//  █████ ██████ ██     ██████
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // JSFL - Serialises values to XML for type-safe communication with Flash panels
@@ -15,14 +15,14 @@
 	{
 		/**
 		 * Serializes values to XML so they can be passed to Flash and be deserialized to values again
-		 * 
-		 * @param	value	{Value}		Any value		
-		 * @returns			{String}	An XML String	
+		 *
+		 * @param	value	{Value}		Any value
+		 * @returns			{String}	An XML String
 		 */
 		serialize:function(value)
 		{
 			// utilities
-			
+
 				function escapeXML(xml)
 				{
 					return xml
@@ -32,7 +32,7 @@
 						.replace(/"/g, "&quot;")
 						.replace(/\'/g, "&apos;");
 				}
-				
+
 				function  objectToXML(obj)
 				{
 					var str = '<object>';
@@ -42,7 +42,7 @@
 					}
 					return str + '</object>';
 				}
-				
+
 				function arrayToXML(arr)
 				{
 					var str = '<array>';
@@ -52,7 +52,7 @@
 					}
 					return str + '</array>';
 				}
-			
+
 				function toXML(value)
 				{
 					var type = typeof value;
@@ -95,15 +95,29 @@
 				}
 
 			// constructor
-			
+
 				return toXML(value)
-			
+
 		},
-		
+
+		getUIState:function()
+		{
+			var timeline = null;
+			var document = fl.getDocumentDOM();
+			if(document)
+			{
+				timeline		= document.getTimeline().name;
+				document		= document.pathURI || document.name;
+				//var selLayers	= timeline.getSelectedLayers();
+				//var selFrames	= timeline.getSelectedFrames();
+			}
+			return {document:document, timeline:timeline};
+		},
+
 		toString:function()
 		{
 			return '[class JSFL]';
 		}
 	}
-	
+
 	xjsfl.classes.register('JSFLInterface', JSFLInterface);
