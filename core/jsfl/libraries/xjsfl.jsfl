@@ -1376,7 +1376,7 @@
 		 * @see								xjsfl.file.makePath
 		 */
 		makeURI:function(str, context)
-		{
+			{
 			// if str is already a URI, no need to convert so return immediately
 				if(str.indexOf('file:') == 0)
 				{
@@ -1981,6 +1981,21 @@
 		manifests:{},
 
 		/**
+		 * Gets the manifest for a particular module namespace
+		 * @param	{String}	namespace	The namespace of the manifest to get
+		 * @returns	{XML}					The manifest XML
+		 */
+		getManifest:function(namespace)
+		{
+			var manifest = this.manifests[namespace];
+			if(manifest)
+			{
+				return manifest;
+			}
+			throw new Error('xjsfl.modules.getManifest(): there is no manifest registered under the namespace "' +namespace+ '"');
+		},
+
+		/**
 		 * Finds all module bootstraps in the xJSFL/modules (or supplied) folder
 		 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
 		 * @returns	{xjsfl}				The main xJSFL object
@@ -2086,7 +2101,7 @@
          */
         load:function(namespace)
         {
-			var manifest = this.manifests[namespace];
+			var manifest = this.getManifest(namespace);
 			if(manifest)
 			{
 				xjsfl.file.load(String(manifest.jsfl.uri) + 'jsfl/bootstrap.jsfl');
@@ -2112,30 +2127,24 @@
 				}
 
 			// create module
-				var manifest = this.manifests[namespace];
-				if(manifest)
+				var manifest = this.getManifest(namespace);
+				try
 				{
-					try
+					var module = new xjsfl.classes.Module(namespace, properties);
+					/*
+					if(module)
 					{
-						var module = new xjsfl.classes.Module(namespace, properties);
-						/*
-						if(module)
-						{
-							this.modules[namespace] = module;
-						}
-						*/
-						return module;
+						this.modules[namespace] = module;
 					}
-					catch(err)
-					{
-						xjsfl.debug.error(err);
-					}
+					*/
+					return module;
 				}
-				else
+				catch(err)
 				{
-					throw new Error('xjsfl.modules.create(): there is no manifest registered under the namespace "' +namespace+ '"');
+					xjsfl.debug.error(err);
 				}
 		}
+
 
 	}
 
