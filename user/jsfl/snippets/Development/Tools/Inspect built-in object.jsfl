@@ -22,7 +22,8 @@
 			Timeline:	context.timeline,
 			Layer:		context.layer,
 			Frame:		context.frame,
-			Selection:	dom.selection
+			Selection:	dom.selection,
+			Events:		xjsfl.events
 		};
 	
 	// setup controls
