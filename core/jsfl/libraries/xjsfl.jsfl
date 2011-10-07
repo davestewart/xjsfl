@@ -2307,7 +2307,7 @@
 			xjsfl.classes.restore(scope);
 
 		// add inspect to global scope for convenience
-			scope.inspect	= Output.inspect;
+			//scope.inspect	= Output.inspect;
 
 		// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 			scope.xJSFL		= xjsfl;
