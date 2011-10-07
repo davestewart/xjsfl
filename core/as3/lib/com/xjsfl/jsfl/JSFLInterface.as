@@ -91,10 +91,24 @@ package com.xjsfl.jsfl
 			  */
 			public static function xmlToObject(xml:XML):*
 			{
+				
+				function unescapeXML(xml)
+				{
+					return xml
+						.replace(/&amp;/g, "&")
+						.replace(/&lt;/g, "<")
+						.replace(/&gt;/g, ">")
+						.replace(/&quot;/g, '"')
+						.replace(/&apos;/g, "'");
+				}
+
 				var obj:*;
 				var property:XML;
 				switch (xml.localName())
 				{
+					case 'xml':
+						obj = new XML(unescapeXML(xml.toString()));
+						break;
 					case 'string':
 						obj = xml.toString();
 						break;
