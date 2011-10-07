@@ -1494,11 +1494,11 @@
 
 				/**
 				 * Shows the XUL dialog
-				 * @param	accept	{Function}	An optional function to run when the user presses the dialog OK button
-				 * @param	cancel	{Function}	An optional function to run when the user presses the dialog Cancel button
-				 * @returns			{XUL}		the XUL dialog
+				 * @param	onAccept	{Function}	An optional function to run when the user presses the dialog OK button
+				 * @param	onCancel	{Function}	An optional function to run when the user presses the dialog Cancel button
+				 * @returns				{XUL}		The XUL dialog
 				 */
-				show:function(accept, cancel)
+				show:function(onAccept, onCancel)
 				{
 
 					// --------------------------------------------------------------------------------
@@ -1532,7 +1532,7 @@
 							//Output.inspect(this.settings)
 
 						// get control values and convert to array for callbacks
-							if(accept || cancel)
+							if(onAccept || onCancel)
 							{
 								var args = xjsfl.utils.getValues(this.values);
 							}
@@ -1566,23 +1566,26 @@
 									if(this.error)
 									{
 										alert(this.error);
-										this.show(accept, cancel);
+										this.show(onAccept, onCancel);
 									}
 
 								// validated - update settings and call accept callback
 									else
 									{
-										if(accept)
+										if(onAccept)
 										{
-											accept.apply(this, args);
+											onAccept.apply(this, args);
 										}
 									}
 							}
 
 						// cancel
-							else if(cancel)
+							else
 							{
-								cancel.apply(this, args);
+								if(onCancel)
+								{
+									onCancel.apply(this, args);
+								}
 								this.settings = null;
 							}
 
