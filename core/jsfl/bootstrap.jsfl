@@ -61,6 +61,7 @@
 
 						// functions
 							scope.trace		= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
+							scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
 							scope.clear		= fl.outputPanel.clear;
 
 						// dom getter
@@ -115,7 +116,7 @@
 
 			// modules
 				xjsfl.trace('loading Modules...', true);
-				xjsfl.modules.loadFolder();
+				xjsfl.modules.find();
 
 			// user bootstrap
 				xjsfl.trace('loading user bootstrap...', true);
