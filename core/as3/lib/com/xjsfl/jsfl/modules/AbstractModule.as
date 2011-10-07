@@ -26,9 +26,9 @@
 				public static var modules		:Array			= [];
 		
 			// module properties
-				private var _name				:String;					// Name of the module, i.e. "Keyframer" (derived from the module URI)
-				private var _moduleURI			:String;					// JSFL URI to the module, i.e. "file:///C|/scripting/flash/xJSFL/modules/Tools/Keyframer/"
+				private var _name				:String;					// Name of the module, i.e. "Keyframer" (will use the manifest at runtime, otherwise, the namespace)
 				private var _namespace			:String						// JSFL namespace of the module, i.e. "xjsfl.modules.tools.keyframer"
+				private var _moduleURI			:String;					// JSFL URI to the module, i.e. "file:///C|/scripting/flash/xJSFL/modules/Tools/Keyframer/"
 					
 			// xjsfl properties	
 				private var _xjsflURI			:String;					// JSFL URI to xJSFL, i.e. "file:///C|/scripting/flash/xJSFL/"
@@ -44,7 +44,8 @@
 		// { region: Instantiation
 		
 			/**
-			 * 
+			 * Empty constructor as setup code is self-contained, and we want subclasses 
+			 * to be able to initialize themselves with static instances using a const
 			 */
 			public function AbstractModule()
 			{
@@ -73,11 +74,10 @@
 			/**
 			 * 
 			 * @param	_namespace		The namespace of the module in xjsfl.modules, i.e. keyframer
-			 * @param	name			The full name of the panel that will show in the Flash UI
 			 * @param	moduleURI		The full URI to the authoring-time module root folder, i.e. file:///C|/projects/xJSFL/modules/Keyframer
 			 * @param	xjsflURI		The full URI to the authoring-time xJSFL root folder, i.e. file:///C|/projects/xJSFL/
 			 */
-			protected function setup(_namespace:String, name:String, moduleURI:String, xjsflURI:String):void
+			protected function setup(_namespace:String, moduleURI:String, xjsflURI:String):void
 			{
 				// check URIs are valid
 					if ( ! (/^(file|http):/.test(moduleURI)) )
@@ -95,17 +95,17 @@
 					{
 						// variables
 							this._namespace		= _namespace;
-							_name				= name;
 							_moduleURI			= moduleURI.replace(/\/+$/, '/');
 							_xjsflURI			= xjsflURI.replace(/\/+$/, '/');
+							
+						// Grab correct data when running in a panel
+							_xjsflURI			= JSFL.isPanel ? MMExecute('xjsfl.uri') : _xjsflURI;
+							_moduleURI			= JSFL.isPanel ? MMExecute('xjsfl.modules.manifests.' +_namespace+ '.jsfl.uri') : _moduleURI;
+							_name				= JSFL.isPanel ? MMExecute('xjsfl.modules.manifests.' +_namespace+ '.jsfl.panel') : _moduleURI;
 							
 						// properties
 							this.allowLogging	= true;
 							
-						// Grab correct URIs when running in a panel
-							_xjsflURI			= JSFL.isPanel ? MMExecute('xjsfl.uri') : _xjsflURI;
-							_moduleURI			= JSFL.isPanel ? MMExecute(fqns + '.uri') : _moduleURI;
-						
 						// register module so it can't be setup twice
 							AbstractModule.modules[_namespace] = this;
 							
@@ -130,7 +130,7 @@
 			{
 				log('Initializing');
 				MMExecute('xjsfl.init(this, "' + _name + '")');
-				MMExecute('xjsfl.modules.reload("' + _namespace + '")');
+				MMExecute('xjsfl.modules.load("' + _namespace + '")');
 			}
 			
 			
@@ -168,12 +168,12 @@
 				{
 					throw new Error('Error in AbstractModule: namespace is null; remember to call setup() first!');
 				}
-				return JSFL.call(fqns + '.' + method, args, fqns);
+				return JSFL.call(_namespace + '.' + method, args, _namespace);
 			}
 			
 			public function grab(property:String):*
 			{
-				return JSFL.grab(fqns + '.' + property);
+				return JSFL.grab(_namespace + '.' + property);
 			}
 			
 		// ---------------------------------------------------------------------------------------------------------------------
@@ -184,9 +184,6 @@
 			
 			/// The JSFL namespace of the module
 			public function get ns():String { return _namespace; }
-			
-			/// The fully-qualifyed JSFL namespace of the module
-			public function get fqns():String { return 'xjsfl.modules.' + this._namespace; }
 			
 			/// The URI of the module on the local filesystem
 			public function get uri():String { return _moduleURI; }
@@ -243,7 +240,7 @@
 			protected function about():void 
 			{
 				JSFL.trace('\nModule: ' +name+ '\n');
-				JSFL.trace('  > Namespace:    ' + fqns);
+				JSFL.trace('  > Namespace:    ' + _namespace);
 				JSFL.trace('  > Panel path    ' + (JSFL.isPanel ? grab('panel.path').replace(/\\/g, '/') : '<Unknown at authoring time>'));
 				JSFL.trace('  > Module path:  ' + path);
 				JSFL.trace('  > Module URI:   ' + uri);
