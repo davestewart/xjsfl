@@ -1877,8 +1877,6 @@
 								.filter( function(file){ return /.jsfl$/.test(file); } )
 								.map( function(file){ return file.replace('.jsfl', ''); } );
 
-								Output.inspect(files)
-
 			// load files
 				xjsfl.classes.load(files);
 
