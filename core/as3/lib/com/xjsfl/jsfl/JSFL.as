@@ -51,8 +51,11 @@ package com.xjsfl.jsfl
 			 */		 		 		 		
 			public static function call(functionName:String, args:Array = null, scope:String = null):*
 			{
+				// variables
+					args		= args || [];
+					scope		= scope || functionName.replace(/\.\w+$/, '');
+					
 				// serialize arguments
-					args = args || [];
 					for (var i:int = 0; i < args.length; i++) 
 					{
 						if (args[i] is RegExp) // don't serialize regexp - treat them as unparsed strings
@@ -64,22 +67,23 @@ package com.xjsfl.jsfl
 							args[i] = JSFLInterface.serialize(args[i]);
 						}
 					}
-						
+					
 				// build the JSFL call
 					var jsfl:String
-					if (scope)
-					{
-						jsfl = functionName + '.apply(' +scope + ', [' + args.join(', ') + '])';
-					}
-					else
+					if (scope == '')
 					{
 						jsfl = functionName + '(' +args.join(', ') + ')';
 					}
-						
+					else
+					{
+						jsfl = functionName + '.apply(' +scope + ', [' + args.join(', ') + '])';
+					}
+					
 				// make the call
 					if (JSFL.isPanel)
 					{
-						return JSFLInterface.deserialize(MMExecute('JSFLInterface.serialize(' + jsfl + ')'));
+						var value:String = MMExecute('JSFLInterface.serialize(' + jsfl + ')');
+						return JSFLInterface.deserialize(value);
 					}
 					else
 					{
