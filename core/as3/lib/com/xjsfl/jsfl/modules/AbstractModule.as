@@ -128,7 +128,7 @@
 			 */
 			protected function initialize():void 
 			{
-				log('Initializing');
+				log('Initializing', true);
 				MMExecute('xjsfl.init(this, "' + _name + '")');
 				MMExecute('xjsfl.modules.load("' + _namespace + '")');
 			}
@@ -252,9 +252,9 @@
 			 * Logs a message to the listener during development
 			 * @param	message
 			 */
-			protected function log(message:String):void 
+			protected function log(message:String, newline:Boolean = false):void 
 			{
-				message = '> ' + _name + ': ' + message;
+				message = (newline ? '\n' : '') + '> ' + _name + ': ' + message;
 				allowLogging ? JSFL.trace(message) : trace(message);
 			}
 			
