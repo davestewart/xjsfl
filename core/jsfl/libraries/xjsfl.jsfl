@@ -2284,12 +2284,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Initialize
 
-	/**
-	 * Extend xjsfl with elements we don't want Komodo autocomplete to pick up
-	 */
-	xjsfl.utils.extend
-	(
-		xjsfl,
+	(function()
+	{
+		var props =
 		{
 			/**
 			 * Shortcut to trace function
@@ -2325,7 +2322,10 @@
 			}
 
 		}
-	)
+
+		xjsfl.utils.extend(xjsfl, props)
+
+	})()
 
 	/**
 	 * Initialize the environment by extracting variables / objects / functions to global scope
