@@ -22,6 +22,14 @@
 	// --------------------------------------------------------------------------------
 	// setup
 
+		/**
+		 * Fake xjsfl instantation for Komodo autocomplete
+		 */
+		if( ! xjsfl )
+		{
+			xjsfl = { };
+		}
+
 		(function()
 		{
 			// if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
@@ -39,7 +47,6 @@
 					FLfile.createFolder(uri);
 				}
 		})()
-
 
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -1108,9 +1115,6 @@
 
 	}
 
-    xjsfl.trace = xjsfl.output.trace;
-
-
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██ ██
@@ -1327,8 +1331,9 @@
 								//TODO Decide whether to display this or not
 								var _path	= xjsfl.file.makePath(uri, true);
 								xjsfl.output.log('xjsfl.file.load', 'loading "' + _path + '"');
-								if(xjsfl.loading)
+								if(xjsfl['loading'])
 								{
+
 								}
 
 							// flag
@@ -1733,7 +1738,7 @@
 				fl.trace(new xjsfl.classes.Template(uriErrors, data).render());
 
 			// set loading to false
-				xjsfl.loading = false;
+				xjsfl['loading'] = false;
 		},
 
 		/**
@@ -2059,7 +2064,7 @@
 				xjsfl.modules.manifests[namespace]	= manifest;
 
 			// debug
-				xjsfl.trace('registering module "' +String(manifest.info.name)+ '"');
+				xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
 
             // copy any panels to the WindowSWF folder
 				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + 'ui/'));
@@ -2222,7 +2227,27 @@
 			{
 				dialog.handleEvent(type, id);
 			}
-		}
+		},
+
+		/**
+		 * Lightweight function to return the current UI state
+		 * @returns		{Object}
+		 */
+		getState:function()
+		{
+			//TODO Add in boolean to also get the selected elements
+			var document, timeline, layers, frames;
+			var dom = fl.getDocumentDOM();
+			if(dom)
+			{
+				document	= dom.pathURI || dom.name;
+				timeline	= dom.getTimeline();
+				layers		= String(timeline.getSelectedLayers());
+				frames		= String(timeline.getSelectedFrames());
+			}
+			return {document:document, timeline:timeline ? timeline.name : null, layers:layers, frames:frames};
+		},
+
 	}
 
 
@@ -2259,30 +2284,48 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Initialize
 
-
 	/**
-	 * Stand toString function
-	 * @returns
+	 * Extend xjsfl with elements we don't want Komodo autocomplete to pick up
 	 */
-	xjsfl.toString = function()
-	{
-		return '[object xJSFL]';
-	}
-
-	/**
-	 * Reload the framework from disk
-	 */
-	xjsfl.reload = function(force)
-	{
-		//TODO Possibly add in an alert box which is controlled by debug level
-		if( ! xjsfl.loading || force === true)
+	xjsfl.utils.extend
+	(
+		xjsfl,
 		{
-			//alert('RELOADING!')
-			delete xjsfl.uri;
-			xjsfl.debug.state = false;
-			fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
+			/**
+			 * Shortcut to trace function
+			 * @returns
+			 */
+			trace:function()
+			{
+				xjsfl.output.trace.apply(this, arguments);
+			},
+
+			/**
+			 * Reload the framework from disk
+			 */
+			reload:function(force)
+			{
+				//TODO Possibly add in an alert box which is controlled by debug level
+				if( ! xjsfl['loading'] || force === true)
+				{
+					//alert('RELOADING!')
+					delete xjsfl.uri;
+					xjsfl.debug.state = false;
+					fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
+				}
+			},
+
+			/**
+			 * Stand toString function
+			 * @returns
+			 */
+			toString:function()
+			{
+				return '[object xJSFL]';
+			}
+
 		}
-	}
+	)
 
 	/**
 	 * Initialize the environment by extracting variables / objects / functions to global scope
@@ -2292,8 +2335,6 @@
 	 */
 	xjsfl.init = function(scope, scopeName)
 	{
-		// initialize only if xJSFL (xJSFL, not xjsfl) variable is not yet defined
-
 		// copy core variables and functions into scope
 			xjsfl.initVars(scope, scopeName);
 
@@ -2305,9 +2346,6 @@
 
 		// copy registered classes into scope
 			xjsfl.classes.restore(scope);
-
-		// add inspect to global scope for convenience
-			//scope.inspect	= Output.inspect;
 
 		// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 			scope.xJSFL		= xjsfl;
