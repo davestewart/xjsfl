@@ -103,23 +103,9 @@
 
 		},
 
-		getUIState:function()
-		{
-			var timeline = null;
-			var document = fl.getDocumentDOM();
-			if(document)
-			{
-				timeline		= document.getTimeline().name;
-				document		= document.pathURI || document.name;
-				//var selLayers	= timeline.getSelectedLayers();
-				//var selFrames	= timeline.getSelectedFrames();
-			}
-			return {document:document, timeline:timeline};
-		},
-
 		toString:function()
 		{
-			return '[class JSFL]';
+			return '[class JSFLInterface]';
 		}
 	}
 
