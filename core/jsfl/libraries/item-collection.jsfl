@@ -1,38 +1,38 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██  ██                  ██████       ██ ██              ██   ██             
-//  ██  ██                  ██           ██ ██              ██                  
-//  ██ █████ █████ ████████ ██     █████ ██ ██ █████ █████ █████ ██ █████ █████ 
-//  ██  ██   ██ ██ ██ ██ ██ ██     ██ ██ ██ ██ ██ ██ ██     ██   ██ ██ ██ ██ ██ 
-//  ██  ██   █████ ██ ██ ██ ██     ██ ██ ██ ██ █████ ██     ██   ██ ██ ██ ██ ██ 
-//  ██  ██   ██    ██ ██ ██ ██     ██ ██ ██ ██ ██    ██     ██   ██ ██ ██ ██ ██ 
-//  ██  ████ █████ ██ ██ ██ ██████ █████ ██ ██ █████ █████  ████ ██ █████ ██ ██ 
+//  ██  ██                  ██████       ██ ██              ██   ██
+//  ██  ██                  ██           ██ ██              ██
+//  ██ █████ █████ ████████ ██     █████ ██ ██ █████ █████ █████ ██ █████ █████
+//  ██  ██   ██ ██ ██ ██ ██ ██     ██ ██ ██ ██ ██ ██ ██     ██   ██ ██ ██ ██ ██
+//  ██  ██   █████ ██ ██ ██ ██     ██ ██ ██ ██ █████ ██     ██   ██ ██ ██ ██ ██
+//  ██  ██   ██    ██ ██ ██ ██     ██ ██ ██ ██ ██    ██     ██   ██ ██ ██ ██ ██
+//  ██  ████ █████ ██ ██ ██ ██████ █████ ██ ██ █████ █████  ████ ██ █████ ██ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // ItemCollection
 
 	// context = lib or folder?
-	
+
 /*
 
 
 	//fl.getDocumentDOM().library.moveToFolder("new", "Symbol 1", true);
-	
+
 	var lib = fl.getDocumentDOM().library;
 	var items = lib.items
-	
+
 	cmp = function(a, b)
 	{
 		return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 	}
-	
+
 	items = items.sort(cmp)
-					   
+
 	for(var i = 0; i < items.length; i++)
 	{
 		fl.trace(items[i].name)
 	}
-	
+
 	pass in parent folder or library to callback?
 
 */
@@ -40,12 +40,12 @@
 	/**
 	 * ItemCollection class enacpsulates and modifies Arrays of LibraryItems
 	 */
-	var itemCollection =
+	var ItemCollection =
 	{
 		className:'ItemCollection',
-		
+
 		library:null,
-		
+
 		constructor:function(elements)
 		{
 			var dom = fl.getDocumentDOM();
@@ -59,17 +59,17 @@
 				throw new Error('ItemCollection requires that a document be open before instantiation');
 			}
 		},
-		
+
 		/**
 		 * Fast sorting algorithm
-		 * @returns		
+		 * @returns
 		 */
 		sort:function()
 		{
 			xjsfl.utils.sortOn(this.elements, 'name', true);
 			return this;
 		},
-		
+
 		/**
 		 * Select the item in the library
 		 * @returns				{ItemCollection}	The original ItemCollection
@@ -84,7 +84,7 @@
 			this.reveal();
 			return this;
 		},
-		
+
 		/**
 		 * Updates the elements from the hard disk
 		 * @returns				{ItemCollection}	The original ItemCollection
@@ -94,7 +94,7 @@
 			this.elements.forEach(function(e){ this.library.updateItem(e.name) }, this);
 			return this;
 		},
-		
+
 		/**
 		 * Delete the item from the library
 		 * @returns				{ItemCollection}	The original ItemCollection
@@ -107,10 +107,10 @@
 			}
 			return this;
 		},
-		
+
 		/**
 		 * Visually expands or collapses folders in the library panel
-		 * @param	state		{Boolean}		
+		 * @param	state		{Boolean}
 		 * @param	recurse		{Boolean}
 		 * @returns				{ItemCollection}	The original ItemCollection
 		 */
@@ -127,7 +127,7 @@
 			}
 			return this;
 		},
-		
+
 		/**
 		 * Reveals the items in the library panel by expanding contaiing folders
 		 * @returns				{ItemCollection}	The original ItemCollection
@@ -151,7 +151,7 @@
 			}
 			return this;
 		},
-		
+
 		/**
 		 * Move collection elements to a folder
 		 * @param	path		{String}			The path to move items to
@@ -164,19 +164,19 @@
 			// varaibles
 				path	= path.replace(/[:\(\)\[\]\*\+]/g, '')
 				expand	= expand === false ? false : true;
-				
+
 			// create folder if it doesn't exist
 				if( ! this.library.itemExists(path))
 				{
 					this.library.addNewItem('folder', path);
 				}
-				
+
 			// move items
 				for(var i = 0; i < this.elements.length; i++)
 				{
 					this.library.moveToFolder(path, this.elements[i].name, Boolean(replace));
 				}
-				
+
 			// expand folders
 			//TODO double check that expandFolder IS actually buggy
 				if(expand)
@@ -187,11 +187,11 @@
 						this.library.expandFolder(true, true, path);
 					}
 				}
-				
+
 			// return
 				return this;
 		},
-		
+
 		/**
 		 * Sequentially rename the the items in the collection using an alphanumeric pattern, a callback, or parameters
 		 * @param baseName		{Function}			A callback of the format function(name, index, item) which should return a custom name
@@ -212,20 +212,20 @@
 					var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
 					return baseName + str;
 				}
-				
+
 			// function supplied as naseName argument
 				if(typeof baseName === 'function')
 				{
 					callback = baseName;
 				}
-				
+
 			// string supplied
 				else
 				{
 					// assign default callback
 						callback	= rename;
 						baseName	= baseName || 'clip';
-					
+
 					// determine if baseName is a pattern
 						var matches = baseName.match(/(.+?)(#+|\d+)$/)
 						if(matches)
@@ -235,7 +235,7 @@
 							startIndex	= parseInt(matches[2], 10);
 							startIndex	= isNaN(startIndex) ? 1 : startIndex;
 						}
-						
+
 					// variables
 						else
 						{
@@ -246,16 +246,16 @@
 							padding		= padding === true ? String(this.elements.length).length : padding;
 						}
 				}
-				
+
 			// do it
 				for(var i = 0; i < this.elements.length; i++)
 				{
 					this.elements[i].name = callback(this.elements[i], i, this.elements, this.elements[i].name.split('/').pop());
 				}
-				
+
 				return this;
 		},
-		
+
 		/**
 		 * Run a function in each item in the collection by entering edit mode, running the function, then moving onto the next item
 		 * @param	callback	{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
@@ -275,7 +275,7 @@
 			)
 			return this;
 		},
-		
+
 		/**
 		 * Adds the items in the collection to the stage, returning an ElementCollection of the newly-added elements
 		 * @param	context		{Context}			An optional context object of where to add the items
@@ -300,7 +300,7 @@
 			}
 			return new ElementCollection(elements).select();
 		},
-		
+
 		/**
 		 * Debugging function to list the items in the collection
 		 * @returns				{ItemCollection}	The original ItemCollection
@@ -310,13 +310,13 @@
 			Output.list(this.elements, 'name', this.toString());
 			return this;
 		}
-		
+
 	}
-	
-	ItemCollection = Collection.extend(itemCollection)
+
+	ItemCollection = Collection.extend(ItemCollection)
 	ItemCollection.toString = function()
 	{
 		return '[class ItemCollection]';
 	}
-	
+
 	xjsfl.classes.register('ItemCollection', ItemCollection);

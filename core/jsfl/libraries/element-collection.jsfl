@@ -1,12 +1,12 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████ ██                             ██   ██████       ██ ██              ██   ██             
-//  ██     ██                             ██   ██           ██ ██              ██                  
-//  ██     ██ █████ ████████ █████ █████ █████ ██     █████ ██ ██ █████ █████ █████ ██ █████ █████ 
-//  █████  ██ ██ ██ ██ ██ ██ ██ ██ ██ ██  ██   ██     ██ ██ ██ ██ ██ ██ ██     ██   ██ ██ ██ ██ ██ 
-//  ██     ██ █████ ██ ██ ██ █████ ██ ██  ██   ██     ██ ██ ██ ██ █████ ██     ██   ██ ██ ██ ██ ██ 
-//  ██     ██ ██    ██ ██ ██ ██    ██ ██  ██   ██     ██ ██ ██ ██ ██    ██     ██   ██ ██ ██ ██ ██ 
-//  ██████ ██ █████ ██ ██ ██ █████ ██ ██  ████ ██████ █████ ██ ██ █████ █████  ████ ██ █████ ██ ██ 
+//  ██████ ██                             ██   ██████       ██ ██              ██   ██
+//  ██     ██                             ██   ██           ██ ██              ██
+//  ██     ██ █████ ████████ █████ █████ █████ ██     █████ ██ ██ █████ █████ █████ ██ █████ █████
+//  █████  ██ ██ ██ ██ ██ ██ ██ ██ ██ ██  ██   ██     ██ ██ ██ ██ ██ ██ ██     ██   ██ ██ ██ ██ ██
+//  ██     ██ █████ ██ ██ ██ █████ ██ ██  ██   ██     ██ ██ ██ ██ █████ ██     ██   ██ ██ ██ ██ ██
+//  ██     ██ ██    ██ ██ ██ ██    ██ ██  ██   ██     ██ ██ ██ ██ ██    ██     ██   ██ ██ ██ ██ ██
+//  ██████ ██ █████ ██ ██ ██ █████ ██ ██  ████ ██████ █████ ██ ██ █████ █████  ████ ██ █████ ██ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // ElementCollection
@@ -14,14 +14,14 @@
 	/**
 	 * ElementCollection class enacpsulates and modifies Arrays of stage Elements
 	 */
-	elementCollection =
+	ElementCollection =
 	{
 		className:'ElementCollection',
-		
+
 		dom:null,
-		
+
 		selection:null,
-		
+
 		constructor:function(elements)
 		{
 			this.dom = fl.getDocumentDOM();
@@ -31,7 +31,7 @@
 			}
 			this.base(elements);
 		},
-		
+
 		/**
 		 * Swap any existing selection for the collection
 		 */
@@ -44,7 +44,7 @@
 				dom.selection = this.elements;
 			}
 		},
-		
+
 		/**
 		 * Reselect any user selection
 		 */
@@ -53,7 +53,7 @@
 			dom.selectNone();
 			dom.selection = this.selection;
 		},
-		
+
 		/**
 		 * Finds a single element or groups of elements within the collection
 		 * @param	element		{Number}		The index of the element to find
@@ -102,7 +102,7 @@
 			}
 			return null;
 		},
-		
+
 		/**
 		 * Select one or all of the elements within the collection
 		 * @param	element		{Boolean}			An optional true flag to select all elements (the default)
@@ -125,7 +125,7 @@
 			}
 			return this;
 		},
-		
+
 		/**
 		 * Move the collection on stage to, or by, x and y values
 		 * @param	x			{Number}			The x pixel value to move to, or by
@@ -138,7 +138,7 @@
 			// variables
 				x = x || 0;
 				y = y || 0;
-				
+
 			// move relative
 				if(relative)
 				{
@@ -149,14 +149,14 @@
 						element.y = element.y + y;
 					}
 				}
-				
+
 			// move absolute
 				else
 				{
 					// get bounds
 						this._deselect();
 						var bounds = dom.getSelectionRect();
-						
+
 					// loop
 						for(var i = 0; i < this.elements.length; i++)
 						{
@@ -164,18 +164,18 @@
 							element.x	= (element.left - bounds.left) + (element.x - element.left) + x;
 							element.y	= (element.top - bounds.top) + (element.y - element.top) + y;
 						}
-						
+
 					// reselect
 						this._reselect();
 				}
-				
+
 			// refresh
 				this.refresh();
-				
+
 			// return
 				return this;
 		},
-		
+
 		/**
 		 * Duplicates and updates the current collection
 		 * @param	add			{Boolean}			An optional flag to add the duplicated items to the current collection, defaulst to false
@@ -185,14 +185,14 @@
 		{
 			// deselect existing items
 				this._deselect();
-				
+
 			// duplicate
 				//alert('before:' + [this.elements.length, dom.selection.length])
 				this.dom.duplicateSelection();
 				var elements	= this.dom.selection;
-				
+
 			// rename elements
-			
+
 				// function
 					function parseNames(element)
 					{
@@ -210,28 +210,28 @@
 							}
 						}
 					}
-					
+
 				// generate data for new names
 					var name	= '';
 					var num		= 0;
 					var pad		= 0;
-					
+
 					this.elements.forEach(parseNames);
 					name	= name || 'Item';
 					num		= num == 0 ? 1 : num + 1;
-					
+
 				// rename elements
 					new ElementCollection(elements).rename(name, pad, num)
 
 			// add / replace elements
 				this.elements = add ? this.elements.concat(elements) : elements;
-				
+
 			// reselect
 				//alert('after:' + [this.elements.length, dom.selection.length])
 				this.refresh();
 				return this;
 		},
-		
+
 		/**
 		 * Removes all elements from the collection and the stage
 		 * @returns				{ElementCollection}	The original ElementCollection object
@@ -247,7 +247,7 @@
 			}
 			return this;
 		},
-		
+
 
 		/**
 		 * Sets a single property on each element in the collection
@@ -263,7 +263,7 @@
 		{
 			//TODO Update to handle 3D properties
 			//TDOD Update to handle alpha, brightness, tint, filters
-			
+
 			// if a hash is supplied, recurse the name:values
 				if(typeof prop === 'object')
 				{
@@ -274,7 +274,7 @@
 					}
 					return this;
 				}
-			
+
 			// if 2D properties, recurse sub-properties
 				if(/^(pos|position|size|scale)$/.test(String(prop)))
 				{
@@ -291,7 +291,7 @@
 						{
 							values = undefined;
 						}
-					
+
 					// get prop names
 						switch(prop)
 						{
@@ -300,23 +300,23 @@
 								var x = 'x';
 								var y = 'y';
 							break;
-						
+
 							case 'size':
 								var x = 'width';
 								var y = 'height';
 							break;
-						
+
 							case 'scale':
 								var x = 'scaleX';
 								var y = 'scaleY';
 							break;
 						}
-						
+
 					// set properties
-					
+
 						//TODO modify width and height to update in object-space (rotate, resize, rotate back)
 						//TODO Add screenwidth and screenheight properties
-						
+
 						for(var i = 0; i < this.elements.length; i++)
 						{
 							values				= typeof value === 'function' ? value.apply(this, [this.elements[i], i, this.elements]) : value;
@@ -324,11 +324,11 @@
 							this.elements[i][x]	= values[0]
 							this.elements[i][y]	= values[1]
 						}
-						
+
 					// return
 						return this;
 				}
-			
+
 			// if 1D properties, assign
 				else
 				{
@@ -338,10 +338,10 @@
 						this.elements[i][prop] = fn(this.elements[i], i, this.elements);
 					}
 				}
-			
+
 			return this;
 		},
-		
+
 		/**
 		 * Sequentially rename the the items in the collection using an alphanumeric pattern, a callback, or parameters
 		 * @param baseName		{String}			The basename for your objects
@@ -359,7 +359,7 @@
 				{
 					callback = baseName;
 				}
-				
+
 			// string supplied
 				else
 				{
@@ -370,10 +370,10 @@
 							var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
 							return baseName + str;
 						}
-						
+
 					// assign default callback
 						callback = rename;
-					
+
 					// determine if baseName is a pattern
 						var matches = baseName.match(/(.+?)(#+|\d+)$/)
 						if(matches)
@@ -383,7 +383,7 @@
 							startIndex	= parseInt(matches[2], 10);
 							startIndex	= isNaN(startIndex) ? 1 : startIndex;
 						}
-						
+
 					// variables
 						else
 						{
@@ -395,17 +395,17 @@
 							padding		= padding === true ? String(this.elements.length).length : padding;
 						}
 				}
-				
+
 			// do it
 				for(var i = 0; i < this.elements.length; i++)
 				{
 					this.elements[i].name = callback(this.elements[i], i, this.elements);
 				}
-				
+
 			// return
 				return this;
 		},
-		
+
 		/**
 		 * Reorder the elements om the stage by an arbitrary property
 		 * @param	prop			{String}			The property to compare. Available properties are 'name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY'
@@ -414,13 +414,13 @@
 		 */
 		orderBy:function(prop, reverseOrder)
 		{
-			
+
 		// look up more efficient sort functions?
 			if(prop.match(/(name|elementType|x|y|width|height|size|left|top|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)/))
 			{
 				// update selection
 					this._deselect(false);
-					
+
 				// helper functions
 					getProperty = function(element, prop)
 					{
@@ -430,18 +430,18 @@
 						}
 						return element[prop];
 					}
-					
+
 					cmp = function(a, b)
 					{
 						var aProp = getProperty(a, prop);
 						var bProp = getProperty(b, prop);
 						return aProp < bProp ? -1 : (aProp > bProp ? 1 : 0);
 					}
-					
+
 				// grab the array and sort it
 					var arr = [].concat(this.elements);
 					arr = arr.sort(cmp);
-					
+
 				// reorder elements
 					this.dom.selectNone();
 					arr.forEach
@@ -452,18 +452,18 @@
 							this.dom.arrange(reverseOrder ? 'back' : 'front');
 						}
 					)
-					
+
 				// re-order
 					this.elements = arr;
-					
+
 				// update selection
 					this._reselect();
-					
+
 			}
 			return this;
 		},
-		
-		
+
+
 		/**
 		 * Align elements to one another
 		 * @param props		{String}			The specific arguments for the arrange type. Acceptable values are 'left,right,top,bottom,top left,top right,bottom left,bottom right,vertical,horizontal,center'
@@ -477,17 +477,17 @@
 				{
 					return this;
 				}
-				
+
 			// align
 				props = props || 'center';
 				if(props.match(/\b(left|right|top|bottom|top left|top right|bottom left|bottom right|vertical|horizontal|center)\b/))
 				{
 					// update selection
 						this._deselect();
-						
+
 					// variables
 						var align, x, y;
-						
+
 					// special props
 						if(props === 'center')
 						{
@@ -513,24 +513,24 @@
 							//x		= element['x'];
 							//y		= element['y'];
 						}
-					
+
 					// reposition
 						//this.attr('x', coords[0]);
 						//this.attr('y', coords[1]);
-							
+
 					// align
 						for(var i = 0; i < align.length; i++)
 						{
 							dom.align(align[i]);
 						}
-						
+
 					// update selection
 						this._reselect();
 				};
-			
+
 			return this;
 		},
-		
+
 		/**
 		 * Distribute elements relative to one another from their transformation point
 		 * @param props		{String}			1 or 2 of 'left,horizontal,right,top,vertical,bottom'
@@ -544,10 +544,10 @@
 				{
 					return this;
 				}
-				
+
 			// update selection
 				this._deselect();
-				
+
 			// distribute
 				props = xjsfl.utils.toArray(props);
 				for(var i = 0; i < props.length; i++)
@@ -565,14 +565,14 @@
 						dom.distribute(props[i], toStage);
 					}
 				}
-				
+
 			// update selection
 				this._reselect();
-				
+
 			// return
 				return this;
 		},
-		
+
 		/**
 		 * Space elements relative to one another
 		 * @param direction	{String}			The direction in which to space. Acceptable values are 'vertical,horizontal'
@@ -589,23 +589,23 @@
 					{
 						return this;
 					}
-					
+
 				// custom spacing routine
 					if(typeof type === 'number')
 					{
 						// variables
 							var x, y, element, offset;
 							gutter	= type || 0;
-							
+
 						// reorder
 							this.orderBy(direction == 'horizontal' ? 'left' : 'top');
-							
+
 						// align
 							for(var i = 0; i < this.elements.length; i++)
 							{
 								// element
 									element	= this.elements[i];
-									
+
 								// move
 									if(direction == 'horizontal')
 									{
@@ -621,27 +621,27 @@
 									}
 							}
 					}
-					
+
 				// standard spacing
 					else
 					{
 						// update selection
 							this._deselect();
-							
+
 						// make a selection
 							dom.selectNone();
 							dom.selection = this.elements;
 
-						// space						
+						// space
 							dom.space(direction, !!type);
-							
+
 						// update selection
 							this._reselect();
 					}
 			}
 			return this;
 		},
-		
+
 		/**
 		 * match elements' dimensions relative to one another
 		 * @param	props	{String}			The dimension in which to match. Acceptable values are'width,height,size'
@@ -660,13 +660,13 @@
 					{
 						return this;
 					}
-					
+
 				// test
 					if(typeof element === 'undefined')
 					{
 						element = true;
 					}
-					
+
 				// get element
 					if(typeof element === 'boolean')
 					{
@@ -676,13 +676,13 @@
 							height:	xjsfl.utils.getExtremeValue(this.elements, 'height', element)
 						};
 					}
-					
+
 				// name or index
 					else if(typeof element === 'string' || typeof element === 'number')
 					{
 						element = this.find(element);
 					}
-					
+
 				// match
 					if(element && element instanceof Element)
 					{
@@ -700,7 +700,7 @@
 			}
 			return this;
 		},
-		
+
 		/*
 		match:function(props, toStage)
 		{
@@ -710,7 +710,7 @@
 			}
 		},
 		*/
-		
+
 		/**
 		 * Repositions element positions to round multiples of numbers
 		 * @param	precision	{Number}			The pixel-precision to reposition to, same for x and y values
@@ -733,10 +733,10 @@
 				{
 					precision = {x:1, y:1};
 				}
-				
+
 			// rounding: down(-1), nearest(0), or up(1)
 				rounding = rounding || 0;
-				
+
 			// offset
 				if(rounding < 0)
 				{
@@ -750,26 +750,26 @@
 				{
 					var offset = {x:precision.x * 0.5, y:precision.y * 0.5};
 				}
-				
+
 			// main code
 				for(var i = 0 ; i < this.elements.length; i++)
 				{
 					var element	= this.elements[i];
-					
+
 					var x		= element.x + offset.x;
 					var y		= element.y + offset.y;
-					
+
 					x			-= x % precision.x;
 					y			-= y % precision.y;
-					
+
 					element.x	= x;
 					element.y	= y;
 				}
-				
+
 			// return
 				return this;
 		},
-		
+
 		layout:function(columns, gutter, spacing)
 		{
 			if(this.elements.length)
@@ -777,7 +777,7 @@
 				var element	= this.elements[0];
 				var x		= element.x;
 				var y		= element.y;
-				
+
 				for(var i = 0; i < this.elements.length; i++)
 				{
 					px			= i % cols;
@@ -786,7 +786,7 @@
 				}
 			}
 		},
-		
+
 		/**
 		 * Randomizes any valid element properties
 		 * @param	prop		{Object}			An object containing property name:value pairs
@@ -808,10 +808,10 @@
 					}
 					return this;
 				}
-				
+
 			// variable
 				var isArray	= xjsfl.utils.isArray(modifier);
-				
+
 			// handle single properties
 				if(/^(x|y|width|height|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)$/.test(prop))
 				{
@@ -822,7 +822,7 @@
 													: xjsfl.utils.randomizeValue(this.elements[i][prop], modifier);
 					}
 				}
-				
+
 			// handle compound (Array) properties such as position, scale and size
 				else if(/^(pos|position|scale|size)$/.test(prop))
 				{
@@ -833,7 +833,7 @@
 						{
 							prop = 'position';
 						}
-						
+
 					// attribute components
 						var attrs =
 						{
@@ -841,7 +841,7 @@
 							scale:		['scaleX', 'scaleY'],
 							size:		['width', 'height']
 						};
-						
+
 					// assign per compound type
 						switch(prop)
 						{
@@ -849,7 +849,7 @@
 								values = isArray ? modifier : [modifier[0],  modifier[1]];
 								this.randomize({x:values[0], y:values[1]});
 							break;
-						
+
 							case 'size':
 							case 'scale':
 								for(var i = 0; i < this.elements.length; i++)
@@ -883,7 +883,7 @@
 											value		= xjsfl.utils.randomizeValue(Math.max(element[px], element[py]), modifier);
 											values		= [value, value];
 										}
-										
+
 									// assign values
 										element[px]		= values[0];
 										element[py]		= values[1];
@@ -892,12 +892,12 @@
 						}
 
 				}
-				
+
 			// return
 				return this;
 		},
-		
-		
+
+
 		/**
 		 * Centers the transform points of the elements
 		 * @param state		{Boolean}			Sets the transform point to the center (true) or the original pivot point (false). Defaults to true
@@ -906,29 +906,29 @@
 		centerTransformPoint:function(state)
 		{
 			// need to use matrix math on this one!
-			
+
 			function center(e, i)
 			{
 				if(false)
 				{
 					var rot		= e.rotation;
-					
+
 					e.rotation
 					var mat		= e.matrix;
 					var mat2	= fl.Math.invertMatrix(e.matrix)
-					
+
 					//$debug(e.matrix)
-					
+
 					//fl.Math.concatMatrix()
 					mat2.tx		= e.width/2;
 					mat2.ty		= e.height/2;
-					
+
 					trace(e.matrix)
-					
+
 					/*
 					var cMat = {a:1, b:0, c:0, d:1, tx:e.width/2, ty:e.height/2};
 					*/
-					
+
 					/*
 					e.matrix = mat;
 					*/
@@ -937,26 +937,26 @@
 					var invMat = fl.Math.invertMatrix(e.matrix)
 					e.matrix = fl.Math.concatMatrix(mat, invMat);
 					*/
-					
+
 					var mat		= e.matrix
 					var b		= e.matrix.b;
 					var c		= e.matrix.c;
-					
+
 					var cMat	= {a:mat.a, b:0, c:0, d:mat.d, tx:mat.tx, ty:mat.ty};
-					
+
 					e.matrix	= cMat;
 					e.setTransformationPoint( {x:(e.width/2) * (1/e.scaleX), y:(e.height/2) * (1/e.scaleY)} );
 					e.matrix	= mat;
-					
-							
+
+
 				//e.setTransformationPoint( {x:e.width/2, y:e.height/2} );
-				
+
 				//e.setTransformationPoint( {x:e.width/2, y:e.height/2} );
 			}
 			this.each(center);
 			return this;
 		},
-		
+
 		/**
 		 * Resets the transform of the elements
 		 * @returns				{ElementCollection}	The original ElementCollection object
@@ -968,7 +968,7 @@
 			this._reselect();
 			return this;
 		},
-		
+
 		/**
 		 * Run a function in each item in the collection by entering edit mode, running the function, then moving onto the next item
 		 * @param	callback	{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
@@ -992,7 +992,7 @@
 			)
 			return this;
 		},
-		
+
 		/**
 		 * Forces the a refreshes of the display after a series of operations
 		 * @returns				{ElementCollection}	The original ElementCollection object
@@ -1002,7 +1002,7 @@
 			this.dom.livePreview = true
 			return this;
 		},
-		
+
 		/**
 		 * Utility function to list the contents of the collection
 		 * @returns				{ElementCollection}	The original ElementCollection object
@@ -1013,17 +1013,17 @@
 			{
 				return element.name ? 'name: ' + element.name : (element.libraryItem ? 'item: ' + element.libraryItem.name : 'type: ' + element.elementType);
 			}
-			
+
 			Output.list(this.elements, getName, this.toString());
 			return this;
 		}
 
 	}
-	
-	ElementCollection = Collection.extend(elementCollection);
+
+	ElementCollection = Collection.extend(ElementCollection);
 	ElementCollection.toString = function()
 	{
 		return '[class ElementCollection]';
 	}
-	
+
 	xjsfl.classes.register('ElementCollection', ElementCollection);
