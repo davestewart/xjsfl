@@ -357,6 +357,23 @@
 				return obj;
 		},
 
+		clone:function(obj)
+		{
+			if(obj == null || typeof(obj) != 'object')
+			{
+				return obj;
+			}
+
+			var temp = obj.constructor() || {}; // changed
+
+			for(var key in obj)
+			{
+				temp[key] = xjsfl.utils.clone(obj[key]);
+			}
+
+			return temp;
+		},
+
         /**
          * Adds properties to an object's namesapce by supplying a dot.syntax.path and properties object
          * @param	{Object}	target		The object in which to create the new object
