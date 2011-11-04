@@ -1,5 +1,6 @@
 ﻿package com.xjsfl.jsfl.modules
 {
+	import com.xjsfl.jsfl.io.JSFLIO;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -8,7 +9,7 @@
 	import flash.events.*;
 	
 	import adobe.utils.MMExecute;
-	import com.xjsfl.jsfl.JSFL;
+	import com.xjsfl.jsfl.io.JSFL;
 
 	import com.xjsfl.ui.controls.rightclickmenu.RightClickMenu;
 	import com.xjsfl.ui.controls.rightclickmenu.RightClickMenuEvent;
@@ -38,7 +39,10 @@
 				
 			// root
 				protected var _root				:DisplayObjectContainer;	// A reference to the swf root
-				protected var _showContextMenu	:Boolean
+				protected var _showContextMenu	:Boolean;
+				
+			// io
+				protected var io				:JSFLIO;					// The I/O for the JSFL
 				
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Instantiation
@@ -100,8 +104,11 @@
 							
 						// Grab correct data when running in a panel
 							_xjsflURI			= JSFL.isPanel ? MMExecute('xjsfl.uri') : _xjsflURI;
-							_moduleURI			= JSFL.isPanel ? MMExecute('xjsfl.modules.manifests.' +_namespace+ '.jsfl.uri') : _moduleURI;
-							_name				= JSFL.isPanel ? MMExecute('xjsfl.modules.manifests.' +_namespace+ '.jsfl.panel') : _moduleURI;
+							_moduleURI			= JSFL.isPanel ? MMExecute('xjsfl.modules.getManifest("' +_namespace+ '").jsfl.uri') : _moduleURI;
+							_name				= JSFL.isPanel ? MMExecute('xjsfl.modules.getManifest("' +_namespace+ '").info.name') : _namespace;
+							
+						// add I/O
+							io					= new JSFLIO(_namespace);
 							
 						// properties
 							this.allowLogging	= true;
@@ -164,16 +171,12 @@
 			 */
 			public function call(method:String, ...args:*):*
 			{
-				if ( ! _namespace )
-				{
-					throw new Error('Error in AbstractModule: namespace is null; remember to call setup() first!');
-				}
-				return JSFL.call(_namespace + '.' + method, args, _namespace);
+				return io.call(method, args);
 			}
 			
 			public function grab(property:String):*
 			{
-				return JSFL.grab(_namespace + '.' + property);
+				return io.grab(property);
 			}
 			
 		// ---------------------------------------------------------------------------------------------------------------------

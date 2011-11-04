@@ -1,10 +1,10 @@
-package com.xjsfl.jsfl
+package com.xjsfl.jsfl.io
 {
 
 	import adobe.utils.MMExecute;
 	import flash.utils.getTimer;
 	
-	import com.xjsfl.jsfl.JSFLInterface;
+	import com.xjsfl.jsfl.io.JSFLInterface;
 	import com.xjsfl.utils.debugging.Output;
 	
 	/**
@@ -17,7 +17,7 @@ package com.xjsfl.jsfl
 		// ---------------------------------------------------------------------------------------------------------------------
 		// constants
 		
-			/// A Boolean indicating if the currect environment is an SWFPanel (and can therefore run MMExecute() commands)
+			/// A Boolean indicating if the current environment is an SWFPanel (and can therefore run MMExecute() commands)
 			public static const isPanel		:Boolean		= MMExecute('(function(){return 1})()') != false;
 			
 			/// A String specifying the Flash config URI
@@ -34,17 +34,13 @@ package com.xjsfl.jsfl
 		
 			/**
 			 *
-			 * Calls a JSFL function, passing zero or more arguments
+			 * Calls a JSFL function, optionally passing arguments, and automatically resolving scope
 			 * 
-			 * @param functionName		The alphanumeric name of the jsfl function to call.
-			 * @param arguments			The arguments to pass to the jsfl function.
-			 * 							You can specify zero
-			 *    						or more parameters, separating them with commas. They can be of
-			 *    						any ActionScript data type, but the ActionScript types are
-			 *    						automatically converted into JavaScript types.
-			 * @return					The response received from the jsfl function. If the call failed–
-			 *    						for example, if there is no such function or the interface is not
-			 *    						available– null is returned and an error is thrown.
+			 * @param functionName		The function or method to call
+			 * @param arguments			Optional arguments to pass to the function.
+			 * @param scope				The scope to call the function in. Defaults to the object the function is attached to
+			 * @return					The response received from the jsfl function, or null if there is no such function or 
+			 * 							if the interface is not available an error is thrown.
 			 *     
 			 * @see flash.external.ExternalInterface#call()		 		 
 			 *
@@ -58,7 +54,7 @@ package com.xjsfl.jsfl
 				// serialize arguments
 					for (var i:int = 0; i < args.length; i++) 
 					{
-						if (args[i] is RegExp) // don't serialize regexp - treat them as unparsed strings
+						if (args[i] is RegExp) // don't serialize regexp - this is a cheat to treat them as unparsed strings
 						{
 							args[i] = args[i].source;
 						}
@@ -78,20 +74,25 @@ package com.xjsfl.jsfl
 					{
 						jsfl = functionName + '.apply(' +scope + ', [' + args.join(', ') + '])';
 					}
-					
+
 				// make the call
 					if (JSFL.isPanel)
 					{
-						var value:String = MMExecute('JSFLInterface.serialize(' + jsfl + ')');
+						var value:String = MMExecute('try{JSFLInterface.serialize(' + jsfl + ');}catch(err){xjsfl.debug.error(err);}');
 						return JSFLInterface.deserialize(value);
 					}
 					else
 					{
 						log('call', jsfl);
-						return false;
+						return null;
 					}
 			}
 			
+			/**
+			 * Grabs an atrbitrary property from the JSFL environment
+			 * @param	property
+			 * @return
+			 */
 			static public function grab(property:String):* 
 			{
 				if (JSFL.isPanel)
@@ -101,17 +102,42 @@ package com.xjsfl.jsfl
 				else
 				{
 					log('grab', property);
-					return false;
+					return null;
+				}
+			}
+			
+			static public function get(property:String):*
+			{
+				if (JSFL.isPanel)
+				{
+					return JSFLInterface.deserialize(MMExecute('JSFLInterface.serialize(' + property + ')'));
+				}
+				else
+				{
+					log('get', property);
+					return null;
+				}
+			}
+			
+			static public function set(property:String, value:*):void
+			{
+				var jsfl:String = property + ' = ' + value;
+				if (JSFL.isPanel)
+				{
+					MMExecute(jsfl);
+				}
+				else
+				{
+					log('set', jsfl);
 				}
 			}
 			
 
 
 			/**
-			 * Executes arbitrary JSFL by wrapping the code in a function and, optionally returning the serialized results
-			 * @param	jsfl	A String containing the JSFL to execute. To return a value, make sure the JSFL ends 
-			 * 					with a valid return statement, such as "return fl.getDocumentDOM().selection.length;";
-			 * @return	Mixed	The result of the executed JSFL call
+			 * Executes a JSFL string
+			 * @param	jsfl	A valid fragment of JSFL
+			 * @return	mixed	The result of the executed JSFL call
 			 */
 			public static function exec(jsfl:String):*
 			{

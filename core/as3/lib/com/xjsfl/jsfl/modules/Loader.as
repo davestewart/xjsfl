@@ -1,6 +1,6 @@
 package com.xjsfl.jsfl.modules 
 {
-	import com.xjsfl.jsfl.JSFL;
+	import com.xjsfl.jsfl.io.JSFL;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
@@ -38,10 +38,10 @@ package com.xjsfl.jsfl.modules
 		
 			/**
 			 * Constructor for the xJSFL Loader class
-			 * @param	module
-			 * @param	config
-			 * @param	assets
-			 * @param	properties
+			 * @param	module			
+			 * @param	config			
+			 * @param	assets			
+			 * @param	properties		
 			 */
 			public function Loader(module:AbstractModule, config:Object = null, assets:Object = null, properties:Object = null)
 			{
@@ -54,6 +54,9 @@ package com.xjsfl.jsfl.modules
 					_module		= module;
 					_loader		= new LoaderMax( properties );
 				 
+				// register JSON with LoaderMax
+					LoaderMax.registerFileType('json', DataLoader);
+					
 				// force all loader types to compile
 					LoaderMax.activate( [ CSSLoader, DataLoader, ImageLoader, MP3Loader, SWFLoader, VideoLoader, XMLLoader ] );
 					
@@ -127,13 +130,9 @@ package com.xjsfl.jsfl.modules
 			 */
 			protected function addConfig(filename:String, properties:Object = null):void
 			{
-				// default path
-					var filename:String			= filename.toLowerCase().replace(/(\.xml)?$/, '.xml');
-						
-				// item
-					var item:LoaderCore			= getLoader(filename, properties);
-					_config[properties.name]	= _content[properties.name] = item;
-					loader.append(item);
+				var item:LoaderCore			= getLoader(filename, properties);
+				_config[properties.name]	= _content[properties.name] = item;
+				loader.append(item);
 			}
 			
 			/**
@@ -143,7 +142,7 @@ package com.xjsfl.jsfl.modules
 			 */
 			public function add(filename:String, properties:Object = null):void 
 			{
-				if (/\.xml$/.test(filename))
+				if (/\/config\//.test(filename))
 				{
 					addConfig(filename, properties);
 				}
@@ -154,7 +153,7 @@ package com.xjsfl.jsfl.modules
 			}
 			
 			/**
-			 * Returns a LoaderMax loader of teh correct type for the filename extension
+			 * Returns a LoaderMax loader of the correct type for the filename extension
 			 * @param	filename
 			 * @param	properties
 			 * @return
@@ -254,6 +253,7 @@ package com.xjsfl.jsfl.modules
 										module:		module.uri,
 										xjsfl:		module.xjsflURI,
 										user:		module.xjsflURI + 'user/',
+										
 										moduleURI:	module.uri,
 										xjsflURI:	module.xjsflURI,
 										userURI:	module.xjsflURI + 'user/'					

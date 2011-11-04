@@ -1,4 +1,4 @@
-package com.xjsfl.jsfl
+package com.xjsfl.jsfl.io
 {
 	import adobe.utils.MMExecute;
 	import flash.utils.describeType;
