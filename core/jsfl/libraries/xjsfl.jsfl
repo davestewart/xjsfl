@@ -86,6 +86,23 @@
 		},
 
 		/**
+		 * Get the current Timeline, or issue a standard warning if not available
+		 * @returns		{Timeline}	A Timelineobject
+		 * @returns		{Boolean}	False if not available
+		 */
+		timeline:function(error)
+		{
+			//TODO Look to see if passing in an error message is good design or not
+			var dom = fl.getDocumentDOM();
+			if(dom)
+			{
+				return dom.getTimeline();
+			}
+			alert(error || 'Open a Flash document (FLA) before running this script');
+			return false;
+		},
+
+		/**
 		 * Get the currently selected library items, or issue a standard warning if not selected
 		 * @returns		{Array}		An array of library items
 		 * @returns		{Boolean}	False if not available
@@ -2253,16 +2270,23 @@
 		getState:function()
 		{
 			//TODO Add in boolean to also get the selected elements
-			var document, timeline, layers, frames;
+			var obj = {};
 			var dom = fl.getDocumentDOM();
 			if(dom)
 			{
-				document	= dom.pathURI || dom.name;
-				timeline	= dom.getTimeline();
-				layers		= String(timeline.getSelectedLayers());
-				frames		= String(timeline.getSelectedFrames());
+				var timeline = dom.getTimeline();
+				obj =
+				{
+					document:	dom.pathURI || dom.name,
+					timeline:	timeline.name,
+					layers:		String(timeline.getSelectedLayers()),
+					frames:		String(timeline.getSelectedFrames()),
+					numLayers:	timeline.layers.length,
+					numFrames:	timeline.frameCount,
+					selection:	null
+				}
 			}
-			return {document:document, timeline:timeline ? timeline.name : null, layers:layers, frames:frames};
+			return obj;
 		},
 
 	}
@@ -2301,6 +2325,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Initialize
 
+	/**
+	 * These properties are assigned using extend, to remain hidden from Komodo's code-intelligence
+	 */
 	(function()
 	{
 		var props =
