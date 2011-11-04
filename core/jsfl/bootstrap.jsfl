@@ -29,8 +29,8 @@
 			 */
 			xjsfl.initVars = function(scope, scopeName)
 			{
-				// initialize only if scriptDir method is not yet defined
-					if(typeof scope.scriptDir === 'undefined')
+				// initialize only if core $dom method is not yet defined
+					if(typeof scope.$dir === 'undefined')
 					{
 						// debug
 							if(scopeName)
@@ -59,27 +59,51 @@
 								}
 							}
 
-						// functions
-							scope.trace		= function(){fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))};
+						// methods
+							xjsfl.trace = xjsfl.output.trace;
+
+						// global functions
+							scope.trace		= function(){ fl.outputPanel.trace(Array.slice.call(this, arguments).join(', ')) };
 							scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
 							scope.clear		= fl.outputPanel.clear;
 
-						// dom getter
-							scope.__defineGetter__( 'dom', function(){ return fl.getDocumentDOM(); } );
+						// global shortcuts
 
-						// script dir getter (can't use until after main xjsfl class has loaded!)
-							scope.__defineGetter__
-							(
-								'scriptDir',
-								function()
+							// $dom
+								if(typeof scope.$dom === 'undefined')
 								{
-									var stack = xjsfl.utils.getStack();
-									return xjsfl.file.makeURI(stack[3].path);
+									scope.__defineGetter__( '$dom', function(){ return fl.getDocumentDOM(); } );
 								}
-							);
 
-						// methods
-							xjsfl.trace = xjsfl.output.trace;
+							// $timeline
+								if(typeof scope.$timeline === 'undefined')
+								{
+									scope.__defineGetter__( '$timeline', function(){ return fl.getDocumentDOM().getTimeline(); } );
+								}
+
+							// $library
+								if(typeof scope.$library === 'undefined')
+								{
+									scope.__defineGetter__( '$library', function(){ return fl.getDocumentDOM().library; } );
+								}
+
+							// $selection
+								if(typeof scope.$selection === 'undefined')
+								{
+									//TODO Check why this doesn't work in all files
+									scope.__defineGetter__( '$selection', function(){ return fl.getDocumentDOM().selection; } );
+								}
+
+							// $dir getter (can't use until after main xjsfl class has loaded!)
+								scope.__defineGetter__
+								(
+									'$dir',
+									function()
+									{
+										var stack = xjsfl.utils.getStack();
+										return xjsfl.file.makeURI(stack[3].path);
+									}
+								);
 					}
 			}
 
