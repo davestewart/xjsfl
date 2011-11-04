@@ -88,7 +88,7 @@
 				/**
 				 * @type {String} The platform-specific path to the item
 				 */
-				get path(){ return FLfile.uriToPlatformPath(this.uri).replace(/\\/g, '/') },
+				get path(){ return FLfile.uriToPlatformPath(this.uri); },
 
 				/**
 				 * @type {Boolean} true if the file exists; false otherwise.
@@ -184,8 +184,9 @@
 
 		/**
 		 * Folder class
-		 * @param pathOrUri {String} The uri or path to the object
-		 * @param create {Boolean} An optional Boolean flag on whether to create the folder or not, defaults to false
+		 * @extends	{FileSystemObject}
+		 * @param	{String}	pathOrUri	The uri or path to the object
+		 * @param	{Boolean}	create		An optional Boolean flag on whether to create the folder or not, defaults to false
 		 */
 		Folder = function(pathOrUri, create)
 		{
@@ -411,8 +412,9 @@
 
 		/**
 		 * File class
-		 * @param pathOrUri	{String}	The uri or path to the object
-		 * @param contents	{String}	An optional string contents of the file, or true to save a blank file
+		 * @extends	{FileSystemObject}
+		 * @param	{String}	pathOrUri	The uri or path to the object
+		 * @param	{String}	contents	An optional string contents of the file, or true to save a blank file
 		 */
 		File = function(pathOrUri, contents)
 		{
