@@ -24,7 +24,7 @@
 
 		constructor:function(elements)
 		{
-			this.dom = fl.getDocumentDOM();
+			this.dom = $dom;
 			if(!this.dom)
 			{
 				throw new Error('ElementCollection requires that a document be open before instantiation');
@@ -37,11 +37,11 @@
 		 */
 		_deselect:function(state)
 		{
-			this.selection = dom.selection || [];
+			this.selection = $selection || [];
 			if(state !== false)
 			{
-				dom.selectNone();
-				dom.selection = this.elements;
+				this.dom.selectNone();
+				this.dom.selection = this.elements;
 			}
 		},
 
@@ -50,8 +50,8 @@
 		 */
 		_reselect:function()
 		{
-			dom.selectNone();
-			dom.selection = this.selection;
+			this.dom.selectNone();
+			this.dom.selection = this.selection;
 		},
 
 		/**
@@ -155,7 +155,7 @@
 				{
 					// get bounds
 						this._deselect();
-						var bounds = dom.getSelectionRect();
+						var bounds = this.dom.getSelectionRect();
 
 					// loop
 						for(var i = 0; i < this.elements.length; i++)
@@ -187,7 +187,7 @@
 				this._deselect();
 
 			// duplicate
-				//alert('before:' + [this.elements.length, dom.selection.length])
+				//alert('before:' + [this.elements.length, this.dom.selection.length])
 				this.dom.duplicateSelection();
 				var elements	= this.dom.selection;
 
@@ -227,7 +227,7 @@
 				this.elements = add ? this.elements.concat(elements) : elements;
 
 			// reselect
-				//alert('after:' + [this.elements.length, dom.selection.length])
+				//alert('after:' + [this.elements.length, this.dom.selection.length])
 				this.refresh();
 				return this;
 		},
@@ -521,7 +521,7 @@
 					// align
 						for(var i = 0; i < align.length; i++)
 						{
-							dom.align(align[i]);
+							this.dom.align(align[i]);
 						}
 
 					// update selection
@@ -562,7 +562,7 @@
 						{
 							props[i] += ' edge';
 						}
-						dom.distribute(props[i], toStage);
+						this.dom.distribute(props[i], toStage);
 					}
 				}
 
@@ -629,11 +629,11 @@
 							this._deselect();
 
 						// make a selection
-							dom.selectNone();
-							dom.selection = this.elements;
+							this.dom.selectNone();
+							this.dom.selection = this.elements;
 
 						// space
-							dom.space(direction, !!type);
+							this.dom.space(direction, !!type);
 
 						// update selection
 							this._reselect();
@@ -964,7 +964,7 @@
 		resetTransform:function()
 		{
 			this._deselect();
-			dom.resetTransformation();
+			this.dom.resetTransformation();
 			this._reselect();
 			return this;
 		},
@@ -985,7 +985,7 @@
 				{
 					if(element.symbolType)
 					{
-						dom.library.editItem(element.libraryItem.name);
+						this.dom.library.editItem(element.libraryItem.name);
 						callback.apply(scope || that, [element, index].concat(params));
 					}
 				}

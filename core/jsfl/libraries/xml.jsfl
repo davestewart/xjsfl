@@ -55,7 +55,7 @@
 					var matches = callback.match(rxAttr);
 					callback = function(node, i){ return node.attribute(matches[1]) == matches[2]; }
 				}
-				
+
 				// wildcard (*)
 				else if(callback == '*')
 				{
@@ -139,6 +139,16 @@
 			return this;
 	}
 
+	/**
+	 * Remove nodes according to a callback or expression
+	 * @returns					{String}		The XML converted to a string
+	 */
+	/*
+	XML.prototype.function::toString = function()
+	{
+		return this.toXMLString();
+	}
+	*/
 
 	/**
 	 * Filter an existing XMLList with a callback or expression

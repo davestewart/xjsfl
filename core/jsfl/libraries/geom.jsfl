@@ -1,14 +1,14 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████                             ██              
-//  ██                                 ██              
-//  ██     █████ █████ ████████ █████ █████ ████ ██ ██ 
-//  ██ ███ ██ ██ ██ ██ ██ ██ ██ ██ ██  ██   ██   ██ ██ 
-//  ██  ██ █████ ██ ██ ██ ██ ██ █████  ██   ██   ██ ██ 
-//  ██  ██ ██    ██ ██ ██ ██ ██ ██     ██   ██   ██ ██ 
-//  ██████ █████ █████ ██ ██ ██ █████  ████ ██   █████ 
-//                                                  ██ 
-//                                               █████ 
+//  ██████                             ██
+//  ██                                 ██
+//  ██     █████ █████ ████████ █████ █████ ████ ██ ██
+//  ██ ███ ██ ██ ██ ██ ██ ██ ██ ██ ██  ██   ██   ██ ██
+//  ██  ██ █████ ██ ██ ██ ██ ██ █████  ██   ██   ██ ██
+//  ██  ██ ██    ██ ██ ██ ██ ██ ██     ██   ██   ██ ██
+//  ██████ █████ █████ ██ ██ ██ █████  ████ ██   █████
+//                                                  ██
+//                                               █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Geometry
@@ -25,7 +25,7 @@
 		{
 			// variables
 				var args = arguments;
-			
+
 			// switch
 				switch(arguments.length)
 				{
@@ -33,10 +33,10 @@
 						case 0:
 							this.left		= 0;
 							this.top		= 0;
-							this.right		= dom.width;
-							this.bottom		= dom.height;
+							this.right		= $dom.width;
+							this.bottom		= $dom.height;
 						break;
-					
+
 					// 1 argument - should be an element or a radius
 						case 1:
 
@@ -48,22 +48,22 @@
 								this.right		= args[0].left + args[0].width;
 								this.bottom		= args[0].top + args[0].height;
 							}
-							
+
 						// Number (radius)
 							else if(typeof args[0] == 'number')
 							{
-								var value		= 
+								var value		=
 								this.left		= -args[0] / 2;
 								this.top		= -args[0] / 2;
 								this.right		= args[0] / 2;
 								this.bottom		= args[0] / 2;
 							}
-							
+
 						// Array - selection or list of elements
 						//TODO Add
-							
+
 						break;
-					
+
 					// width, height
 						case 2:
 							this.left		= 0;
@@ -71,7 +71,7 @@
 							this.right		= args[0];
 							this.bottom		= args[1];
 						break;
-					
+
 					// left, top, width, height
 						case 4:
 							this.left		= args[0];
@@ -80,12 +80,11 @@
 							this.bottom		= args[1] + args[3];
 						break;
 				}
-				
+
 			this.toString = function()
 			{
 				return '[object Bounds top="' +this.top+ '" right="' +this.right+ '" bottom="' +this.bottom+ '" left="' +this.left+ '"]';
 			}
 		}
-		
+
 		xjsfl.classes.register('Bounds', Bounds);
-		

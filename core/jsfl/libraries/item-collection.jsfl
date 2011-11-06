@@ -48,7 +48,7 @@
 
 		constructor:function(elements)
 		{
-			var dom = fl.getDocumentDOM();
+			var dom = $dom;
 			if(dom)
 			{
 				this.library = dom.library;

@@ -1504,7 +1504,7 @@
 					// --------------------------------------------------------------------------------
 					// force a document open if none is
 
-						if( ! dom )
+						if( ! $dom )
 						{
 							fl.createDocument();
 						}

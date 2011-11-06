@@ -28,7 +28,7 @@
 		// setup
 
 			// reference to library
-				var dom	= xjsfl.get.dom()
+				var dom	= $dom;
 				if( ! dom)
 				{
 					return null;
