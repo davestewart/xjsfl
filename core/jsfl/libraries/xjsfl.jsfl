@@ -1415,8 +1415,9 @@
 		 * @see								xjsfl.file.makePath
 		 */
 		makeURI:function(str, context)
-			{
+		{
 			// if str is already a URI, no need to convert so return immediately
+				str = String(str);
 				if(str.indexOf('file:') == 0)
 				{
 					return str;
@@ -2242,7 +2243,7 @@
 				//Output.list(this.dialogs, null, 'Dialog opened')
 
 			// show
-				var settings = dom.xmlPanel(uri);
+				var settings = $dom.xmlPanel(uri);
 
 			// unregister
 				this.dialogs.pop();
