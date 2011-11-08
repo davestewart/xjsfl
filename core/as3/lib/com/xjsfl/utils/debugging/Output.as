@@ -2,7 +2,7 @@ package com.xjsfl.utils.debugging
 {
 
 	import flash.utils.getTimer;
-	import com.xjsfl.jsfl.JSFL;
+	import com.xjsfl.jsfl.io.JSFL;
 	import com.xjsfl.utils.debugging.Debug;
 	import com.xjsfl.utils.StringUtils;
 
