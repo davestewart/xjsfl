@@ -80,4 +80,5 @@
 			return '[object Logger path="' +this.file.path+ '"]';
 		}
 	}
-	
+
+	xjsfl.classes.register('Logger', Logger);
