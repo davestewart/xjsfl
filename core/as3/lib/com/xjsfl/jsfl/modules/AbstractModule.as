@@ -171,7 +171,8 @@
 			 */
 			public function call(method:String, ...args:*):*
 			{
-				return io.call(method, args);
+				var params:Array = [method].concat(args.slice(0, args.length));
+				return io.call.apply(this, params);
 			}
 			
 			public function grab(property:String):*

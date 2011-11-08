@@ -78,7 +78,8 @@ package com.xjsfl.jsfl.io
 				// make the call
 					if (JSFL.isPanel)
 					{
-						var value:String = MMExecute('try{JSFLInterface.serialize(' + jsfl + ');}catch(err){xjsfl.debug.error(err);}');
+						var call	:String	= 'try{JSFLInterface.serialize(' + jsfl + ');}catch(err){xjsfl.debug.error(err);}';
+						var value	:String	= MMExecute(call);
 						return JSFLInterface.deserialize(value);
 					}
 					else
