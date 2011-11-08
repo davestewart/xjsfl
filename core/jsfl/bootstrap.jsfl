@@ -78,20 +78,20 @@
 							// $timeline
 								if(typeof scope.$timeline === 'undefined')
 								{
-									scope.__defineGetter__( '$timeline', function(){ return fl.getDocumentDOM().getTimeline(); } );
+									scope.__defineGetter__( '$timeline', function(){ var dom = $dom; return dom ? dom.getTimeline() : null; } );
 								}
 
 							// $library
 								if(typeof scope.$library === 'undefined')
 								{
-									scope.__defineGetter__( '$library', function(){ return fl.getDocumentDOM().library; } );
+									scope.__defineGetter__( '$library', function(){ var dom = $dom; return dom ? dom.library : null; } );
 								}
 
 							// $selection
 								if(typeof scope.$selection === 'undefined')
 								{
 									//TODO Check why this doesn't work in all files
-									scope.__defineGetter__( '$selection', function(){ return fl.getDocumentDOM().selection; } );
+									scope.__defineGetter__( '$selection', function(){ var dom = $dom; return dom ? dom.selection : null; } );
 								}
 
 							// $dir getter (can't use until after main xjsfl class has loaded!)
