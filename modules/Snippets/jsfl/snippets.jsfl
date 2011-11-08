@@ -1,7 +1,5 @@
-﻿/** @type {Module} */
-var Snippets =
+﻿var Snippets =
 {
-
 	// ------------------------------------------------------------------------------------------------
 	// constructor,
 
@@ -301,14 +299,7 @@ var Snippets =
 
 		runFile:function(uri)
 		{
-			try
-			{
-				new File(uri).run();
-			}
-			catch(err)
-			{
-				xjsfl.debug.error(err);
-			}
+			new File(uri).run();
 		},
 
 		openFile:function(uri)
@@ -414,4 +405,7 @@ var Snippets =
 // ------------------------------------------------------------------------------------------------
 // create module
 
-	Snippets = xjsfl.modules.create('Snippets', Snippets);
+/**
+ * @type {Module}
+ */
+Snippets = xjsfl.modules.create('Snippets', Snippets);
