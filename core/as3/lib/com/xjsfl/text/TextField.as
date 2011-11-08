@@ -6,6 +6,10 @@ package com.xjsfl.text
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	
+	import flash.events.FocusEvent;
+	import flash.events.MouseEvent;
+
+	
 	import com.xjsfl.text.fonts.ReferenceSans;
 
 	/**
@@ -24,7 +28,6 @@ package com.xjsfl.text
 				
 			
 			// properties
-				
 			
 			// variables
 				
@@ -40,31 +43,6 @@ package com.xjsfl.text
 			
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Configuration
-		
-			
-		
-		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Public methods
-		
-			
-
-		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Accessors
-
-			override public function get width():Number { return super.width; }
-			override public function set width(value:Number):void 
-			{
-				super.width		= value;
-				autoSize		= value < 0 ? TextFieldAutoSize.LEFT : TextFieldAutoSize.NONE;
-			}
-
-		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Handlers
-		
-			
-
-		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Protected methods
 		
 			protected function initialize(size:Number, color:Number):void 
 			{
@@ -84,6 +62,28 @@ package com.xjsfl.text
 					setTextFormat(fmt);
 			}
 			
+		// ---------------------------------------------------------------------------------------------------------------------
+		// { region: Public methods
+		
+
+		// ---------------------------------------------------------------------------------------------------------------------
+		// { region: Accessors
+
+			override public function get width():Number { return super.width; }
+			override public function set width(value:Number):void 
+			{
+				super.width		= value;
+				autoSize		= value < 0 ? TextFieldAutoSize.LEFT : TextFieldAutoSize.NONE;
+			}
+			
+		// ---------------------------------------------------------------------------------------------------------------------
+		// { region: Handlers
+		
+			
+
+		// ---------------------------------------------------------------------------------------------------------------------
+		// { region: Protected methods
+		
 
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Utilities
