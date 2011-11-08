@@ -4,7 +4,7 @@ package
 	import flash.display.StageAlign;
 	import flash.events.Event;
 	
-	import com.xjsfl.jsfl.JSFL;
+	import com.xjsfl.jsfl.io.JSFL;
 	import com.xjsfl.jsfl.modules.AbstractModule;
 	
 	import jsfl.SnippetsModule;

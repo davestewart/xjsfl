@@ -301,7 +301,14 @@ var Snippets =
 
 		runFile:function(uri)
 		{
-			new File(uri).run();
+			try
+			{
+				new File(uri).run();
+			}
+			catch(err)
+			{
+				xjsfl.debug.error(err);
+			}
 		},
 
 		openFile:function(uri)

@@ -3,7 +3,7 @@
 	import flash.events.Event;
 	import flash.external.ExternalInterface;
 	
-	import com.xjsfl.jsfl.JSFL;
+	import com.xjsfl.jsfl.io.JSFL;
 	import com.xjsfl.jsfl.modules.AbstractModule;
 	import com.xjsfl.jsfl.modules.Loader;
 	
