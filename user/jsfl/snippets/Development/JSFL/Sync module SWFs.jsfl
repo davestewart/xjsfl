@@ -40,7 +40,7 @@
 			{
 				try
 				{
-					trace('Copying: "' +src.path+ '"\nOver: "' +trg.path+ '"');
+					trace('Copying: "' +src.path+ '"\nOver:    "' +trg.path+ '"');
 					src.readOnly = false;
 					trg.readOnly = false;
 					src.copy(trg.uri, true);

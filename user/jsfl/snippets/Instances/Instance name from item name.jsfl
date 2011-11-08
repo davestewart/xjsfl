@@ -3,9 +3,7 @@
  *
  */
 
-var elements = dom.selection;
-
-for each(var element in elements)
+for each(var element in $selection)
 {
 	var item = element.libraryItem;
 	if(item)
@@ -13,5 +11,5 @@ for each(var element in elements)
 		element.name = item.name.split('/').pop().replace(/\W/g, '_');
 	}
 }
-dom.livePreview = true;
-dom.selction = elements;
+$dom.selction = elements;
+$dom.livePreview = true;

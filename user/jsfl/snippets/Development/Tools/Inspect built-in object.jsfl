@@ -5,14 +5,14 @@
 (function()
 {
 	// force a document open
-		if(! dom)
+		if(! $dom)
 		{
 			fl.createDocument();
 		}
-		
+
 	// values
 		var context = Context.create();
-		var scopes = 
+		var scopes =
 		{
 			xJSFL:		xjsfl,
 			Flash:		fl,
@@ -22,12 +22,12 @@
 			Timeline:	context.timeline,
 			Layer:		context.layer,
 			Frame:		context.frame,
-			Selection:	dom.selection,
+			Selection:	$selection,
 			Events:		xjsfl.events
 		};
-	
+
 	// setup controls
-		var controls = 
+		var controls =
 		[
 			'title:Show variables...',
 			'radios:Scope=[' +xjsfl.utils.getKeys(scopes).join(',')+ ']',
@@ -35,12 +35,12 @@
 			'checkbox:Clear output panel=true'
 		]
 		.join(',');
-		
+
 	// create ui
 		var xul = XUL
 			.factory(controls)
 			.show();
-			
+
 	// process input
 		if(xul.values.depth)
 		{
@@ -52,3 +52,4 @@
 		}
 
 })()
+

@@ -1,13 +1,14 @@
-﻿/**
+﻿xjsfl.init(this);
+/**
  * Randomize width, height and rotation of selected elements on the stage
  * @icon {iconsURI}Objects/weather/weather_breeze.png
  */
 (function(){
 
-	if(xjsfl.get.selection())
+	if($selection)
 	{
-		var collection = new ElementCollection(dom.selection);
-		
+		var collection = new ElementCollection($selection);
+
 		function randomize(event)
 		{
 			collection
@@ -15,7 +16,7 @@
 				.randomize(event.xul.values)
 				.refresh();
 		}
-		
+
 		XUL
 			.factory('x=20%,y=50%,width=50%,height=50%,rotation=360,button:Apply,title:Randomize elements')
 			.addEvent('apply', 'command', randomize)

@@ -13,16 +13,16 @@ function makeAnimation()
 	{
 		// create documnet
 			fl.createDocument();
-			
+
 		// variables
-			var dom		= fl.getDocumentDOM();
-			var tl		= dom.getTimeline();
-			var lib		= dom.library;
+			var dom		= $dom;
+			var tl		= $timeline;
+			var lib		= $library;
 			var files	= FLfile.listFolder(folder, 'files');
 			
 		// ensure only png files
 			files		= files.filter(function(file){ return /\.png$/.test(file); });
-			
+
 		// import loop
 			for(var i = 0; i < files.length; i++)
 			{
@@ -35,7 +35,7 @@ function makeAnimation()
 					tl.insertBlankKeyframe();
 				}
 			}
-			
+
 		// adjust document size
 			dom.selectAll();
 			var size	= dom.getSelectionRect()
