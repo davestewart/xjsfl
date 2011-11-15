@@ -21,7 +21,7 @@
 		}
 		uriOrPath = uriOrPath.replace(/(\.txt)?$/, '.txt');
 		this.useTimestamp = useTimestamp;
-		this.file = new File(uriOrPath, 'Log created on: ' + new Date().toUTCString() + '\n\n');
+		this.file = new File(uriOrPath, 'Log created on: ' + new Date().toUTCString() + this.newLine + this.newLine);
 	}
 
 	Logger.prototype =
@@ -29,6 +29,8 @@
 		file:null,
 
 		useTimestamp:false,
+
+		newLine:xjsfl.settings.newLine,
 
 		get contents()
 		{
@@ -46,7 +48,7 @@
 			{
 				value = new Date().toUTCString() + '\t' + value;
 			}
-			this.file.write(value + '\n', true);
+			this.file.write(value + this.newLine, true);
 			this.file.save();
 		},
 
