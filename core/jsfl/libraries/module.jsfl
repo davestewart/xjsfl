@@ -29,7 +29,7 @@
 				}
 
 			// load manifest
-				this.manifest	= xjsfl.modules.manifests[namespace];
+				this.manifest	= xjsfl.modules.getManifest(namespace);
 				if( ! this.manifest)
 				{
 					throw new Error('Module(): There is no manifest file for the namespace "' +namespace+ '"');
@@ -52,6 +52,12 @@
 				if(panel)
 				{
 					this.panel = panel;
+				}
+
+			// window
+				this.getWindow = function()
+				{
+					return window;
 				}
 
 			// call a constructor if provided
@@ -88,7 +94,7 @@
 				uri:		'',
 
 				/**
-				 * @type {swfPanel} A reference to the panel, if it exists
+				 * @type {SWFPanel} A reference to the panel, if it exists
 				 */
 				panel:		null,
 
@@ -101,9 +107,8 @@
 				get path(){ return xjsfl.file.makePath(this.uri, true); },
 
 				/**
-				 *
-				 * @param
-				 * @returns
+				 * Gets the Window object of the module
+				 * @returns {Window}
 				 */
 				getWindow:function()
 				{
