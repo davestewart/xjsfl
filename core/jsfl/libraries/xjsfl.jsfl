@@ -2010,147 +2010,41 @@
 
 
 	/**
-	 * A namespace in which to store module code to prevent pollution of global scope
-	 * as well as a couple of methods to add and load module code
+	 * Dummy properties for Komodo code inteligence
 	 */
 	xjsfl.modules =
 	{
-		/**
-		 * A URI store for found modules
-		 */
-		manifests:{},
-
 		/**
 		 * Gets the manifest for a particular module namespace
 		 * @param	{String}	namespace	The namespace of the manifest to get
 		 * @returns	{XML}					The manifest XML
 		 */
-		getManifest:function(namespace)
-		{
-			var manifest = this.manifests[namespace];
-			if(manifest)
-			{
-				return manifest;
-			}
-			throw new Error('xjsfl.modules.getManifest(): there is no manifest registered under the namespace "' +namespace+ '"');
-		},
+		getManifest:function(namespace){ },
+
 
 		/**
-		 * Finds all module bootstraps in the xJSFL/modules (or supplied) folder
+		 * Gets the Module instance for a particular module namespace
+		 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
+		 * @returns	{Module}				An xJSFL Module instance
+		 */
+		getModule:function(namespace){ },
+
+
+		/**
+		 * Finds and stores information about all module manifests in the xJSFL/modules (or supplied) folder.
+		 * Called in the main bootstrap, and can be called manually in the user bootstrap to add other folders.
 		 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
 		 * @returns	{xjsfl}				The main xJSFL object
 		 */
-		find:function(uri)
-		{
-			// callback function to process files and folders
-				function processFile(element)
-				{
-					if(element instanceof Folder)
-					{
-						if(/assets|config|docs|temp|ui/.test(element.name))
-						{
-							return false;
-						}
-					}
-					else if(element.name === 'manifest.xml')
-					{
-						xjsfl.modules.init(element.parent.uri);
-                        return false;
-					}
-				};
+		find:function(uri){ },
 
-			// find and load modules automatically
-				Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
-
-			// return
-				return this;
-		},
 
 		/**
-		 * Initialize a module during the bootstrap - find its panels and copy them to the Flash/WindowSWF folder
-		 *
-		 * @param	path	{String}	The module root path, relative to from xJSFL/modules/ i.e. "Snippets", or an absolute URI
+		 * Runs the module bootstrap to load code locally into the host panel
+		 * @param	{String}	namespace	The namespace of the module to initialize
 		 */
-		init:function(path)
-		{
-			// ensure path has a trailing slash
-				path = path.replace(/\/*$/, '/');
+		load:function(namespace){ },
 
-			// if path is not a URI, it will probably be a path fragment, so default to the modules folder
-				if( ! xjsfl.file.isURI(path))
-				{
-					var uri			= xjsfl.settings.folders.modules + path;
-				}
-				else
-				{
-					var uri			= path;
-				}
-
-            // load in the manifest and update with the actual URI
-                var manifest		= xjsfl.file.load(uri + 'manifest.xml');
-				if( ! manifest)
-				{
-					return this;
-				}
-
-			// store manifest
-				manifest.jsfl.uri	= uri;
-				var namespace		= String(manifest.jsfl.namespace);
-				xjsfl.modules.manifests[namespace]	= manifest;
-
-			// debug
-				xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
-
-            // copy any panels to the WindowSWF folder
-				var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + 'ui/'));
-				for each(var src in folder.files)
-				{
-					if(src.extension === 'swf')
-					{
-						// grab any existing target panels
-							var trg = new File(fl.configURI + 'WindowSWF/' + src.name);
-
-						// check exists and compare dates
-							if(! trg.exists || src.modified > trg.modified)
-							{
-								xjsfl.output.trace('copying "' + xjsfl.file.makePath(src.uri, true) + '" to "Flash/Configuration/WindowSWF/"');
-								src.copy(fl.configURI + 'WindowSWF/', true);
-							}
-
-						// no need to copy if up to date
-							else
-							{
-								xjsfl.output.trace('panel "' + src.name.replace('.swf', '') + '" is already up to date');
-							}
-					}
-				}
-
-			// preload
-				if(String(manifest.jsfl.preload) == 'true')
-				{
-					this.load(manifest.jsfl.namespace);
-				}
-
-			// return
-				return this;
-		},
-
-        /**
-         * Runs the module bootstrap to load code locally into the calling panel
-         * @param	{String}	namespace	The namespace of the module to initialize
-         */
-        load:function(namespace)
-        {
-			var manifest = this.getManifest(namespace);
-			if(manifest)
-			{
-				xjsfl.file.load(String(manifest.jsfl.uri) + 'jsfl/bootstrap.jsfl');
-			}
-			else
-			{
-				throw new Error('xjsfl.modules.load(): there is no module registered under the namespace "' +namespace+ '"');
-			}
-        },
 
 		/**
 		 * Factory method to create an xJSFL module instance
@@ -2158,37 +2052,251 @@
 		 * @param	{Object}	properties	The properties of the module
 		 * @returns	{Module}				An xJSFL Module instance
 		 */
-		create:function(namespace, properties)
-		{
-			// if manifest is not yet loaded (perhaps in development) attempt to initialize
-				if( ! this.manifests[namespace])
-				{
-					this.init(namespace);
-				}
-
-			// create module
-				var manifest = this.getManifest(namespace);
-				try
-				{
-					var module = new xjsfl.classes.Module(namespace, properties);
-					/*
-					if(module)
-					{
-						this.modules[namespace] = module;
-					}
-					*/
-					return module;
-				}
-				catch(err)
-				{
-					xjsfl.debug.error(err);
-				}
-		}
-
-
+		create:function(namespace, properties){ }
 	}
 
-	// ------------------------------------------------------------------------------------------------------------------------
+	/**
+	 * A namespace in which to store module code to prevent pollution of global scope
+	 * as well as a couple of methods to add and load module code
+	 */
+	xjsfl.modules =
+	(
+		/**
+		 * The module loading process goes like this...
+		 *
+		 * 1 - 	All modules reside in their own folder, with a manifest.xml in the root, and a
+		 * 		bootstrap.jsfl in jsfl. The manifest stores all information about the module, and
+		 * 		the bootstrap contains optional JSFL code that the module needs to run on startup.
+		 *
+		 * 2 - 	During the main xJSFL bootstrap, xjsfl.modules.find() is called, to search the main
+		 *		modules folder for modules' manifest.xml files. Note that find() can also be called
+		 *		manually from the user bootstrap to initialize modules external to the xJSFL modules
+		 *		folder.
+		 *
+		 * 3 -	For any modules that are found, xjsfl.modules.init(path) is called and the module's
+		 *		manifest information is cached, and any panel SWFs are copied to the WindowSWF folder.
+		 *		Note that no modules instances are instantiated yet.
+		 *
+		 * 4 -	When any panels are opened, xjsfl.modules.load(namespace) is called via MMExecute()
+		 * 		from the AbtractModule.initialize() function. This loads the module's bootstrap.jsfl
+		 *		file, which should in turn load the module's main JSFL file which contains the module's
+		 *		JSFL properties and method. This file then calls...
+		 *
+		 * 5 -	...xjsfl.modules.create(), which creates and registers the module internally, so it
+		 *		can be retrieved if necessary via xjsfl.modules.getModule(namespace)
+		 *
+		 */
+
+		function()
+		{
+			/**
+			 * A private reference to all found manifests
+			 */
+			var manifests = {};
+
+			/**
+			 * A private reference to all loaded modules
+			 */
+			var modules = {};
+
+			/**
+			 * The property object that will be returned as xjsfl.modules
+			 */
+			var obj =
+			{
+				/**
+				 * Gets the manifest for a particular module namespace
+				 * @param	{String}	namespace	The namespace of the manifest to get
+				 * @returns	{XML}					The manifest XML
+				 */
+				getManifest:function(namespace)
+				{
+					var manifest = manifests[namespace];
+					if(manifest)
+					{
+						return manifest;
+					}
+					throw new Error('xjsfl.modules.getManifest(): there is no manifest registered under the namespace "' +namespace+ '"');
+				},
+
+				/**
+				 * Gets the Module instance for a particular module namespace
+				 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
+				 * @returns	{Module}				An xJSFL Module instance
+				 */
+				getModule:function(namespace)
+				{
+					var module = modules[namespace];
+					if(module)
+					{
+						return module;
+					}
+					throw new Error('xjsfl.modules.getModule(): there is no module registered under the namespace "' +namespace+ '"');
+				},
+
+				/**
+				 * Finds and stores information about all module manifests in the xJSFL/modules (or supplied) folder.
+				 * Called in the main bootstrap, and can be called manually in the user bootstrap to add other folders.
+				 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
+				 * @returns	{xjsfl}				The main xJSFL object
+				 */
+				find:function(uri)
+				{
+					// callback function to process files and folders
+						function processFile(element)
+						{
+							if(element instanceof Folder)
+							{
+								// skip folders where manifests shouldn't be
+								if(/assets|config|docs|temp|ui/.test(element.name))
+								{
+									return false;
+								}
+							}
+							// if a manifest is found, initialize it
+							else if(element.name === 'manifest.xml')
+							{
+								xjsfl.modules.init(element.parent.uri);
+								return false;
+							}
+						};
+
+					// find and load modules automatically
+						Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
+
+					// return
+						return this;
+				},
+
+				//TODO Does init() need to be public? Consider making it private
+
+				/**
+				 * Initializes, but does not instantiate a module, by caching its manifest files, and copying
+				 * any panel resources to the Flash/WindowSWF folder, and commands to the Commands folder
+				 *
+				 * @param	path	{String}	The module root path, relative to from xJSFL/modules/ i.e. "Snippets", or an absolute URI
+				 */
+				init:function(path)
+				{
+					// ensure path has a trailing slash
+						path = path.replace(/\/*$/, '/');
+
+					// if path is not a URI, it will probably be a path fragment, so default to the modules folder
+						if( ! xjsfl.file.isURI(path))
+						{
+							var uri			= xjsfl.settings.folders.modules + path;
+						}
+						else
+						{
+							var uri			= path;
+						}
+
+					// attempt to load the module's manifest
+						var manifest		= xjsfl.file.load(uri + 'manifest.xml');
+						if( ! manifest)
+						{
+							return this;
+						}
+
+					// update with the actual URI & store
+						manifest.jsfl.uri		= uri;
+						var namespace			= String(manifest.jsfl.namespace);
+						manifests[namespace]	= manifest;
+
+					// debug
+						xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
+
+					// copy any panels to the WindowSWF folder
+						var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + 'ui/'));
+						for each(var src in folder.files)
+						{
+							if(src.extension === 'swf')
+							{
+								// grab any existing target panels
+									var trg = new File(fl.configURI + 'WindowSWF/' + src.name);
+
+								// check exists and compare dates
+									if(! trg.exists || src.modified > trg.modified)
+									{
+										xjsfl.output.trace('copying "' + xjsfl.file.makePath(src.uri, true) + '" to "Flash/Configuration/WindowSWF/"');
+										src.copy(fl.configURI + 'WindowSWF/', true);
+									}
+
+								// no need to copy if up to date
+									else
+									{
+										xjsfl.output.trace('panel "' + src.name.replace('.swf', '') + '" is already up to date');
+									}
+							}
+						}
+
+					//TODO Add code to copy commands here as well
+
+					// preload
+						if(String(manifest.jsfl.preload) == 'true')
+						{
+							this.load(manifest.jsfl.namespace);
+						}
+
+					// return
+						return this;
+				},
+
+				/**
+				 * Runs the module bootstrap to load code locally into the host panel
+				 * @param	{String}	namespace	The namespace of the module to initialize
+				 */
+				load:function(namespace)
+				{
+					var manifest = manifests[namespace];
+					if(manifest)
+					{
+						xjsfl.file.load(String(manifest.jsfl.uri) + 'jsfl/bootstrap.jsfl');
+					}
+					else
+					{
+						throw new Error('xjsfl.modules.load(): there is no module registered under the namespace "' +namespace+ '"');
+					}
+				},
+
+				/**
+				 * Factory method to create an xJSFL module instance
+				 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
+				 * @param	{Object}	properties	The properties of the module
+				 * @returns	{Module}				An xJSFL Module instance
+				 */
+				create:function(namespace, properties)
+				{
+					// if manifest is not yet loaded (perhaps in development) attempt to initialize the module
+						if( ! manifests[namespace])
+						{
+							this.init(namespace);
+						}
+
+					// create module
+						try
+						{
+							var module = new xjsfl.classes.Module(namespace, properties);
+							if(module)
+							{
+								modules[namespace] = module;
+							}
+							return module;
+						}
+						catch(err)
+						{
+							xjsfl.debug.error(err);
+						}
+				}
+			}
+
+			return obj;
+		}
+	)();
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██  ██ ██
 //  ██  ██ ██
