@@ -17,7 +17,7 @@
 	// Bounds object
 
 		/**
-		 * Bounds object. Args: 0=Document size, 1=Element, 1=radius, 2=width/weight, 4=x,y,width,height
+		 * Bounds object. Args: 0=Document size, 1=Element, 1=radius, 1=Array, 2=width,height, 4=x,y,width,height
 		 * Useful for quickly creating objects on the stage
 		 * @returns		{Object}
 		 */
@@ -27,9 +27,9 @@
 				var args = arguments;
 
 			// switch
-				switch(arguments.length)
+				switch(args.length)
 				{
-					// 0 arguments, use document ize
+					// 0 arguments, use document size
 						case 0:
 							this.left		= 0;
 							this.top		= 0;
@@ -37,11 +37,28 @@
 							this.bottom		= $dom.height;
 						break;
 
-					// 1 argument - should be an element or a radius
+					// 1 argument - should be a document, element, radius, or an Array of Elements (such as a selection)
 						case 1:
 
+						// Bounds
+							if(args[0] instanceof Bounds)
+							{
+								var bounds		= new Bounds();
+								bounds.top		= this.top;
+								bounds.left		= this.left;
+								bounds.right	= this.right;
+								bounds.bottom	= this.bottom;
+								return bounds;
+							}
+
+						// Document
+							else if(args[0] instanceof Document)
+							{
+								return new Bounds();
+							}
+
 						// Element (element bounds)
-							if(args[0] instanceof Element || args[0] instanceof SymbolItem)
+							else if(args[0] instanceof Element || args[0] instanceof SymbolItem)
 							{
 								this.left		= args[0].left;
 								this.top		= args[0].top;
@@ -52,7 +69,6 @@
 						// Number (radius)
 							else if(typeof args[0] == 'number')
 							{
-								var value		=
 								this.left		= -args[0] / 2;
 								this.top		= -args[0] / 2;
 								this.right		= args[0] / 2;
@@ -60,7 +76,28 @@
 							}
 
 						// Array - selection or list of elements
-						//TODO Add
+							else if(args[0] instanceof Array)
+							{
+								var top, left, right, bottom, element = args[0][0]
+								this.top		= element.top;
+								this.left		= element.left;
+								this.right		= element.left + element.width;
+								this.bottom		= element.top + element.height;
+
+								for(var i = 1; i < args[0].length; i++)
+								{
+									element		= args[0][i]
+									top			= element.top;
+									left		= element.left;
+									right		= element.left + element.width;
+									bottom		= element.top + element.height;
+
+									if(top < this.top)			this.top	= top;
+									if(left < this.left)		this.left	= left;
+									if(right > this.right)		this.right	= right;
+									if(bottom > this.bottom)	this.bottom	= bottom;
+								}
+							}
 
 						break;
 
@@ -84,6 +121,11 @@
 			this.toString = function()
 			{
 				return '[object Bounds top="' +this.top+ '" right="' +this.right+ '" bottom="' +this.bottom+ '" left="' +this.left+ '"]';
+			}
+
+			this.clone = function()
+			{
+				return new Bounds(this);
 			}
 		}
 
