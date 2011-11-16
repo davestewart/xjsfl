@@ -20,7 +20,7 @@
 		 * @param 	namespace	{String}	The namespace of the module in the xjsfl.modules object, i.e. "keyframer"
 		 * @param 	properties	{object}	The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
 		 */
-		Module = function(namespace, properties)
+		Module = function(namespace, properties, window)
 		{
 			// add class properties
 				for(var prop in properties)
@@ -55,6 +55,10 @@
 				}
 
 			// window
+				/**
+				 * Gets the Window object of the module
+				 * @returns {Window}
+				 */
 				this.getWindow = function()
 				{
 					return window;
@@ -106,14 +110,6 @@
 				 */
 				get path(){ return xjsfl.file.makePath(this.uri, true); },
 
-				/**
-				 * Gets the Window object of the module
-				 * @returns {Window}
-				 */
-				getWindow:function()
-				{
-					return window;
-				},
 
 			// ----------------------------------------------------------------------------------------
 			// methods

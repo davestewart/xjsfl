@@ -408,4 +408,4 @@
 /**
  * @type {Module}
  */
-Snippets = xjsfl.modules.create('Snippets', Snippets);
+Snippets = xjsfl.modules.create('Snippets', Snippets, this);

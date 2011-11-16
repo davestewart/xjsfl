@@ -2265,7 +2265,7 @@
 				 * @param	{Object}	properties	The properties of the module
 				 * @returns	{Module}				An xJSFL Module instance
 				 */
-				create:function(namespace, properties)
+				create:function(namespace, properties, window)
 				{
 					// if manifest is not yet loaded (perhaps in development) attempt to initialize the module
 						if( ! manifests[namespace])
@@ -2276,7 +2276,7 @@
 					// create module
 						try
 						{
-							var module = new xjsfl.classes.Module(namespace, properties);
+							var module = new xjsfl.classes.Module(namespace, properties, window);
 							if(module)
 							{
 								modules[namespace] = module;

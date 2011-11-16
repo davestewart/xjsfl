@@ -44,4 +44,4 @@ var Sample =
 // ------------------------------------------------------------------------------------------------
 // create module
 
-	Sample = xjsfl.modules.create('Sample', Sample);
+	Sample = xjsfl.modules.create('Sample', Sample, this);
