@@ -19,9 +19,9 @@
 		{
 			throw new ReferenceError('Logger Error: URI or path was not supplied');
 		}
-		uriOrPath = uriOrPath.replace(/(\.txt)?$/, '.txt');
-		this.useTimestamp = useTimestamp;
-		this.file = new File(uriOrPath, 'Log created on: ' + new Date().toUTCString() + this.newLine + this.newLine);
+		uriOrPath			= uriOrPath.replace(/(\.txt)?$/, '.txt');
+		this.useTimestamp	= useTimestamp;
+		this.file			= new File(uriOrPath, 'Log created on: ' + new Date().toUTCString() + this.newLine + this.newLine);
 	}
 
 	Logger.prototype =
