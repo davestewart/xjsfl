@@ -117,14 +117,14 @@
 		/**
 		 * Output object in hierarchical format (note that $ arguments are optional, and can be passed in any order)
 		 * @param obj			{Object}		Any Object or value
-		 * @param $maxDepth		{Number}		An optional max depth to recurse to (defaults to 3)
+		 * @param $depth		{Number}		An optional max depth to recurse to (defaults to 3)
 		 * @param $label		{String}		An optional String label (defaults to "Inspect")
 		 * @param $debug		{Boolean}		An optional boolean to indicate output type: true=debug, false=return, undefined=output
 		 * @param $filters		{Object}		An optional filters object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
 		 * @param $callback		{Function}		An optional output function in case you want to do any custom processing of the data
 		 * @returns				{String}		A String hierarchy of the object's properties
 		 */
-		inspect:function(obj, $maxDepth, $label, $debug, $filters, $callback)
+		inspect:function(obj, $depth, $label, $debug, $filters, $callback)
 		{
 			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
 			//TODO Maybe just have an include object, which could be like {underscores:false, functions:false,strings:false}
@@ -163,7 +163,7 @@
 					function processLeaf(value, key)
 					{
 						// quit if max depth reached
-							if (indent.length > maxDepth)
+							if (indent.length > depth)
 							{
 								return false;
 							}
@@ -450,7 +450,7 @@
 
 				// defaults
 					var label		= 'Inspect';
-					var maxDepth	= 4;
+					var depth		= 4;
 					var print		= null;
 					var debug		= false;
 					var print		= true;
@@ -458,10 +458,10 @@
 					var filters		= {};
 
 				// parameter shifting
-					for each(var arg in [$maxDepth, $label, $debug, $filters, $callback])
+					for each(var arg in [$depth, $label, $debug, $filters, $callback])
 					{
 						if(typeof arg === 'number')
-							maxDepth = arg;
+							depth = arg;
 						else if(typeof arg === 'string')
 							label = arg;
 						else if(typeof arg === 'boolean')
@@ -522,7 +522,7 @@
 
 				// get final stats
 					stats.time			= (((new Date) - stats.time) / 1000).toFixed(1) + ' seconds';
-					stats				= ' (depth:' +maxDepth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')';
+					stats				= ' (depth:' +depth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')';
 
 				// output
 					if(debug === true)
