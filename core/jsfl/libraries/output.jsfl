@@ -115,22 +115,22 @@
 		},
 
 		/**
-		 * Output object in hierarchical format
-		 * @param obj		{Object}		Any Object or value
-		 * @param arg		{String}		An optional String label (defaults to "Inspect")
-		 * @param arg		{Number}		An optional max depth to recurse to (defaults to 3)
-		 * @param arg		{Boolean}		An optional boolean to indicate output type: true=debug, false=return, undefined=output
-		 * @param arg		{Object}		An optional filter object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
-		 * @param arg		{Function}		An optional output function in case you want to do any custom processing of the data
-		 * @returns			{String}		A String hierarchy of the object's properties
+		 * Output object in hierarchical format (note that $ arguments are optional, and can be passed in any order)
+		 * @param obj			{Object}		Any Object or value
+		 * @param $maxDepth		{Number}		An optional max depth to recurse to (defaults to 3)
+		 * @param $label		{String}		An optional String label (defaults to "Inspect")
+		 * @param $debug		{Boolean}		An optional boolean to indicate output type: true=debug, false=return, undefined=output
+		 * @param $filters		{Object}		An optional filters object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
+		 * @param $callback		{Function}		An optional output function in case you want to do any custom processing of the data
+		 * @returns				{String}		A String hierarchy of the object's properties
 		 */
-		inspect:function(obj, arg2, arg3, arg4, arg5)
+		inspect:function(obj, $maxDepth, $label, $debug, $filters, $callback)
 		{
 			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
 			//TODO Maybe just have an include object, which could be like {underscores:false, functions:false,strings:false}
 			//TODO Refactor all iteration to the Data class
 			//TODO For callback / debug, output to file in two separate passes - 1:key, 2:value, that way you get to see the actual key name who's value breaks the iteration
-			//TODO Refactor {filter} argument to an {options} object so many parameters can be passed in
+			//TODO Refactor {filters} argument to an {options} object so many parameters can be passed in
 
 			// ---------------------------------------------------------------------------------------------------------------------
 			// methods
@@ -183,7 +183,7 @@
 
 						// skip if filter is set to false
 							//trace(value + ':' + type)
-							if(filter[type] === false)
+							if(filters[type] === false)
 							{
 								return false;
 							}
@@ -448,13 +448,6 @@
 			// ---------------------------------------------------------------------------------------------------------------------
 			// setup
 
-				/**
-				 * Output object in hierarchical format
-				 * @param obj		Object	Any Object
-				 * @param label		String	An optional String labal, which will result in the output being immediately be printed to the Output panel
-				 * @param maxDepth	uint	An optional uint specifying a max depth to recurse to (needed to limit recursive objects)
-				 */
-
 				// defaults
 					var label		= 'Inspect';
 					var maxDepth	= 4;
@@ -462,10 +455,10 @@
 					var debug		= false;
 					var print		= true;
 					var callback	= null;
-					var filter		= {};
+					var filters		= {};
 
 				// parameter shifting
-					for each(var arg in [arg2, arg3, arg4])
+					for each(var arg in [$maxDepth, $label, $debug, $filters, $callback])
 					{
 						if(typeof arg === 'number')
 							maxDepth = arg;
@@ -479,7 +472,7 @@
 								print = false;
 						}
 						else if(typeof arg === 'object')
-							filter = arg;
+							filters = arg;
 						else if(typeof arg === 'function')
 							callback = arg;
 					}
@@ -632,5 +625,3 @@
 		xjsfl.classes.register('Output', Output);
 		xjsfl.classes.register('inspect', Output.inspect);
 		inspect = Output.inspect;
-
-
