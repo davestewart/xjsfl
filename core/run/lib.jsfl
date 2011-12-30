@@ -7,7 +7,7 @@
 			xjsfl.init(this);
 
 		// if a document is open...
-			if(dom)
+			if($dom)
 			{
 				// grab uri
 					var uri		= FLfile.read(xjsfl.uri + 'core/temp/uri.txt');
@@ -27,9 +27,8 @@
 					if(jsfl)
 					{
 						// variables
-							var lib		= dom.library;
+							var lib		= $library;
 							var sel		= lib.getSelectedItems();
-							var timeline, layers;
 
 						// no need to init twice
 							jsfl		= jsfl.replace('xjsfl.init(this)', '');
@@ -41,12 +40,8 @@
 							for(var i = 0; i < sel.length; i++)
 							{
 								// open librray item
-									xjsfl.output.trace("Updating item '" + sel[i].name + "'")
+									xjsfl.trace("Updating item '" + sel[i].name + "'")
 									lib.editItem(sel[i].name);
-
-								// update globals
-									timeline	= dom.getTimeline();
-									layers		= timeline.layers;
 
 								// execute script
 									eval(jsfl);
