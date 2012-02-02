@@ -300,7 +300,8 @@
 				for each(var selector in selectors)
 				{
 					// debug
-						//trace(selector);
+						trace(selector);
+						trace(items.length)
 
 					// store temporary items as we find and filter
 						var temp	= [];
@@ -308,6 +309,8 @@
 					// if the task is to find, filter items as a group, with any extra processing taking place in the testing function
 						if(selector.type === 'find')
 						{
+							inspect(selector)
+							trace('	' + items)
 							temp = selector.find(items, scope);
 						}
 
@@ -317,6 +320,7 @@
 							var state;
 							for each(var item in items)
 							{
+								trace('	' + item)
 								state = selector.test(item, scope);
 								if(state)
 								{
@@ -324,6 +328,8 @@
 								}
 							}
 						}
+
+						trace(temp)
 
 					// update items with temp items
 						items = temp;
