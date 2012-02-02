@@ -1,12 +1,12 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████       ██              ██                    
-//  ██           ██              ██                    
-//  ██     █████ ██ █████ █████ █████ █████ ████ █████ 
-//  ██████ ██ ██ ██ ██ ██ ██     ██   ██ ██ ██   ██    
-//      ██ █████ ██ █████ ██     ██   ██ ██ ██   █████ 
-//      ██ ██    ██ ██    ██     ██   ██ ██ ██      ██ 
-//  ██████ █████ ██ █████ █████  ████ █████ ██   █████ 
+//  ██████       ██              ██
+//  ██           ██              ██
+//  ██     █████ ██ █████ █████ █████ █████ ████ █████
+//  ██████ ██ ██ ██ ██ ██ ██     ██   ██ ██ ██   ██
+//      ██ █████ ██ █████ ██     ██   ██ ██ ██   █████
+//      ██ ██    ██ ██    ██     ██   ██ ██ ██      ██
+//  ██████ █████ ██ █████ █████  ████ █████ ██   █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Selectors - static repository of tests used by the Selector class
@@ -14,7 +14,7 @@
 	var Selectors =
 	{
 		/**
-		 * 
+		 *
 		 * @param	expression	{String}		A CSS expression
 		 * @param	items		{Array}			An array of items to filter
 		 * @param	scope		{Object}		A valid scope reference. Valid types are Library, Document, Timeline, Layer, Frame
@@ -25,7 +25,7 @@
 		{
 			// --------------------------------------------------------------------------------
 			// setup
-			
+
 				// define selection type from scope
 					var matches = String(scope).match(/(Library|Document|Timeline|Layer|Frame)/);
 					if(matches)
@@ -43,59 +43,62 @@
 					{
 						throw new TypeError('TypeError: Invalid scope ' +scope+ ' supplied to Selector.select()');
 					}
-	
+
 			// --------------------------------------------------------------------------------
-			// process rules
-			
+			// process expression
+
 				// exit early if universal selector is supplied
 					if(expression == '*')
 					{
 						return items;
 					}
-			
-				// variables
-					var rules	= xjsfl.utils.trim(expression).split(/,/g);
-					var results	= [];
-					
+
+				// break up any comma-delimited expressions into an array of discrete expressions
+					var expressions	= xjsfl.utils.trim(expression).split(/,/g);
+
 				// get items
-					for each (var rule in rules)
+					var results		= [];
+					for each (var expression in expressions)
 					{
 						// parse rule into selector array
-							var selectors = this.parse(rule, type);
-							
+							var selectors = this.parse(expression, type);
+
 						// debug
 							if(debug)
 							{
-								Output.inspect(selectors, 'Selectors for "' + rule + '"');
+								Output.inspect(selectors, 'Selectors for "' + expression + '"');
 							}
-							
+
 						// get items
 							var _results = Selectors.test(selectors, items, scope)
+
+						// append to existing results array
 							results = results.concat(_results);
 					}
-				
+
 				// ensure items are unique
 					results = xjsfl.utils.toUniqueArray(results);
-					
+
 				// return
 					return results;
 		},
-		
+
 
 		/**
 		 * parse a selector expression into selectors - also called from :not()
-		 * @param	rule	{String}	A CSS rule
-		 * @param	type	{String}	The type of parse
-		 * @returns		
+		 * @param	expression	{String}	A CSS expression
+		 * @param	type		{String}	The type of parse, e.g. Item, Element, etc
+		 * @returns
 		 */
-		parse:function(rule, type)
+		parse:function(expression, type)
 		{
+
 			// --------------------------------------------------------------------------------
 			// setup
-			
+
 				// chunker
 					/*
-						#  type             match
+						#  type             example
 						-------------------------------------------------
 						1: combo			:not(selector)
 						   2: type			:not
@@ -106,130 +109,140 @@
 						7: package			.com.domain.package.Class
 						8: pseudo			:type
 						9: attribute		[attribute=value]
-						   10:  name		attribute
-						   11:  operand		=
+						   10: name			attribute
+						   11: operand		=
 						   12: value		value
 					*/
 					//var chunker = /(:([\-\w]+)\((.+)\))|([\*\d\w][\-\w\d\s_*{|}]+)|\/([\-\w\s\/_*{|}]+)|\.([*A-Z][\w*]+)|\.([a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
 					var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]*)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
-	
+
 				// variables
 					var exec,
 						selector,
 						selectors = [],
-						typeTests = Selectors[type.toLowerCase()],
-						coreTests = Selectors.core;
-						
+						object = Selectors[type.toLowerCase()];
+
 				// debug
-					//trace('\n\n\n\n--------------------------------------------------------------------------------\n' + rule + '\n--------------------------------------------------------------------------------')
-				
+					//trace('\n\n\n\n--------------------------------------------------------------------------------\n' + expression + '\n--------------------------------------------------------------------------------')
+
 			// --------------------------------------------------------------------------------
 			// parse
-			
-				while(exec = chunker.exec(rule))
+
+				while(exec = chunker.exec(expression))
 				{
 					// --------------------------------------------------------------------------------
 					// setup
-					
+
 						// debug
 							//Output.inspect(exec);
 							//trace(limit++);
-							
+
 						// create
 							selector = new Selector(exec[0]);
-						
+
 					// --------------------------------------------------------------------------------
 					// create selector
-					
+
 						// 1: combo ":not(:bitmap)"
 							if(exec[1])
 							{
 								selector.type	= 'combo';
 								selector.name	= exec[2];
-								selector.method	= coreTests.combo[selector.name];
+								selector.method	= Selectors.core.combo[selector.name];
 								selector.params	= [null, Selector.makeRX(exec[3], selector)];
 							}
-							
+
 						// 4: name "this is a name"
 							else if(exec[4])
 							{
 								selector.type	= 'filter';
 								selector.type	= 'name';
-								selector.method	= typeTests.filter.name;
+								selector.method	= object.filter.name;
 								selector.params	= [null, Selector.makeRX(exec[4], selector), selector.range];
 							}
-							
+
 						// 5: path "/path/to/item"
 							else if(exec[5])
 							{
 								selector.type	= 'filter';
 								selector.name	= 'path';
-								selector.method	= typeTests.filter.path;
+								selector.method	= object.filter.path;
 								selector.params	= [null, Selector.makeRX(exec[5], selector), selector.range];
 							}
-							
+
 						// 6: Class ".Class"
 							else if(exec[6])
 							{
 								selector.type	= 'filter';
 								selector.name	= 'class';
-								selector.method	= typeTests.filter.Class;
+								selector.method	= object.filter.Class;
 								selector.params	= [null, Selector.makeRX(exec[6], selector)];
 							}
-							
+
 						// 7: package ".com.domain.package.Class"
 							else if(exec[7])
 							{
 								selector.type	= 'filter';
 								selector.name	= 'package';
-								selector.method	= typeTests.filter.Package;
+								selector.method	= object.filter.Package;
 								selector.params	= [null, Selector.makeRX(exec[7], selector)];
 							}
-							
+
 						// 8: pseudo ":type"
 							else if(exec[8])
 							{
 								// variables
 									var name = exec[8];
 									var method;
-									
-								// types
-									if(exec[8].match(/selected|children|descendants|parent|first|last/))
+
+								// type
+									if(/instance|symbol|bitmap|embeddedvideo|linkedvideo|video|compiledclip|text|static|dynamic|input|primitive|group|shape|movieclip|graphic|button/.test(exec[8]))
+									{
+										selector.type	= 'type';
+										method			= object.filter.type;
+									}
+
+								// find
+									if(/selected|children|descendants|parent|first|last/.test(exec[8]))
 									{
 										selector.type	= 'find';
-										method			= typeTests.find[exec[8]];
+										method			= object.find[exec[8]];
 									}
-									else if(exec[8].match(/exported|empty|animated|keyframed|scripted|audible/))
+
+								// pseudo
+									else if(/exported|empty|animated|keyframed|scripted|audible/.test(exec[8]))
 									{
 										selector.type	= 'pseudo';
-										method			= typeTests.pseudo[exec[8]];
+										method			= object.pseudo[exec[8]];
 									}
+
+								// custom
 									else
 									{
-										selector.type	= 'type'; // should this be 'filter'?
-										method			= typeTests.filter.type;
+										selector.type	= 'pseudo';
+										method			= object.pseudo[exec[8]];
 									}
-									
+
 								// assign
 									selector.name	= name;
 									selector.method	= method;
 									selector.params	= [null, exec[8]];
 							}
-							
+
 						// 9: attribute "[attribute=value]"
 							else if(exec[9])
 							{
 								// selector properties
 									selector.type	= 'filter';
 									selector.name	= 'attribute';
-									selector.method	= coreTests.filter.attribute;
-									
+									selector.method	= Selectors.core.filter.attribute;
+
 								// attribute components
 									var attName		= exec[10];
 									var attOperand	= exec[11];
 									var attValue	= exec[12];
 									var val			= parseFloat(attValue);
-									
+
 								// parse numeric values
 									if( ! isNaN(val) )// /<>/.test(attOperand)
 									{
@@ -239,16 +252,16 @@
 									{
 										attValue = Selector.makeRX(exec[12], selector);
 									}
-									
+
 								// assign
-									selector.params	= [null, attName, attOperand, attValue, selector.range];
+									selector.params	= [null, attName, attOperand, attValue, selector.range, object.custom];
 							}
-							
+
 					// --------------------------------------------------------------------------------
 					// assign selector, or throw error
-					
+
 							//trace('TYPE:' + selector);
-							
+
 						// finally, add selector
 							if(selector.method)
 							{
@@ -258,16 +271,16 @@
 							{
 								throw new TypeError('TypeError: Unrecognised selector "' +selector.pattern+ '" in ' +type+ 'Selector function');
 							}
-						
+
 				}
-			
-			// debug	
+
+			// debug
 				//Output.inspect(selectors, 'SELECTORS');
-				
+
 			// return
 				return selectors;
 		},
-		
+
 		/**
 		 * Tests the selectors against the supplied items and returns matches
 		 * @param	selectors	{Array}			An array of Selector instances
@@ -282,23 +295,23 @@
 				{
 					return [];
 				}
-			
+
 			// loop over all selectors
 				for each(var selector in selectors)
 				{
 					// debug
 						//trace(selector);
-						
+
 					// store temporary items as we find and filter
 						var temp	= [];
-						
-					// filter items as a group, with any extra processing taking place in the testing function
+
+					// if the task is to find, filter items as a group, with any extra processing taking place in the testing function
 						if(selector.type === 'find')
 						{
 							temp = selector.find(items, scope);
 						}
-						
-					// filter items with one test per item
+
+					// otherwise, filter items with one test per item
 						else
 						{
 							var state;
@@ -311,60 +324,114 @@
 								}
 							}
 						}
-						
+
 					// update items with temp items
 						items = temp;
-						
+
 					// exit early if 0 items
 						if(items.length == 0)
 						{
 							break;
 						}
 				}
-				
+
 			// return
 				return items;
+		},
+
+		/**
+		 * Registers a custom selector
+		 * @param	{String}	pattern		The pattern of the selector. Valid values are ":type" or "[attribute]"
+		 * @param	{Function}	callback	A pseudo callback of the format function(item){ return state }
+		 * @param	{Function}	callback	An attribute callback of the format function(item){ return value }
+		 * @param	{String}	type		The type of selector. Valid values are Library|Document|Timeline|Layer|Frame
+		 */
+		register:function(pattern, callback, type)
+		{
+			// variables
+				pattern			= String(pattern);
+				var matches		= pattern.match(/([:\[])(\w+)/);
+				var group;
+
+			// test for valid selector
+				if(matches)
+				{
+					// error if wrong type
+						if( ! /^(item|element)$/.test(type) )
+						{
+							throw new Error('Error in Selectors.register(): Invalid type "' +type+ '" supplied');
+						}
+
+					// OK, extract the selector
+						var selector	= matches[2];
+
+					// :pseudo selector
+						if(matches[1] == ':')
+						{
+							group = 'pseudo';
+						}
+
+					// [attribute] selector
+						else if(matches[1] == '[')
+						{
+							group = 'custom';
+						}
+
+					// assign
+						Selectors[type][group][selector] = callback;
+				}
+				else
+				{
+					throw new Error('Error in Selectors.register(): Invalid pattern "' +pattern+ '" supplied');
+				}
 		}
-		
+
 	}
-	
+
 	Selectors.core =
 	{
 		/**
-		 * 
+		 *
 		 */
 		filter:
 		{
 			/**
-			 * Test an attribute of an object against a value
+			 * Test an attribute of an object against a value or callback
 			 * @param	item		{Object}	The item to test
 			 * @param	name		{String}	The name of the attribute
 			 * @param	operand		{String}	The operand type. Acceptable string values are =, !=, ^=, $=, *=. Acceptable numeric values are =, !=, >, >=, <, <=
-			 * @param	value		{String}	The value to test against. Acceptable values are Numbers, Strings
-			 * @param	value		{Number}	The value to test against. 
+			 * @param	value		{String}	The String value to test against
+			 * @param	value		{Number}	The Number value to test against
+			 * @param	range		{Object}	A range object with .min and .max values
+			 * @param	custom		{Object}	The Selectors.foo.custom object which contains custom callbacks
 			 * @returns				{Boolean}	True if the test passes
 			 */
-			attribute:function(item, name, operand, value, range)
+			attribute:function(item, name, operand, value, range, custom)
 			{
+				// variables
+					var callback, prop;
+
+				// get the item property
+					if(name in item)
+					{
+						prop		= item[name];
+					}
+					else
+					{
+						callback	= custom[name];
+						prop		= callback.apply(this, [item]);
+					}
+
 				// no operand, just test for property
 					if(operand == '')
 					{
-						//trace('EXISTS')
-						for(var prop in item)
-						{
-							if(prop === name)
-							{
-								return true;
-							}
-						}
-						return false;
+						return callback ? prop : name in item;
 					}
-					
+
 				// numeric operand (>, >=, <, <=)
 					if(typeof value === 'number' && range == undefined)
 					{
 						//trace('NUMERIC')
-						var prop = item[name];
 						switch(operand)
 						{
 							case '=':		return prop == value;
@@ -375,24 +442,24 @@
 							case '>=':		return prop >= value;
 						}
 					}
-				
+
 				// range comparison (={min|max} converted to range object {min:n, max:m})
 					if(range)
 					{
 						//trace('RANGE');
-						var prop = item[name];
 						return prop >= range.min && prop <= range.max;
 					}
-					
+
+				// the last two comparisons are string-based, so cast the property to a String
+					prop = String(prop);
+
 				// RegExp comparison (^=, $=, *=)
 					//TODO Complete RegExp comparison
 					if(value instanceof RegExp)
 					{
-						//trace('REGEXP')
-						var prop = String(item[name]);
 						return value.test(prop);
 					}
-				
+
 				// finally, string operand (=, !=)
 					//trace('STRING');
 					switch(operand)
@@ -404,10 +471,10 @@
 			}
 
 		},
-		
+
 		math:
 		{
-			
+
 			range:function(str, range)
 			{
 				var value = parseFloat(str);
@@ -422,92 +489,96 @@
 				return false;
 				*/
 			}
-			
+
 		},
-		
+
 		find:
 		{
-			
+
 		},
-		
+
 		pseudo:
 		{
-			
+
 		},
-		
+
 		combo:
 		{
-			//TODO filter() functionality 
+			//TODO filter() functionality
 			/**
-			 * 
-			 * @param	selector	
-			 * @returns		
+			 *
+			 * @param	selector
+			 * @returns
 			 */
 			filter:function(callback)
 			{
 				// filter keeps
 				return callback();
 			},
-			
+
 			not:function(callback)
 			{
 				// not discards
 				return ! callback();
 			},
-			
-			//TODO not() functionality 
+
+			//TODO not() functionality
 			/**
-			 * 
-			 * @param	selector		
-			 * @param	test		
-			 * @returns		
+			 *
+			 * @param	selector
+			 * @param	test
+			 * @returns
 			 */
 			not:function(items, selector)
 			{
 				trace('NOT ' + selector)
 				// get the items with the new selecor
 					var newItems = Selectors.select(selector, items, this);
-					
+
 					Output.inspect(newItems)
-				
+
 				// compare to items in
 					return newItems
-				
+
 			},
-			
+
 			//TODO contains() functionality - should this be custom per type, i.e. items, elements, frames?
 			/**
-			 * 
-			 * @param	selector	
-			 * @returns		
+			 *
+			 * @param	selector
+			 * @returns
 			 */
 			contains:function(selector)
 			{
-				
+
 			},
-			
+
 			//TODO nth()
 			/**
-			 * 
-			 * @param	selector	
-			 * @returns		
+			 *
+			 * @param	selector
+			 * @returns
 			 */
 			nth:function(selector)
 			{
-				
+
 			}
-		
+
 		}
-		
+
 	}
-	
+
 	Selectors.element =
 	{
-		
+		register:function(pattern, callback)
+		{
+			Selectors.register(pattern, callback, 'element');
+		},
+
 		filter:
 		{
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		An Element
 			 * @param	rx		{RegExp}	A regular expression to match against the item name
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -516,9 +587,9 @@
 			{
 				return Selectors.item.filter.path(item, rx, range);
 			},
-			
+
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		An Element
 			 * @param	rx		{RegExp}	A regular expression to match against the item path
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -534,9 +605,9 @@
 					return false;
 				}
 			},
-			
+
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		An Element
 			 * @param	type	{String}	A valid Item itemType
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -547,11 +618,11 @@
 				{
 					// --------------------------------------------------------------------------------
 					// instance: symbol, bitmap, embedded video, linked video, video, compiled clip
-					
+
 						//TODO Add video
-						
+
 						case 'instance':
-							
+
 							// symbol: button, movieclip, graphic
 								if(item.symbolType)
 								{
@@ -559,49 +630,49 @@
 									{
 										return true;
 									}
-									return item.symbolType.replace(/ /g, '') == type;
+									return item.symbolType.replace(/ /g, '') === type;
 								}
-								
+
 							// instance
-								return item.instanceType.replace(/ /g, '') == type;
-							
+								return item.instanceType.replace(/ /g, '') === type;
+
 						break;
-					
+
 					// --------------------------------------------------------------------------------
 					// text: text, static, dynamic, input
-					
+
 						case 'text':
-							
+
 							if(type === 'text')
 							{
 								return true;
 							}
-							return item.textType.replace(/ /g, '') == type;
-							
+							return item.textType.replace(/ /g, '') === type;
+
 						break;
-					
+
 					// --------------------------------------------------------------------------------
-					// shape: group, shape
-					
+					// shape: primitive, group, shape
+
 						case 'shape':
 							if(item.isRectangleObject || item.isOvalObject)
 							{
-								return type == 'primitive';
+								return type === 'primitive';
 							}
 							if(item.isGroup)
 							{
-								return type == 'group';
+								return type === 'group';
 							}
-							return type == 'shape';
+							return type === 'shape';
 						break;
 				}
-				
+
 				return false;
-					
+
 			}
 
 		},
-		
+
 		find:
 		{
 			selected:function(items)
@@ -609,13 +680,13 @@
 				return this.selection;
 			}
 		},
-		
+
 		pseudo:
 		{
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			empty:function(element)
 			{
@@ -625,11 +696,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			animated:function(element)
 			{
@@ -639,11 +710,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			keyframed:function(element)
 			{
@@ -653,11 +724,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			scripted:function(element)
 			{
@@ -667,11 +738,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			audible:function(element)
 			{
@@ -681,16 +752,26 @@
 				}
 				return false;
 			}
+		},
+
+		custom:
+		{
+
 		}
 
 	}
-	
+
 	Selectors.item  =
 	{
+		register:function(pattern, callback)
+		{
+			Selectors.register(pattern, callback, 'item');
+		},
+
 		filter:
 		{
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		A library Item instance
 			 * @param	rx		{RegExp}	A regular expression to match against the item name
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -709,9 +790,9 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		A library Item instance
 			 * @param	rx		{RegExp}	A regular expression to match against the item path
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -729,9 +810,9 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		A library Item instance
 			 * @param	rx		{RegExp}	A regular expression to match against the item's full linkageClassName
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -744,9 +825,9 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		A library Item instance
 			 * @param	rx		{RegExp}	A regular expression to match against the Class component of the item'slinkageClassName
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -759,9 +840,9 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
+			 *
 			 * @param	item	{Item}		A library Item instance
 			 * @param	type	{String}	A valid Item itemType
 			 * @returns			{Boolean}	True if matched, false if failed
@@ -776,48 +857,48 @@
 					{
 						return /movieclip|graphic|button/.test(itemType);
 					}
-					
-				// special case for videos
-					if(itemType === 'video' && type.match(/linkedvideo|embeddedvideo/))
+
+				// special case for videos: video, linked video, embedded video
+					if(itemType === 'video' && type.match(/video|linkedvideo|embeddedvideo/))
 					{
-						return item.videoType === type;
+						return type === 'video' ? true : item.videoType === type;
 					}
-					
+
 				// undefined, component, movieclip, graphic, button, folder, font, sound, bitmap, compiledclip, screen
 					else
 					{
 						return itemType === type;
 					}
 			}
-			
+
 		},
-		
+
 		find:
 		{
 			/**
-			 * 
-			 * @param	items	
-			 * @returns		
+			 *
+			 * @param	items
+			 * @returns
 			 */
 			first:function(items)
 			{
 				return [items.shift()];
 			},
-			
+
 			/**
-			 * 
-			 * @param	items	
-			 * @returns		
+			 *
+			 * @param	items
+			 * @returns
 			 */
 			last:function(items)
 			{
 				return [items.pop()];
 			},
-			
+
 			/**
-			 * 
-			 * @param	items	
-			 * @returns		
+			 *
+			 * @param	items
+			 * @returns
 			 */
 			parent:function(items)
 			{
@@ -831,12 +912,12 @@
 							paths.push(parent);
 						}
 					}
-					
+
 				// make array unique
 					paths = xjsfl.utils.toUniqueArray(paths);
-					
+
 					Output.inspect(paths)
-					
+
 				// grab folders from library
 					var index, temp = [];
 					for each(var path in paths)
@@ -847,16 +928,16 @@
 							temp.push(this.items[index]);
 						}
 					}
-					
-				// return 
+
+				// return
 					return temp;
 			},
-			
+
 			/**
-			 * 
-			 * @param	items	
-			 * @param	parent	
-			 * @returns		
+			 *
+			 * @param	items
+			 * @param	parent
+			 * @returns
 			 */
 			children:function(parents)
 			{
@@ -868,7 +949,7 @@
 						{
 							continue;
 						}
-						
+
 					// check against all other items in the library
 						for each(var item in this.items)
 						{
@@ -881,16 +962,16 @@
 								}
 							}
 						}
-					
+
 				}
 				return items;
 			},
-			
+
 			/**
-			 * 
-			 * @param	items	
-			 * @param	parent	
-			 * @returns		
+			 *
+			 * @param	items
+			 * @param	parent
+			 * @returns
 			 */
 			descendants:function(parents)
 			{
@@ -902,7 +983,7 @@
 						{
 							continue;
 						}
-						
+
 					// check against all other items in the library
 						for each(var item in this.items)
 						{
@@ -911,44 +992,46 @@
 								items.push(item);
 							}
 						}
-					
+
 				}
 				return items;
 			},
-			
+
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			selected:function(items)
 			{
 				return this.getSelectedItems();
 			}
-			
+
+			//TODO add even, odd, nth, etc
+
 		},
-		
+
 		pseudo:
 		{
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			exported:function(item)
 			{
 				return item.linkageExportForAS === true;
 			},
-			
+
 			timeline:function(item)
 			{
 				return /movie clip|graphic|button/.test(item.itemType);
 			},
-			
+
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			empty:function(item)
 			{
@@ -963,11 +1046,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			animated:function(item)
 			{
@@ -977,11 +1060,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			keyframed:function(item)
 			{
@@ -991,11 +1074,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			scripted:function(item)
 			{
@@ -1005,11 +1088,11 @@
 				}
 				return false;
 			},
-			
+
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			audible:function(item)
 			{
@@ -1019,8 +1102,14 @@
 				}
 				return false;
 			}
-			
-		}				
+
+		},
+
+		custom:
+		{
+
+		}
+
 	}
 
 	Selectors.timeline =
@@ -1028,56 +1117,61 @@
 		pseudo:
 		{
 			/**
-			 * 
-			 * @param	item	
-			 * @returns		
+			 *
+			 * @param	item
+			 * @returns
 			 */
 			empty:function(timeline)
 			{
 				return ! Iterators.layers(timeline, null, function (frame){ return frame.elements.length > 0; });
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			animated:function(timeline)
 			{
 				return Iterators.layers(timeline, null, function (frame){ return frame.tweenType != 'none'; } );
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			keyframed:function(timeline)
 			{
 				return Iterators.layers(timeline, null, function (frame){ return frame.startFrame > 0 && frame.elements.length > 0; } );
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			scripted:function(timeline)
 			{
 				return Iterators.layers(timeline, null, function (frame){ return frame.actionScript != ''; });
 			},
-			
+
 			/**
-			 * 
-			 * @param	element	
-			 * @returns		
+			 *
+			 * @param	element
+			 * @returns
 			 */
 			audible:function(timeline)
 			{
 				return Iterators.layers(timeline, null, function (frame){ return frame.soundLibraryItem != null; });
 			}
+		},
+
+		custom:
+		{
+
 		}
 	}
 
-	
+
 	xjsfl.classes.register('Selectors', Selectors);
