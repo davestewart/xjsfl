@@ -311,7 +311,7 @@
 							temp = selector.find(items, scope);
 						}
 
-					// otherwise, filter items with one test per item
+					// otherwise, filter items by testing each item individually
 						else
 						{
 							var state;
@@ -333,6 +333,7 @@
 						{
 							break;
 						}
+						trace()
 				}
 
 			// return
@@ -677,7 +678,8 @@
 		{
 			selected:function(items)
 			{
-				return this.selection;
+				var selection = this.selection;
+				return items.filter(function(element) { return selection.indexOf(element) !== -1 } );
 			}
 		},
 
