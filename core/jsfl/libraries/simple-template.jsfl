@@ -18,14 +18,14 @@
 
 		/**
 		 * SimpleTemplate constructor
-		 * @param	{String}	template	The input template, including {placeholder} variables
+		 * @param	{String}	input		The input template, including {placeholder} variables
 		 * @param	{Object}	data		An optional Object of name:value pairs
 		 */
-		SimpleTemplate = function(template, data)
+		SimpleTemplate = function(input, data)
 		{
-			if(template)
+			if(input)
 			{
-				this.template = template;
+				this.input = input;
 			}
 			if(data)
 			{
@@ -50,13 +50,13 @@
 			constructor:SimpleTemplate,
 
 			/** @type {String}	The input template */
-			template:'',
+			input:'',
 
-			/** @type {String}	The result of the populated template */
+			/** @type {String}	The result of the populated input template */
 			output:'',
 
 			/**
-			 * Populates the template with data
+			 * Populates the input with data
 			 * @param	{Object}	data		An Object of name:value pairs
 			 * @returns	{SimpleTemplate}		The current instance
 			 */
@@ -64,7 +64,7 @@
 			{
 				// populate
 					var rx;
-					var text = this.template;
+					var text = this.input;
 					for(var i in data)
 					{
 						rx		= new RegExp('{' +i+ '}', 'g')
@@ -79,7 +79,7 @@
 			},
 
 			/**
-			 * Returns the populated output of the template
+			 * Returns the populated output of the input
 			 * @returns	{String}		The populated output
 			 */
 			render:function()
@@ -93,7 +93,7 @@
 			 */
 			toString:function()
 			{
-				return '[object SimpleTemplate "' +this.template+ '"]';
+				return '[object SimpleTemplate "' +this.input+ '"]';
 			}
 
 
