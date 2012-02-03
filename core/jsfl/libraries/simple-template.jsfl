@@ -1,132 +1,105 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████ ██                ██          ██████                      ██        ██         
-//  ██                       ██            ██                        ██        ██         
-//  ██     ██ ████████ █████ ██ █████      ██   █████ ████████ █████ ██ █████ █████ █████ 
-//  ██████ ██ ██ ██ ██ ██ ██ ██ ██ ██      ██   ██ ██ ██ ██ ██ ██ ██ ██    ██  ██   ██ ██ 
-//      ██ ██ ██ ██ ██ ██ ██ ██ █████      ██   █████ ██ ██ ██ ██ ██ ██ █████  ██   █████ 
-//      ██ ██ ██ ██ ██ ██ ██ ██ ██         ██   ██    ██ ██ ██ ██ ██ ██ ██ ██  ██   ██    
-//  ██████ ██ ██ ██ ██ █████ ██ █████      ██   █████ ██ ██ ██ █████ ██ █████  ████ █████ 
-//                     ██                                      ██                         
-//                     ██                                      ██                         
+//  ██████ ██                ██          ██████                      ██        ██
+//  ██                       ██            ██                        ██        ██
+//  ██     ██ ████████ █████ ██ █████      ██   █████ ████████ █████ ██ █████ █████ █████
+//  ██████ ██ ██ ██ ██ ██ ██ ██ ██ ██      ██   ██ ██ ██ ██ ██ ██ ██ ██    ██  ██   ██ ██
+//      ██ ██ ██ ██ ██ ██ ██ ██ █████      ██   █████ ██ ██ ██ ██ ██ ██ █████  ██   █████
+//      ██ ██ ██ ██ ██ ██ ██ ██ ██         ██   ██    ██ ██ ██ ██ ██ ██ ██ ██  ██   ██
+//  ██████ ██ ██ ██ ██ █████ ██ █████      ██   █████ ██ ██ ██ █████ ██ █████  ████ █████
+//                     ██                                      ██
+//                     ██                                      ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Simple Template - A simpler version of the Template class
 
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
-	
-		SimpleTemplate = function(uri, data)
+
+		/**
+		 * SimpleTemplate constructor
+		 * @param	{String}	template	The input template, including {placeholder} variables
+		 * @param	{Object}	data		An optional Object of name:value pairs
+		 */
+		SimpleTemplate = function(template, data)
 		{
-			if(uri)
+			if(template)
 			{
-				this.load(uri);
+				this.template = template;
 			}
 			if(data)
 			{
-				this.populate(data)
+				this.populate(data);
 			}
 		}
-		
+
 	// ------------------------------------------------------------------------------------------------
 	// Static properties
-	
-		SimpleTemplate.templates = {};
+
 		SimpleTemplate.toString = function()
 		{
 			return '[class SimpleTemplate]';
 		}
-		
+
 	// ------------------------------------------------------------------------------------------------
 	// Prototype
-	
+
 		SimpleTemplate.prototype =
 		{
-			
+
 			constructor:SimpleTemplate,
-		
-			uri:'',
-			
-			input:'',
-			
+
+			/** @type {String}	The input template */
+			template:'',
+
+			/** @type {String}	The result of the populated template */
 			output:'',
-			
-			load:function(uri, append)
-			{
-				// input
-					this.uri	= uri;
-					//this.input	= SimpleTemplate.templates[uri];
-					
-				// load file
-					if( ! this.input)
-					{
-						// load contents
-							var input = new File(uri).contents;
-							
-						// cache?
-							//SimpleTemplate.templates[uri] = input;
-							
-						// update input
-							append ? this.input += input : this.input = input;
-					}
-					
-				// return
-					return this;
-			},
-			
+
+			/**
+			 * Populates the template with data
+			 * @param	{Object}	data		An Object of name:value pairs
+			 * @returns	{SimpleTemplate}		The current instance
+			 */
 			populate:function(data)
 			{
 				// populate
 					var rx;
-					var text = this.input;
+					var text = this.template;
 					for(var i in data)
 					{
 						rx		= new RegExp('{' +i+ '}', 'g')
 						text	= text.replace(rx, data[i]);
 					}
-					
+
 				// update
 					this.output = text;
-					
+
 				// return
 					return this;
 			},
-			
-			indent:function(indent)
-			{
-				// indent
-					switch(typeof indent)
-					{
-						case 'string':
-							indent = indent.match(/^\t+$/) ? indent : '	';
-						break;
-					
-						case 'number':
-							indent = new Array(Math.floor(indent + 1)).join('	');
-						break;
-					
-						default:
-							indent = '	';
-					}
-					this.output = this.output.replace(/^/gm, indent);
-					
-				// return
-					return this;
-			},
-			
+
+			/**
+			 * Returns the populated output of the template
+			 * @returns	{String}		The populated output
+			 */
 			render:function()
 			{
-				fl.trace(this.output);
+				return this.output;
 			},
-			
+
+			/**
+			 * Returns the String representation of the SimpleTemplate
+			 * @returns
+			 */
 			toString:function()
 			{
-				return this.output;
+				return '[object SimpleTemplate "' +this.template+ '"]';
 			}
-			
+
+
 		}
-		
+
 	// ------------------------------------------------------------------------------------------------
 	// Register class with xjsfl
-	
+
 		xjsfl.classes.register('SimpleTemplate', SimpleTemplate);
