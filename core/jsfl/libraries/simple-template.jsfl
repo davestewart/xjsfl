@@ -11,7 +11,7 @@
 //                     ██                                      ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Simple Template - A simpler version of the Template class
+// Simple Template - A simple templating class
 
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
@@ -55,20 +55,44 @@
 			/** @type {String}	The result of the populated input template */
 			output:'',
 
+			/** @type {Object}	The SimpleTemplate's data */
+			data:null,
+
 			/**
 			 * Populates the input with data
-			 * @param	{Object}	data		An Object of name:value pairs
-			 * @returns	{SimpleTemplate}		The current instance
+			 * @param	{Object}			data	An Object of name:value pairs
+			 * @returns	{SimpleTemplate}			The current instance
 			 */
 			populate:function(data)
 			{
-				// populate
-					var rx;
+				// assign data
+					this.data = data;
+
+				// variables
+					var rx, value;
 					var text = this.input;
-					for(var i in data)
+
+				// populate
+					for(var i in this.data)
 					{
-						rx		= new RegExp('{' +i+ '}', 'g')
-						text	= text.replace(rx, data[i]);
+						// skip numeric keys (i.e. Arrays) as it breaks the RegExp
+							if( ! isNaN(parseInt(i)) )
+							{
+								continue;
+							}
+
+						// create variables
+							rx		= new RegExp('{' +i+ '}', 'g');
+							value	= this.data[i];
+
+						// convert any nested SimpleTemplates
+							if(value instanceof SimpleTemplate)
+							{
+								value = value.output;
+							}
+
+						// populate
+							text	= text.replace(rx, value);
 					}
 
 				// update
@@ -79,12 +103,31 @@
 			},
 
 			/**
-			 * Returns the populated output of the input
-			 * @returns	{String}		The populated output
+			 * Updates the input template with a new value
+			 * @param	{String}			input	A String input template
+			 * @returns	{SimpleTemplate}			The current instance
 			 */
-			render:function()
+			update:function(input)
 			{
-				return this.output;
+				this.input = input;
+				this.populate(this.data);
+				return this;
+			},
+
+			/**
+			 * Prints the populated output of the input
+			 * @param	{Boolean}			output	An optional flag to print the table table to the Output panel, defaults to true
+			 * @returns	{String}					The populated output
+			 * @returns	{SimpleTemplate}			The current instance
+			 */
+			render:function(trace)
+			{
+				if(trace === false)
+				{
+					return this.output;
+				}
+				fl.trace(this.output);
+				return this;
 			},
 
 			/**
@@ -93,7 +136,7 @@
 			 */
 			toString:function()
 			{
-				return '[object SimpleTemplate "' +this.input+ '"]';
+				return '[object SimpleTemplate input="' +this.input+ '"]';
 			}
 
 
