@@ -59,7 +59,7 @@
 			data:null,
 
 			/**
-			 * Populates the input with data
+			 * Populates the input template with data
 			 * @param	{Object}			data	An Object of name:value pairs
 			 * @returns	{SimpleTemplate}			The current instance
 			 */
@@ -69,21 +69,26 @@
 					this.data = data;
 
 				// variables
-					var rx, value;
-					var text = this.input;
+					var rx, prop, value, placeholder;
+					var output			= this.input;
+					var placeholders	= xjsfl.utils.toUniqueArray(this.input.match(/{(\w+)}/g))
 
-				// populate
-					for(var i in this.data)
+				// loop over placeholders and populate
+					for each(placeholder in placeholders)
 					{
-						// skip numeric keys (i.e. Arrays) as it breaks the RegExp
-							if( ! isNaN(parseInt(i)) )
+						// current prop name
+							prop		= placeholder.substring(1, placeholder.length - 1);
+
+							trace(prop)
+
+						// skip numeric properties (i.e. {1}) as it breaks the RegExp
+							if( ! isNaN(parseInt(prop)) )
 							{
 								continue;
 							}
 
-						// create variables
-							rx		= new RegExp('{' +i+ '}', 'g');
-							value	= this.data[i];
+						// current value
+							value		= prop in data ? data[prop] : placeholder;
 
 						// convert any nested SimpleTemplates
 							if(value instanceof SimpleTemplate)
@@ -92,11 +97,12 @@
 							}
 
 						// populate
-							text	= text.replace(rx, value);
+							rx			= new RegExp(placeholder, 'g');
+							output		= output.replace(rx, value);
 					}
 
 				// update
-					this.output = text;
+					this.output = output;
 
 				// return
 					return this;
