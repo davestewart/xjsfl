@@ -79,8 +79,6 @@
 						// current prop name
 							prop		= placeholder.substring(1, placeholder.length - 1);
 
-							trace(prop)
-
 						// skip numeric properties (i.e. {1}) as it breaks the RegExp
 							if( ! isNaN(parseInt(prop)) )
 							{
