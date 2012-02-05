@@ -390,7 +390,8 @@
 
 		Folder.prototype = new FileSystemObject;
 		xjsfl.utils.extend(Folder.prototype, folder);
-
+		delete folder;
+		
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
@@ -753,7 +754,7 @@
 
 		File.prototype = new FileSystemObject;
 		xjsfl.utils.extend(File.prototype, file);
-
+		delete file;
 
 // -----------------------------------------------------------------------------------------------------------------------------------------
 // register classes with xjsfl
