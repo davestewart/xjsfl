@@ -154,8 +154,8 @@
 				else
 				{
 					// get bounds
-						this._deselect();
 						var bounds = this.dom.getSelectionRect();
+						this._deselect();
 
 					// loop
 						for(var i = 0; i < this.elements.length; i++)
@@ -645,10 +645,10 @@
 		/**
 		 * match elements' dimensions relative to one another
 		 * @param	props	{String}			The dimension in which to match. Acceptable values are'width,height,size'
-		 * @param	element	{Boolean}			An optional flag (true=biggest, false=smallest) of the element whose dimension(s) you want to match. Defaults to true
-		 * @param	element	{Number}			An optional index of the element whose dimension(s) you want to match
-		 * @param	element	{String}			An optional name of the element whose dimension(s) you want to match
 		 * @param	element	{Element}			An optional reference to the element whose dimension(s) you want to match
+		 * @param	element	{String}			An optional name of the element whose dimension(s) you want to match
+		 * @param	element	{Number}			An optional index of the element whose dimension(s) you want to match
+		 * @param	element	{Boolean}			An optional flag (true=biggest, false=smallest) of the element whose dimension(s) you want to match. Defaults to true
 		 * @returns 		{ElementCollection}	The original ElementCollection object
 		 */
 		match:function(prop, element)
@@ -670,10 +670,13 @@
 				// get element
 					if(typeof element === 'boolean')
 					{
+						var widths	= xjsfl.utils.getExtremeValues(this.elements, 'width', element);
+						var heights	= xjsfl.utils.getExtremeValues(this.elements, 'height', element);
+
 						element =
 						{
-							width:	xjsfl.utils.getExtremeValue(this.elements, 'width', element),
-							height:	xjsfl.utils.getExtremeValue(this.elements, 'height', element)
+							width:	element ? widths[1] : widths[0],
+							height:	element ? heights[1] : heights[0]
 						};
 					}
 
@@ -686,7 +689,7 @@
 				// match
 					if(element && element instanceof Element)
 					{
-						trace(element.name)
+						//trace(element.name)
 						if(/^(width|size)$/.test(prop))
 						{
 							this.attr('width', element.width);
