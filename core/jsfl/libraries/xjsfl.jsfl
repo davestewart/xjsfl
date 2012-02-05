@@ -316,7 +316,7 @@
 					{
 						var args = [].concat(params);
 						args.splice(argIndex, 0, element);
-						func.apply(this, args)
+						func.apply(this, args);
 					}
 				)
 
@@ -391,44 +391,6 @@
 			return temp;
 		},
 
-        /**
-         * Adds properties to an object's namesapce by supplying a dot.syntax.path and properties object
-         * @param	{Object}	target		The object in which to create the new object
-         * @param	{String}	namespace	A string path to that object
-         * @param	{Object}	properties	A properties object to create in the new namespace
-         * @returns	{Object}			    The xJSFL object
-         */
-        namespace:function(target, namespace, properties)
-        {
-            var keys		= namespace.split('.');
-            do
-            {
-                var key = keys.shift();
-                if(keys.length > 0)
-                {
-                    if(typeof target[key] === 'undefined')
-                    {
-                        target[key] = {};
-                    }
-                    target = target[key];
-                }
-                else
-                {
-					if( target[key] == null)
-					{
-						target[key] = properties;
-					}
-					else
-					{
-						this.extend(target[key], properties);
-					}
-
-                }
-            }
-            while(keys.length);
-            return this;
-        },
-
 		/**
 		 * Trims the whitespace from both sides of a string
 		 * @param	string	{String}	The input string to trim
@@ -460,14 +422,14 @@
 		},
 
 		/**
-		 * Checks if the object is an array or not
+		 * Checks if the object is a true array or not
 		 *
 		 * @param obj	{Object}		Any object that needs to be checked if it's a true Array
 		 * @returns		{Boolean}		True or false
 		 */
 		isArray:function (obj)
 		{
-			return toString.call(obj) === "[object Array]";
+			return Object.prototype.toString.call(obj) === "[object Array]";
 		},
 
 		/**
@@ -543,15 +505,15 @@
 		},
 
 		/**
-		 * Basic numeric Array sort function - JSFL one seems to default to string by default
+		 * Basic numeric Array sort function
 		 * @param	arr		{Array}		An array to sort
 		 * @param	reverse	{Boolean}	An optional flag to sort in reverse (descending) order
 		 * @returns
 		 */
 		sort:function(arr, reverse)
 		{
-			function asc(a, b)  { return a < b ? -1 : (a > b ? 1 : 0); }
-			function desc(a, b) { return a < b ? 1 : (a > b ? -1 : 0); }
+			function asc(a, b)  { return a - b }
+			function desc(a, b) { return b - a }
 			return arr.sort(reverse == true ? desc : asc);
 		},
 
@@ -702,60 +664,125 @@
 		},
 
 		/**
-		 * Gets the value from an object by supplying a dot-syntaxed string
-		 * @param	{Object}	obj		Any valid Object
-		 * @param	{String}	dotPath	The dot-path to an object property
-		 * @returns	{Value}				The value of the property, if it exists
+		 * Gets properties from an object's namespace via a dot.syntax.path String
+		 * @param	{Object}	obj			The root object from which to extract the deep value
+		 * @param	{String}	path		The dot-path to an existing object property
+		 * @returns	{Value}					The value of the property, if it exists
 		 */
-		getDeepValue:function(obj, dotPath)
+		getDeepValue:function(obj, path)
 		{
-			var parts = dotPath.split('.');
-			while(parts.length > 1)
+			path = String(path);
+			if(path.indexOf('.') == -1)
 			{
-				part = parts.shift();
-				if(part in obj)
-				{
-					obj = obj[part];
-				}
-				else
-				{
-					return;
-				}
+				return obj[path];
 			}
-			return obj[parts[0]];
+			else
+			{
+				var keys = path.split('.');
+				while(keys.length > 1)
+				{
+					key = keys.shift();
+					if(key in obj)
+					{
+						obj = obj[key];
+					}
+					else
+					{
+						return;
+					}
+				}
+				return obj[keys[0]];
+			}
 		},
+
+        /**
+         * Add nested properties to an object's namespace via a dot.syntax.path String
+         * @param	{Object}	obj			The root object on which to create the deep value
+         * @param	{String}	path		A dot-syntax path to a new object property
+         * @param	{Object}	properties	An object or value to add to the new namespace
+         */
+        setDeepValue:function(obj, path, properties)
+        {
+			path		= String(path);
+            var keys	= path.split('.');
+            do
+            {
+				// get the next key
+					var key = keys.shift();
+
+				// extend
+					if(keys.length > 0)
+					{
+						if( ! (key in obj) )
+						{
+							obj[key] = {};
+						}
+						obj = obj[key];
+					}
+
+				// assign
+					else
+					{
+						trace(key)
+						trace(obj)
+						if( ! (key in obj) )
+						{
+							trace('assigning')
+							obj[key] = properties;
+						}
+						else
+						{
+							trace('extending')
+							this.extend(obj[key], properties);
+						}
+
+					}
+            }
+            while(keys.length);
+        },
 
 		/**
 		 * comparison function to get a max or min value within an array of objects
 		 * @param	elements		{Array}		An Array of objects with named properties
 		 * @param	prop			{String}	The property to test
-		 * @param	bias			{Boolean}	An optional flag to get the max (true, default) or the min (false) value
-		 * @param	returnElement	{Boolean}	An optional flag to return the element, rather than the value
-		 * @returns					{Number}	The number
+		 * @param	returnElements	{Boolean}	An optional flag to return the element, rather than the value
+		 * @returns					{Array}		A 2-element Array containing the min and max values, or min and max elements
 		 */
-		getExtremeValue:function(elements, prop, bias, returnElement)
+		getExtremeValues:function(elements, prop, returnElement)
 		{
 			// comparison function
-				function test(el, index, elements)
+				function test(element, index, elements)
 				{
-					var val	= el[prop];
-					value	= value || val;
-					if(bias ? val > value : val < value)
+					var value = element[prop];
+					if(value > maxValue)
 					{
-						value	= val;
-						element	= el;
+						maxValue	= value;
+						maxElement	= element;
+					}
+					else if(value < minValue)
+					{
+						minValue	= value;
+						minElement	= element;
 					}
 				}
 
+			// catch empty array
+				if( ! elements || ! this.isArray(elements) || elements.length < 1)
+				{
+					return {min:undefined, max:undefined};
+				}
+
 			// variables
-				var value;
-				var element;
+				var minElement	= elements[0];
+				var maxElement	= elements[0];
+				var minValue	= elements[0][prop];
+				var maxValue	= elements[0][prop];
 
 			// test
 				elements.forEach(test);
 
 			// return
-				return returnElement ? element : value;
+				return returnElement ? [minElement, maxElement] : [minValue, maxValue];
 		},
 
 
@@ -1080,16 +1107,17 @@
 
 		/**
 		 * Get a random value between 2 numbers
-		 * @param	a	{Array}		A 2-element array defining the lower and upper limits
-		 * @param	a	{Number}	The lower limit of the range
-		 * @param	b	{Number}	The lower limit of the range
-		 * @param	b	{Number}	An optional Boolean to round to the nearest integer value
-		 * @returns		{Number}	A number between a and b
+		 * @param	a		{Array}		A 2-element array defining the lower and upper limits
+		 * @param	a		{Number}	The lower limit of the range
+		 * @param	b		{Number}	The lower limit of the range
+		 * @param	round	{Number}	An optional Boolean to round to the nearest integer value
+		 * @returns			{Number}	A number between a and b
 		 */
 		randomValue:function(a, b, round)
 		{
 			if(a instanceof Array)
 			{
+				round = b;
 				b = a[1];
 				a = a[0];
 			}
