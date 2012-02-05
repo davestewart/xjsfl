@@ -92,6 +92,7 @@
 								{
 									//TODO Check why this doesn't work in all files
 									scope.__defineGetter__( '$selection', function(){ var dom = $dom; return dom ? dom.selection : null; } );
+									scope.__defineSetter__( '$selection', function(elements){ var dom = $dom; if(dom){dom.selectNone(); dom.selection = elements} } );
 								}
 
 							// $dir getter (can't use until after main xjsfl class has loaded!)
