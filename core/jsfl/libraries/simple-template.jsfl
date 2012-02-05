@@ -41,6 +41,11 @@
 			return '[class SimpleTemplate]';
 		}
 
+		SimpleTemplate.populate = function(input, data)
+		{
+			return new SimpleTemplate(input, data).output;
+		}
+
 	// ------------------------------------------------------------------------------------------------
 	// Prototype
 
@@ -71,7 +76,7 @@
 				// variables
 					var rx, prop, value, placeholder;
 					var output			= this.input;
-					var placeholders	= xjsfl.utils.toUniqueArray(this.input.match(/{(\w+)}/g))
+					var placeholders	= xjsfl.utils.toUniqueArray(this.input.match(/{([^}]+)}/g))
 
 				// loop over placeholders and populate
 					for each(placeholder in placeholders)
@@ -86,7 +91,14 @@
 							}
 
 						// current value
-							value		= prop in data ? data[prop] : placeholder;
+							if(prop.indexOf('.') != -1)
+							{
+								value = xjsfl.utils.getDeepValue(data, prop) || placeholder;
+							}
+							else
+							{
+								value = prop in data ? data[prop] : placeholder;
+							}
 
 						// convert any nested SimpleTemplates
 							if(value instanceof SimpleTemplate)
