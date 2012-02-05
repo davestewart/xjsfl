@@ -17,6 +17,7 @@
 		/**
 		 * Table constructor
 		 * @param	{Array}		rows			An input Array of objects
+		 * @param	{Object}	rows			An input Object, the properties & values of which will become rows
 		 * @param	{Array}		keys			An optional array of columns to extract from the data
 		 * @param	{String}	keys			An optional anything-delimted string to extract from the data
 		 * @param	{Number}	keys			An optional Table ORDER Constant to order the columns
@@ -29,45 +30,72 @@
 			//TODO Add a setHeading() method to add a tabel eading row
 			//TODO Update constructor to allow setting of heading
 
-			if(rows instanceof Array)
-			{
-				// variables
-					this.rows			= rows;
-					this.cols			= [];
-					this.colWidths		= [];
-					this.rowHeights		= [];
-
-				// widths and heights
-					this.mW				= maxColWidth || this.mW;
-					this.mH				= maxRowHeight || this.mH;
-
-				// filter column data
-					this.setKeys(keys);
-
-				// set max widths
-					for(var y = 0; y < this.rows.length; y++)
+			// if a single, (non-Array) object is passed, transpose properties and values into two columns
+				if( ! (rows instanceof Array))
+				{
+					var arr = [];
+					for (var prop in rows)
 					{
-						for(var x = 0; x < this.keys.length; x++)
-						{
-							// filter cell data for newlines
-								var value = String(this.rows[y][this.keys[x]]);
-								if(/[\r\n]/.test(value))
-								{
-									this.rows[y][this.keys[x]] = value.split(/[\r\n]/).shift() + '...';
-								}
-
-							// set widths
-								this.setMax(y, x, this.rows[y][this.keys[x]]);
-						}
+						arr.push({Property:prop, Value:PropertyResolver.resolve(rows, prop)});
 					}
+					rows = arr;
+				}
 
-				// add headings
-					this.setHeading();
-			}
-			else
-			{
-				throw new Error('Table constructor requires that the first argument be an Array, with at least one element');
-			}
+			// otherwise, start processing the rows of the Array
+				if(rows instanceof Array)
+				{
+					// variables
+						this.rows			= rows;
+						this.cols			= [];
+						this.colWidths		= [];
+						this.rowHeights		= [];
+
+					// widths and heights
+						this.mW				= maxColWidth || this.mW;
+						this.mH				= maxRowHeight || this.mH;
+
+					// filter column data
+						this.setKeys(keys);
+
+					// set max widths
+						for(var y = 0; y < this.rows.length; y++)
+						{
+							for(var x = 0; x < this.keys.length; x++)
+							{
+								// get element and property name
+									var element = this.rows[y];
+									var name	= this.keys[x];
+
+								// skip if properties might be unreachable
+									if(PropertyResolver.testProperty(name))
+									{
+										continue;
+									}
+
+								// get value
+									var value	= String(element[name]);
+
+								// filter cell data for newlines
+									if(/[\r\n]/.test(value))
+									{
+										value = value.split(/[\r\n]/).shift() + '...'
+										this.rows[y][this.keys[x]] = value;
+									}
+
+								// set widths
+									this.setMax(y, x, value);
+
+							}
+						}
+
+
+					// add headings
+						this.setHeading();
+				}
+				else
+				{
+					throw new Error('Table constructor requires that the first argument be an Array, with at least one element');
+				}
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -200,7 +228,7 @@
 					// print
 						if(output !== false)
 						{
-							trace(this.output);
+							fl.trace(this.output);
 						}
 
 					// return
@@ -396,12 +424,19 @@
 							// loop through each column
 								for(var x = 0; x < this.keys.length; x++)
 								{
-									var value	= this.rows[y][this.keys[x]];
-									value		= value === undefined ? '' : value;
-									var pad		= typeof value == 'number' ? true : false;
-									output		+= " ";
-									output		+= this.pad(String(value).substr(this.mW * (line-1), this.mW), this.colWidths[x], ' ', pad);
-									output		+= " " + this.chars.col;
+									// get element and property name
+										var element = this.rows[y];
+										var name	= this.keys[x];
+
+									// get and format value
+										var value	= PropertyResolver.resolve(element, name)
+										var text	= value === undefined ? '' : value;
+										var pad		= typeof text == 'number' ? true : false;
+
+									// create output
+										output		+= " ";
+										output		+= this.pad(String(text).substr(this.mW * (line-1), this.mW), this.colWidths[x], ' ', pad);
+										output		+= " " + this.chars.col;
 								}
 
 							// add output
