@@ -1083,16 +1083,18 @@
 		 * @param	a	{Array}		A 2-element array defining the lower and upper limits
 		 * @param	a	{Number}	The lower limit of the range
 		 * @param	b	{Number}	The lower limit of the range
+		 * @param	b	{Number}	An optional Boolean to round to the nearest integer value
 		 * @returns		{Number}	A number between a and b
 		 */
-		randomValue:function(a, b)
+		randomValue:function(a, b, round)
 		{
 			if(a instanceof Array)
 			{
 				b = a[1];
 				a = a[0];
 			}
-			return a + (b - a) * Math.random();
+			var value = a + (b - a) * Math.random();
+			return round ? Math.round(value) : value;
 		}
 	}
 
