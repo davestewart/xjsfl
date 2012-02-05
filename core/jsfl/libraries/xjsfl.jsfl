@@ -702,6 +702,30 @@
 		},
 
 		/**
+		 * Gets the value from an object by supplying a dot-syntaxed string
+		 * @param	{Object}	obj		Any valid Object
+		 * @param	{String}	dotPath	The dot-path to an object property
+		 * @returns	{Value}				The value of the property, if it exists
+		 */
+		getDeepValue:function(obj, dotPath)
+		{
+			var parts = dotPath.split('.');
+			while(parts.length > 1)
+			{
+				part = parts.shift();
+				if(part in obj)
+				{
+					obj = obj[part];
+				}
+				else
+				{
+					return;
+				}
+			}
+			return obj[parts[0]];
+		},
+
+		/**
 		 * comparison function to get a max or min value within an array of objects
 		 * @param	elements		{Array}		An Array of objects with named properties
 		 * @param	prop			{String}	The property to test
@@ -1092,6 +1116,9 @@
 	 */
 	xjsfl.output =
 	{
+		//TODO Convert trace() or log() to use Logger class
+
+
 		OUTPUT_TYPE_TRACE:	'trace',
 		OUTPUT_TYPE_ALERT:	'alert',
 
@@ -1507,6 +1534,8 @@
 					path = FLfile.uriToPlatformPath(xjsfl.uri) + path;
 				}
 
+				//TODO Add support for "./", and confirm results of "../" and "/"
+
 			// replace backslashes
 				path = path.replace(/\\+/g, '/');
 
@@ -1885,7 +1914,7 @@
 			// load classes
 				for(var i = 0; i < paths.length; i++)
 				{
-					if(paths[i].indexOf('xjsfl') == -1) // don't reload load xjsfl //TODO consider moving xjsfl out of libraries
+					if(paths[i].indexOf('xjsfl') == -1) // don't reload load xjsfl
 					{
 						if(debugType != undefined)
 						{
@@ -1910,6 +1939,7 @@
 		loadFolder:function(path, debugType)
 		{
             //TODO add a list of filenames to prioritize
+			//TODO refactor loadFolder to load() by detecting folder path or Folder class
 
 			// grab files
 				var uri		= xjsfl.file.makeURI(path);
@@ -2056,8 +2086,10 @@
 	}
 
 	/**
-	 * A namespace in which to store module code to prevent pollution of global scope
-	 * as well as a couple of methods to add and load module code
+	 * A namespace in which to store module code to prevent pollution of global
+	 * scope as well as a couple of methods to add and load module code
+	 *
+	 * Needs to be created in a closure to keep the modules and manifests private
 	 */
 	xjsfl.modules =
 	(
@@ -2383,6 +2415,7 @@
 			var dom = fl.getDocumentDOM();
 			if(dom)
 			{
+				//BUG CS5.5 won't allow you to get a timeline sometimes
 				var timeline = dom.getTimeline();
 				obj =
 				{
