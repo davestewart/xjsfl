@@ -18,16 +18,21 @@
 
 	/**
 	 * Logger constructor
-	 * @param	{String}	pattern		An optional input pattern
+	 * @param	{String}	template	An optional input pattern
 	 * @param	{String}	uriOrPath	An optional URI or path to which to save a log file
+	 * @param	{Boolean}	append		An optional Boolean to append (rather than clear) any existing file, defaults to false
 	 */
-	function Logger(pattern, uriOrPath)
+	function Logger(template, uriOrPath, append)
 	{
-		this.template		= new SimpleTemplate(pattern || '{message}');
+		this.template		= new SimpleTemplate(template || '{message}');
 		if(uriOrPath)
 		{
 			uriOrPath		= uriOrPath.replace(/(\.txt)?$/, '.txt');
 			this.file		= new File(uriOrPath);
+			if(append !== true)
+			{
+				this.clear();
+			}
 		}
 	}
 
@@ -63,27 +68,32 @@
 				 */
 				count:0,
 
+				/**
+				 * @type {Object}			A hash of triggers
+				 */
+				triggers:{},
+
 			// ------------------------------------------------------------------------------------------------
 			// Public methods
 
 				/**
 				 * Log a message (note that the order of $ arguments may be swapped)
 				 * @param	{String}	message			The message to log
-				 * @param	{Number}	$level			An optional Numbered log level that will rendered into {level} placeholders
-				 * @param	{String}	$info			An optional String that will rendered into {info} placeholders
+				 * @param	{String}	$type			An optional log type String that will be rendered into the {type} placeholders
+				 * @param	{Object}	$params			An optional Object of name:value pairs that will be rendered into the user's custom placeholders
 				 * @param	{Boolean}	$trace			An optional Boolean to additionally trace the result to the Output panel (File logging only)
 				 * @returns	{Logger}					The current instance
 				 */
-				log:function(message, $level, $info, $trace)
+				log:function(message, $type, $params, $trace)
 				{
 					// parameter shifting
-						var level = '', info = '', trace;
-						for each(var arg in [$level, $info, $trace])
+						var type = '', info = '', params = {}, trace;
+						for each(var arg in [$type, $params, $trace])
 						{
-							if(typeof arg === 'number')
-								level = arg;
-							else if(typeof arg === 'string')
-								info = arg;
+							if(typeof arg === 'string' || typeof arg === 'number')
+								type = arg;
+							else if(typeof arg === 'object')
+								params = arg;
 							else if(typeof arg === 'boolean')
 								trace = arg;
 						}
@@ -94,13 +104,15 @@
 						var data	=
 						{
 							message		:message, // message goes first, so its content can be populated by later variables
-							info		:info,
-							level		:level,
+							type		:type,
 							timestamp	:date.toUTCString(),
 							time		:time,
 							millitime	:time + ':' + date.getMilliseconds(),
 							count		:this.count++
 						}
+
+					// user data
+						data		= xjsfl.utils.extend(data, params);
 
 					// populate
 						message		= message ? this.template.populate(data).output : '';
@@ -121,8 +133,26 @@
 							fl.trace(message);
 						}
 
+					// check in case this log message triggers a callback
+						if(this.triggers[type])
+						{
+							this.triggers[type](this, message, data);
+						}
+
 					// return
 						return this;
+				},
+
+				/**
+				 * Add a callback function that should fire when a log with a certain type is logged
+				 * @param	{String}	type		The message type to register a callback for
+				 * @param	{Function}	callback	The function to call when a log of that type is called
+				 * @returns	{Logger}				The current instance
+				 */
+				addTrigger:function(type, callback)
+				{
+					this.triggers[type] = callback;
+					return this;
 				},
 
 			// ------------------------------------------------------------------------------------------------
@@ -131,21 +161,30 @@
 				/**
 				 * Writes directly to the log file, if there is one
 				 * @param	{String}	message			The message to log
+				 * @param	{Boolean}	trace			An optional Boolean to additionally trace the result to the Output panel
 				 * @returns	{Logger}					The current instance
 				 */
-				write:function(message)
+				write:function(message, trace)
 				{
 					if(this.file)
 					{
 						this.file.contents += message + xjsfl.settings.newLine;
+						if(trace)
+						{
+							fl.trace(message);
+						}
 					}
 					else
 					{
-						trace(message);
+						fl.trace(message);
 					}
 					return this;
 				},
 
+				/**
+				 * Clears the log file
+				 * @returns	{Logger}		The current instance
+				 */
 				clear:function()
 				{
 					this.file.contents = '';
@@ -218,11 +257,11 @@
 
 				/**
 				 * Returns a String representation of the instance
-				 * @returns	{Object}		Description
+				 * @returns	{String}		Description
 				 */
 				toString:function()
 				{
-					return '[object Logger template="' +this.template.template+ '" path="' +(this.file ? this.file.path : '')+ '"]';
+					return '[object Logger template="' +this.template.input+ '" path="' +(this.file ? xjsfl.file.makePath(this.file.path, true) : '')+ '"]';
 				}
 		}
 
