@@ -905,10 +905,14 @@
 				var rxFile		= /(.+?)([^\\\/]*)$/;
 
 			// error
-				error			= error || new Error();
+				var strStack	= (error instanceof Error ? error : new Error('Stack trace')).stack;
 
 			// parse stack
-				var matches		= error.stack.match(rxParts);
+				var matches		= strStack.match(rxParts);
+				if( ! error )
+				{
+					matches = matches.slice(2); // remove the fake error
+				}
 
 			// parse lines
 				var stack		= [];
@@ -1495,7 +1499,7 @@
 				else if(context === true || path === true)
 				{
 					var stack	= xjsfl.utils.getStack();
-					path		= xjsfl.file.makePath(stack[3].path) + (path === true ? '' : path);
+					path		= xjsfl.file.makePath(stack[1].path) + (path === true ? '' : path);
 				}
 
 			//TODO IMPORTANT! Throw error / passback false on empty string
