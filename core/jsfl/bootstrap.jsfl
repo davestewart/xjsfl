@@ -102,7 +102,7 @@
 									function()
 									{
 										var stack = xjsfl.utils.getStack();
-										return xjsfl.file.makeURI(stack[3].path);
+										return xjsfl.file.makeURI(stack[1].path);
 									}
 								);
 					}
