@@ -20,206 +20,268 @@
 			 * Create a valid URI from a supplied string
 			 *
 			 * - Resolves relative paths (automatically or via context)
+			 * - Allows concatenation and resolution of paths
+			 * - Resolves paths relative to another file
 			 * - Resolves {placeholder} variables
-			 * - Corrects badly-formatted URIs
+			 * - Tidies badly-formatted URIs
 			 *
-			 * @param	pathOrURI	{String}	A path or URI-formatted string
+			 * @param	pathOrURI	{String}	A token, path or URI-formatted string
 			 * @param	context		{String}	An optional uri or path context, from which to start the URI
 			 * @param	context		{File}		An optional File from which to start the URI
 			 * @param	context		{Folder}	An optional Folder from which to start the URI
 			 * @param	context		{Number}	An optional stack-function index, the location of which to derive the URI from
+			 * @param	parseURI	{Boolean}	An optional Boolean, to bypass immediate returning of file:/// URIs, and parse their content
 			 * @returns				{String}	An absolute URI
 			 * @see								Notes at the top of this file
 			 */
-			toURI:function(pathOrURI, context)
+			toURI:function(pathOrURI, context, parseURI)
 			{
-				// ensure pathOrURI is a string
-					pathOrURI = String(pathOrURI);
+				// ---------------------------------------------------------------------------------------------------------------
+				// process URI
 
-				// if pathOrURI is already a URI, no need to convert so return immediately
-					if(pathOrURI.indexOf('file:///') === 0)
-					{
-						return pathOrURI;
-					}
+					// ensure pathOrURI is a string
+						pathOrURI = String(pathOrURI);
 
-				// variables
-					var uri;
-					var root;
-					var path		= pathOrURI.replace(/\\+/g, '/');;
-					var rxFile		= /[^\/\\]+$/;
-
-				// check path for and convert any leading {placeholder} variables
-					if(path.indexOf('{') === 0)
-					{
-						var matches = path.match(/{(\w+)}/);
-						if(matches)
+					// process URIs
+						if(pathOrURI.indexOf('file:///') === 0)
 						{
-							var folder = xjsfl.settings.folders[matches[1]];
-							if(folder)
-							{
-								return URI.correct(path.replace(matches[0], folder));
-							}
+							// if pathOrURI is already a URI, return immediately
+								if( ! parseURI )
+								{
+									return pathOrURI;
+								}
+
+							// convert URI to a path
+								pathOrURI = pathOrURI
+									.replace('file:///', '')
+									.replace('|', ':')
+									.replace(/%20/g, ' ');
 						}
-						throw new URIError('Error in URI.toURI(): Unrecognised placeholder ' +matches[0]+ ' in path "' +path+ '"');
-					}
 
-				// check to see if supplied context resolves to a URI
-					if( context && (typeof context !== 'number') )
-					{
-						// variables
-							var uri;
+				// ---------------------------------------------------------------------------------------------------------------
+				// process {placeholders}
 
-						// grab URI of context if possible
-							if(typeof context === 'string')
+					// variables
+						var uri;
+						var root;
+						var path		= pathOrURI.replace(/\\+/g, '/');;
+						var rxFile		= /[^\/\\]+$/;
+
+					// check path for and convert any leading {placeholder} variables
+						if(path.indexOf('{') === 0)
+						{
+							var matches = path.match(/{(\w+)}/);
+							if(matches)
 							{
-								if(String(context).indexOf('file:///') === 0)
+								var folder = xjsfl.settings.folders[matches[1]];
+								if(folder)
 								{
-									uri = context;
+									uri		= path.replace(matches[0], folder);
 								}
-								else
-								{
-									uri = URI.toURI(context);
-								}
-							}
-							else if(context instanceof File)
-							{
-								uri = context.uri;
-							}
-							else if(context instanceof Folder)
-							{
-								uri = context.uri + '/';
-							}
-
-						// test that a URI was found
-							if(uri)
-							{
-								// check that path isn't absolute (or else it can't be resolved)
-									if(/^([\w ]+:|\/)/.test(path))
-									{
-										throw new URIError('Error in URI.toURI(): It is not possible to resolve the absolute path "' +path+ '" relative to "' +context+ '"');
-									}
-									else
-									{
-										root = uri.replace(rxFile, '');
-									}
 							}
 							else
 							{
-								throw new URIError('Error in URI.toURI(): It is not possible to resolve the path "' +path+ '" as the context "' +context+ '" as is not a valid URI, File or Folder');
+								throw new URIError('Error in URI.toURI(): Unrecognised placeholder ' +matches[0]+ ' in path "' +path+ '"');
 							}
-					}
+						}
 
-				// if a root (context) wasn't resolved, check path for leading relative tokens and attempt to resolve correct source of file location
-					if( ! root )
-					{
-						// variables
-							var rx			= /^(\.\/|\.\.\/|\/\/|\/|[\w ]+:)/;
-							var matches		= path.match(rx);
-							context			= context || 1;
+				// ---------------------------------------------------------------------------------------------------------------
+				// process context
 
-						// parse relative-path formats to resolve root
-							if(matches)
-							{
-								switch(matches[1])
+					// check to see if supplied context resolves to a URI
+						else if( context && (typeof context !== 'number') )
+						{
+							// grab URI of context if possible
+								if(typeof context === 'string')
 								{
-									case './':
-										//trace('	./  - ' + path);
-										root		= null;
-									break;
-									case '../':
-										//trace('	../ - ' + path);
-										root		= null;
-									break;
-									case '/':
-										//trace('	/   - ' + path);
-										root		= xjsfl.uri;
-									break;
-									case '//':
-										//trace('	//  - ' + path);
-										var stack	= xjsfl.utils.getStack();
-										var matches	= stack[context].uri.match(/(file:\/\/\/[^\/]+\/)/);
-										root		= matches[1];
-									break;
-									default:
-										if(matches[1].indexOf(':') !== -1)
+									if(String(context).indexOf('file:///') === 0)
+									{
+										root = context;
+									}
+									else
+									{
+										root = URI.toURI(context);
+									}
+								}
+								else if(context instanceof File)
+								{
+									root = context.uri;
+								}
+								else if(context instanceof Folder)
+								{
+									root = context.uri + '/';
+								}
+
+							// test that a URI was found
+								if(root)
+								{
+									// check that path isn't absolute (or else it can't be resolved)
+										if(URI.isAbsolute(path))
 										{
-											//trace('	c:  - ' + path);
-											if(matches[1].length > 2 || fl.version.indexOf('mac') > -1)
-											{
-												path = path.replace(':', '/');
-											}
-											else
-											{
-												path = path.replace(':', '|');
-											}
-											return 'file:///' + URI.correct(path);
+											throw new URIError('Error in URI.toURI(): It is not possible to resolve the absolute path "' +path+ '" relative to "' +context+ '"');
 										}
 										else
 										{
-											//trace('	rel - ' + path);
-											root	= null;
+											uri = root.replace(rxFile, '') + path;
 										}
 								}
-							}
-					}
+								else
+								{
+									throw new URIError('Error in URI.toURI(): It is not possible to resolve the path "' +path+ '" as the context "' +context+ '" as is not a valid URI, File or Folder');
+								}
+						}
 
-				// if the root wasn't implied by the path (i.e. folder/file.txt), it must be relative, so derive from the calling file
-					if( ! root )
-					{
-						var stack	= xjsfl.utils.getStack();
-						var source	= stack[context].uri;
-						uri			= source.replace(rxFile, '') + path;
-					}
+				// ---------------------------------------------------------------------------------------------------------------
+				// process relative paths
 
-					else
-					{
-						uri			= root.replace('file:///', '') + path;
-						return 'file:///' + URI.correct(uri);
-					}
+					// if a URI isn't yet resolved, check path for leading relative tokens and attempt to resolve correct source of file location
+						if( ! uri )
+						{
+							// variables
+								var rx			= /^(\.\/|\.\.\/|\/\/|\/|[\w ]+:)/;
+								var matches		= path.match(rx);
+								context			= context || 1;
 
-				// return
-					return URI.correct(uri);
+							// parse relative-path formats to resolve root
+								if(matches)
+								{
+									switch(matches[1])
+									{
+										case './':
+											//trace('	./  - ' + path);
+											root		= null;
+										break;
+										case '../':
+											//trace('	../ - ' + path);
+											root		= null;
+										break;
+										case '/':
+											//trace('	/   - ' + path);
+											root		= xjsfl.uri;
+										break;
+										case '//':
+											//trace('	//  - ' + path);
+											var stack	= xjsfl.utils.getStack();
+											var matches	= stack[context].uri.match(/(file:\/\/\/[^\/]+\/)/);
+											root		= matches[1];
+										break;
+										default:
+											if(matches[1].indexOf(':') !== -1)
+											{
+												//trace('	c:  - ' + path);
+												if(matches[1].length > 2 || fl.version.indexOf('mac') > -1)
+												{
+													root = path.replace(':', '/');
+												}
+												else
+												{
+													root = path.replace(':', '|');
+												}
+												path = '';
+											}
+											else
+											{
+												//trace('	rel - ' + path);
+												root	= null;
+											}
+									}
+
+									if(root)
+									{
+										uri = root + path;
+									}
+								}
+						}
+
+					// if still no URI, the root wasn't implied by the path (i.e. folder/file.txt) therefore it must be relative, so derive from the calling file
+						if( ! uri )
+						{
+							var stack	= xjsfl.utils.getStack();
+							var source	= stack[context].uri;
+							uri			= source.replace(rxFile, '') + path;
+						}
+
+				// ---------------------------------------------------------------------------------------------------------------
+				// tidy URI
+
+					// remove file:///
+						if(uri.indexOf('file:///') === 0)
+						{
+							uri = uri.substr(8);
+						}
+
+					// replace backslashes
+						uri = uri.replace(/\\+/g, '/');
+
+					// replace double-slashes
+						uri = uri.replace(/\/+/g, '/');
+
+					// replace redundant ./
+						uri = uri.replace(/(^|\/)\.\//img, '$1');
+
+					// replace %20 with spaces
+						uri = uri.replace(/ /g, '%20');
+
+					// tidy drive letter
+						uri	= uri.replace(/^([a-z ]+):/i, '$1|')
+
+					// resolve relative tokens
+						while(uri.indexOf('../') > 0)
+						{
+							// kill folder/../ pairs
+								uri = uri.replace(/(^|\/)[^\/]+\/\.\.\//, '/');
+
+							// replace any leading ../ tokens (as you can't go higher than root)
+								uri = uri.replace(/^([a-z ]+[:|])\/[.\/]+/img, '$1/');
+								//path = path.replace(/^\/\.\.\//img, '');
+						}
+
+					// add 'file:///'
+						uri = 'file:///' + uri;
+
+				// ---------------------------------------------------------------------------------------------------------------
+				// done!
+
+					// return
+						return uri;
 			},
 
 			/**
 			 * Create a valid path from a supplied string
 			 *
-			 * @param	pathOrURI	{String}	A path or URI-formatted string
-			 * @param	shorten		{Boolean}	An optional boolean to return a path with {xjsfl} or {config} swapped out from the actual path
+			 * @param	pathOrURI	{String}	A token, path or URI-formatted string
+			 * @param	shorten		{Boolean}	An optional Boolean to return a path with {placeholder} variables for registered URIs
 			 * @returns				{String}	An absolute, or shortened path
 			 * @see								Notes at the top of this file
 			 */
 			toPath:function(pathOrURI, shorten)
 			{
-				// variables
-					pathOrURI	= String(pathOrURI);
-					var uri		= pathOrURI;
+				// parse all input via toURI()
+					var uri = URI.toURI(String(pathOrURI), 2, true);
 
-				// convert placeholders
-					if(uri.indexOf('{') === 0)
+				// return the {placeholder} version of registered URIs
+					if(shorten)
 					{
-						uri = URI.toURI(uri);
-					}
+						// convert to URI if not already
+							if(uri.indexOf('file:///') !== 0)
+							{
+								uri = uri
+									.replace(/(^[a-z ]+):/i, '$1|')
+									.replace(/\\/g, '/')
+									.replace(/ /g, '%20')
+									.replace(/^/, 'file:///');
+							}
 
-				// convert relative paths
-					else if(/^([^:]+$|[^:]+\/|\.\/|\.\.\/|\/\/|\/)/.test(pathOrURI))
-					{
-						uri = URI.toURI(uri, 2);
-					}
-
-				// return the short version of registered URIs
-					if(shorten && pathOrURI.indexOf('file:///') === 0)
-					{
 						// variables
 							var folders = [];
 
 						// get all folders matching the input URI
 							for(var folder in xjsfl.settings.folders)
 							{
-								var uri = xjsfl.settings.folders[folder];
-								if(pathOrURI.indexOf(uri) === 0)
+								var folderURI = xjsfl.settings.folders[folder];
+								if(uri.indexOf(folderURI) === 0)
 								{
-									folders.push({name:folder, uri:uri});
+									folders.push({name:folder, uri:folderURI});
 								}
 							}
 
@@ -228,7 +290,7 @@
 							{
 								xjsfl.utils.sortOn(folders, 'name');
 								var folder = folders.shift();
-								uri = pathOrURI.replace(folder.uri, '{' +folder.name+ '}/');
+								uri = uri.replace(folder.uri, '{' +folder.name+ '}');
 							}
 					}
 
@@ -245,69 +307,13 @@
 			},
 
 			/**
-			 * Resolves a relative path from the absolute location of another
-			 *
-			 * @param	{String}	path		A relative file path, such as 'path/to/file.txt'
-			 * @param	{String}	context		An abxolute URI such as 'file:///path/to/file.txt'
-			 * @returns	{String}				An absolute URI
+			 * Tests if a path is absolute or not
+			 * @param	{String}	path	A valid path
+			 * @returns	{Boolean}			true or false, depending on the result
 			 */
-			resolve:function(path, context)
+			isAbsolute:function(path)
 			{
-				return URI.correct(context.replace(/[^\/\\]+$/, '') + path);
-			},
-
-			/**
-			 * Corrects badly-formatted URIs and paths
-			 *
-			 * - \\ are converted to /
-			 * - ../ are resolved
-			 * - // are converted to /
-			 * - Spaces are converted to %20
-			 *
-			 * @param	{String}	pathOrURI	A path or URI-formatted string
-			 * @returns	{String}				The corrected path or URI-formatted string
-			 */
-			correct:function(path)
-			{
-				// remove file:///
-					var protocol = '';
-					if(path.indexOf('file:///') === 0)
-					{
-						path = path.substr(8);
-						protocol = 'file:///';
-					}
-
-				// replace backslashes
-					path = path.replace(/\\+/g, '/');
-
-				// replace double-slashes
-					path = path.replace(/\/+/g, '/');
-
-				// resolve folder/../ pairs
-					while(path.indexOf('../') > -1)
-					{
-						// kill folder pair
-							path = path.replace(/(^|\/)[^\/]+\/\.\.\//, "/");
-
-						// replace any leading ../ tokens (as you can't go higher than root)
-							path = path.replace(/^([a-z ]+[:|])\/[.\/]+/img, "$1/");
-					}
-
-				// replace redundant ./
-					path = path.replace(/\.\//g, '');
-
-				// replace %20 with spaces
-					path = path.replace(/ /g, '%20');
-					//path = path.replace(/%20/g, ' ');
-
-				// return
-					return protocol + path;
-			},
-
-			isAbsolute:function(pathOrURI)
-			{
-				var path = URI.toPath(pathOrURI);
-				return /^[a-z]:/i.test(path);
+				return /^([\w ]+[:|])/.test(path.replace('file:///', ''));
 			}
 		}
 
