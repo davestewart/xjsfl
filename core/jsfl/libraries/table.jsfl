@@ -125,10 +125,11 @@
 		 * @param	{Number}	keys			An optional Table ORDER Constant to order the columns
 		 * @param	{Number}	maxColWidth		Max Row Width (chars)
 		 * @param	{Number}	maxRowHeight	Max Column Height (carriage returns)
+		 * @return 	{String}					The String output of the table
 		 */
 		Table.print = function(rows, caption, keys, maxColWidth, maxRowHeight)
 		{
-			new Table(rows, caption, keys, maxColWidth, maxRowHeight).render(true);
+			return new Table(rows, caption, keys, maxColWidth, maxRowHeight).render(true);
 		}
 
 		/// Sort table columns in the order they are first found
@@ -141,7 +142,7 @@
 		Table.ORDER_COLUMN	= 2;
 
 		/// Sort table columns by the most popular rows first
-		Table.ORDER_ROW	= 3;
+		Table.ORDER_ROW		= 3;
 
 		/// Sort table columns by the first row's keys only (this will hide data for some objects!)
 		Table.ORDER_FIRST	= 4;
