@@ -166,6 +166,7 @@
 				 */
 				write:function(message, trace)
 				{
+					message = message || '';
 					if(this.file)
 					{
 						this.file.contents += message + xjsfl.settings.newLine;
@@ -187,7 +188,10 @@
 				 */
 				clear:function()
 				{
-					this.file.contents = '';
+					if(this.file.exists)
+					{
+						this.file.contents = '';
+					}
 					return this;
 				},
 
