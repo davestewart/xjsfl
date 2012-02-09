@@ -24,21 +24,29 @@
 		 * @param	{Number}	maxColWidth		Max Column Height (returns)
 		 * @param	{Number}	maxRowHeight	Max Row Width (chars)
 		 */
-		function Table(rows, keys, maxColWidth, maxRowHeight)
+		function Table(rows, caption, keys, maxColWidth, maxRowHeight)
 		{
 			//TODO Add option to automatically skip functions, including constructors
-			//TODO Add a setHeading() method to add a tabel eading row
-			//TODO Update constructor to allow setting of heading
 
 			// if a single, (non-Array) object is passed, transpose properties and values into two columns
-				if( ! (rows instanceof Array))
+				if( ! (rows instanceof Array) )
 				{
 					var arr = [];
 					for (var prop in rows)
 					{
-						arr.push({Property:prop, Value:PropertyResolver.resolve(rows, prop)});
+						var value = PropertyResolver.resolve(rows, prop);
+						if(keys === true)
+						{
+							arr.push({Property:prop, Value:value, Type:xjsfl.utils.getClass(value)});
+						}
+						else
+						{
+							arr.push({Property:prop, Value:value});
+						}
 					}
+					this.colAlignOverride = true;
 					rows = arr;
+					keys = undefined;
 				}
 
 			// otherwise, start processing the rows of the Array
@@ -88,6 +96,11 @@
 							}
 						}
 
+					// set caption
+						if(caption)
+						{
+							this.setCaption(caption);
+						}
 
 					// add headings
 						this.setHeading();
@@ -109,9 +122,9 @@
 		 * @param	{Number}	keys			An optional Table ORDER Constant to order the columns
 		 * @param	{Number}	maxColWidth		Max Column Height (returns)
 		 */
-		Table.print = function(rows, keys, maxColWidth)
+		Table.print = function(rows, caption, keys, maxColWidth, caption)
 		{
-			new Table(rows, keys, maxColWidth).render(true);
+			new Table(rows, caption, keys, maxColWidth, null).render(true);
 		}
 
 		/// Sort table columns in the order they are first found
@@ -149,44 +162,53 @@
 				constructor:Table,
 
 				/**
-				 * @var array The array for processing
+				 * @var {Array} The array for processing
 				 */
 				rows:		null,
 
 				/**
-				 * @type	{Array}	An array of column {key, width, align} objects
+				 * @type {Array} An array of column {key, width, align} objects
 				 */
-				cols:		[
-								{key:'', width:0, align:0}
-							],
+				cols:		[ { key:'', width:0, align:0 } ],
 
 				/**
-				 * @var int The Column index of keys
+				 * @var {Number} The Column index of keys
 				 */
 				keys:		[],
 
 				/**
-				 * @var int The column width settings
+				 * @type {String} The table's caption
+				 */
+				caption:	null,
+
+				/**
+				 * @var {Number} The column width settings
 				 */
 				colWidths:	[],
 
 				/**
-				 * @var int the column width settings
+				 * @var {Number} the column width settings
 				 */
 				colAligns:	[],
 
+
 				/**
-				 * @var int the row lines settings
+				 * @type {Number}
+				 */
+				colAlignOverride:null,
+
+				/**
+				 * @var {Number} the row lines settings
 				 */
 				rowHeights:		[],
 
 				/**
-				 * @var int max row height (returns)
+				 * @var {Number} max row height (returns)
 				 */
 				mH:		2,
 
 				/**
-				 * @var int max column width (chars)
+				 * @var {Number} max column width (chars)
 				 */
 				mW:		100,
 
@@ -206,13 +228,17 @@
 			// public methods
 
 				/**
-				 * Renders the data in the class as an ASCII table
+				 * Renders the data as an ASCII table
 				 * @param	{Boolean}	output		An optional flag to print the table table to the Output panel, defaults to true
 				 * @return 	{String}				The String output of the table
 				 */
 				render:function(output)
 				{
 					// header
+						if(this.caption)
+						{
+							this.addCaption();
+						}
 						this.addLine();
 						this.addHeading();
 
@@ -237,7 +263,7 @@
 
 				toString:function()
 				{
-					return '[object Table rows="' +(this.rows ? this.rows.length : 0)+ '"]';
+					return '[object Table caption="' +(this.caption || '')+ '" rows="' +(this.rows ? this.rows.length : 0)+ '"]';
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
@@ -245,8 +271,9 @@
 
 				/**
 				 * Filter the displayed row data by key (column)
-				 * @param	{Array}		keys	An array of column names
 				 * @param	{Number}	keys	A Table ORDER constant
+				 * @param	{Array}		keys	An array of column names
+				 * @param	{String}	keys	A comma delimited string of key names
 				 */
 				setKeys:function(keys)
 				{
@@ -254,7 +281,7 @@
 						keys = keys || Table.ORDER_ROW;
 
 					// string - split into keys
-						if(typeof keys == 'string')
+						if(typeof keys === 'string')
 						{
 							keys = xjsfl.utils.trim(keys.replace(/\s*[^\w ]+\s*/g, ',')).split(/,/g);
 						}
@@ -407,6 +434,11 @@
 						}
 				},
 
+				setCaption:function(caption)
+				{
+					this.caption = caption;
+				},
+
 			// ---------------------------------------------------------------------------------------------------------------
 			// output methods
 
@@ -428,15 +460,15 @@
 										var element = this.rows[y];
 										var name	= this.keys[x];
 
-									// get and format value
-										var value	= PropertyResolver.resolve(element, name)
+									// get and format value (need to use PropertyResolver in case Symbols are passed in)
+										var value	= PropertyResolver.resolve(element, name);
 										var text	= value === undefined ? '' : value;
-										var pad		= typeof text == 'number' ? true : false;
+										var pad		= this.colAlignOverride ? false : (typeof text == 'number' ? true : false);
 
 									// create output
-										output		+= " ";
-										output		+= this.pad(String(text).substr(this.mW * (line-1), this.mW), this.colWidths[x], ' ', pad);
-										output		+= " " + this.chars.col;
+										output		+= " "
+													+ this.pad(String(text).substr(this.mW * (line-1), this.mW), this.colWidths[x], ' ', pad)
+													+ " " + this.chars.col;
 								}
 
 							// add output
@@ -461,10 +493,10 @@
 								var val		= this.colWidths[x];
 								var align	= typeof value == 'number';
 
-								output += ' ' +
-									this.pad(this.head[key], val, ' ', align) +
-									' ' +
-									this.chars.col;
+								output += ' '
+									+ this.pad(this.head[key], val, ' ', align)
+									+ ' '
+									+ this.chars.col;
 							}
 
 						// add output
@@ -486,14 +518,26 @@
 					// loop through columns
 						for(var x = 0; x < this.colWidths.length; x++)
 						{
-							output += this.chars.row +
-								this.pad('', this.colWidths[x], this.chars.row) +
-								this.chars.row +
-								this.chars.cen;
+							output += this.chars.row
+								+ this.pad('', this.colWidths[x], this.chars.row)
+								+ this.chars.row
+								+ this.chars.cen;
 						}
 
 					// add output
 						this.output += output + '\n';;
+				},
+
+				addCaption:function()
+				{
+					this.addLine();
+					this.output = this.output.replace(/\-\+\-/g, '---');
+					this.output += this.chars.col
+							+ ' '
+							+ this.pad(this.caption, this.output.length - 4)
+							+ this.chars.col
+							+ '\n';
+
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
