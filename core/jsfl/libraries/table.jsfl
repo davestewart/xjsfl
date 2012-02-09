@@ -18,11 +18,12 @@
 		 * Table constructor
 		 * @param	{Array}		rows			An input Array of objects
 		 * @param	{Object}	rows			An input Object, the properties & values of which will become rows
+		 * @param	{String}	caption			An optional String caption that is shown at the top of the table
 		 * @param	{Array}		keys			An optional array of columns to extract from the data
 		 * @param	{String}	keys			An optional anything-delimted string to extract from the data
 		 * @param	{Number}	keys			An optional Table ORDER Constant to order the columns
-		 * @param	{Number}	maxColWidth		Max Column Height (returns)
-		 * @param	{Number}	maxRowHeight	Max Row Width (chars)
+		 * @param	{Number}	maxColWidth		Max Row Width (chars)
+		 * @param	{Number}	maxRowHeight	Max Column Height (carriage returns)
 		 */
 		function Table(rows, caption, keys, maxColWidth, maxRowHeight)
 		{
@@ -117,14 +118,17 @@
 		/**
 		 * Static table method to print a table
 		 * @param	{Array}		rows			An input Array of objects
+		 * @param	{Object}	rows			An input Object, the properties & values of which will become rows
+		 * @param	{String}	caption			An optional String caption that is shown at the top of the table
 		 * @param	{Array}		keys			An optional array of columns to extract from the data
 		 * @param	{String}	keys			An optional anything-delimted string to extract from the data
 		 * @param	{Number}	keys			An optional Table ORDER Constant to order the columns
-		 * @param	{Number}	maxColWidth		Max Column Height (returns)
+		 * @param	{Number}	maxColWidth		Max Row Width (chars)
+		 * @param	{Number}	maxRowHeight	Max Column Height (carriage returns)
 		 */
-		Table.print = function(rows, caption, keys, maxColWidth, caption)
+		Table.print = function(rows, caption, keys, maxColWidth, maxRowHeight)
 		{
-			new Table(rows, caption, keys, maxColWidth, null).render(true);
+			new Table(rows, caption, keys, maxColWidth, maxRowHeight).render(true);
 		}
 
 		/// Sort table columns in the order they are first found
@@ -271,9 +275,9 @@
 
 				/**
 				 * Filter the displayed row data by key (column)
-				 * @param	{Number}	keys	A Table ORDER constant
-				 * @param	{Array}		keys	An array of column names
-				 * @param	{String}	keys	A comma delimited string of key names
+				 * @param	{Number}	keys			A Table ORDER constant
+				 * @param	{Array}		keys			An array of column names
+				 * @param	{String}	keys			An anything-delimited string of key names
 				 */
 				setKeys:function(keys)
 				{
@@ -364,6 +368,8 @@
 							this.keys = keys;
 						}
 
+					// return
+						return this;
 				},
 
 				/**
@@ -373,6 +379,7 @@
 				setMaxWidth:function(maxWidth)
 				{
 					this.mW = Math.floor(maxWidth);
+					return this;
 				},
 
 				/**
@@ -382,6 +389,7 @@
 				setMaxHeight:function(maxHeight)
 				{
 					this.mH = Math.floor(maxHeight);
+					return this;
 				},
 
 				setMax:function(y, x, value)
@@ -412,6 +420,9 @@
 						{
 							this.rowHeights[y] = h;
 						}
+
+					// return
+						return this;
 				},
 
 				setHeading:function()
@@ -432,11 +443,20 @@
 						{
 							this.head = data;
 						}
+
+					// return
+						return this;
 				},
 
+				/**
+				 * Sets the table caption
+				 * @param	{String}	caption		A caption that is shown at the top of the table
+				 * @returns	{Table}					The current instance
+				 */
 				setCaption:function(caption)
 				{
 					this.caption = caption;
+					return this;
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
