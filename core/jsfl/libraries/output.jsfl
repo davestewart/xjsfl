@@ -218,6 +218,9 @@
 
 					function processObject(obj)
 					{
+						//TODO have two loops - one for illegal instances, one for legal instances.
+						//TODO use PropertyResolver class
+
 						down(obj);
 						for (var key in obj)
 						{
