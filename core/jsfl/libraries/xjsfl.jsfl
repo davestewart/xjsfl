@@ -70,8 +70,8 @@
 	{
 		/**
 		 * Get the current Document DOM, or issue a standard warning if not available
-		 * @returns		{Document}	A Document object
-		 * @returns		{Boolean}	False if not available
+		 * @returns	{Document}		A Document object
+		 * @returns	{Boolean}		False if not available
 		 */
 		dom:function(error)
 		{
@@ -87,8 +87,8 @@
 
 		/**
 		 * Get the current Timeline, or issue a standard warning if not available
-		 * @returns		{Timeline}	A Timelineobject
-		 * @returns		{Boolean}	False if not available
+		 * @returns	{Timeline}		A Timelineobject
+		 * @returns	{Boolean}		False if not available
 		 */
 		timeline:function(error)
 		{
@@ -104,8 +104,8 @@
 
 		/**
 		 * Get the currently selected library items, or issue a standard warning if not selected
-		 * @returns		{Array}		An array of library items
-		 * @returns		{Boolean}	False if not available
+		 * @returns	{Array}			An array of library items
+		 * @returns	{Boolean}		False if not available
 		 */
 		items:function()
 		{
@@ -124,8 +124,8 @@
 
 		/**
 		 * Get the current selection, or issue a standard warning if nothing is selected
-		 * @returns		{Array}		An array of elements
-		 * @returns		{Boolean}	False if no selection
+		 * @returns	{Array}			An array of elements
+		 * @returns	{Boolean}		False if no selection
 		 */
 		selection:function()
 		{
@@ -317,10 +317,10 @@
 		 * Run each element of an array through a callback function
 		 * Used to call functions in a loop without writing loop code or forEach closure, or checking that original argument is an array
 		 *
-		 * @param	arr			{Array}		An array of elements to be passed to the callback
-		 * @param	func		{Function}	The function to call
-		 * @param	params		{Array}		An opptional array of arguments to be passed
-		 * @param	argIndex	{Number}	An optional argument index in which the original array element should be passed
+		 * @param	{Array}		arr			An array of elements to be passed to the callback
+		 * @param	{Function}	func		The function to call
+		 * @param	{Array}		params		An opptional array of arguments to be passed
+		 * @param	{Number}	argIndex	An optional argument index in which the original array element should be passed
 		 */
 		applyEach:function(arr, func, params, argIndex)
 		{
@@ -352,13 +352,13 @@
 		/**
 		 * Extends an object or array with more properties or elements
 		 *
-		 * @param obj		{Object}	A source Object to be extended
-		 * @param props		{Object}	The properties to be added
-		 * @returns			{Object}	The modified object
+		 * @param	{Object}	obj			A source Object to be extended
+		 * @param	{Object}	props		The properties to be added
+		 * @returns	{Object}				The modified object
 		 *
-		 * @param obj		{Array}		A source Array to be extended
-		 * @param props		{Array}		The elements to be added
-		 * @returns			{Array}		The modified array
+		 * @param	{Array}		obj			A source Array to be extended
+		 * @param	{Array}		props		The elements to be added
+		 * @returns	{Array}					The modified array
 		 */
 		extend:function(obj, props)
 		{
@@ -418,8 +418,8 @@
 
 		/**
 		 * Trims the whitespace from both sides of a string
-		 * @param	string	{String}	The input string to trim
-		 * @returns			{String}	The trimmed string
+		 * @param	{String}	string		The input string to trim
+		 * @returns	{String}				The trimmed string
 		 */
 		trim:function(string)
 		{
@@ -428,11 +428,11 @@
 
 		/**
 		 * Pads a value to a certain length with a specific character
-		 * @param	value	{Value}		Any value
-		 * @param	length	{Number}	An optional length, defaults to 6
-		 * @param	chr		{String}	An optional padding character, defaults to 0
-		 * @param	right	{Boolean}	An optional flag to pad to the right, rather than the left
-		 * @returns			{String}	The padded value
+		 * @param	{Value}		value		Any value
+		 * @param	{Number}	length		An optional length, defaults to 6
+		 * @param	{String}	chr			An optional padding character, defaults to 0
+		 * @param	{Boolean}	right		An optional flag to pad to the right, rather than the left
+		 * @returns	{String}				The padded value
 		 */
 		pad:function(value, length, chr, right)
 		{
@@ -449,8 +449,8 @@
 		/**
 		 * Checks if the object is a true array or not
 		 *
-		 * @param obj	{Object}		Any object that needs to be checked if it's a true Array
-		 * @returns		{Boolean}		True or false
+		 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
+		 * @returns	{Boolean}				True or false
 		 */
 		isArray:function (obj)
 		{
@@ -461,10 +461,10 @@
 		 * Turns a single value into an array
 		 * It either returns an existing array, splits a string at delimiters, or wraps the single value in an array
 		 *
-		 * @param	value	{String}	A string
-		 * @param	delim	{RegExp}	An optional RegExp with which to split the input string, defaults to any non-word character
-		 * @param	delim	{String}	An optional character with which to split the string
-		 * @returns			{Array}		A new Array
+		 * @param	{String}	value		A string
+		 * @param	{RegExp}	delim		An optional RegExp with which to split the input string, defaults to any non-word character
+		 * @param	{String}	delim		An optional character with which to split the string
+		 * @returns	{Array}					A new Array
 		 */
 		toArray:function(value, delim)
 		{
@@ -512,8 +512,8 @@
 		/**
 		 * Returns a unique array without any duplicate items
 		 *
-		 * @param	arr		{Array}		Any array
-		 * @returns			{Array}		A unique array
+		 * @param	{Array}		arr			Any array
+		 * @returns	{Array}					A unique array
 		 */
 		toUniqueArray:function(arr)
 		{
@@ -531,9 +531,9 @@
 
 		/**
 		 * Basic numeric Array sort function
-		 * @param	arr		{Array}		An array to sort
-		 * @param	reverse	{Boolean}	An optional flag to sort in reverse (descending) order
-		 * @returns
+		 * @param	{Array}		arr			An array to sort
+		 * @param	{Boolean}	reverse		An optional flag to sort in reverse (descending) order
+		 * @returns	{Array}					The sorted Array
 		 */
 		sort:function(arr, reverse)
 		{
@@ -544,9 +544,9 @@
 
 		/**
 		 * Optimized Array sortOn method, for sorting Arrays by child property. This function modifies the input Array
-		 * @param	arr		{Array}		An Array of Objects
-		 * @param	prop	{String}	A property name to sort on; defaults to 'name'
-		 * @param	alpha	{Boolean}	An optional flag to sort alphabetically
+		 * @param	{Array}		arr			An Array of Objects
+		 * @param	{String}	prop		A property name to sort on; defaults to 'name'
+		 * @param	{Boolean}	alpha		An optional flag to sort alphabetically
 		 */
 		sortOn:function(arr, prop, alpha)
 		{
@@ -597,13 +597,13 @@
 		/**
 		 * Get an Array of values from an Object, or an Array of Arrays/Objects from an Array of Objects
 		 *
-		 * @param	input	{Array}		An Object or an array of Objects
-		 * @param	prop	{String}	The name of a property to collect
-		 * @param	prop	{Function}	A callback function of the format function propertyName(element){ return element.property }
-		 * @param	prop	{Array}		The names of properties to collect
-		 * @param	prop	{Boolean}	A Boolean indicates you want to collect ALL properties
-		 * @param	option	{Boolean}	If passing and returning a single object, pass true to make it unique. If returning a 2D array, pass true to return Objects
-		 * @returns			{Array}		A new 1D or 2D Array
+		 * @param	{Array}		input		An Object or an array of Objects
+		 * @param	{String}	prop		The name of a property to collect
+		 * @param	{Function}	prop		A callback function of the format function propertyName(element){ return element.property }
+		 * @param	{Array}		prop		The names of properties to collect
+		 * @param	{Boolean}	prop		A Boolean indicates you want to collect ALL properties
+		 * @param	{Boolean}	option		If passing and returning a single object, pass true to make it unique. If returning a 2D array, pass true to return Objects
+		 * @returns	{Array}					A new 1D or 2D Array
 		 */
 		getValues:function(input, prop, option)
 		{
@@ -748,8 +748,8 @@
 				// assign
 					else
 					{
-						trace(key)
-						trace(obj)
+						//trace(key)
+						//trace(obj)
 						if( ! (key in obj) )
 						{
 							trace('assigning')
@@ -767,11 +767,11 @@
         },
 
 		/**
-		 * comparison function to get a max or min value within an array of objects
-		 * @param	elements		{Array}		An Array of objects with named properties
-		 * @param	prop			{String}	The property to test
-		 * @param	returnElements	{Boolean}	An optional flag to return the element, rather than the value
-		 * @returns					{Array}		A 2-element Array containing the min and max values, or min and max elements
+		 * Comparison function to get a max or min value within an array of objects
+		 * @param	{Array}		elements		An Array of objects with named properties
+		 * @param	{String}	prop			The property to test
+		 * @param	{Boolean}	returnElements	An optional flag to return the element, rather than the value
+		 * @returns	{Array}						A 2-element Array containing the min and max values, or min and max elements
 		 */
 		getExtremeValues:function(elements, prop, returnElement)
 		{
@@ -814,9 +814,9 @@
 		/**
 		 * Get an object's keys, or all the keys from an Array of Objects
 		 *
-		 * @param	obj	{Object}	Any object with iterable properties
-		 * @param	obj	{Array}		An Array of objects with iterable properties
-		 * @returns		{Array}		An array of key names
+		 * @param	{Object}	obj			Any object with iterable properties
+		 * @param	{Array}		obj			An Array of objects with iterable properties
+		 * @returns	{Array}					An array of key names
 		 */
 		getKeys:function(obj)
 		{
@@ -837,10 +837,10 @@
 
 		/**
 		 * Get the arguments of a function as an Array
-		 * @param	args		{Arguments}		An arguments object
-		 * @param	startIndex	{Number}		Optional index of the argument from which to start from
-		 * @param	endIndex	{Number}		Optional index of the argument at which to end
-		 * @returns				{Array}			An Array of parameters
+		 * @param	{Arguments}	args		An arguments object
+		 * @param	{Number}	startIndex	Optional index of the argument from which to start from
+		 * @param	{Number}	endIndex	Optional index of the argument at which to end
+		 * @returns	{Array}					An Array of parameters
 		 */
 		getArguments:function(args, startIndex, endIndex)
 		{
@@ -850,8 +850,8 @@
 		/**
 		 * Get the class of an object as a string
 		 *
-		 * @param	value	{value}		Any value
-		 * @returns			{String}	The class name of the value i.e. 'String', 'Date', 'CustomClass'
+		 * @param	{value}		value		Any value
+		 * @returns	{String}				The class name of the value i.e. 'String', 'Date', 'CustomClass'
 		 */
 		getClass:function(obj)
 		{
@@ -897,8 +897,8 @@
 
 		/**
 		 * Returns the named SWF panel if it exists
-		 * @param	name	{String}	The panel name
-		 * @returns			{SWFPanel}	An SWFPanel object
+		 * @param	{String}	name		The panel name
+		 * @returns	{SWFPanel}				An SWFPanel object
 		 */
 		getPanel:function(name)
 		{
@@ -919,9 +919,9 @@
 		/**
 		 * Returns an array of the the currently executing files, paths, lines, and code
 		 *
-		 * @param	error		{Error}		An optional error object
-		 * @param	shorten		{Boolean}	An optional Boolean to shorten any core paths with {xjsfl}
-		 * @returns				{Array}		An array of the executing files, paths, lines and code
+		 * @param	{Error}		error		An optional error object
+		 * @param	{Boolean}	shorten		An optional Boolean to shorten any core paths with {xjsfl}
+		 * @returns	{Array}					An array of the executing files, paths, lines and code
 		 */
 		getStack:function(error, shorten)
 		{
@@ -972,9 +972,9 @@
 
 		/**
 		 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
-		 * @param	value	{String}	An input string
-		 * @param	trim	{Boolean}	An optional flag to trim the string, on by default
-		 * @returns			{Mixed}		The parsed value of the original value
+		 * @param	{String}	value		An input string
+		 * @param	{Boolean}	trim		An optional flag to trim the string, on by default
+		 * @returns	{Mixed}					The parsed value of the original value
 		 */
 		parseValue:function(value, trim)
 		{
@@ -1035,10 +1035,10 @@
 
 		/**
 		 * Randomnly modify a seed value with a secondary modifier component
-		 * @param value		{Number}	A value to modify
-		 * @param modifier	{Number}	An optional modifier component with which to modify the original value
-		 * @param modifier	{String}	An optional modifier component with which to modify the original value, with optional leading +,-,* or a trailing %
-		 * @returns			{Number}	The modified value
+		 * @param	{Number}	value		A value to modify
+		 * @param	{Number}	modifier	An optional modifier component with which to modify the original value
+		 * @param	{String}	modifier	An optional modifier component with which to modify the original value, with optional leading +,-,* or a trailing %
+		 * @returns	{Number}				The modified value
 		 */
 		randomizeValue:function(value, modifier)
 		{
@@ -1136,11 +1136,11 @@
 
 		/**
 		 * Get a random value between 2 numbers
-		 * @param	a		{Array}		A 2-element array defining the lower and upper limits
-		 * @param	a		{Number}	The lower limit of the range
-		 * @param	b		{Number}	The lower limit of the range
-		 * @param	round	{Number}	An optional Boolean to round to the nearest integer value
-		 * @returns			{Number}	A number between a and b
+		 * @param	{Array}		a			A 2-element array defining the lower and upper limits
+		 * @param	{Number}	a			The lower limit of the range
+		 * @param	{Number}	b			The lower limit of the range
+		 * @param	{Number}	round		An optional Boolean to round to the nearest integer value
+		 * @returns	{Number}				A number between a and b
 		 */
 		randomValue:function(a, b, round)
 		{
@@ -1196,8 +1196,8 @@
 
 		/**
 		 * Logging function
-		 * @param	type	{String}	The type of log message
-		 * @param	message	{String}	The text of the log message
+		 * @param	{String}	type		The type of log message
+		 * @param	{String}	message		The text of the log message
 		 * @returns
 		 */
 		log:function(type, message)
@@ -1212,8 +1212,8 @@
 		/**
 		 * Issue a warning to the user
 		 *
-		 * @param message		{String} The message to be displayed
-		 * @param debugLevel	{Number} 1 traces the message to the output panel, 2 shows the alert dialog
+		 * @param	{String} message		The message to be displayed
+		 * @param	{Number} debugLevel		1 traces the message to the output panel, 2 shows the alert dialog
 		 */
 		warn:function(message)
 		{
@@ -1263,11 +1263,11 @@
 		/**
 		 * Finds all files of a particular type within the cascading file system
 		 *
-		 * @param	type			{String}	The folder in which to look in to find the files, @see switch statement
-		 * @param	name			{String}	A file name (pass no extension to use default), or partial file path
-		 * @param	returnType		{Number}	An optional 0, 1 or -1; 0: all files (default), -1: the last file (user), 1:the first file (core)
-		 * @returns					{String}	A single file path if found and return type is 1 or -1, or null if not
-		 * @returns					{Array}		An Array of file uris if found, and return type is 0, or null if not
+		 * @param	{String}	type		The folder in which to look in to find the files, @see switch statement
+		 * @param	{String}	name		A file name (pass no extension to use default), or partial file path
+		 * @param	{Number}	returnType	An optional 0, 1 or -1; 0: all files (default), -1: the last file (user), 1:the first file (core)
+		 * @returns	{String}				A single file path if found and return type is 1 or -1, or null if not
+		 * @returns	{Array}					An Array of file uris if found, and return type is 0, or null if not
 		 */
 		find:function(type, name, returnType)
 		{
@@ -1372,14 +1372,14 @@
 		 * Attempts to find and run or return files from the cascading file structure.
 		 * Parameters and return type vary depending on file type!
 		 *
-		 * @param path			{String}		The relative or absolute path, or uri to the file
+		 * @param	{String}		path	The relative or absolute path, or uri to the file
 		 *
-		 * @param name			{String}		The name or path fragment to a file, with or without the file extension
-		 * @param type			{String}		The folder type in which to look (i.e. settings) for the file(s)
+		 * @param	{String}		name	The name or path fragment to a file, with or without the file extension
+		 * @param	{String}		type	The folder type in which to look (i.e. settings) for the file(s)
 		 *
-		 * @returns				{Boolean}		A Boolean indicating Whether the file was successfully found and loaded
-		 * @returns				{XML}			An XML object of the content of the file, if XML
-		 * @returns				{String}		The string content of the file otherwise
+		 * @returns	{Boolean}				A Boolean indicating Whether the file was successfully found and loaded
+		 * @returns	{XML}					An XML object of the content of the file, if XML
+		 * @returns	{String}				The string content of the file otherwise
 		 */
 		load:function (path, type)
 		{
@@ -1494,10 +1494,10 @@
 		 * Create a valid URI from a supplied string
 		 * Function has the same internal functionality as makePath()
 		 *
-		 * @param	str			{String}	An absolute path, relative path, or uri
-		 * @param	context		{String}	An optional context (uri or path), from which to start the URI
-		 * @param	context		{Boolean}	An alternative optional Boolean indicating to automatically derive the URI from the calling function's file location
-		 * @returns				{String}	An absolute URI
+		 * @param	{String}	str			An absolute path, relative path, or uri
+		 * @param	{String}	context		An optional context (uri or path), from which to start the URI
+		 * @param	{Boolean}	context		An alternative optional Boolean indicating to automatically derive the URI from the calling function's file location
+		 * @returns	{String}				An absolute URI
 		 * @see								xjsfl.file.makePath
 		 */
 		makeURI:function(str, context)
@@ -1553,9 +1553,9 @@
 		 * - replace multiple / and \ with /
 		 * - resolve ../ tokens to correct parent folder
 		 *
-		 * @param	str			{String}	An absolute path, relative path, or uri
-		 * @param	shorten		{Boolean}	An optional boolean to return a path with {xjsfl} or {config} swapped out from the actual path
-		 * @returns				{String}	An absolute or shortened path
+		 * @param	{String}	str			An absolute path, relative path, or uri
+		 * @param	{Boolean}	shorten		An optional boolean to return a path with {xjsfl} or {config} swapped out from the actual path
+		 * @returns	{String}				An absolute or shortened path
 		 */
 		makePath:function(str, shorten)
 		{
@@ -1622,8 +1622,8 @@
 		/**
 		 * Checks if a path is absolute or not
 		 *
-		 * @param path {String} The path to the file
-		 * @returns {Boolean} True (absolute) or False (relative)
+		 * @param	{String}	path		The path to the file
+		 * @returns	{Boolean}				True (absolute) or False (relative)
 		 */
 		isAbsolutePath:function(path)
 		{
@@ -1700,7 +1700,7 @@
 
 		/**
 		 * Debugs script files by loading and eval-ing them
-		 * @param		{String}		uriOrPath		The URI or path of the file to load
+		 * @param	{String}	uriOrPath	The URI or path of the file to load
 		 */
 		file:function(uriOrPath)
 		{
@@ -1785,10 +1785,10 @@
 
 		/**
 		 * Tests a callback and outputs the error stack if the call fails. Add additional parameters after the callback reference
-		 * @param	fn		{Function}	The function to test
-		 * @param	params	{Array}		An array or arguments to pass to the function
-		 * @param	scope	{Object}	An alternative scope to run the function in
-		 * @returns			{Value}		The result of the function if successful
+		 * @param	{Function}	fn			The function to test
+		 * @param	{Array}		params		An array or arguments to pass to the function
+		 * @param	{Object}	scope		An alternative scope to run the function in
+		 * @returns	{Value}					The result of the function if successful
 		 */
 		func:function(fn, params, scope)
 		{
@@ -1815,8 +1815,8 @@
 		/**
 		 * Traces a human-readable error stack to the Output Panel
 		 *
-		 * @param error		{Error}		A javaScript Error object
-		 * @param testing	{Boolean}	Internal use only. Removes test() stack items
+		 * @param	{Error}		error		A javaScript Error object
+		 * @param	{Boolean}	testing		Internal use only. Removes test() stack items
 		 */
 		error:function(error, testing)
 		{
@@ -1867,10 +1867,10 @@
 		/**
 		 * Logs the results of an error to the temp directory so Komodo can read in the data
 		 *
-		 * @param		{String}		uri			The URI of the erroring file
-		 * @param		{Number}		line		The line number of the error
-		 * @param		{String}		name		The name of the error
-		 * @param		{String}		message		The error message
+		 * @param	{String}	uri			The URI of the erroring file
+		 * @param	{Number}	line		The line number of the error
+		 * @param	{String}	name		The name of the error
+		 * @param	{String}	message		The error message
 		 */
 		log:function(error)
 		{
@@ -1890,9 +1890,7 @@
 			}
 		},
 
-		/**
-		 * File debugging state
-		 */
+		/** @type {Boolean}	Set the file debugging state */
 		set state(state)
 		{
 			//TODO Think about making this a simple boolean, then updating file.load() to check for debug.state == true
@@ -1926,6 +1924,7 @@
 
 		},
 
+		/** @type {Boolean}	Get the file debugging state */
 		get state()
 		{
 			return fl.runScript === xjsfl.debug.file;
@@ -1958,10 +1957,10 @@
 		/**
 		 * Load a class or array of classes from disk
 		 *
-		 * @param	filename	{String}	A class filename or path, relative to any jsfl/libraries folder
-		 * @param	filename	{Array}		An Array of class filepaths
-		 * @param	debugType	{String}	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
-		 * @returns				{xjsfl}		The main xJSFL object
+		 * @param	{String}	filename	A class filename or path, relative to any jsfl/libraries folder
+		 * @param	{Array}		filename	An Array of class filepaths
+		 * @param	{String}	debugType	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
+		 * @returns	{xjsfl}					The main xJSFL object
 		 */
 		load:function(filename, debugType)
 		{
@@ -1991,9 +1990,9 @@
 
 		/**
 		 * Load an entire folder of libraries
-		 * @param	filename	{String}	A class filename or path, relative to any jsfl/libraries folder
-		 * @param	debugType	{String}	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
-		 * @returns				{xjsfl}		The main xJSFL object
+		 * @param	{String}	filename	A class filename or path, relative to any jsfl/libraries folder
+		 * @param	{String}	debugType	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
+		 * @returns	{xjsfl}					The main xJSFL object
 		 */
 		loadFolder:function(path, debugType)
 		{
@@ -2015,7 +2014,7 @@
 
 		/**
 		 * Loads a class only if not already defined
-		 * @param	filename	{String}	The class name, such as 'Template', or 'Table'
+		 * @param	{String}	filename	The class name, such as 'Template', or 'Table'
 		 * @returns
 		 */
 		require:function(filename)
@@ -2034,9 +2033,9 @@
 		/**
 		 * Registers a class/function for later retrieval
 		 *
-		 * @param	name	{String}	The name of the class / function / object to register
-		 * @param	obj		{Object}	The actual class / function / object
-		 * @returns			{xjsfl}		The main xJSFL object
+		 * @param	{String}	name		The name of the class / function / object to register
+		 * @param	{Object}	obj			The actual class / function / object
+		 * @returns	{xjsfl}					The main xJSFL object
 		 */
 		register:function(name, obj)
 		{
@@ -2052,9 +2051,9 @@
 		/**
 		 * Internal function that restores a class/function to the supplied namespace
 		 *
-		 * @param	name	{string}	The name of the class to restore
-		 * @param	scope	{Object}	The scope to which the class should be restored to (defaults to window)
-		 * @returns			{xjsfl}		The main xJSFL object
+		 * @param	{string}	name		The name of the class to restore
+		 * @param	{Object}	scope		The scope to which the class should be restored to (defaults to window)
+		 * @returns	{xjsfl}					The main xJSFL object
 		 */
 		restore:function(name, scope)
 		{
@@ -2122,8 +2121,8 @@
 		/**
 		 * Finds and stores information about all module manifests in the xJSFL/modules (or supplied) folder.
 		 * Called in the main bootstrap, and can be called manually in the user bootstrap to add other folders.
-		 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
-		 * @returns	{xjsfl}				The main xJSFL object
+		 * @param	{String}	uri			An optional folder URI to search in, defaults to xJSFL/modules/
+		 * @returns	{xjsfl}					The main xJSFL object
 		 */
 		find:function(uri){ },
 
@@ -2228,8 +2227,8 @@
 				/**
 				 * Finds and stores information about all module manifests in the xJSFL/modules (or supplied) folder.
 				 * Called in the main bootstrap, and can be called manually in the user bootstrap to add other folders.
-				 * @param	{String}	uri		An optional folder URI to search in, defaults to xJSFL/modules/
-				 * @returns	{xjsfl}				The main xJSFL object
+				 * @param	{String}	uri			An optional folder URI to search in, defaults to xJSFL/modules/
+				 * @returns	{xjsfl}					The main xJSFL object
 				 */
 				find:function(uri)
 				{
@@ -2265,7 +2264,7 @@
 				 * Initializes, but does not instantiate a module, by caching its manifest files, and copying
 				 * any panel resources to the Flash/WindowSWF folder, and commands to the Commands folder
 				 *
-				 * @param	path	{String}	The module root path, relative to from xJSFL/modules/ i.e. "Snippets", or an absolute URI
+				 * @param	{String}	path		The module root path, relative to from xJSFL/modules/ i.e. "Snippets", or an absolute URI
 				 */
 				init:function(path)
 				{
@@ -2414,8 +2413,8 @@
 
 		/**
 		 * Show a new XUL dialog, nesting if one is already shown
-		 * @param	xul		{XUL}		A valid XUL object
-		 * @returns			{Object}	The settings object from the XMLUI
+		 * @param	{XUL}		xul			A valid XUL object
+		 * @returns	{Object}				The settings object from the XMLUI
 		 */
 		show:function(xul)
 		{
@@ -2469,7 +2468,7 @@
 
 		/**
 		 * Lightweight function to return the current UI state
-		 * @returns		{Object}
+		 * @returns	{Object}
 		 */
 		getState:function()
 		{
@@ -2578,8 +2577,8 @@
 
 	/**
 	 * Initialize the environment by extracting variables / objects / functions to global scope
-	 * @param	scope		{Object}	The scope into which the framework should be extracted
-	 * @param	scopeName	{String}	An optional id, which when supplied, traces a short message to the Output panel
+	 * @param	{Object}	scope			The scope into which the framework should be extracted
+	 * @param	{String}	scopeName		An optional id, which when supplied, traces a short message to the Output panel
 	 * @returns
 	 */
 	xjsfl.init = function(scope, scopeName)

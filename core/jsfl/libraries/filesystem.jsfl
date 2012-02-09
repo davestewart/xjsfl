@@ -185,8 +185,8 @@
 		/**
 		 * Folder class
 		 * @extends	{FileSystemObject}
-		 * @param	{String}	pathOrUri	The uri or path to the object
-		 * @param	{Boolean}	create		An optional Boolean flag on whether to create the folder or not, defaults to false
+		 * @param	{String}				pathOrUri	The uri or path to the object
+		 * @param	{Boolean}				create		An optional Boolean flag on whether to create the folder or not, defaults to false
 		 */
 		Folder = function(pathOrUri, create)
 		{
@@ -261,7 +261,7 @@
 				 * @param	{Function}		callback	A callback function to fire on each iteraction. Return true at any point to cancel iteration
 				 * @param	{String}		type		Optionally limit the iteration to files or folders. Leave blank for all content
 				 * @param	{Scope}			type		An optional scope to call the function in
-				 * @returns {Folder}		The original folder
+				 * @returns {Folder}					The original folder
 				 */
 				each:function(callback, type, scope)
 				{
@@ -292,9 +292,9 @@
 
 				/**
 				 * Return a filtered array of the folder's contents, matching against the filenames
-				 * @param	{RegExp}	pattern	A RegExp filename pattern
-				 * @param	{String}	pattern	A String filename pattern, wildcards allowed
-				 * @returns	{Array}		An array of Filesystem objects
+				 * @param	{RegExp}		pattern		A RegExp filename pattern
+				 * @param	{String}		pattern		A String filename pattern, wildcards allowed
+				 * @returns	{Array}						An array of Filesystem objects
 				 */
 				filter:function(pattern)
 				{
@@ -309,7 +309,7 @@
 
 				/**
 				 * A string representation of the folder name and number of items
-				 * @returns {String} A string representation of the folder
+				 * @returns	{String}					A string representation of the folder
 				 */
 				toString:function(path)
 				{
@@ -414,8 +414,8 @@
 		/**
 		 * File class
 		 * @extends	{FileSystemObject}
-		 * @param	{String}	pathOrUri	The uri or path to the object
-		 * @param	{String}	contents	An optional string contents of the file, or true to save a blank file
+		 * @param	{String}				pathOrUri	The uri or path to the object
+		 * @param	{String}				contents	An optional string contents of the file, or true to save a blank file
 		 */
 		File = function(pathOrUri, contents)
 		{
@@ -451,7 +451,7 @@
 
 				/**
 				 * Opens the file in the associated application
-				 * @returns {File} The original file
+				 * @returns {File}			The original file
 				 */
 				open:function()
 				{
@@ -480,8 +480,8 @@
 
 				/**
 				 * Executes any JSFL file, or attempts to run any other file type via the OS
-				 * @returns {File}			The original file if it exists
-				 * @returns {false} 		False if the file doesn't exist
+				 * @returns {File}						The original file if it exists
+				 * @returns {false} 					False if the file doesn't exist
 				 */
 				run:function()
 				{
@@ -507,9 +507,9 @@
 
 				/**
 				 * Copies the file to a new location
-				 * @param	{String}	trgURI		The new uri to copy the file to. Can be a folder or file.
-				 * @param	{Boolean}	overWrite	Optional Boolean indicating whether the target file should be overwritten without warning
-				 * @returns	{File}					A new File object
+				 * @param	{String}		trgURI		The new uri to copy the file to. Can be a folder or file.
+				 * @param	{Boolean}		overWrite	Optional Boolean indicating whether the target file should be overwritten without warning
+				 * @returns	{File}						A new File object
 				 */
 				copy:function(trgURI, overWrite)
 				{
@@ -588,10 +588,10 @@
 
 				/**
 				 * Write or append data to the file
-				 * @param	{String}	data		The data to write to the file
-				 * @param	{Boolean}	append		An optional flag to append, rather than overwrite the file
-				 * @returns	{File}					The original file if successful
-				 * @returns	{Boolean}				A Boolean false if the operation failed
+				 * @param	{String}		data		The data to write to the file
+				 * @param	{Boolean}		append		An optional flag to append, rather than overwrite the file
+				 * @returns	{File}						The original file if successful
+				 * @returns	{Boolean}					A Boolean false if the operation failed
 				 */
 				write:function(data, append)
 				{
@@ -611,9 +611,9 @@
 
 				/**
 				 * Append data to the file
-				 * @param	{String}	data		The data to append to the file
-				 * @returns	{File}					The original file if successful
-				 * @returns	{Boolean}				A Boolean false if the operation failed
+				 * @param	{String}		data		The data to append to the file
+				 * @returns	{File}						The original file if successful
+				 * @returns	{Boolean}					A Boolean false if the operation failed
 				 */
 				append:function(data)
 				{
@@ -622,8 +622,8 @@
 
 				/**
 				 * Saves the file, optionally as UTF8
-				 * @param	{Boolean}	utf8		An optional Boolean indicating to save the file as UTF8
-				 * @returns {File}					The original file
+				 * @param	{Boolean}		utf8		An optional Boolean indicating to save the file as UTF8
+				 * @returns {File}						The original file
 				 */
 				save:function(utf8)
 				{
@@ -646,7 +646,7 @@
 
 				/**
 				 * Reveals the file, selected, in the Explorer or Finder
-				 * @returns {File} The original file
+				 * @returns {File}			The original file
 				 */
 				reveal:function()
 				{
@@ -667,9 +667,9 @@
 
 				/**
 				 * Rename the file. You can optionally omit the name and just provide an extension to only rename the extension
-				 * @param	{String}	name		The new name for the file (you can omit the extension)
-				 * @param	{String}	extension	The new extension for the file
-				 * @returns	{File}					The original file
+				 * @param	{String}		name		The new name for the file (you can omit the extension)
+				 * @param	{String}		extension	The new extension for the file
+				 * @returns	{File}						The original file
 				 */
 				rename:function(name, extension)
 				{
@@ -697,8 +697,8 @@
 
 				/**
 				 * A string representation of the file
-				 * @param	{Boolean}		path	A flag to show the full path, not just the name
-				 * @returns {String}				A string containing the class and filename
+				 * @param	{Boolean}		path		A flag to show the full path, not just the name
+				 * @returns	{String}					A string containing the class and filename
 				 */
 				toString:function(path)
 				{

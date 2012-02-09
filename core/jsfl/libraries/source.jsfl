@@ -1,12 +1,12 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████                              
-//  ██                                  
-//  ██     █████ ██ ██ ████ █████ █████ 
-//  ██████ ██ ██ ██ ██ ██   ██    ██ ██ 
-//      ██ ██ ██ ██ ██ ██   ██    █████ 
-//      ██ ██ ██ ██ ██ ██   ██    ██    
-//  ██████ █████ █████ ██   █████ █████ 
+//  ██████
+//  ██
+//  ██     █████ ██ ██ ████ █████ █████
+//  ██████ ██ ██ ██ ██ ██   ██    ██ ██
+//      ██ ██ ██ ██ ██ ██   ██    █████
+//      ██ ██ ██ ██ ██ ██   ██    ██
+//  ██████ █████ █████ ██   █████ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Source - examine and manipulate source code
@@ -17,14 +17,15 @@
 		Source =
 		{
 			/**
-			 * 
-			 * @param	source	
-			 * @returns		
+			 * Parses DocComments into an Object that can be easily-interogated
+			 * @param	{String}	source	A URI to a source file that contains comments
+			 * @param	{File}		source	A file pointing to a source file that contains comments
+			 * @returns	{Object}			An object containing the comment content as properties
 			 */
 			parseDocComment:function(source)
 			{
 				// derive content
-				
+
 					// file
 						if(source instanceof File)
 						{
@@ -35,19 +36,19 @@
 						{
 							source = new File(source).contents;
 						}
-				
+
 				// grab comment
 					var comments	= source.match(/\/\*(?:(?!\*\/|\/\*)[\s\S])*(?:\/\*(?:(?!\*\/|\/\*)[\s\S])*\*\/(?:(?!\*\/|\/\*)[\s\S])*)*[\s\S]*?\*\//);
-					
+
 				// parse comment
 					if(comments)
 					{
 						// property object
 							var obj = {};
-							
+
 						// intro text
-						
-						
+
+
 						// params
 							var desc	= comments[0].match(/@(\w+)\s+([^\r\n]+)/);
 							if(desc == null)
@@ -55,7 +56,7 @@
 								var desc	= comments[0].match(/\* (\w[^\r\n]+)/);
 							}
 							var icon	= comments[0].match(/@icon\s+([^\r\n]+)/);
-							
+
 							if(icon)
 							{
 								//item.@icon = icon[1];
@@ -64,19 +65,19 @@
 							{
 								//item.@desc = desc[1].replace(/"/g, '\"');
 							}
-							
+
 						// return
 							return obj;
 					}
-					
+
 				// return
 					return null;
 			},
-			
+
 			/**
 			 * Parses a function source into an object
-			 * @param	fn	{Function}	A reference to a function
-			 * @returns		{Object}	An Object with name and params properties
+			 * @param	{Function}	fn		A reference to a function
+			 * @returns	{Object}			An Object with name and params properties
 			 */
 			parseFunction:function(fn)
 			{
@@ -88,9 +89,8 @@
 				}
 				return {name:null, params:[]};
 			}
-		
+
 		}
-		
+
 	// register class
 		xjsfl.classes.register('Source', Source);
-		

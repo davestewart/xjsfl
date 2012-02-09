@@ -23,9 +23,9 @@
 		/**
 		 * Converts a typical [object Object] string into an [object Class value="1" property="2"] string
 		 * Should only be used on JavaScript Objects that already convert properly to String
-		 * @param	obj		{Object}	Any object that can be converted to a String
-		 * @param	output	{Boolean}	An optional Boolean idicating to output the result to the Output panel
-		 * @returns			{String}	A String representation of the object and its properties
+		 * @param	{Object}	obj			Any object that can be converted to a String
+		 * @param	{Boolean}	output		An optional Boolean idicating to output the result to the Output panel
+		 * @returns	{String}				A String representation of the object and its properties
 		 */
 		props:function(obj, output)
 		{
@@ -63,13 +63,13 @@
 
 		/**
 		 * Lists the properties of an object in a human-readable format
-		 * @param arr			{Object}	An object whose properties you wish to list
-		 * @param arr			{Array}		An Array of objects with selected properties you wish to list
-		 * @param properties	{String}	An optional property to list, defaults to 'name'
-		 * @param properties	{Array}		An optional Array of properties
-		 * @param label			{String}	An optional String label, defaults to "List"
-		 * @param output		{Boolean}	An optional boolean to indicate output type: true=debug, false=return, undefined=output
-		 * @returns				{String}	A String list of the object's properties
+		 * @param	{Object}	arr			An object whose properties you wish to list
+		 * @param	{Array}		arr			An Array of objects with selected properties you wish to list
+		 * @param	{String}	properties	An optional property to list, defaults to 'name'
+		 * @param	{Array}		properties	An optional Array of properties
+		 * @param	{String}	label		An optional String label, defaults to "List"
+		 * @param	{Boolean}	output		An optional boolean to indicate output type: true=debug, false=return, undefined=output
+		 * @returns	{String}				A String list of the object's properties
 		 */
 		list:function(arr, properties, label, output)
 		{
@@ -116,13 +116,13 @@
 
 		/**
 		 * Output object in hierarchical format (note that $ arguments are optional, and can be passed in any order)
-		 * @param obj			{Object}		Any Object or value
-		 * @param $depth		{Number}		An optional max depth to recurse to (defaults to 3)
-		 * @param $label		{String}		An optional String label (defaults to "Inspect")
-		 * @param $debug		{Boolean}		An optional boolean to indicate output type: true=debug, false=return, undefined=output
-		 * @param $filters		{Object}		An optional filters object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
-		 * @param $callback		{Function}		An optional output function in case you want to do any custom processing of the data
-		 * @returns				{String}		A String hierarchy of the object's properties
+		 * @param	{Object}	obj			Any Object or value
+		 * @param	{Number}	$depth		An optional max depth to recurse to (defaults to 3)
+		 * @param	{String}	$label		An optional String label (defaults to "Inspect")
+		 * @param	{Boolean}	$debug		An optional boolean to indicate output type: true=debug, false=return, undefined=output
+		 * @param	{Object}	$filters	An optional filters object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
+		 * @param	{Function}	$callback	An optional output function in case you want to do any custom processing of the data
+		 * @returns	{String}				A String hierarchy of the object's properties
 		 */
 		inspect:function(obj, $depth, $label, $debug, $filters, $callback)
 		{
@@ -308,8 +308,8 @@
 
 					/**
 					 * Get the type of an object
-					 * @param	value			mixed		Any value or object
-					 * @param	getClassName	boolean		return the class name rather than the type if possible
+					 * @param	{Object}		value			Any value or object
+					 * @param	{Boolean}		getClassName	return the class name rather than the type if possible
 					 * @returns	The type of classname of a value
 					 */
 					function getType(value, getClassName)
@@ -544,8 +544,8 @@
 
 		/**
 		 * Convenience function to Table.print() to output value in tabular format
-		 * @param	arr		{array}		An Array of values
-		 * @returns			{String}	The output of the print() call
+		 * @param	{array}		arr			An Array of values
+		 * @returns	{String}				The output of the print() call
 		 */
 		table:function(arr)
 		{
@@ -554,11 +554,11 @@
 
 		/**
 		 * View the hierarchy of a folder
-		 * @param value		{String}		A valid folder path
-		 * @param value		{Folder}		An existing folder object
-		 * @param depth		{Number}		An optional max depth to recurse to (defaults to 3)
-		 * @param output	{Boolean}		An optional boolean to indicate outputting or not (defaults to true)
-		 * @returns			{String}		The String hierarchy of the folder
+		 * @param	{String}		value	A valid folder path
+		 * @param	{Folder}		value	An existing folder object
+		 * @param	{Number}		depth	An optional max depth to recurse to (defaults to 3)
+		 * @param	{Boolean}		output	An optional boolean to indicate outputting or not (defaults to true)
+		 * @returns	{String}				The String hierarchy of the folder
 		 */
 		folder:function(folder, depth, output)
 		{
@@ -589,10 +589,10 @@
 
 		/**
 		 * Print the content to the listener as a formatted list. Normally this is only called by the other Output functions!
-		 * @param	content		The content to be output
-		 * @param	title		The title of the print
-		 * @param	output		An optional Boolean specifying whether to print to the Output Panel, defualts to true
-		 * @return	The String result of the print
+		 * @param	{Object}	content		The content to be output
+		 * @param	{String}	title		The title of the print
+		 * @param	{Boolean}	output		An optional Boolean specifying whether to print to the Output Panel, defualts to true
+		 * @return	{String}				The String result of the print
 		 */
 		_print:function(content, title, output)
 		{

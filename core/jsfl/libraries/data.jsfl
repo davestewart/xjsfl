@@ -22,15 +22,17 @@
 		//TODO review recursive function signatures & implementation, & provide default callbacks if appropriate. @see Data#recurseFolder
 
 		/**
-		 * Utility function to recurse / walk hierarchical structures calling user-supplied calllbacks on traversed elements
+		 * Generic function to recurse / walk hierarchical structures calling user-supplied calllbacks on traversed elements
+		 * @param	{Object}	rootElement		The root element to start processing on
+		 * @param	{Function}	fnChild			A callback function to call on child elements
+		 * @param	{Function}	fnTestChildren	A callback function to determine whether child nodes should be processed
+		 * @returns	{value}						The result of the passed fnChild function
 		 */
-		/*
-		*/
 		recurse2:function(rootElement, fnChild, fnTestChildren)
 		{
 			function process(element, index)
 			{
-				fnChild(element, index, level);
+				var result = fnChild(element, index, level);
 
 				if(fnTestChildren ? fnTestChildren(element, index, level) : element.length > 0)
 				{
@@ -41,12 +43,22 @@
 					}
 					level--;
 				}
+
+				return result;
 			}
 
 			var level = 0;
-			process(rootElement, 0);
+			return process(rootElement, 0);
 		},
 
+		/**
+		 * Generic function to recurse a data structure, processing nodes and children with callbacks
+		 * @param	{Object}	rootElement		The root element to start processing on
+		 * @param	{Function}	fnChild			A callback function to call on child elements
+		 * @param	{Function}	fnTestChildren	A callback function to determine whether child nodes should be processed
+		 * @param	{Object}	scope			An optional Object on which to appy "this" scope to
+		 * @returns	{value}						The result of the passed fnChild function
+		 */
 		recurse:function(rootElement, fnChild, fnTestChildren, scope)
 		{
 			fl.trace(this);
@@ -54,7 +66,7 @@
 			{
 				//fl.trace('Processing:' + element)
 
-				fnChild.apply(scope, [element, index, level]);
+				var result = fnChild.apply(scope, [element, index, level]);
 
 				if(fnTestChildren ? fnTestChildren.apply(scope, [element, index, level]) : element.length > 0)
 				{
@@ -66,20 +78,22 @@
 					}
 					level--;
 				}
+
+				return result;
 			}
 
 			scope = scope || window;
 			var level = 0;
-			process(rootElement, 0);
+			return process(rootElement, 0);
 		},
 
 		/**
 		 * Recursively trawl a folder's contents, optionally calling a callback per element. (NB, arguments 2 and 3 may be swapped)
-		 * @param	folder		{String}	The path or uri to a valid folder
-		 * @param	folder		{Folder}	A valid Folder object
-		 * @param	arg2		{Function}	An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
-		 * @param	arg3		{Number}	An optional max depth to recurse to, defaults to 100
-		 * @returns				(Array}		An array of paths
+		 * @param	{String}	folder		The path or uri to a valid folder
+		 * @param	{Folder}	folder		A valid Folder object
+		 * @param	{Function}	arg2		An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
+		 * @param	{Number}	arg3		An optional max depth to recurse to, defaults to 100
+		 * @returns	{Array}					An array of paths
 		 */
 		recurseFolder:function(folder, arg2, arg3)
 		{

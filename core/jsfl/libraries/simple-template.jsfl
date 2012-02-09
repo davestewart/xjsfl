@@ -41,11 +41,6 @@
 			return '[class SimpleTemplate]';
 		}
 
-		SimpleTemplate.populate = function(input, data)
-		{
-			return new SimpleTemplate(input, data).output;
-		}
-
 	// ------------------------------------------------------------------------------------------------
 	// Prototype
 

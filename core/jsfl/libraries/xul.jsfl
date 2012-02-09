@@ -16,8 +16,8 @@
 
 		/**
 		 * XUL constructor
-		 * @param	title	{String}	The title of the new dialog
-		 * @returns			{XUL}		A new XUL instance
+		 * @param	{String}	title		The title of the new dialog
+		 * @returns	{XUL}					A new XUL instance
 		 */
 		function XUL(title)
 		{
@@ -63,9 +63,9 @@
 
 		/**
 		 * Static convenience method to instantiate and return a new chainable XUL instance
-		 * @param	props	{String}	An optional shorthand controls String
-		 * @param	props	{Function}	An optional Function
-		 * @returns			{XUL}		A XUL class
+		 * @param	{String}	props		An optional shorthand controls String
+		 * @param	{Function}	props		An optional Function
+		 * @returns	{XUL}					A XUL class
 		 */
 		XUL.factory = function(props)
 		{
@@ -123,11 +123,11 @@
 
 		/**
 		 * Static convenience method to create and show interface in one call, returning any submitted values
-		 * @param	props	{String}		A String of shorthand controls
-		 * @param	props	{Function}		A Function, the parameters of which will map to dialog controls
-		 * @param	accept	{Function}		An optional callback function to be called when the user clicks the OK button
-		 * @param	cancel	{Function}		An optional callback function to be called when the user clicks the Cancel button
-		 * @returns			{Object}		An Object containing the accepted values, or null if the user cancels the dialog
+		 * @param	{String}	props		A String of shorthand controls
+		 * @param	{Function}	props		A Function, the parameters of which will map to dialog controls
+		 * @param	{Function}	accept		An optional callback function to be called when the user clicks the OK button
+		 * @param	{Function}	cancel		An optional callback function to be called when the user clicks the Cancel button
+		 * @returns	{Object}				An Object containing the accepted values, or null if the user cancels the dialog
 		 */
 		XUL.create = function(props, accept, cancel)
 		{
@@ -232,15 +232,15 @@
 				// misc
 					/**
 					 * (private) Main add control method
-					 * @param	type		{String}	The control type, i.e. button, colorchip, etc
-					 * @param	id			{String}	The control id
-					 * @param	label		{String}	The control label
-					 * @param	xml			{XML}		The original XML of the control, built by the appropriate addControl method
-					 * @param	attributes	{Object}	Any additional attributes that should be applied to the control XML
-					 * @param	validation	{Object}	Any validation rules that should be applied to the control
-					 * @param	events		{Object}	An Object containing event:callback pairs
-					 * @param	user		{Boolean}	An optional Boolean containing event:callback pairs
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	type		The control type, i.e. button, colorchip, etc
+					 * @param	{String}	id			The control id
+					 * @param	{String}	label		The control label
+					 * @param	{XML}		xml			The original XML of the control, built by the appropriate addControl method
+					 * @param	{Object}	attributes	Any additional attributes that should be applied to the control XML
+					 * @param	{Object}	validation	Any validation rules that should be applied to the control
+					 * @param	{Object}	events		An Object containing event:callback pairs
+					 * @param	{Boolean}	user		An optional Boolean containing event:callback pairs
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					_addControl:function(type, id, label, xml, attributes, validation, events, user)
 					{
@@ -329,11 +329,11 @@
 
 					/**
 					 * Updates supplied XML with new child items parent
-					 * @param	parent		{XML}		An XML parent node. Child items are updated by reference
-					 * @param	values		{Array}		The values (values, or {label:'',value:''} Objects) of each of the new elements you want to add
-					 * @param	id			{String}	The id of the new control
-					 * @param	selected	{String}	The value of the selected item
-					 * @returns				{XML}		The XML of the new children (altough the original parent is altered by reference anyway)
+					 * @param	{XML}		parent		An XML parent node. Child items are updated by reference
+					 * @param	{Array}		values		The values (values, or {label:'',value:''} Objects) of each of the new elements you want to add
+					 * @param	{String}	id			The id of the new control
+					 * @param	{String}	selected	The value of the selected item
+					 * @returns	{XML}					The XML of the new children (altough the original parent is altered by reference anyway)
 					 */
 					_addChildren:function(parent, values, id, selected)
 					{
@@ -407,9 +407,9 @@
 
 					/**
 					 * Add validation to an individual control (not yet implemented)
-					 * @param	id			{String}	The id of the control
-					 * @param	validation
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	id			The id of the control
+					 * @param	{Object}	validation	Not yet implemented
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					_addValidation:function(id, validation)
 					{
@@ -426,9 +426,9 @@
 
 					/**
 					 * Add events to an individual control
-					 * @param	id			{String}	The id of the control
-					 * @param	events		{Object}	An Object containing event:callback pairs
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	id			The id of the control
+					 * @param	{Object}	events		An Object containing event:callback pairs
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					_addEvents:function(id, events)
 					{
@@ -441,8 +441,8 @@
 
 					/**
 					 * Parse user-supplied XML so that XULControls are created
-					 * @param	xml	{XML}		An XML element containing valid XMLUI control elements
-					 * @returns		{XMLList}	The child XML control elements
+					 * @param	{XML}		xml			An XML element containing valid XMLUI control elements
+					 * @returns	{XMLList}				The child XML control elements
 					 */
 					_parseUserXML:function(xml)
 					{
@@ -484,8 +484,8 @@
 
 					/**
 					 * Add control using shorthand notation
-					 * @param	str		{String}	A string of the format "type:Label=values,type:Label=values, ..."
-					 * @returns			{XUL}		The XUL dialog
+					 * @param	{String}	str				A string of the format "type:Label=values,type:Label=values, ..."
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					add:function(str)
 					{
@@ -712,12 +712,12 @@
 
 					/**
 					 * Add a Textbox control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addTextbox:function(label, id, attributes, validation, events)
 					{
@@ -731,13 +731,13 @@
 
 					/**
 					 * Add a Popupslider control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	values		{Array}		An optional Array of values [default, min, max]
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Array}		values			An optional Array of values [default, min, max]
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addSlider:function(label, id, values, attributes, validation, events)
 					{
@@ -764,12 +764,12 @@
 
 					/**
 					 * Add a Checkbox control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addCheckbox:function(label, id, attributes, validation)
 					{
@@ -786,12 +786,12 @@
 
 					/**
 					 * Add a Colorchip control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes [value, format]
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes [value, format]
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addColorchip:function(label, id, attributes, validation, events)
 					{
@@ -835,12 +835,12 @@
 
 					/**
 					 * Add a Choosefile control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addFile:function(label, id, attributes, validation, events)
 					{
@@ -855,12 +855,12 @@
 
 					/**
 					 * Add a Expression control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addExpression:function(label, id, attributes, validation, events)
 					{
@@ -875,11 +875,11 @@
 
 					/**
 					 * Add a Button control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addButton:function(label, id, attributes, events)
 					{
@@ -900,12 +900,12 @@
 
 					/**
 					 * Add a Listbox control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addListbox:function(label, id, values, attributes, validation, events)
 					{
@@ -923,12 +923,12 @@
 
 					/**
 					 * Add a Menulist control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addDropdown:function(label, id, values, attributes, validation, events)
 					{
@@ -946,12 +946,12 @@
 
 					/**
 					 * Add a RadioGroup to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addRadiogroup:function(label, id, values, attributes)
 					{
@@ -969,12 +969,12 @@
 
 					/**
 					 * Add a CheckboxGroup to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addCheckboxgroup:function(label, id, values, attributes, validation)
 					{
@@ -992,12 +992,12 @@
 
 					/**
 					 * Add a Targetlist control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @param	validation	{Object}	Optional validation properties
-					 * @param	events		{Object}	Optional event callbacks
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label			A label for the UI item
+					 * @param	{String}	id				An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes		Optional attributes
+					 * @param	{Object}	validation		Optional validation properties
+					 * @param	{Object}	events			Optional event callbacks
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addTargetlist:function(label, id, attributes, validation, events)
 					{
@@ -1011,8 +1011,8 @@
 
 					/**
 					 * Add an invisible property control to the UI
-					 * @param	id		{String}	A unique id so the value can be retrieved from the settings object
-					 * @returns			{XUL}		The XUL dialog
+					 * @param	{String}	id				A unique id so the value can be retrieved from the settings object
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addProperty:function(id)
 					{
@@ -1031,12 +1031,12 @@
 
 					/**
 					 * Adds XML to the rows tag of the UI xml. If the XML, XMLList, or String doesn't contain a row, it will be created automatically
-					 * @param	xml				{XML}		An XML <row>
-					 * @param	xml				{XMLList}	An XMLList of <row>s
-					 * @param	xml				{String}	A String of XML
-					 * @param	breakOutOfRows	{String}	An optional Boolean to break out of rows, and just add vanilla XML to the dialog
-					 * @param	dontParse		{Boolean}	Internal flag to indicate to the function not to process the XML for control info
-					 * @returns					{XUL}		The XUL dialog
+					 * @param	{XML}		xml				An XML <row>
+					 * @param	{XMLList}	xml				An XMLList of <row>s
+					 * @param	{String}	xml				A String of XML
+					 * @param	{String}	breakOutOfRows	An optional Boolean to break out of rows, and just add vanilla XML to the dialog
+					 * @param	{Boolean}	dontParse		Internal flag to indicate to the function not to process the XML for control info
+					 * @returns	{XUL}						The XUL dialog
 					 */
 					addXML:function(xml, breakOutOfRows, dontParse)
 					{
@@ -1080,8 +1080,8 @@
 
 					/**
 					 * Add a separator element to the dialog
-					 * @param	label		{String}	An optional labal to add beneath the separator
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label		An optional labal to add beneath the separator
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					addSeparator:function(label)
 					{
@@ -1104,12 +1104,12 @@
 
 					/**
 					 * Add a spacer element to the dialog
-					 * @returns		{XUL}		The XUL dialog
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					addSpacer:function()
 					{
 						// build xml
-							var xml				= XUL.templates.spacer.copy();
+							var xml = XUL.templates.spacer.copy();
 
 						// add xml
 							this.addXML(xml);
@@ -1120,10 +1120,10 @@
 
 					/**
 					 * Add a Label control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	attributes	{Object}	Optional attributes
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label		A label for the UI item
+					 * @param	{String}	id			An optional id, otherwise derived from the label
+					 * @param	{Object}	attributes	Optional attributes
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					addLabel:function(label, id)
 					{
@@ -1142,8 +1142,8 @@
 
 					/**
 					 * Adds a script source to the interface
-					 * @param	script	{Function}
-					 * @returns			{XUL}		The XUL dialog
+					 * @param	{Function}script
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					addScript:function(script)
 					{
@@ -1167,12 +1167,12 @@
 
 					/**
 					 * Add a Flash control to the UI
-					 * @param	label		{String}	A label for the UI item
-					 * @param	id			{String}	An optional id, otherwise derived from the label
-					 * @param	source		{String}	Source path to the SWF, relative to the XML saved location
-					 * @param	properties	{Array}		An array of property names to be created
-					 * @param	attributes	{Object}	Optional attributes
-					 * @returns				{XUL}		The XUL dialog
+					 * @param	{String}	label		A label for the UI item
+					 * @param	{String}	id			An optional id, otherwise derived from the label
+					 * @param	{String}	source		Source path to the SWF, relative to the XML saved location
+					 * @param	{Array}		properties	An array of property names to be created
+					 * @param	{Object}	attributes	Optional attributes
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					setFlash:function(src, width, height, properties)
 					{
@@ -1204,8 +1204,8 @@
 
 					/**
 					 * Replace the standard XML dialog template
-					 * @param	xml		{String}	An XML String containing dialog controls
-					 * @returns			{XUL}		The XUL dialog
+					 * @param	{String}	xml			An XML String containing dialog controls
+					 * @returns	{XUL}					The XUL dialog
 					 */
 					setXML:function(xml)
 					{
@@ -1224,8 +1224,8 @@
 
 				/**
 				 * Sets the initial values of controls in the dialog
-				 * @param	values	{Object}	A hash of control:value values
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{Object}	values			A hash of control:value values
+				 * @returns	{XUL}						The XUL dialog
 				 */
 				setValues:function(values)
 				{
@@ -1238,9 +1238,9 @@
 
 				/**
 				 * Sets the initial value of a control in the dialog
-				 * @param	id		{String}	The name of the control
-				 * @param	value	{value}		The value of the control
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{String}	id				The name of the control
+				 * @param	{value}		value			The value of the control
+				 * @returns	{XUL}						The XUL dialog
 				 */
 				setValue:function(id, value)
 				{
@@ -1255,8 +1255,8 @@
 
 				/**
 				 * Assign values from a miscellaneous property object
-				 * @param	props	{Object}	An object of key:value pairs. Valid keys are: title
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{Object}	props			An object of key:value pairs. Valid keys are: title
+				 * @returns	{XUL}						The XUL dialog
 				 */
 				setProperties:function(props)
 				{
@@ -1275,8 +1275,8 @@
 
 				/**
 				 * Set the default buttons of the XMLUI dialog
-				 * @param	str		{String}	A comma delimted string of valid button types, e.g. "accept,cancel"
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{String}	str				A comma delimted string of valid button types, e.g. "accept,cancel"
+				 * @returns	{XUL}						The XUL dialog
 				 */
 				setButtons:function(str)
 				{
@@ -1286,8 +1286,8 @@
 
 				/**
 				 * Set the widths of the dialog's columns
-				 * @param	columns	{Array}		An array of Number pixel widths
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{Array}		columns			An array of Number pixel widths
+				 * @returns	{XUL}						The XUL dialog
 				 */
 				setColumns:function(columns)
 				{
@@ -1297,8 +1297,8 @@
 
 				/**
 				 * Set the title of the dialog
-				 * @param	title	{String}	A String title
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{String}	title			A String title
+				 * @returns	{XUL}						The XUL dialog
 				 */
 				setTitle:function(title)
 				{
@@ -1314,80 +1314,80 @@
 			// --------------------------------------------------------------------------------
 			// event handling
 
-					/**
-					 * Add (or actually, set) a event callback for an id
-					 * @param	ids			{String}	The id(s) of the element to register the callback for
-					 * @param	types		{String}	The type(s) of callback. Values can be create, change, click, setfocus. Separate multiple types with spaces or commas if required
-					 * @param	callback	{Function}	The callback to call. Format must be function(event){ ... }
-					 * @returns				{XUL}		The XUL dialog
-					 */
-					addEvent:function(ids, types, callback)
-					{
-						// xul-level events
-							if(arguments.length == 2 && typeof types == 'function')
-							{
-								// variables
-									callback	= types;
-									var type	= ids;
+				/**
+				 * Add (or actually, set) a event callback for an id
+				 * @param	{String}	ids			The id(s) of the element to register the callback for
+				 * @param	{String}	types		The type(s) of callback. Values can be create, change, click, setfocus. Separate multiple types with spaces or commas if required
+				 * @param	{Function}	callback	The callback to call. Format must be function(event){ ... }
+				 * @returns	{XUL}					The XUL dialog
+				 */
+				addEvent:function(ids, types, callback)
+				{
+					// xul-level events
+						if(arguments.length == 2 && typeof types == 'function')
+						{
+							// variables
+								callback	= types;
+								var type	= ids;
 
-								// check types are valid
-									if( ! /^initialize|prevalidate|postvalidate$/.test(type))
+							// check types are valid
+								if( ! /^initialize|prevalidate|postvalidate$/.test(type))
+								{
+									throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
+								}
+
+							// build hash if not yet exists
+								if(this.events[type] == null)
+								{
+									this.events[type] = {};
+								}
+
+							// assign command
+								this.events[type] = callback;
+
+						}
+
+					// control events
+						else
+						{
+							// update "click" events to "command" events
+								types	= types.replace(/click/g, 'command');
+
+							// convert ids and types to Arrays
+								ids		= xjsfl.utils.trim(ids).split(/\W+/g);
+								types	= xjsfl.utils.trim(types).split(/\W+/g);
+
+							// add events
+								for each(var id in ids)
+								{
+									for each(var type in types)
 									{
-										throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
+										// check types are valid
+											if( ! /^command|change|setfocus|create$/.test(type))
+											{
+												throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
+											}
+
+										// build hash if not yet exists
+											if(this.events[type] == null)
+											{
+												this.events[type] = {};
+											}
+
+										// assign command
+											this.events[type][id] = callback;
 									}
+								}
+						}
 
-								// build hash if not yet exists
-									if(this.events[type] == null)
-									{
-										this.events[type] = {};
-									}
-
-								// assign command
-									this.events[type] = callback;
-
-							}
-
-						// control events
-							else
-							{
-								// update "click" events to "command" events
-									types	= types.replace(/click/g, 'command');
-
-								// convert ids and types to Arrays
-									ids		= xjsfl.utils.trim(ids).split(/\W+/g);
-									types	= xjsfl.utils.trim(types).split(/\W+/g);
-
-								// add events
-									for each(var id in ids)
-									{
-										for each(var type in types)
-										{
-											// check types are valid
-												if( ! /^command|change|setfocus|create$/.test(type))
-												{
-													throw new Error('XUL.addEvent(): invalid event type "' +type+ '"');
-												}
-
-											// build hash if not yet exists
-												if(this.events[type] == null)
-												{
-													this.events[type] = {};
-												}
-
-											// assign command
-												this.events[type][id] = callback;
-										}
-									}
-							}
-
-						// return
-							return this;
-					},
+					// return
+						return this;
+				},
 
 				/**
 				 * Set the scope in which events will run
-				 * @param	scope	{Object}	The object in which you want events to be called in
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{Object}	scope		The object in which you want events to be called in
+				 * @returns	{XUL}					The XUL dialog
 				 */
 				setEventScope:function(scope)
 				{
@@ -1397,8 +1397,8 @@
 
 				/**
 				 * Handles all events in the XUL dialog
-				 * @param	type	{String}	The event type
-				 * @param	id		{String}	The control id
+				 * @param	{String}	type		The event type
+				 * @param	{String}	id			The control id
 				 */
 				handleEvent:function (type, id)
 				{
@@ -1473,8 +1473,8 @@
 
 				/**
 				 * Save the dialog in a particular location so custom Flash controls can reference the src attribute properly
-				 * @param	uri		{String}	A valid URI of where to save the dialog's XML file
-				 * @returns			{XUL}		The XUL dialog
+				 * @param	{String}	uri			A valid URI of where to save the dialog's XML file
+				 * @returns	{XUL}					The XUL dialog
 				 */
 				saveAs:function(uri)
 				{
@@ -1494,9 +1494,9 @@
 
 				/**
 				 * Shows the XUL dialog
-				 * @param	onAccept	{Function}	An optional function to run when the user presses the dialog OK button
-				 * @param	onCancel	{Function}	An optional function to run when the user presses the dialog Cancel button
-				 * @returns				{XUL}		The XUL dialog
+				 * @param	{Function}	onAccept	An optional function to run when the user presses the dialog OK button
+				 * @param	{Function}	onCancel	An optional function to run when the user presses the dialog Cancel button
+				 * @returns	{XUL}					The XUL dialog
 				 */
 				show:function(onAccept, onCancel)
 				{
@@ -1595,7 +1595,7 @@
 
 				/**
 				 * Closes the dialog
-				 * @param	state	{Boolean}	An optional Boolean to close and accpet (true) or cancel (unsupplied or false) the dialog
+				 * @param	{Boolean}	state		An optional Boolean to close and accpet (true) or cancel (unsupplied or false) the dialog
 				 * @returns
 				 */
 				close:function(state)
@@ -1692,8 +1692,8 @@
 
 				/**
 				 * Parses a function source into an info object: {name:name, params:['param1','param2','param3']}
-				 * @param	fn	{Function}		A function
-				 * @returns		{Object}		An object
+				 * @param	{Function}		fn		A function
+				 * @returns	{Object}				An object
 				 */
 				_parseFunction:function(fn)
 				{
@@ -1708,7 +1708,7 @@
 
 				/**
 				 * Returns a String representation of the dialog
-				 * @returns		{String}	The String representation of the dialog
+				 * @returns	{String}				The String representation of the dialog
 				 */
 				toString:function()
 				{
@@ -1741,10 +1741,10 @@
 
 		/**
 		 * An object-oriented wrapper for XMLUI controls
-		 * @param	id		{String}	The id of the control
-		 * @param	type	{String}	The type (tag name) of the control item
-		 * @param	xul		{XUL}		The parent XUL instance of the control
-		 * @param	xml		{XML}		The XML of the control, that will be added to the UI
+		 * @param	{String}	id		The id of the control
+		 * @param	{String}	type	The type (tag name) of the control item
+		 * @param	{XUL}		xul		The parent XUL instance of the control
+		 * @param	{XML}		xml		The XML of the control, that will be added to the UI
 		 */
 		function XULControl(id, type, xul, xml)
 		{
@@ -1764,7 +1764,7 @@
 
 				/**
 				 * Gets the XUL instance the control belongs to
-				 * @returns		{XUL}		A XUL instance
+				 * @returns	{XUL}			A XUL instance
 				 */
 				this.getXUL = function()
 				{
@@ -1773,7 +1773,7 @@
 
 				/**
 				 * Gets the XML String that originally created the control
-				 * @returns		{String}	An XML String
+				 * @returns	{String}		An XML String
 				 */
 				this.getXML = function()
 				{
@@ -1782,7 +1782,7 @@
 
 			// flags
 				/**
-				 * @type {Boolean} Whether the control shoudl be enumerated for a value from XUL.values
+				 * @type {Boolean} Whether the control should be enumerated for a value from XUL.values
 				 */
 				this.enumerable	= ! /^button|flash$/.test(type);
 
@@ -2078,7 +2078,7 @@
 
 				/**
 				 * Validates the control's value and returns an error message if invalid
-				 * @returns		{String}	The error message if invalid, or null if valid
+				 * @returns	{String}		The error message if invalid, or null if valid
 				 */
 				validate:function()
 				{
@@ -2108,7 +2108,7 @@
 
 				/**
 				 * A string representation of the control
-				 * @returns		{String}	A string representation of the control
+				 * @returns	{String}		A string representation of the control
 				 */
 				toString:function()
 				{
@@ -2135,10 +2135,10 @@
 
 		/**
 		 * A XUL Event class to pass parameters to event callbacks
-		 * @param	type	{String}		The type of event, i.e. 'click', 'change', 'create'
-		 * @param	control	{XULControl}	The xJSFL XULControl the event was dispatched by
-		 * @param	xul		{XUL}			The xJSFL XUL instance the control belongs to
-		 * @param	xmlui	{XMLUI}			The Flash XMLUI instance the control belongs to
+		 * @param	{String}		type		The type of event, i.e. 'click', 'change', 'create'
+		 * @param	{XULControl}	control		The xJSFL XULControl the event was dispatched by
+		 * @param	{XUL}			xul			The xJSFL XUL instance the control belongs to
+		 * @param	{XMLUI}			xmlui		The Flash XMLUI instance the control belongs to
 		 */
 		function XULEvent(type, control, xul, xmlui)
 		{

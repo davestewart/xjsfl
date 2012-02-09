@@ -56,11 +56,11 @@
 
 		/**
 		 * Finds a single element or groups of elements within the collection
-		 * @param	element		{Number}		The index of the element to find
-		 * @param	element		{String}		The name of the element to find
-		 * @param	element		{RegExp}		A RegExp to match agains the names of the elements (plural) to find
-		 * @returns				{Element}		A single element
-		 * @returns				{Array}			An array of elements (only if a RegExp is supplied)
+		 * @param	{Number}		element		The index of the element to find
+		 * @param	{String}		element		The name of the element to find
+		 * @param	{RegExp}		element		A RegExp to match agains the names of the elements (plural) to find
+		 * @returns	{Element}					A single element
+		 * @returns	{Array}						An array of elements (only if a RegExp is supplied)
 		 */
 		find:function(element)
 		{
@@ -105,11 +105,11 @@
 
 		/**
 		 * Select one or all of the elements within the collection
-		 * @param	element		{Boolean}			An optional true flag to select all elements (the default)
-		 * @param	element		{Number}			An optional index of the element to select
-		 * @param	element		{String}			An optional name of the element to select
-		 * @param	element		{Element}			An optional reference to the element to select
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @param	{Boolean}			element		An optional true flag to select all elements (the default)
+		 * @param	{Number}			element		An optional index of the element to select
+		 * @param	{String}			element		An optional name of the element to select
+		 * @param	{Element}			element		An optional reference to the element to select
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		select:function(element)
 		{
@@ -128,10 +128,10 @@
 
 		/**
 		 * Move the collection on stage to, or by, x and y values
-		 * @param	x			{Number}			The x pixel value to move to, or by
-		 * @param	y			{Number}			The y pixel value to move to, or by
-		 * @param	relative	{Boolean}			An optional flag to move the elements relative to their current position, defaults to false
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @param	{Number}			x			The x pixel value to move to, or by
+		 * @param	{Number}			y			The y pixel value to move to, or by
+		 * @param	{Boolean}			relative	An optional flag to move the elements relative to their current position, defaults to false
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		move:function(x, y, relative)
 		{
@@ -178,8 +178,8 @@
 
 		/**
 		 * Duplicates and updates the current collection
-		 * @param	add			{Boolean}			An optional flag to add the duplicated items to the current collection, defaulst to false
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @param	{Boolean}			add			An optional flag to add the duplicated items to the current collection, defaulst to false
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		duplicate:function(add)
 		{
@@ -234,7 +234,7 @@
 
 		/**
 		 * Removes all elements from the collection and the stage
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		deleteElements:function()
 		{
@@ -251,13 +251,13 @@
 
 		/**
 		 * Sets a single property on each element in the collection
-		 * @param	prop		{Object}			A hash of valid name:value properties
-		 * @param	prop		{String}			The name of the property to modify
-		 * @param	value		{Value}				A valid property value
-		 * @param	value		{Array}				An array of property values
-		 * @param	value		{Object}			An Object of x, y property values
-		 * @param	value		{Function}			A callback function of the format function(element, index, elements), that returns a value
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @param	{Object}			prop		A hash of valid name:value properties
+		 * @param	{String}			prop		The name of the property to modify
+		 * @param	{Value}				value		A valid property value
+		 * @param	{Array}				value		An array of property values
+		 * @param	{Object}			value		An Object of x, y property values
+		 * @param	{Function}			value		A callback function of the format function(element, index, elements), that returns a value
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		attr:function (prop, value)
 		{
@@ -344,13 +344,13 @@
 
 		/**
 		 * Sequentially rename the the items in the collection using an alphanumeric pattern, a callback, or parameters
-		 * @param baseName		{String}			The basename for your objects
-		 * @param baseName		{String}			A single "name_###" name/number pattern string
-		 * @param padding		{Number}			An optional length to pad the numbers to the elements are renamed
-		 * @param padding		{Boolean}			An optional flag to pad the numbers as they are created
-		 * @param startIndex	{Number}			An optional number to start renaming from. Defaults to 1
-		 * @param separator		{String}			An optional separator between the numeric part of the name. Defaults to '_'
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @param	{String}			baseName	The basename for your objects
+		 * @param	{String}			baseName	A single "name_###" name/number pattern string
+		 * @param	{Number}			padding		An optional length to pad the numbers to the elements are renamed
+		 * @param	{Boolean}			padding		An optional flag to pad the numbers as they are created
+		 * @param	{Number}			startIndex	An optional number to start renaming from. Defaults to 1
+		 * @param	{String}			separator	An optional separator between the numeric part of the name. Defaults to '_'
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		rename:function (baseName, padding, startIndex, separator)
 		{
@@ -408,9 +408,9 @@
 
 		/**
 		 * Reorder the elements om the stage by an arbitrary property
-		 * @param	prop			{String}			The property to compare. Available properties are 'name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY'
-		 * @param	reverseOrder	{Boolean}			Optionally arrange in reverse order
-		 * @returns 				{ElementCollection}	The original ElementCollection object
+		 * @param	{String}			prop			The property to compare. Available properties are 'name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY'
+		 * @param	{Boolean}			reverseOrder	Optionally arrange in reverse order
+		 * @returns	{ElementCollection}					The original ElementCollection object
 		 */
 		orderBy:function(prop, reverseOrder)
 		{
@@ -466,9 +466,9 @@
 
 		/**
 		 * Align elements to one another
-		 * @param props		{String}			The specific arguments for the arrange type. Acceptable values are 'left,right,top,bottom,top left,top right,bottom left,bottom right,vertical,horizontal,center'
-		 * @param toStage	{Boolean}			Use the stage bounding box
-		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 * @param	{String}			props		The specific arguments for the arrange type. Acceptable values are 'left,right,top,bottom,top left,top right,bottom left,bottom right,vertical,horizontal,center'
+		 * @param	{Boolean}			toStage		Use the stage bounding box
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		align:function(props, element)
 		{
@@ -533,9 +533,9 @@
 
 		/**
 		 * Distribute elements relative to one another from their transformation point
-		 * @param props		{String}			1 or 2 of 'left,horizontal,right,top,vertical,bottom'
-		 * @param toStage	{Boolean}			Use the stage bounding box
-		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 * @param	{String}			props		1 or 2 of 'left,horizontal,right,top,vertical,bottom'
+		 * @param	{Boolean}			toStage		Use the stage bounding box
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		distribute:function(props, toStage)
 		{
@@ -575,10 +575,10 @@
 
 		/**
 		 * Space elements relative to one another
-		 * @param direction	{String}			The direction in which to space. Acceptable values are 'vertical,horizontal'
-		 * @param type		{Number}			An optional amount of space to add or subtract between items
-		 * @param type		{Boolean}			An optional flag to use the stage bounding box (only has an effect on the root)
-		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 * @param	{String}			direction	The direction in which to space. Acceptable values are 'vertical,horizontal'
+		 * @param	{Number}			type		An optional amount of space to add or subtract between items
+		 * @param	{Boolean}			type		An optional flag to use the stage bounding box (only has an effect on the root)
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		space:function(direction, type)
 		{
@@ -644,12 +644,12 @@
 
 		/**
 		 * match elements' dimensions relative to one another
-		 * @param	props	{String}			The dimension in which to match. Acceptable values are'width,height,size'
-		 * @param	element	{Element}			An optional reference to the element whose dimension(s) you want to match
-		 * @param	element	{String}			An optional name of the element whose dimension(s) you want to match
-		 * @param	element	{Number}			An optional index of the element whose dimension(s) you want to match
-		 * @param	element	{Boolean}			An optional flag (true=biggest, false=smallest) of the element whose dimension(s) you want to match. Defaults to true
-		 * @returns 		{ElementCollection}	The original ElementCollection object
+		 * @param	{String}			props		The dimension in which to match. Acceptable values are'width,height,size'
+		 * @param	{Element}			element		An optional reference to the element whose dimension(s) you want to match
+		 * @param	{String}			element		An optional name of the element whose dimension(s) you want to match
+		 * @param	{Number}			element		An optional index of the element whose dimension(s) you want to match
+		 * @param	{Boolean}			element		An optional flag (true=biggest, false=smallest) of the element whose dimension(s) you want to match. Defaults to true
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		match:function(prop, element)
 		{
@@ -716,10 +716,10 @@
 
 		/**
 		 * Repositions element positions to round multiples of numbers
-		 * @param	precision	{Number}			The pixel-precision to reposition to, same for x and y values
-		 * @param	precision	{Array}				The pixel-precision to reposition to, different for x and y values
-		 * @param	rounding	{Number}			Round down(-1), nearest(0), or up(1). Defaults to nearest(0)
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @param	{Number}			precision	The pixel-precision to reposition to, same for x and y values
+		 * @param	{Array}				precision	The pixel-precision to reposition to, different for x and y values
+		 * @param	{Number}			rounding	Round down(-1), nearest(0), or up(1). Defaults to nearest(0)
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		toGrid:function(precision, rounding)
 		{
@@ -792,12 +792,12 @@
 
 		/**
 		 * Randomizes any valid element properties
-		 * @param	prop		{Object}			An object containing property name:value pairs
-		 * @param	prop		{String}			A valid String property names
-		 * @param	modifier	{Number}			A multiplier value
-		 * @param	modifier	{String}			A valid modifier property: n%, +n, -n, *n
-		 * @param	modifier	{Array}				A valid modifier range: [from, to]
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @param	{Object}			prop		An object containing property name:value pairs
+		 * @param	{String}			prop		A valid String property names
+		 * @param	{Number}			modifier	A multiplier value
+		 * @param	{String}			modifier	A valid modifier property: n%, +n, -n, *n
+		 * @param	{Array}				modifier	A valid modifier range: [from, to]
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		randomize:function(prop, modifier)
 		{
@@ -903,8 +903,8 @@
 
 		/**
 		 * Centers the transform points of the elements
-		 * @param state		{Boolean}			Sets the transform point to the center (true) or the original pivot point (false). Defaults to true
-		 * @returns			{ElementCollection}	The original ElementCollection object
+		 * @param	{Boolean}			state		Sets the transform point to the center (true) or the original pivot point (false). Defaults to true
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		centerTransformPoint:function(state)
 		{
@@ -962,7 +962,7 @@
 
 		/**
 		 * Resets the transform of the elements
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		resetTransform:function()
 		{
@@ -974,10 +974,10 @@
 
 		/**
 		 * Run a function in each item in the collection by entering edit mode, running the function, then moving onto the next item
-		 * @param	callback	{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
-		 * @param	params		{Array}				An array of optional parameters to pass to the callback
-		 * @param	scope		{Object}			An optional scope to call the method in
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @param	{Function}			callback	A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
+		 * @param	{Array}				params		An array of optional parameters to pass to the callback
+		 * @param	{Object}			scope		An optional scope to call the method in
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		exec:function(callback, params, scope)
 		{
@@ -998,7 +998,7 @@
 
 		/**
 		 * Forces the a refreshes of the display after a series of operations
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		refresh:function()
 		{
@@ -1008,7 +1008,7 @@
 
 		/**
 		 * Utility function to list the contents of the collection
-		 * @returns				{ElementCollection}	The original ElementCollection object
+		 * @returns	{ElementCollection}				The original ElementCollection object
 		 */
 		list:function()
 		{

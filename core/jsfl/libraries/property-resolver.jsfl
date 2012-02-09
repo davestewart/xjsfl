@@ -19,16 +19,32 @@
 		PropertyResolver =
 		{
 
+			/**
+			 * Tests whether an element is one of the few elements that needs resolving
+			 * @param	{Object}	instance	An object or class instance
+			 * @returns	{Boolean}				true or false, depending on the result
+			 */
 			testInstance:function(instance)
 			{
 				return instance instanceof SymbolItem || instance instanceof Shape || instance instanceof Window;
 			},
 
+			/**
+			 * Tests an element to see if a property name needs resolving
+			 * @param	{String}	name		A property name
+			 * @returns	{Boolean}				true or false, depending on the result
+			 */
 			testProperty:function(name)
 			{
 				return !! (name in this.methods);
 			},
 
+			/**
+			 * Resolves the property value of an element
+			 * @param	{Object}	element		An object or class instance
+			 * @param	{String}	name		A property name
+			 * @returns	{Object}				The value of the property
+			 */
 			resolve:function(element, name)
 			{
 				if(element instanceof SymbolInstance)

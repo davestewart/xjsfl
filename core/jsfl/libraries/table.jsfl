@@ -278,6 +278,7 @@
 				 * @param	{Number}	keys			A Table ORDER constant
 				 * @param	{Array}		keys			An array of column names
 				 * @param	{String}	keys			An anything-delimited string of key names
+				 * @return	{Table}						The current instance
 				 */
 				setKeys:function(keys)
 				{
@@ -374,7 +375,8 @@
 
 				/**
 				 * Set the maximum width (number of characters) per column before truncating
-				 * @param int maxWidth
+				 * @param	{Number}	 maxWidth		The width of the widest column
+				 * @return	{Table}						The current instance
 				 */
 				setMaxWidth:function(maxWidth)
 				{
@@ -384,7 +386,8 @@
 
 				/**
 				 * Set the maximum height (number of lines) per row before truncating
-				 * @param {Number}	maxHeight	The maximum number of lines a row show be
+				 * @param	{Number}	maxHeight		The maximum number of lines a row show be
+				 * @return	{Table}						The current instance
 				 */
 				setMaxHeight:function(maxHeight)
 				{
@@ -582,14 +585,14 @@
 				},
 
 				/**
-				 *
-				 * @param	{Object}	hash
-				 * @returns
+				 * Utility function to sort keys
+				 * @param	{Object}	hash	A hash of keys/counts
+				 * @returns	{Array}				A new Array of keys
 				 */
 				getSortedKeys:function(hash)
 				{
 					// sort function
-						function byCount(a, b, c)
+						function byCount(a, b)
 						{
 							var v1 = a.count;
 							var v2 = b.count;

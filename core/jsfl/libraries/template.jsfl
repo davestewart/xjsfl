@@ -18,9 +18,9 @@
 
 		/**
 		 * Handes loading and population of text data, including nested templating and indentation
-		 * @param	uri		{String}	A URI or path to the template file
-		 * @param	data	{Object}	An object of key:value pairs
-		 * @returns			{Template}	A new Template instance
+		 * @param	{String}	uri		A URI or path to the template file
+		 * @param	{Object}	data	An object of key:value pairs
+		 * @returns	{Template}			A new Template instance
 		 */
 		function Template(uri, data)
 		{
@@ -90,8 +90,8 @@
 
 				/**
 				 * Loads the template source text file
-				 * @param	uri		{String}	A URI or path to the template file
-				 * @returns			{Template}	Itself
+				 * @param	{String}	uri		A URI or path to the template file
+				 * @returns	{Template}			Itself
 				 */
 				load:function(uri)
 				{
@@ -120,8 +120,8 @@
 
 				/**
 				 * Saves the rendered template to a file
-				 * @param	uri			{String}	The uri of where to save the file
-				 * @param	overwrite	{Boolean}	An optional Boolean specifying whether to overwrite an existing file or not
+				 * @param	{String}	uri			The uri of where to save the file
+				 * @param	{Boolean}	overwrite	An optional Boolean specifying whether to overwrite an existing file or not
 				 */
 				save:function(uri, overwrite)
 				{
@@ -144,11 +144,11 @@
 
 				/**
 				 * Set the values for the placeholders in template
-				 * @param	data	{Object}	An object of key:value pairs
-				 * @param	data	{String}	A key name
-				 * @param	value	{mixed}		Any value that can be converted to a string, even another Template instance
-				 * @param	append	{Boolean}	Append the value, rather than replacing it
-				 * @returns			{Template}	Itself
+				 * @param	{Object}	data		An object of key:value pairs
+				 * @param	{String}	data		A key name
+				 * @param	{mixed}		value		Any value that can be converted to a string, even another Template instance
+				 * @param	{Boolean}	append		Append the value, rather than replacing it
+				 * @returns	{Template}				Itself
 				 */
 				set:function(data, value, append)
 				{
@@ -181,9 +181,9 @@
 
 				/**
 				 * Set a global indent for the final rendered output
-				 * @param	indent	{Number}	The number of tabs to indent
-				 * @param	indent	{String}	A string that will be used as the indent
-				 * @returns			{Template}	Itself
+				 * @param	{Number}	indent		The number of tabs to indent
+				 * @param	{String}	indent		A string that will be used as the indent
+				 * @returns	{Template}				Itself
 			 */
 				indent:function(indent)
 				{
@@ -208,7 +208,7 @@
 
 				/**
 				 * Renders the Template and all its placeholder values
-				 * @returns		{String}	The rendered template
+				 * @returns	{String}				The rendered template
 				 */
 				render:function(_stack)
 				{
@@ -317,7 +317,7 @@
 
 				/**
 				 * Return a copy of the object
-				 * @returns		{Template}	An independant copy of the object
+				 * @returns	{Template}				An independant copy of the object
 				 */
 				clone:function()
 				{

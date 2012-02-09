@@ -25,13 +25,13 @@
 			 * - Resolves {placeholder} variables
 			 * - Tidies badly-formatted URIs
 			 *
-			 * @param	pathOrURI	{String}	A token, path or URI-formatted string
-			 * @param	context		{String}	An optional uri or path context, from which to start the URI
-			 * @param	context		{File}		An optional File from which to start the URI
-			 * @param	context		{Folder}	An optional Folder from which to start the URI
-			 * @param	context		{Number}	An optional stack-function index, the location of which to derive the URI from
-			 * @param	parseURI	{Boolean}	An optional Boolean, to bypass immediate returning of file:/// URIs, and parse their content
-			 * @returns				{String}	An absolute URI
+			 * @param	{String}	pathOrURI	A token, path or URI-formatted string
+			 * @param	{String}	context		An optional uri or path context, from which to start the URI
+			 * @param	{File}		context		An optional File from which to start the URI
+			 * @param	{Folder}	context		An optional Folder from which to start the URI
+			 * @param	{Number}	context		An optional stack-function index, the location of which to derive the URI from
+			 * @param	{Boolean}	parseURI	An optional Boolean, to bypass immediate returning of file:/// URIs, and parse their content
+			 * @returns	{String}				An absolute URI
 			 * @see								Notes at the top of this file
 			 */
 			toURI:function(pathOrURI, context, parseURI)
@@ -274,9 +274,9 @@
 			/**
 			 * Create a valid path from virtually any URI or path
 			 *
-			 * @param	pathOrURI	{String}	A token, path or URI-formatted string
-			 * @param	shorten		{Boolean}	An optional Boolean to return a path with {placeholder} variables for registered URIs
-			 * @returns				{String}	An absolute, or shortened path
+			 * @param	{String}	pathOrURI	A token, path or URI-formatted string
+			 * @param	{Boolean}	shorten		An optional Boolean to return a path with {placeholder} variables for registered URIs
+			 * @returns	{String}				An absolute, or shortened path
 			 * @see								Notes at the top of this file
 			 */
 			toPath:function(pathOrURI, shorten)

@@ -11,7 +11,11 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Selector - Class which holds JSFL rules (methods) and other parameters to compare against potentially-selected objects
 
-	function Selector(pattern, object)
+	/**
+	 * The Selector constructor
+	 * @param	{String}	pattern		The CSS selector pattern
+	 */
+	function Selector(pattern)
 	{
 		// NOTE: Scope is no longer passed in, as we don't want it to be inspected when we debug
 		this.pattern	= pattern;
@@ -26,10 +30,10 @@
 
 	/**
 	 * Static method to expands patterns and ranges in String expressions, updates test with ranges, and creates a RegExp that can be tested against
-	 * @param	expression	{String}	A String selector
-	 * @param	test		{Boolean}	An optional test object with which to populate with range values
-	 * @returns				{String}	A RegExp if wildcards or ranges were found
-	 * @returns				{RegExp}	A String if only text and numbers were found
+	 * @param	{String}	expression	A String selector
+	 * @param	{Boolean}	test		An optional test object with which to populate with range values
+	 * @returns	{String}				A RegExp if wildcards or ranges were found
+	 * @returns	{RegExp}				A String if only text and numbers were found
 	 */
 	Selector.makeRX = function(expression, selector)
 	{
@@ -44,6 +48,12 @@
 			//return /\.\*|\\d\+/.test(expression) ? new RegExp('^' + expression.replace(/\//g, '\\/') + '$', 'i') : expression;
 	}
 
+	/**
+	 * Static utility function to set the range of values from a range-syntax fragment {min|max}
+	 * @param	{String}	expression	A CSS selector pattern
+	 * @param	{Selector}	selector	The selector to assign the range values to
+	 * @returns	{String}				A new CSS expression
+	 */
 	Selector.makeRange = function(expression, selector)
 	{
 		// match any ranges i.e. {-100|100}

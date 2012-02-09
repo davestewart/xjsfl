@@ -16,8 +16,8 @@
 		/**
 		 * Serializes values to XML so they can be passed to Flash and be deserialized to values again
 		 *
-		 * @param	value	{Value}		Any value
-		 * @returns			{String}	An XML String
+		 * @param	{Value}		value	Any value
+		 * @returns	{String}			An XML String
 		 */
 		serialize:function(value)
 		{

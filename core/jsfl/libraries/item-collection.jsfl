@@ -72,7 +72,7 @@
 
 		/**
 		 * Select the item in the library
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		select:function()
 		{
@@ -87,7 +87,7 @@
 
 		/**
 		 * Updates the elements from the hard disk
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		update:function()
 		{
@@ -97,7 +97,7 @@
 
 		/**
 		 * Delete the item from the library
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		deleteItems:function()
 		{
@@ -110,9 +110,9 @@
 
 		/**
 		 * Visually expands or collapses folders in the library panel
-		 * @param	state		{Boolean}
-		 * @param	recurse		{Boolean}
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @param	{Boolean}state
+		 * @param	{Boolean}recurse
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		expand:function(state, recurse)
 		{
@@ -130,7 +130,7 @@
 
 		/**
 		 * Reveals the items in the library panel by expanding contaiing folders
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		reveal:function()
 		{
@@ -154,10 +154,10 @@
 
 		/**
 		 * Move collection elements to a folder
-		 * @param	path		{String}			The path to move items to
-		 * @param	replace		{Boolean}			Replace any items of the same name (set false to automatically rename)
-		 * @param	expand		{Boolean}			Expand any newly-created folders
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @param	{String}			path		The path to move items to
+		 * @param	{Boolean}			replace		Replace any items of the same name (set false to automatically rename)
+		 * @param	{Boolean}			expand		Expand any newly-created folders
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		move:function(path, replace, expand)
 		{
@@ -194,14 +194,14 @@
 
 		/**
 		 * Sequentially rename the the items in the collection using an alphanumeric pattern, a callback, or parameters
-		 * @param baseName		{Function}			A callback of the format function(name, index, item) which should return a custom name
-		 * @param baseName		{String}			A single "name_###" name/number pattern string
-		 * @param baseName		{String}			The basename for your objects
-		 * @param padding		{Number}			An optional padding length for the numeric part of the name
-		 * @param padding		{Boolean}			An optional flag to automatically pad the numeric part of the name to the correct length
-		 * @param startIndex	{Number}			An optional number to start renaming from. Defaults to 1
-		 * @param separator		{String}			An optional separator between the numeric part of the name. Defaults to '_'
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @param	{Function}			baseName	A callback of the format function(name, index, item) which should return a custom name
+		 * @param	{String}			baseName	A single "name_###" name/number pattern string
+		 * @param	{String}			baseName	The basename for your objects
+		 * @param	{Number}			padding		An optional padding length for the numeric part of the name
+		 * @param	{Boolean}			padding		An optional flag to automatically pad the numeric part of the name to the correct length
+		 * @param	{Number}			startIndex	An optional number to start renaming from. Defaults to 1
+		 * @param	{String}			separator	An optional separator between the numeric part of the name. Defaults to '_'
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		rename:function(baseName, padding, startIndex, separator)
 		{
@@ -258,9 +258,9 @@
 
 		/**
 		 * Run a function in each item in the collection by entering edit mode, running the function, then moving onto the next item
-		 * @param	callback	{Function}			A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
-		 * @param	params		{Array}				An array of optional parameters to pass to the callback
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @param	{Function}			callback	A function with a signature matching function(element, index, ...params), with "this" referring to the original ItemCollection
+		 * @param	{Array}				params		An array of optional parameters to pass to the callback
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		exec:function(callback, params)
 		{
@@ -278,10 +278,10 @@
 
 		/**
 		 * Adds the items in the collection to the stage, returning an ElementCollection of the newly-added elements
-		 * @param	context		{Context}			An optional context object of where to add the items
-		 * @param	x			{Number}			An optional x position to add the items at
-		 * @param	y			{Number}			An optional y position to add the items at
-		 * @returns				{ElementCollection} A new ElementCollection
+		 * @param	{Context}			context		An optional context object of where to add the items
+		 * @param	{Number}			x			An optional x position to add the items at
+		 * @param	{Number}			y			An optional y position to add the items at
+		 * @returns	{ElementCollection} 			A new ElementCollection
 		 */
 		addToStage:function(context, x, y)
 		{
@@ -303,7 +303,7 @@
 
 		/**
 		 * Debugging function to list the items in the collection
-		 * @returns				{ItemCollection}	The original ItemCollection
+		 * @returns	{ItemCollection}				The original ItemCollection
 		 */
 		list:function()
 		{

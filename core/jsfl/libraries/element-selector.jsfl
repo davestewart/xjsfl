@@ -16,9 +16,9 @@
 	/**
 	 * Element Selector function to return an ElementCollection of stage elements
 	 *
-	 * @param	selector	{String}				A selector expression
-	 * @param	context		{Context}				A valid Context instance
-	 * @returns				{ElementCollection}		An Element Collection
+	 * @param	{String}				selector	A selector expression
+	 * @param	{Context}				context		A valid Context instance
+	 * @returns	{ElementCollection}					An Element Collection
 	 */
 	$ = function(expression, context, debug)
 	{

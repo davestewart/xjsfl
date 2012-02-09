@@ -16,7 +16,7 @@
 
 		/**
 		 * Timer constructor
-		 * @param name {String}	An optinoal name for the new Timer
+		 * @param	{String}	name		An optional name for the new Timer
 		 */
 		function Timer(name)
 		{
@@ -122,7 +122,7 @@
 
 			/**
 			 * Start the timer
-			 * @returns			{Timer}		Itself
+			 * @returns	{Timer}				Itself
 			 */
 			start:function()
 			{
@@ -133,8 +133,8 @@
 
 			/**
 			 * Stop the timer
-			 * @param	print	{Boolean}	Optionally print the results of the timer
-			 * @returns			{Timer}		Itself
+			 * @param	{Boolean}	print	Optionally print the results of the timer
+			 * @returns	{Timer}				Itself
 			 */
 			stop:function(print)
 			{
@@ -152,7 +152,7 @@
 
 			/**
 			 * Standard toString method
-			 * @returns		{String}	A String representation of the object
+			 * @returns	{String}			A String representation of the object
 			 */
 			toString:function()
 			{

@@ -1,36 +1,36 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██  ██                     ██                    
-//  ██  ██                     ██                    
-//  ██ █████ █████ ████ █████ █████ █████ ████ █████ 
-//  ██  ██   ██ ██ ██      ██  ██   ██ ██ ██   ██    
-//  ██  ██   █████ ██   █████  ██   ██ ██ ██   █████ 
-//  ██  ██   ██    ██   ██ ██  ██   ██ ██ ██      ██ 
-//  ██  ████ █████ ██   █████  ████ █████ ██   █████ 
+//  ██  ██                     ██
+//  ██  ██                     ██
+//  ██ █████ █████ ████ █████ █████ █████ ████ █████
+//  ██  ██   ██ ██ ██      ██  ██   ██ ██ ██   ██
+//  ██  ██   █████ ██   █████  ██   ██ ██ ██   █████
+//  ██  ██   ██    ██   ██ ██  ██   ██ ██ ██      ██
+//  ██  ████ █████ ██   █████  ████ █████ ██   █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Iterators - Iterate thorugh documents, items, timelines, layers, frames and elements
-	
+
 	//TODO Create global find() method
 	/*
 		Iterates through every item, layer, frame, element, and in the callback
 		add the context to the a global array. Then afterwards, the user can jump
 		to each object with contexts[i].goto();
 	*/
-	
+
 	Iterators =
 	{
 		/**
 		 * Iterates through Documents, and optionally Items, Layers, Frames and Elements, processing each one with a callback if supplied
-		 * 
-		 * @param	documents		{Boolean}		Pass true to use all documents
-		 * @param	documents		{null}			Pass null to use all documents
-		 * @param	documents		{Array}			An optional Array of Document objects
-		 * @param	itemCallback	{Function}		An optional callback of the format function(item, index, items, context)
-		 * @param	layerCallback	{Function}		An optional callback of the format function(layer, index, layers, context)
-		 * @param	frameCallback	{Function}		An optional callback of the format function(frame, index, frames, context)
-		 * @param	elementCallback	{Function}		An optional callback of the format function(element, index, elements, context)
-		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 *
+		 * @param	{Boolean}		documents			Pass true to use all documents
+		 * @param	{null}			documents			Pass null to use all documents
+		 * @param	{Array}			documents			An optional Array of Document objects
+		 * @param	{Function}		itemCallback		An optional callback of the format function(item, index, items, context)
+		 * @param	{Function}		layerCallback		An optional callback of the format function(layer, index, layers, context)
+		 * @param	{Function}		frameCallback		An optional callback of the format function(frame, index, frames, context)
+		 * @param	{Function}		elementCallback		An optional callback of the format function(element, index, elements, context)
+		 * @returns	{Boolean}							true as soon as the callback returns true, if not false
 		 */
 		documents:function(documents, documentCallback, itemCallback, layerCallback, frameCallback, elementCallback)
 		{
@@ -39,18 +39,18 @@
 				{
 					documents = fl.documents;
 				}
-				
+
 			// iterate
 				for(var i = 0; i < documents.length; i++)
 				{
 					// debug
 						//trace('Document:' + i);
-						
+
 						// TODO Should the DOM iterator swap the active window, or should the callback handle this?
-						
+
 					// context
 						var context = new Context(documents[i]);
-						
+
 					// callback
 						if(documentCallback instanceof Function)
 						{
@@ -58,7 +58,7 @@
 							if(result === true)return true;
 							if(result === false)continue
 						}
-						
+
 					// layers
 						if((itemCallback || layerCallback || frameCallback || elementCallback))
 						{
@@ -68,21 +68,21 @@
 							}
 						}
 				}
-				return false;			
+				return false;
 		},
-		
+
 		/**
 		 * Iterates through Symbol or Library Items, and optionally Layers, Frames and Elements, processing each one with a callback if supplied
-		 * 
-		 * @param	context			{Array}			An Array of Symbol Items or Instances
-		 * @param	context			{Context}		A Context object, with a valid dom reference
-		 * @param	context			{Boolean}		All items in the current document
-		 * @param	context			{null}			All items in the current document
-		 * @param	itemCallback	{Function}		An optional callback of the format function(item, index, items, context)
-		 * @param	layerCallback	{Function}		An optional callback of the format function(layer, index, layers, context)
-		 * @param	frameCallback	{Function}		An optional callback of the format function(frame, index, frames, context)
-		 * @param	elementCallback	{Function}		An optional callback of the format function(element, index, elements, context)
-		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 *
+		 * @param	{Array}			context				An Array of Symbol Items or Instances
+		 * @param	{Context}		context				A Context object, with a valid dom reference
+		 * @param	{Boolean}		context				All items in the current document
+		 * @param	{null}			context				All items in the current document
+		 * @param	{Function}		itemCallback		An optional callback of the format function(item, index, items, context)
+		 * @param	{Function}		layerCallback		An optional callback of the format function(layer, index, layers, context)
+		 * @param	{Function}		frameCallback		An optional callback of the format function(frame, index, frames, context)
+		 * @param	{Function}		elementCallback		An optional callback of the format function(element, index, elements, context)
+		 * @returns	{Boolean}							true as soon as the callback returns true, if not false
 		 */
 		items:function(context, itemCallback, layerCallback, frameCallback, elementCallback)
 		{
@@ -90,15 +90,15 @@
 			/*
 			 	Then the function can skip the loop and go straight to that context
 			 	i.e. xjsf.iterators.items(true, true, 'actionscript', addStopFrame)
-			 	
+
 			 	So true would skip the callback and just iterate, but 'actionscript'
 			 	would only process the actionscript layer
-			 	
+
 			*/
-			
+
 			// variables
 				var items;
-				
+
 			// create a Context object that callbacks can reference
 				if(context != null && context !== true)
 				{
@@ -119,7 +119,7 @@
 					context	= Context.create(true, false, false, false, false);
 					items	= context.dom.library.items;
 				}
-				
+
 			// final check for items
 				if( ! items )
 				{
@@ -132,14 +132,14 @@
 				{
 					// debug
 						//trace('Item:' + i);
-						
+
 					// skip if item doens't have a timeline
 						if( ! items[i]['timeline'] )
 							continue
 
 					// context
 						context = context.setTimeline(items[i]);
-						
+
 					// callback
 						if(itemCallback instanceof Function)
 						{
@@ -147,7 +147,7 @@
 							if(result === true)return true;
 							if(result === false)continue
 						}
-						
+
 					// layers
 						if(items[i]['timeline'] != null && (layerCallback || frameCallback || elementCallback))
 						{
@@ -157,21 +157,21 @@
 							}
 						}
 				}
-				return false;			
+				return false;
 		},
-		
+
 		/**
 		 * Iterates through a Timeline's layers, and optionally Frames and Elements, processing each one with a callback if supplied
-		 * 
-		 * @param	context			{SymbolInstance}A SymbolItem object
-		 * @param	context			{SymbolItem}	A SymbolInstance object
-		 * @param	context			{Array}			An Array of layers
-		 * @param	context			{Boolean}		Pass true to use the current timeline's layers
-		 * @param	context			{Context}		A Context object, with a valid item reference
-		 * @param	layerCallback	{Function}		An optional callback of the format function(layer, index, layers, context)
-		 * @param	frameCallback	{Function}		An optional callback of the format function(frame, index, frames, context)
-		 * @param	elementCallback	{Function}		An optional callback of the format function(element, index, elements, context)
-		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 *
+		 * @param	{SymbolInstance}context				A SymbolItem object
+		 * @param	{SymbolItem}	context				A SymbolInstance object
+		 * @param	{Array}			context				An Array of layers
+		 * @param	{Boolean}		context				Pass true to use the current timeline's layers
+		 * @param	{Context}		context				A Context object, with a valid item reference
+		 * @param	{Function}		layerCallback		An optional callback of the format function(layer, index, layers, context)
+		 * @param	{Function}		frameCallback		An optional callback of the format function(frame, index, frames, context)
+		 * @param	{Function}		elementCallback		An optional callback of the format function(element, index, elements, context)
+		 * @returns	{Boolean}							true as soon as the callback returns true, if not false
 		 */
 		layers:function(context, layerCallback, frameCallback, elementCallback)
 		{
@@ -184,20 +184,20 @@
 				{
 					context = new Context(false, context, false, false, false);
 				}
-				
+
 			// if a timeline was found, process its layers
 				if(context.timeline)
 				{
 					//Output.inspect(context, 'Context')
-					
+
 					for(var i = 0; i < context.timeline.layers.length; i++)
 					{
 						// debug
 							//trace('Layer:' + i)
-							
+
 						// set context
 							context.setLayer(i);
-							
+
 						// callback
 							if(layerCallback instanceof Function)
 							{
@@ -205,7 +205,7 @@
 								if(result === true)return true;
 								if(result === false)continue
 							}
-							
+
 						// frames
 							if(frameCallback || elementCallback)
 							{
@@ -220,19 +220,19 @@
 				{
 					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.layers');;
 				}
-				return false;			
+				return false;
 		},
-		
+
 		/**
 		 * Iterates through a Layer's Frames, and optionally Elements, processing each one with a callback if supplied
-		 * 
-		 * @param	context			{Layer}			A Layer
-		 * @param	context			{Number}		A valid index of the current timeline
-		 * @param	context			{String}		A valid layer name of the current timeline
-		 * @param	context			{Context}		A Context object with a valid timeline reference
-		 * @param	frameCallback	{Function}		An optional callback of the format function(frame, index, frames, context)
-		 * @param	elementCallback	{Function}		An optional callback of the format function(element, index, elements, context)
-		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 *
+		 * @param	{Layer}			context				A Layer
+		 * @param	{Number}		context				A valid index of the current timeline
+		 * @param	{String}		context				A valid layer name of the current timeline
+		 * @param	{Context}		context				A Context object with a valid timeline reference
+		 * @param	{Function}		frameCallback		An optional callback of the format function(frame, index, frames, context)
+		 * @param	{Function}		elementCallback		An optional callback of the format function(element, index, elements, context)
+		 * @returns	{Boolean}							true as soon as the callback returns true, if not false
 		 */
 		frames:function(context, frameCallback, elementCallback)
 		{
@@ -245,7 +245,7 @@
 				{
 					context	= new Context(false, false, context, false, false);
 				}
-				
+
 			// if a layer object was found
 				if(context.layer)
 				{
@@ -253,13 +253,13 @@
 					{
 						// debug
 							//trace('Frame:' + i)
-						
+
 						// process keyframes only
 							if(i == context.layer.frames[i].startFrame)
 							{
 								// context
 									context.setFrame(i);
-									
+
 								// callback
 									if(frameCallback instanceof Function)
 									{
@@ -267,7 +267,7 @@
 										if(result === true)return true;
 										if(result === false)continue
 									}
-									
+
 								// elements
 									if(elementCallback)
 									{
@@ -277,23 +277,23 @@
 										}
 									}
 							}
-							
+
 					}
 				}
 				else
 				{
 					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.frames');;
 				}
-				return false;			
+				return false;
 		},
-		
+
 		/**
 		 * Iterates through a Frame's elements, processing each one with a callback if supplied
-		 * 
-		 * @param	context			{Frame}			A frame object in the current Timeline
-		 * @param	context			{Context}		A Context object with a valid Frame reference
-		 * @param	elementCallback	{Function}		A callback of the format function(element, index, elements, context)
-		 * @returns					{Boolean}		true as soon as the callback returns true, if not false
+		 *
+		 * @param	{Frame}			context				A frame object in the current Timeline
+		 * @param	{Context}		context				A Context object with a valid Frame reference
+		 * @param	{Function}		elementCallback		A callback of the format function(element, index, elements, context)
+		 * @returns	{Boolean}							true as soon as the callback returns true, if not false
 		 */
 		elements:function(context, elementCallback)
 		{
@@ -306,7 +306,7 @@
 				{
 					context = new Context(false, false, false, context, false);
 				}
-				
+
 			// if a frame context exists
 				if(context.frame)
 				{
@@ -314,7 +314,7 @@
 					{
 						// set context
 							context.setElement(i);
-							
+
 						// callback
 							// in case of deletes, use a custom frame callback which iterates in reverse, rather than this method: for(var i = context.frame.elements.length - 1; i >= 0 ; i--)
 							if(elementCallback instanceof Function)
@@ -328,11 +328,11 @@
 				{
 					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.elements');;
 				}
-				
+
 			// done!
-				return false;			
+				return false;
 		}
 	}
-	
+
 // register class
 	xjsfl.classes.register('Iterators', Iterators);

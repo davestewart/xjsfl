@@ -17,9 +17,16 @@
 	// Bounds object
 
 		/**
-		 * Bounds object. Args: 0=Document size, 1=Element, 1=radius, 1=Array, 2=width,height, 4=x,y,width,height
+		 * Bounds object. Args: 0=Document size, 1=Element, 1=radius, 1=Array, 2=width,height, 4=width,height,x,y
 		 * Useful for quickly creating objects on the stage
-		 * @returns		{Object}
+		 * @param	{Element}	element		A stage element
+		 * @param	{Number}	element		A radius
+		 * @param	{Array}		element		A 2-element Array of width and height
+		 * @param	{Number}	width		The bounds width
+		 * @param	{Number}	height		The bounds height
+		 * @param	{Number}	x			The bounds x position
+		 * @param	{Number}	y			The bounds y position
+		 * @returns	{Object}    			A Bounds object
 		 */
 		function Bounds()
 		{
@@ -111,10 +118,10 @@
 
 					// left, top, width, height
 						case 4:
-							this.left		= args[0];
-							this.top		= args[1];
-							this.right		= args[0] + args[2];
-							this.bottom		= args[1] + args[3];
+							this.left		= args[2];
+							this.top		= args[3];
+							this.right		= args[2] + args[0];
+							this.bottom		= args[3] + args[1];
 						break;
 				}
 

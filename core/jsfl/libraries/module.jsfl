@@ -17,8 +17,8 @@
 		/**
 		 * Base module class used to create xJSFL modules
 		 *
-		 * @param 	namespace	{String}	The namespace of the module in the xjsfl.modules object, i.e. "keyframer"
-		 * @param 	properties	{object}	The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
+		 * @param	{String}	namespace		The namespace of the module in the xjsfl.modules object, i.e. "keyframer"
+		 * @param	{object}	properties		The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
 		 */
 		Module = function(namespace, properties, window)
 		{
@@ -57,7 +57,7 @@
 			// window
 				/**
 				 * Gets the Window object of the module
-				 * @returns {Window}
+				 * @returns	{Window}
 				 */
 				this.getWindow = function()
 				{
@@ -116,9 +116,9 @@
 
 				/**
 				 * Get a named module Config object, either a default, or a specific object
-				 * @param	configName	{String}	An optional name syntax i.e. "data" to default to "modules/Tools/config/tools data.xml"
-				 * @param	configName	{String}	An optional leading-slash syntax i.e. "/cache/data" to reference a specific file: "modules/Tools/config/cache/data.xml"
-				 * @returns				{Config}	A new Config instance
+				 * @param	{String}	configName	An optional name syntax i.e. "data" to default to "modules/Tools/config/tools data.xml"
+				 * @param	{String}	configName	An optional leading-slash syntax i.e. "/cache/data" to reference a specific file: "modules/Tools/config/cache/data.xml"
+				 * @returns	{Config}				A new Config instance
 				 */
 				loadConfig:function(path)
 				{
@@ -141,8 +141,8 @@
 
 				/**
 				 * Log a message to the listener, prefixed with the module's name
-				 * @param	{String}	message
-				 * @param	{Boolean}	lineBefore
+				 * @param	{String}	message		The message to log to the listener
+				 * @param	{Boolean}	lineBefore	An optional Boolean to trace a blank line before the message
 				 */
 				log:function(message, lineBefore)
 				{

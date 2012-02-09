@@ -16,11 +16,11 @@
 	/**
 	 * Item selector function
 	 *
-	 * @param	expression	{String}			A String expression
-	 * @param	context		{String}			A path to a library Item
-	 * @param	context		{Item}				A library Item
-	 * @param	context		{Context}			A Context object with a valid item property
-	 * @returns				{ItemCollection}	An ItemCollection instance
+	 * @param	{String}			expression	A String expression
+	 * @param	{String}			context		A path to a library Item
+	 * @param	{Item}				context		A library Item
+	 * @param	{Context}			context		A Context object with a valid item property
+	 * @returns	{ItemCollection}				An ItemCollection instance
 	 */
 	$$ = function(expression, context, debug)
 	{
