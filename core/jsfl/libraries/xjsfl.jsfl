@@ -196,12 +196,36 @@
 		 */
 		folders:
 		{
-			xjsfl:		xjsfl.uri,
-			core:		xjsfl.uri + 'core/',
-			modules:	xjsfl.uri + 'modules/',
-			user:		xjsfl.uri + 'user/',
-			flash:		fl.configURI,
-			swf:		fl.configURI + 'WindowSWF/'
+			// properties
+				xjsfl:		xjsfl.uri,
+				core:		xjsfl.uri + 'core/',
+				modules:	xjsfl.uri + 'modules/',
+				user:		xjsfl.uri + 'user/',
+				flash:		fl.configURI,
+				swf:		fl.configURI + 'WindowSWF/',
+
+			// methods
+				add:function(name, uri)
+				{
+					if( ! /^(all|add)$/.test(this.name) )
+					{
+						this[name] = uri;
+					}
+				},
+
+				/** @type {Array}	An Array of all registered placeholder URIs in reverse-order (for searching) */
+				get all()
+				{
+					var uris = [];
+					for(var name in this)
+					{
+						if( ! /^(all|add)$/.test(name) )
+						{
+							uris.push(this[name]);
+						}
+					}
+					return uris.sort().reverse();
+				}
 		},
 
 		/**
@@ -243,10 +267,11 @@
 						}
 				},
 
+				/** @type {Array}	An Array of all search URIs */
 				get all()
 				{
 					var uris = xjsfl.settings.uris;
-					return uris.core
+					return [].concat(uris.core)
 								.concat(uris.module)
 								.concat(uris.user);
 				}
@@ -933,11 +958,11 @@
 					// stack object
 						stack[i] =
 						{
-							code:parts[1] || '',
 							line:parseInt(parts[3]) || '',
+							code:parts[1] || '',
 							file:file,
 							path:(xjsfl.file.makePath(path, shorten)),
-							uri:FLfile.platformPathToURI(path)
+							uri:FLfile.platformPathToURI(path + file)
 						};
 				}
 
@@ -2268,6 +2293,10 @@
 						manifest.jsfl.uri		= uri;
 						var namespace			= String(manifest.jsfl.namespace);
 						manifests[namespace]	= manifest;
+
+					// add the URI to the xjsfl.settings.uris.modules and xjsfl.settings.folders objects
+						xjsfl.settings.uris.add(uri, 'module');
+						xjsfl.settings.folders[namespace] = uri;
 
 					// debug
 						xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
