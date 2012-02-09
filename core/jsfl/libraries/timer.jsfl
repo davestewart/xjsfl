@@ -1,19 +1,19 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████ ██                     
-//    ██                          
-//    ██   ██ ████████ █████ ████ 
-//    ██   ██ ██ ██ ██ ██ ██ ██   
-//    ██   ██ ██ ██ ██ █████ ██   
-//    ██   ██ ██ ██ ██ ██    ██   
-//    ██   ██ ██ ██ ██ █████ ██   
+//  ██████ ██
+//    ██
+//    ██   ██ ████████ █████ ████
+//    ██   ██ ██ ██ ██ ██ ██ ██
+//    ██   ██ ██ ██ ██ █████ ██
+//    ██   ██ ██ ██ ██ ██    ██
+//    ██   ██ ██ ██ ██ █████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Timer - A simple timing class
 
 	// --------------------------------------------------------------------------------
 	// Constructor
-	
+
 		/**
 		 * Timer constructor
 		 * @param name {String}	An optinoal name for the new Timer
@@ -24,10 +24,10 @@
 			this.startDate	= new Date();
 			this.endDate	= new Date();
 		}
-		
+
 	// --------------------------------------------------------------------------------
 	// Static properties
-	
+
 		// object
 			var timer =
 			{
@@ -35,27 +35,27 @@
 				 * @type {Timer}
 				 */
 				instance:{},
-				
+
 				get time()
 				{
 					return Timer.instance.time;
 				},
-				
+
 				get milliseconds()
 				{
 					return Timer.instance.milliseconds;
 				},
-				
+
 				start:function(name)
 				{
 					Timer.instance = new Timer(name || 'Default').start();
 				},
-				
+
 				stop:function()
 				{
 					Timer.instance.stop(true);
 				},
-				
+
 				format:function(ms, precision)
 				{
 					// variables
@@ -71,7 +71,7 @@
 							month:		1000*60*60*24*30,
 							year:		1000*60*60*24*365
 						};
-						
+
 					// format time to English
 						if(ms < times.second)		format = ms + ' milliseconds'
 						else if(ms < times.minute)	format = (ms / times.second).toPrecision(3) + ' seconds'
@@ -81,35 +81,36 @@
 						else if(ms < times.month)	format = (ms / times.week).toPrecision(3) + ' weeks'
 						else if(ms < times.year)	format = (ms / times.month).toPrecision(3) + ' months'
 						else						format = (ms / times.year).toPrecision(3) + ' years'
-						
+
 					// return
 						return format;
 				}
-				
+
 			};
-			
+
 		// add static methods to Timer class
 			xjsfl.utils.extend(Timer, timer);
+			delete timer;
 
-		
+
 	// --------------------------------------------------------------------------------
 	// Prototype
-	
+
 		Timer.prototype =
 		{
 			constructor:Timer,
-		
+
 			startDate:null,
-			
+
 			endDate:null,
-			
+
 			running:false,
-			
+
 			get time()
 			{
 				return Timer.format(this.milliseconds);
 			},
-			
+
 			get milliseconds()
 			{
 				if(this.endDate && this.startDate)
@@ -118,7 +119,7 @@
 				}
 				return new Date(ms || 0).getTime()
 			},
-			
+
 			/**
 			 * Start the timer
 			 * @returns			{Timer}		Itself
@@ -129,7 +130,7 @@
 				this.startDate	= new Date();
 				return this;
 			},
-			
+
 			/**
 			 * Stop the timer
 			 * @param	print	{Boolean}	Optionally print the results of the timer
@@ -148,7 +149,7 @@
 				}
 				return this;
 			},
-			
+
 			/**
 			 * Standard toString method
 			 * @returns		{String}	A String representation of the object
@@ -158,12 +159,11 @@
 				return '[object Timer time="' +this.time+ '"]';
 			}
 		}
-		
+
 		Timer.toString = function()
 		{
 			return '[class Timer]';
 		}
 
-		
+
 		xjsfl.classes.register('Timer', Timer);
-	
