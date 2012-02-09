@@ -50,7 +50,7 @@
 			// properties
 
 				/**
-				 * @type {String} The uri-formatted string to the item
+				 * @type {String} The URI-formatted string (file:///) to the item
 				 */
 				uri:null,
 
@@ -391,7 +391,7 @@
 		Folder.prototype = new FileSystemObject;
 		xjsfl.utils.extend(Folder.prototype, folder);
 		delete folder;
-		
+
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
@@ -513,6 +513,8 @@
 				 */
 				copy:function(trgURI, overWrite)
 				{
+					//TODO ensure trgURI is an absolute path
+
 					//Output.inspect(this)
 					// if the file exists, copy it
 						if(this.exists)
