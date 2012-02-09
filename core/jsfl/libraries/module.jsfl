@@ -32,7 +32,7 @@
 				this.manifest	= xjsfl.modules.getManifest(namespace);
 				if( ! this.manifest)
 				{
-					throw new Error('Module(): There is no manifest file for the namespace "' +namespace+ '"');
+					throw new Error('Error in Module(): There is no manifest file for the module "' +namespace+ '"');
 				}
 
 			// namespace
