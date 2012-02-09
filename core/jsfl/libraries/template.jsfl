@@ -63,6 +63,7 @@
 			return '[class Template]';
 		}
 
+
 	// ------------------------------------------------------------------------------------------------
 	// Prototype
 
@@ -146,7 +147,7 @@
 				 * @param	data	{Object}	An object of key:value pairs
 				 * @param	data	{String}	A key name
 				 * @param	value	{mixed}		Any value that can be converted to a string, even another Template instance
-				 * @param	append	{Boolean}	Append teh value, rather than replacing it
+				 * @param	append	{Boolean}	Append the value, rather than replacing it
 				 * @returns			{Template}	Itself
 				 */
 				set:function(data, value, append)
@@ -248,6 +249,8 @@
 						}
 
 					// placeholder matching regular expressions
+						//TODO add in support for default placeholders {default=value}
+						//TODO add in support for deep properties i.e. {timeline.frameCount}
 						var rxLocal		= /^([\t ]*){>(\w+)\??}|{(\w+)\??}/;
 						var rxGlobal	= new RegExp(rxLocal.source, 'g');
 
@@ -258,7 +261,7 @@
 							return '// RECURSION! (' +this.file+ ')';
 						}
 
-					// flatten and cache all data as strings, so repeated placeholders
+					// flatten and cache all data values as strings, so repeated placeholders
 					// are not rendered each time they reappear in the parent Template.
 
 						// variables
@@ -313,7 +316,7 @@
 				},
 
 				/**
-				 * Returna copy of the object
+				 * Return a copy of the object
 				 * @returns		{Template}	An independant copy of the object
 				 */
 				clone:function()
