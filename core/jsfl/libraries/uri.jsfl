@@ -9,7 +9,7 @@
 //  ██████ ██  ██ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// URI - path and URI conversion
+// URI - Handles URI and path conversion, including detection and resolution of relative paths
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// class
@@ -17,7 +17,7 @@
 		var URI =
 		{
 			/**
-			 * Create a valid URI from a supplied string
+			 * Create a valid URI from virtually any URI or path
 			 *
 			 * - Resolves relative paths (automatically or via context)
 			 * - Allows concatenation and resolution of paths
@@ -40,7 +40,7 @@
 				// process URI
 
 					// ensure pathOrURI is a string
-						pathOrURI = String(pathOrURI);
+						pathOrURI = String(pathOrURI || '');
 
 					// process URIs
 						if(pathOrURI.indexOf('file:///') === 0)
@@ -52,49 +52,27 @@
 								}
 
 							// convert URI to a path
-								pathOrURI = pathOrURI
-									.replace('file:///', '')
-									.replace('|', ':')
-									.replace(/%20/g, ' ');
+								pathOrURI = URI.asPath(pathOrURI);
 						}
 
 				// ---------------------------------------------------------------------------------------------------------------
-				// process {placeholders}
+				// variables
 
 					// variables
 						var uri;
 						var root;
-						var path		= pathOrURI.replace(/\\+/g, '/');;
-						var rxFile		= /[^\/\\]+$/;
-
-					// check path for and convert any leading {placeholder} variables
-						if(path.indexOf('{') === 0)
-						{
-							var matches = path.match(/{(\w+)}/);
-							if(matches)
-							{
-								var folder = xjsfl.settings.folders[matches[1]];
-								if(folder)
-								{
-									uri		= path.replace(matches[0], folder);
-								}
-							}
-							else
-							{
-								throw new URIError('Error in URI.toURI(): Unrecognised placeholder ' +matches[0]+ ' in path "' +path+ '"');
-							}
-						}
+						var path		= pathOrURI.replace(/\\+/g, '/');
 
 				// ---------------------------------------------------------------------------------------------------------------
 				// process context
 
 					// check to see if supplied context resolves to a URI
-						else if( context && (typeof context !== 'number') )
+						if( context && (typeof context !== 'number') )
 						{
 							// grab URI of context if possible
 								if(typeof context === 'string')
 								{
-									if(String(context).indexOf('file:///') === 0)
+									if(URI.isURI(context))
 									{
 										root = context;
 									}
@@ -122,13 +100,34 @@
 										}
 										else
 										{
-											uri = root.replace(rxFile, '') + path;
+											uri = URI.getFolder(root) + path;
 										}
 								}
 								else
 								{
 									throw new URIError('Error in URI.toURI(): It is not possible to resolve the path "' +path+ '" as the context "' +context+ '" as is not a valid URI, File or Folder');
 								}
+						}
+
+				// ---------------------------------------------------------------------------------------------------------------
+				// process {placeholders}
+
+					// check path for and convert any leading {placeholder} variables
+						else if(path.indexOf('{') === 0)
+						{
+							var matches = path.match(/{(\w+)}/);
+							if(matches)
+							{
+								var folder = xjsfl.settings.folders[matches[1]];
+								if(folder)
+								{
+									uri = path.replace(matches[0], folder);
+								}
+							}
+							else
+							{
+								throw new URIError('Error in URI.toURI(): Unrecognised placeholder ' +matches[0]+ ' in path "' +path+ '"');
+							}
 						}
 
 				// ---------------------------------------------------------------------------------------------------------------
@@ -147,43 +146,69 @@
 								{
 									switch(matches[1])
 									{
-										case './':
-											//trace('	./  - ' + path);
-											root		= null;
-										break;
-										case '../':
-											//trace('	../ - ' + path);
-											root		= null;
-										break;
-										case '/':
-											//trace('	/   - ' + path);
-											root		= xjsfl.uri;
-										break;
-										case '//':
-											//trace('	//  - ' + path);
-											var stack	= xjsfl.utils.getStack();
-											var matches	= stack[context].uri.match(/(file:\/\/\/[^\/]+\/)/);
-											root		= matches[1];
-										break;
-										default:
-											if(matches[1].indexOf(':') !== -1)
-											{
-												//trace('	c:  - ' + path);
-												if(matches[1].length > 2 || fl.version.indexOf('mac') > -1)
-												{
-													root = path.replace(':', '/');
-												}
-												else
-												{
-													root = path.replace(':', '|');
-												}
-												path = '';
-											}
-											else
-											{
-												//trace('	rel - ' + path);
-												root	= null;
-											}
+										// current folder
+											case './':
+												root		= null;
+												//path		= path.substr(2);
+											break;
+
+										// parent folder
+											case '../':
+												root		= null;
+											break;
+
+										// "framework root" folder
+											case '//':
+												root		= xjsfl.uri;
+												//path		= path.substr(2);
+											break;
+
+										// "current root" folder
+											case '/':
+
+												// update path
+													path		= path.substr(1);
+
+												// grab calling URI
+													var stack	= xjsfl.utils.getStack();
+													var source	= stack[context].uri;
+													var root	= URI.getFolder(source);
+
+												// grab root folder by comparing against registered URIs
+													var folders	= xjsfl.settings.folders.all;
+													for each(var folder in folders)
+													{
+														if(source.indexOf(folder) === 0)
+														{
+															root = folder;
+															break;
+														}
+													}
+
+											break;
+
+										// drive or same folder
+											default:
+
+												// drive
+													if(matches[1].indexOf(':') !== -1)
+													{
+														if(matches[1].length > 2 || fl.version.indexOf('mac') > -1)
+														{
+															root = path.replace(':', '/');
+														}
+														else
+														{
+															root = path.replace(':', '|');
+														}
+														path = '';
+													}
+
+												// same folder (i.e. no match)
+													else
+													{
+														root	= null;
+													}
 									}
 
 									if(root)
@@ -198,7 +223,7 @@
 						{
 							var stack	= xjsfl.utils.getStack();
 							var source	= stack[context].uri;
-							uri			= source.replace(rxFile, '') + path;
+							uri			= URI.getFolder(source) + path;
 						}
 
 				// ---------------------------------------------------------------------------------------------------------------
@@ -247,7 +272,7 @@
 			},
 
 			/**
-			 * Create a valid path from a supplied string
+			 * Create a valid path from virtually any URI or path
 			 *
 			 * @param	pathOrURI	{String}	A token, path or URI-formatted string
 			 * @param	shorten		{Boolean}	An optional Boolean to return a path with {placeholder} variables for registered URIs
@@ -262,16 +287,6 @@
 				// return the {placeholder} version of registered URIs
 					if(shorten)
 					{
-						// convert to URI if not already
-							if(uri.indexOf('file:///') !== 0)
-							{
-								uri = uri
-									.replace(/(^[a-z ]+):/i, '$1|')
-									.replace(/\\/g, '/')
-									.replace(/ /g, '%20')
-									.replace(/^/, 'file:///');
-							}
-
 						// variables
 							var folders = [];
 
@@ -294,27 +309,127 @@
 							}
 					}
 
-				// convert anything that makes it through to a path
-					var path = uri
-						.replace('file:///', '')
-						.replace(/(^[a-z])\|/i, '$1:')
-						.replace(/(^[a-z ]{2,}):\/?/i, '$1/')
-						.replace(/\\/g, '/')
-						.replace(/%20/g, ' ');
-
-				// return
-					return path;
+				// convert and return anything that makes it through to a path
+					return URI.asPath(uri);
 			},
 
 			/**
-			 * Tests if a path is absolute or not
-			 * @param	{String}	path	A valid path
-			 * @returns	{Boolean}			true or false, depending on the result
+			 * Perform simple path to URI conversion
+			 * @param	{String}	path		Any valid path
+			 * @returns	{String}				A URI-formatted string
 			 */
-			isAbsolute:function(path)
+			asURI:function(pathOrURI)
 			{
-				return /^([\w ]+[:|])/.test(path.replace('file:///', ''));
+				if(URI.isURI(pathOrURI))
+				{
+					return pathOrURI;
+				}
+
+				var uri = pathOrURI
+					// replace backslashes
+						.replace(/\\+/g, '/')
+
+					// replace double-slashes
+						.replace(/\/+/g, '/')
+
+					// replace redundant ./
+						.replace(/(^|\/)\.\//img, '$1')
+
+					// replace spaces with %20
+						.replace(/ /g, '%20')
+
+					// tidy drive letter or name
+						.replace(/^([a-z ]+):/i, '$1|')
+
+					// add 'file:///'
+						uri = 'file:///' + uri;
+
+				return uri;
+			},
+
+			/**
+			 * Perform simple URI to path conversion
+			 * @param	{String}	uri			Any valid URI
+			 * @returns	{String}				A path-formatted string
+			 */
+			asPath:function(pathOrURI)
+			{
+				if(URI.isPath(pathOrURI))
+				{
+					return pathOrURI.replace(/\\/g, '/');
+				}
+
+				var path = pathOrURI
+					// remove file:///
+						.replace('file:///', '')
+
+					// replace N| with N:
+						.replace(/(^[a-z])\|/i, '$1:')
+
+					// replace Drive Name: with Drive Name/
+						.replace(/(^[a-z ]{2,}):\/?/i, '$1/')
+
+					// replace \ with /
+						.replace(/\\/g, '/')
+
+					// replace %20 with spaces
+						.replace(/%20/g, ' ');
+
+				return path;
+			},
+
+
+			/**
+			 * Test if the supplied value is a URI-formatted string
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @returns	{Boolean}				true or false, depending on the result
+			 */
+			isURI:function(pathOrURI)
+			{
+				return typeof pathOrURI === 'string' && pathOrURI.indexOf('file:///') === 0;
+			},
+
+			/**
+			 * Test if the supplied value is a path-formatted string
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @returns	{Boolean}				true or false, depending on the result
+			 */
+			isPath:function(pathOrURI)
+			{
+				return typeof pathOrURI === 'string' && pathOrURI.indexOf('file:///') === -1;
+			},
+
+			/**
+			 * Tests if a path or URI is absolute or not (includes tokens and special xJSFL syntax)
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @returns	{Boolean}				true or false, depending on the result
+			 */
+			isAbsolute:function(pathOrURI)
+			{
+				return /^([\w ]+[:|]|\/|{\w+})/.test(String(pathOrURI).replace(/^file:\/\/\//, ''));
+			},
+
+			/**
+			 * Returns the current folder of the path or URI
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @param	{Boolean}	strict		An optional Boolean to return a folder's parent, rather than just getting the current path's folder level
+			 * @returns	{String}				The folder of the path or URI
+			 */
+			getFolder:function(pathOrURI, strict)
+			{
+				// ensure pathOrURI is a string
+					pathOrURI	= String(pathOrURI);
+
+				// remove file:/// and drive name or letter
+					var matches	= pathOrURI.match(/(.+[:|]\/?)/);
+					var drive	= matches ? matches[1] : '';
+					var path	= pathOrURI.substr(drive.length);
+
+				// remove final segment
+					var rx		= strict ? /[^\/\\]+[\/\\]?$/ : /[^\/\\]+$/;
+					return drive + path.replace(rx, '');
 			}
+
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -359,8 +474,8 @@
 				Relative-location syntax
 
 					Relative URIs, i.e. file, ./ or ../ are relative to the calling file
-					/ is relative to xJSFL root
-					// is relative to the drive of the running script
+					/ is relative to the "current root" i.e. user, or the current module
+					// is relative to the "framework root" i.e. the xJSFL root
 					C: or Drive: is relative to the drive (platform specific)
 
 				Parsing
@@ -372,9 +487,10 @@
 
 					URIs and Paths are parsed for
 
-						- \\ are converted to /
+						- drive: letters are contered to and from drive|
+						- \ are converted to /
 						- ../ are resolved
-						- // are converted to /
+						- //+ are converted to /
 						- Spaces are converted to %20
 
 
