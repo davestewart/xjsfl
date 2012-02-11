@@ -13,7 +13,7 @@
 		if(1)
 		{
 			var paths = Data.recurseFolder('c:/temp/');
-			trace('>' + paths.join('\n'));
+			list(paths);
 		}
 
 
@@ -65,7 +65,7 @@
 				}
 
 
-				Data.recurse (new Folder ('c:/temp/'), traceElement, testFolder)
+				Data.recurse ('c:/temp/', traceElement, testFolder)
 
 
 			/*
