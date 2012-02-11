@@ -24,15 +24,15 @@
 				}
 
 			// check that root folder is *only* named xJSFL
-				var xjsfl = String(fl.scriptURI).replace('core/install/install.jsfl', '');
-				if( ! /\bxJSFL\/$/.test(xjsfl))
+				var xjsflURI = String(fl.scriptURI).replace('core/install/install.jsfl', '');
+				if( ! /\bxJSFL\/$/.test(xjsflURI))
 				{
 					alert('xJSFL installation issue.\n\nThe xJSFL root folder must only be named "xJSFL".\n\nPlease rename the folder and start the installation process again.');
 					return false;
 				}
 
 			// check that there is only one xJSFL folder in the install path
-				var matches = xjsfl.match(/\bxJSFL\//g)
+				var matches = xjsflURI.match(/\bxJSFL\//g)
 				if(matches.length > 2)
 				{
 					alert('xJSFL installation issue.\n\nThere must only be one folder named "xJSFL" in the installation path.\n\nPlease move the real xJSFL folder to a new location and start the installation process again.');
@@ -48,8 +48,8 @@
 				var win		= fl.version.indexOf('WIN') != -1;
 				var uris	=
 				{
-					xjsfl		:xjsfl,
-					install		:xjsfl + 'core/install/',
+					xjsfl		:xjsflURI,
+					install		:xjsflURI + 'core/install/',
 					config		:fl.configURI,
 					tools		:fl.configURI + 'Tools/',
 					commands	:fl.configURI + 'Commands/',
@@ -64,10 +64,10 @@
 
 					// populate
 						var rx;
-						for(var i in obj)
+						for(var name in obj)
 						{
-							rx		= new RegExp('{' +i+ '}', 'g')
-							text	= text.replace(rx, obj[i]);
+							rx		= new RegExp('{' +name+ '}', 'g')
+							text	= text.replace(rx, obj[name]);
 						}
 
 					// save
@@ -77,6 +77,15 @@
 						}
 				}
 
+				function copy(srcURI, trgURI)
+				{
+					if(FLfile.exists(trgURI))
+					{
+						FLfile.remove(trgURI);
+					}
+					FLfile.copy(srcURI, trgURI);
+				}
+
 		// ----------------------------------------------------------------------------------------
 		// copy files
 
@@ -84,7 +93,12 @@
 				file			= win ? 'xjsfl.dll' : 'xjsfl.bundle';
 				src				= uris.install + 'External Libraries/' + file;
 				trg				= uris.config + 'External Libraries/' + file;
-				FLfile.copy(src, trg);
+				copy(src, trg);
+
+			// ini
+				src				= uris.install + 'Tools/xJSFL.ini';
+				trg				= uris.tools + 'xJSFL.ini';
+				populate(uris, src, trg);
 
 			// loader
 				src				= uris.install + 'Tools/xJSFL Loader.jsfl';
@@ -96,35 +110,34 @@
 				trg				= uris.tools + 'xJSFL Splash.txt';
 				populate(uris, src, trg);
 
-			// ini
-				populate(uris, uris.install + 'Tools/xJSFL.ini', uris.tools + 'xJSFL.ini');
-
 			// Snippets
 				src				= uris.xjsfl + 'modules/Snippets/ui/xJSFL Snippets.swf';
 				trg				= uris.swf + 'xJSFL Snippets.swf';
-				FLfile.copy(src, trg);
+				copy(src, trg);
 
 			// Commands
-				var commands =
-				[
-					'Open folder.jsfl'
-				];
+				var commands = FLfile.listFolder(uris.install + 'Commands/*.jsfl');
 				for each(var command in commands)
 				{
 					src			= uris.install + 'Commands/' + command;
 					trg			= uris.commands + 'xJSFL/' + command;
-					FLfile.copy(src, trg);
+					copy(src, trg);
 				}
 
 		// ----------------------------------------------------------------------------------------
-		// splash
+		// initialize framework and show splash
 
-			var dom = fl.getDocumentDOM();
-			if( ! dom )
-			{
-				dom = fl.createDocument();
-			}
-			dom.xmlPanel(xjsfl + 'core/install/ui/install.xml')
+			// xJSFL
+				xjsfl.initialized = false;
+				fl.runScript(uris.install + 'Tools/xJSFL Loader.jsfl');
+
+			// splash
+				var dom = fl.getDocumentDOM();
+				if( ! dom )
+				{
+					dom = fl.createDocument();
+				}
+				dom.xmlPanel(xjsflURI + 'core/install/ui/install.xul')
 
 		// ----------------------------------------------------------------------------------------
 		// done
