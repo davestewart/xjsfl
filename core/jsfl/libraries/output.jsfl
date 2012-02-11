@@ -81,9 +81,9 @@
 
 			// defaults
 				label			= label || 'List';
-				properties		= properties || 'name';
 
 			// variables
+				var props		= properties || 'name';
 				var strOutput	= '';
 
 			// if arr is an array, grab selected properties
@@ -92,16 +92,16 @@
 					// collect object to string only
 						if(properties == null)
 						{
-							arr			= arr.map(function(e){return String(e)});
+							arr			= arr.map( function(element){ return String(element); } );
 						}
 					// collect children's properties
 						else
 						{
-							arr			= xjsfl.utils.getValues(arr, properties);
+							arr			= xjsfl.utils.getValues(arr, props);
 						}
 
 					// trace
-						strOutput = Output.inspect(arr, label, properties instanceof Array ? 2 : 1, output);
+						strOutput = Output.inspect(arr, label, props instanceof Array ? 2 : 1, output);
 				}
 
 			// if arr is an object, just output the top-level key/values
@@ -554,16 +554,14 @@
 
 		/**
 		 * View the hierarchy of a folder
-		 * @param	{String}		value	A valid folder path
-		 * @param	{Folder}		value	An existing folder object
-		 * @param	{Number}		depth	An optional max depth to recurse to (defaults to 3)
-		 * @param	{Boolean}		output	An optional boolean to indicate outputting or not (defaults to true)
-		 * @returns	{String}				The String hierarchy of the folder
+		 * @param	{String}		pathOrURI	A valid folder path
+		 * @param	{Folder}		pathOrURI	An existing folder object
+		 * @param	{Number}		depth		An optional max depth to recurse to (defaults to 3)
+		 * @param	{Boolean}		output		An optional boolean to indicate outputting or not (defaults to true)
+		 * @returns	{String}					The String hierarchy of the folder
 		 */
-		folder:function(folder, depth, output)
+		folder:function(pathOrURI, depth, output)
 		{
-			//BUG Errors when file URIs go beyond 260 chars. @see FileSystem for more info
-
 			// output
 				var _output = '';
 
@@ -571,11 +569,10 @@
 				function callback(element, index, level, indent)
 				{
 					_output += indent + '/' +  element.name + '\n';
-					return element.uri.length < 250;
 				}
 
 			// process
-				var files = Data.recurseFolder(folder, callback, depth);
+				var files = Data.recurseFolder(pathOrURI, callback, depth);
 
 			// print
 				if(output !== false)
@@ -627,4 +624,7 @@
 
 		xjsfl.classes.register('Output', Output);
 		xjsfl.classes.register('inspect', Output.inspect);
+		xjsfl.classes.register('list', Output.list);
+
 		inspect = Output.inspect;
+		list	= Output.list;
