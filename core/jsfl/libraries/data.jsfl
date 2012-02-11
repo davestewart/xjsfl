@@ -32,22 +32,22 @@
 		{
 			function process(element, index)
 			{
-				var result = fnChild(element, index, level);
+				var result = fnChild(element, index, depth);
 
-				if(fnTestChildren ? fnTestChildren(element, index, level) : element.length > 0)
+				if(fnTestChildren ? fnTestChildren(element, index, depth) : element.length > 0)
 				{
-					level ++;
+					depth ++;
 					for(var i = 0; i < element.length; i++)
 					{
 						process(element[i], i);
 					}
-					level--;
+					depth--;
 				}
 
 				return result;
 			}
 
-			var level = 0;
+			var depth = 0;
 			return process(rootElement, 0);
 		},
 
@@ -61,85 +61,90 @@
 		 */
 		recurse:function(rootElement, fnChild, fnTestChildren, scope)
 		{
-			fl.trace(this);
 			function process(element, index)
 			{
 				//fl.trace('Processing:' + element)
 
-				var result = fnChild.apply(scope, [element, index, level]);
+				var result = fnChild.apply(scope, [element, index, depth]);
 
-				if(fnTestChildren ? fnTestChildren.apply(scope, [element, index, level]) : element.length > 0)
+				if(fnTestChildren ? fnTestChildren.apply(scope, [element, index, depth]) : element.length > 0)
 				{
-					level ++;
+					depth ++;
 					for(var i = 0; i < element.length; i++)
 					{
-						//fl.trace('Processing folder item ' +element[i]+ ':' + [element, element.length, index, level])
+						//fl.trace('Processing folder item ' +element[i]+ ':' + [element, element.length, index, depth])
 						process(element[i], i);
 					}
-					level--;
+					depth--;
 				}
 
 				return result;
 			}
 
 			scope = scope || window;
-			var level = 0;
+			var depth = 0;
 			return process(rootElement, 0);
 		},
 
 		/**
-		 * Recursively trawl a folder's contents, optionally calling a callback per element. (NB, arguments 2 and 3 may be swapped)
-		 * @param	{String}	folder		The path or uri to a valid folder
-		 * @param	{Folder}	folder		A valid Folder object
-		 * @param	{Function}	arg2		An optional callback of the format callback(element, index, level, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
-		 * @param	{Number}	arg3		An optional max depth to recurse to, defaults to 100
-		 * @returns	{Array}					An array of paths
+		 * Recursively trawl a folder's contents, optionally calling a callback per element (note that $ arguments may passed in any order)
+		 * @param	{String}	folder			The path or uri to a valid folder
+		 * @param	{Folder}	folder			A valid Folder object
+		 * @param	{Function}	$callback		An optional callback of the format callback(element, index, depth, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
+		 * @param	{Number}	$maxDepth		An optional max depth to recurse to, defaults to 100
+		 * @param	{Boolean}	$returnPaths	An optional max depth to recurse to, defaults to 100
+		 * @returns	{Array}						An array of URIs or paths
 		 */
-		recurseFolder:function(folder, arg2, arg3)
+		recurseFolder:function(folder, $callback, $maxDepth, $returnPaths)
 		{
 			// ------------------------------------------------------------
 			// functions
 
 				function process(element, index)
 				{
-
 					// callback
-						var state = callback ? callback(element, index, level, indent) : null;
+						var state = callback ? callback(element, index, depth, indent) : null;
 
-					// process if the callback didn't return false (false = skip element)
+					// process if the callback didn't return false (false == skip element)
 						if(state !== false)
 						{
 							// path
-								paths.push(element.path);
+								paths.push(returnPaths ? element.path : element.uri);
 
-							// return if callback passed back true (true = stop all processing)
+							// return if callback passed back true (true == stop all processing)
 								if(state === true)
 								{
 									return true;
 								}
 
 							// children
-								if(element instanceof Folder && level < depth)
+								if(element instanceof Folder && depth < maxDepth)
 								{
-									level ++;
-									indent += '	';
-									var contents = element.contents;
-									for(var i = 0 ; i < contents.length; i++)
-									{
-										if(contents[i].uri.length > 260)
+									// dow down a level
+										depth ++;
+										indent += '	';
+
+									// iterate
+										var contents = element.contents;
+										for(var i = 0 ; i < contents.length; i++)
 										{
-											//BUG Errors when file URIs go beyond 260 chars. @see FileSystem for more info
-											//TODO Fix 260 character limit in File
-											throw new Error('URIError in Data.recurseFolder: The uri "' +contents[i].uri+ '" is longer than the maximum 260 char length JSFL can process');
+											// catch long URI errors
+												if(contents[i].uri.length > 260)
+												{
+													URI.throwLengthError(contents[i].uri);
+													throw new Error('URIError in Data.recurseFolder(): The uri "' +contents[i].uri+ '" is longer than the maximum 260 char length JSFL can process');
+												}
+
+											// process content
+												if( process(contents[i], i) )
+												{
+													return true;
+												}
 										}
 
-										if(process(contents[i], i))
-										{
-											return true;
-										}
-									}
-									indent = indent.substring(1);
-									level--;
+									// go up a level
+										indent = indent.substring(1);
+										depth--;
 								}
 						}
 
@@ -151,16 +156,19 @@
 			// code
 
 				// defaults
-					var depth		= depth || 100;
+					var maxDepth	= 100;
 					var callback	= null;
+					var returnPaths	= false;
 
 				// parameter shift
-					for each(var arg in [arg2, arg3])
+					for each(var arg in [$callback, $maxDepth, $returnPaths])
 					{
 						if(typeof arg === 'number')
-							depth = arg;
+							maxDepth = arg;
 						else if(typeof arg === 'function')
 							callback = arg;
+						else if(typeof arg === 'boolean')
+							returnPaths = arg;
 					}
 
 				// folder
@@ -172,7 +180,7 @@
 				// variables
 					var paths		= [];
 					var indent		= '';
-					var level		= 0;
+					var depth		= 0;
 
 				// process
 					if(folder instanceof Folder && folder.exists)
@@ -194,6 +202,5 @@
 		}
 
 	};
-
 
 	xjsfl.classes.register('Data', Data);
