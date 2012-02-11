@@ -108,7 +108,7 @@
 				/**
 				 * @type {String} The shortened path to the module's folder
 				 */
-				get path(){ return xjsfl.file.makePath(this.uri, true); },
+				get path(){ return URI.asPath(this.uri, true); },
 
 
 			// ----------------------------------------------------------------------------------------

@@ -52,7 +52,7 @@
 				var uri = fl.browseForFolderURL('Choose a folder');
 				if(uri)
 				{
-					var folder	= new Folder(uri);
+					var folder	= new Folder(uri + '/');
 					var name	= prompt('Choose a name for the new set', folder.name.substr(0, 1).toUpperCase() + folder.name.substr(1));
 				}
 
@@ -60,7 +60,7 @@
 				if(uri && name)
 				{
 					// add settings
-						this.settings.xml.sets.set += new XML('<set name="' +name+ '" uri="' +xjsfl.file.makePath(uri, true)+ '" />');
+						this.settings.xml.sets.set += new XML('<set name="' +name+ '" uri="' +URI.asPath(uri, true)+ '" />');
 
 					// change set
 						this.changeSet(name);
@@ -276,7 +276,7 @@
 				}
 
 			// update folderURI
-				folderURI			= xjsfl.file.makeURI(folderURI);
+				folderURI			= URI.toURI(folderURI);
 				var iconsURI		= this.uri + 'assets/icons/16x16/';
 
 			// generate xml
@@ -284,7 +284,7 @@
 				xml.@path			= folderURI;
 
 			// debug
-				trace('Building snippet set for "' + xjsfl.file.makePath(folderURI, true)+ '"');
+				trace('Building snippet set for "' + URI.asPath(folderURI, true)+ '"');
 
 			// process files
 				Data.recurseFolder(folderURI, callback);

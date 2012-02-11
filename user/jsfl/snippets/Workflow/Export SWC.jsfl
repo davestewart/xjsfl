@@ -5,20 +5,20 @@
 {
 	var xml		= new XML(document.exportPublishProfileString());
 	var file	= xml.PublishFormatProperties.flashFileName;
-	
-	if(xjsfl.file.isAbsolutePath(file))
+
+	if(URI.isAbsolute(file))
 	{
-		var uri		= xjsfl.file.makeURI(file);
+		var uri		= URI.toURI(file);
 	}
 	else
 	{
-		var uri		= xjsfl.file.makeURI(file, document.pathURI);
+		var uri		= URI.toURI(file, document.pathURI);
 	}
 	document.publish();
 	var swf		= new File(uri);
 	if(swf.exists)
 	{
 		swf.remove(true);
-		trace('SWC Exported. Removed "' + FLfile.uriToPlatformPath(uri) + '"');
+		trace('SWC Exported. Removed "' + URI.asPath(uri) + '"');
 	}
 })()

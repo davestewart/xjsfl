@@ -73,7 +73,6 @@
 			// properties
 
 				uri:		'',
-				file:		'',
 				input:		'',
 				output:		'',
 				data:		null,
@@ -90,15 +89,13 @@
 
 				/**
 				 * Loads the template source text file
-				 * @param	{String}	uri		A URI or path to the template file
-				 * @returns	{Template}			Itself
+				 * @param	{String}	pathOrURI	A URI or path to the template file
+				 * @returns	{Template}				Itself
 				 */
-				load:function(uri)
+				load:function(pathOrURI)
 				{
 					// input
-						uri			= xjsfl.file.makeURI(uri);
-						this.uri	= uri;
-						this.file	= uri.substr(uri.lastIndexOf('/') + 1)
+						this.uri	= URI.toURI(pathOrURI, 1);
 
 					// restore from cache?
 						//this.input	= Template.templates[uri];
@@ -106,12 +103,13 @@
 					// load file
 						if( ! this.input)
 						{
-							var file = new File(uri);
+							//TODO What's happening here? Does Template still cache old templates on the class itself?
+							var file = new File(this.uri);
 							if( ! file.exists )
 							{
 								throw new ReferenceError('ReferenceError in Template.load(): The file "' +file.path+ '" does not exist')
 							}
-							this.input	= Template.templates[uri] = file.contents;
+							this.input	= Template.templates[this.uri] = file.contents;
 						}
 
 					// return
@@ -120,18 +118,19 @@
 
 				/**
 				 * Saves the rendered template to a file
-				 * @param	{String}	uri			The uri of where to save the file
+				 * @param	{String}	uriOrPath	The uri of where to save the file
 				 * @param	{Boolean}	overwrite	An optional Boolean specifying whether to overwrite an existing file or not
 				 */
-				save:function(uri, overwrite)
+				save:function(uriOrPath, overwrite)
 				{
-					if(uri != this.uri)
+					if(uriOrPath != this.uri)
 					{
 						//TODO Make sure this works properly (and compare to previous version)
-						var file = new File(uri, this.render());
-						if( ! file.save())
+						var uri		= URI.toURI(uriOrPath, 1);
+						var file	= new File(uri, this.render());
+						if( ! file.save() )
 						{
-							xjsfl.output.warn('The template "' +xjsfl.file.makePath(uri, true)+ '" was not saved');
+							xjsfl.output.warn('The template "' +URI.asPath(uri)+ '" was not saved');
 						}
 					}
 					else
@@ -258,7 +257,7 @@
 						_stack = xjsfl.utils.isArray(_stack) ? _stack : [];
 						if(_stack.indexOf(this) > -1)
 						{
-							return '// RECURSION! (' +this.file+ ')';
+							return '// RECURSION! (' +URI.getFile(this.uri)+ ')';
 						}
 
 					// flatten and cache all data values as strings, so repeated placeholders
@@ -338,7 +337,7 @@
 				 */
 				toString:function()
 				{
-					return '[object Template "' +this.file+ '"]';
+					return '[object Template path="' +URI.asPath(this.uri, true)+ '"]';
 				}
 
 		}

@@ -35,10 +35,10 @@
 				 * @param	{Folder}	context		An optional Folder from which to start the URI
 				 * @param	{Number}	context		An optional stack-function index, the location of which to derive the URI from
 				 * @param	{Boolean}	parseURI	An optional Boolean, to bypass immediate returning of file:/// URIs, and parse their content
+				 * @param	{Boolean}	checkLength	An optional Boolean, to test resulting URIs are not longer than the 260 characters allowed for most FLfile operations. Defaults to true
 				 * @returns	{String}				An absolute URI
-				 * @see								Notes at the top of this file
 				 */
-				toURI:function(pathOrURI, context, parseURI)
+				toURI:function(pathOrURI, context, parseURI, checkLength)
 				{
 					// ---------------------------------------------------------------------------------------------------------------
 					// process URI
@@ -52,6 +52,10 @@
 								// if pathOrURI is already a URI, return immediately
 									if( ! parseURI )
 									{
+										if(checkLength !== false)
+										{
+											URI.checkURILength(pathOrURI);
+										}
 										return pathOrURI;
 									}
 
@@ -143,7 +147,7 @@
 								// variables
 									var rx			= /^(\.\/|\.\.\/|\/\/|\/|[\w ]+:)/;
 									var matches		= path.match(rx);
-									context			= context || 1;
+									var stackIndex	= context ? context + 1 : 1;
 
 								// parse relative-path formats to resolve root
 									if(matches)
@@ -175,7 +179,7 @@
 
 													// grab calling URI
 														var stack	= xjsfl.utils.getStack();
-														var source	= stack[context].uri;
+														var source	= stack[stackIndex].uri;
 														var root	= URI.getPath(source);
 
 													// grab root folder by comparing against registered URIs
@@ -226,7 +230,7 @@
 							if( ! uri )
 							{
 								var stack	= xjsfl.utils.getStack();
-								var source	= stack[context].uri;
+								var source	= stack[stackIndex].uri;
 								uri			= URI.getPath(source) + path;
 							}
 
@@ -268,6 +272,12 @@
 						// add 'file:///'
 							uri = 'file:///' + uri;
 
+						// check that URI is on or below the legal limit of 260 chars
+							if(checkLength !== false)
+							{
+								URI.checkURILength(uri);
+							}
+
 					// ---------------------------------------------------------------------------------------------------------------
 					// done!
 
@@ -288,13 +298,84 @@
 				toPath:function(pathOrURI, shorten)
 				{
 					// parse all input via toURI()
-						var uri = URI.toURI(String(pathOrURI), 2, true);
+						var uri = URI.toURI(String(pathOrURI), 2, true, false);
+
+					// convert and return result
+						return URI.asPath(uri, shorten);
+				},
+
+
+			// ---------------------------------------------------------------------------------------------------------------
+			// conversion functions
+
+				/**
+				 * Perform simple path to URI conversion
+				 * @param	{String}	path		Any valid path
+				 * @param	{Boolean}	checkLength	An optional Boolean, to test resulting URIs are not longer than the 260 characters allowed for most FLfile operations. Defaults to true
+				 * @returns	{String}				A URI-formatted string
+				 */
+				asURI:function(pathOrURI, checkLength)
+				{
+					// variable
+						var uri;
+
+					// convert
+						if(URI.isURI(pathOrURI))
+						{
+							uri = pathOrURI;
+						}
+						else
+						{
+							uri = pathOrURI
+								// replace backslashes
+									.replace(/\\+/g, '/')
+
+								// replace double-slashes
+									.replace(/\/+/g, '/')
+
+								// replace redundant ./
+									.replace(/(^|\/)\.\//img, '$1')
+
+								// replace spaces with %20
+									.replace(/ /g, '%20')
+
+								// tidy drive letter or name
+									.replace(/^([a-z ]+):/i, '$1|')
+
+								// add 'file:///'
+									uri = 'file:///' + uri;
+						}
+
+					// check that URI is on or below the legal limit of 260 chars
+						if( (checkLength !== false) && uri.length > 260 )
+						{
+							URI.throwLengthError(uri);
+						}
+
+					// return
+						return uri;
+				},
+
+				/**
+				 * Perform simple URI to path conversion
+				 * @param	{String}	uri			Any valid URI
+				 * @param	{Boolean}	shorten		An optional Boolean to return a path with {placeholder} variables for registered URIs
+				 * @returns	{String}				A path-formatted string
+				 */
+				asPath:function(pathOrURI, shorten)
+				{
+					// return existing paths early
+						if(URI.isPath(pathOrURI) && shorten != true)
+						{
+							return pathOrURI.replace(/\\/g, '/');
+						}
 
 					// return the {placeholder} version of registered URIs
-						if(shorten)
+						if(shorten && URI.isURI(pathOrURI))
 						{
 							// variables
 								var folders = [];
+								var uri		= pathOrURI;
 
 							// get all folders matching the input URI
 								for(var folder in xjsfl.settings.folders)
@@ -313,79 +394,30 @@
 									var folder = folders.shift();
 									uri = uri.replace(folder.uri, '{' +folder.name+ '}');
 								}
+
+							// re-set uri variable
+								pathOrURI = uri;
 						}
 
-					// convert and return anything that makes it through to a path
-						return URI.asPath(uri);
-				},
+					// convert to path format
+						var path = pathOrURI
+							// remove file:///
+								.replace('file:///', '')
 
+							// replace N| with N:
+								.replace(/(^[a-z])\|/i, '$1:')
 
-			// ---------------------------------------------------------------------------------------------------------------
-			// conversion functions
+							// replace Drive Name: with Drive Name/
+								.replace(/(^[a-z ]{2,}):\/?/i, '$1/')
 
-				/**
-				 * Perform simple path to URI conversion
-				 * @param	{String}	path		Any valid path
-				 * @returns	{String}				A URI-formatted string
-				 */
-				asURI:function(pathOrURI)
-				{
-					if(URI.isURI(pathOrURI))
-					{
-						return pathOrURI;
-					}
+							// replace \ with /
+								.replace(/\\/g, '/')
 
-					var uri = pathOrURI
-						// replace backslashes
-							.replace(/\\+/g, '/')
+							// replace %20 with spaces
+								.replace(/%20/g, ' ');
 
-						// replace double-slashes
-							.replace(/\/+/g, '/')
-
-						// replace redundant ./
-							.replace(/(^|\/)\.\//img, '$1')
-
-						// replace spaces with %20
-							.replace(/ /g, '%20')
-
-						// tidy drive letter or name
-							.replace(/^([a-z ]+):/i, '$1|')
-
-						// add 'file:///'
-							uri = 'file:///' + uri;
-
-					return uri;
-				},
-
-				/**
-				 * Perform simple URI to path conversion
-				 * @param	{String}	uri			Any valid URI
-				 * @returns	{String}				A path-formatted string
-				 */
-				asPath:function(pathOrURI)
-				{
-					if(URI.isPath(pathOrURI))
-					{
-						return pathOrURI.replace(/\\/g, '/');
-					}
-
-					var path = pathOrURI
-						// remove file:///
-							.replace('file:///', '')
-
-						// replace N| with N:
-							.replace(/(^[a-z])\|/i, '$1:')
-
-						// replace Drive Name: with Drive Name/
-							.replace(/(^[a-z ]{2,}):\/?/i, '$1/')
-
-						// replace \ with /
-							.replace(/\\/g, '/')
-
-						// replace %20 with spaces
-							.replace(/%20/g, ' ');
-
-					return path;
+					// return
+						return path;
 				},
 
 
@@ -420,6 +452,26 @@
 				isAbsolute:function(pathOrURI)
 				{
 					return /^([\w ]+[:|]|\/|{\w+})/.test(String(pathOrURI).replace(/^file:\/\/\//, ''));
+				},
+
+				/**
+				 * Tests if a path or URI looks like a filename, rather than a folder
+				 * @param	{String}	pathOrURI	A valid path or URI
+				 * @returns	{Boolean}				true or false, depending on the result
+				 */
+				isFile:function(pathOrURI)
+				{
+					return ! /[\/\\]$/.test(String(pathOrURI));
+				},
+
+				/**
+				 * Tests if a path or URI looks like a folder, rather than a filename
+				 * @param	{String}	pathOrURI	A valid path or URI
+				 * @returns	{Boolean}				true or false, depending on the result
+				 */
+				isFolder:function(pathOrURI)
+				{
+					return pathOrURI == '' || /[\/\\]$/.test(String(pathOrURI));
 				},
 
 
@@ -461,12 +513,36 @@
 						return drive + path.replace(rx, '');
 				},
 
+			// ---------------------------------------------------------------------------------------------------------------
+			// utility functions
+
+				checkURILength:function(uri)
+				{
+					if(uri.length > 260)
+					{
+						URI.throwURILengthError(uri);
+					}
+				},
+
+				throwURILengthError:function(uri)
+				{
+					throw new URIError('The URI for path "' +URI.asPath(uri)+ '" is more than 260 characters.');
+				},
+
+				toString:function()
+				{
+					return '[class URI]';
+				}
+
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// register
 
-		xjsfl.classes.register('URI', URI);
+		if(xjsfl && xjsfl.classes)
+		{
+			xjsfl.classes.register('URI', URI);
+		}
 
 
 	// ---------------------------------------------------------------------------------------------------------------

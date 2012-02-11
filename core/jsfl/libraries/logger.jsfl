@@ -16,25 +16,25 @@
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
 
-	/**
-	 * Logger constructor
-	 * @param	{String}	template	An optional input pattern
-	 * @param	{String}	uriOrPath	An optional URI or path to which to save a log file
-	 * @param	{Boolean}	append		An optional Boolean to append (rather than clear) any existing file, defaults to false
-	 */
-	function Logger(template, uriOrPath, append)
-	{
-		this.template		= new SimpleTemplate(template || '{message}');
-		if(uriOrPath)
+		/**
+		 * Logger constructor
+		 * @param	{String}	template	An optional input pattern
+		 * @param	{String}	uriOrPath	An optional URI or path to which to save a log file
+		 * @param	{Boolean}	append		An optional Boolean to append (rather than clear) any existing file, defaults to false
+		 */
+		function Logger(template, uriOrPath, append)
 		{
-			uriOrPath		= uriOrPath.replace(/(\.txt)?$/, '.txt');
-			this.file		= new File(uriOrPath);
-			if(append !== true)
+			this.template = new SimpleTemplate(template || '{message}');
+			if(uriOrPath)
 			{
-				this.clear();
+				var uri		= URI.toURI(uriOrPath, 1); // convert URI now, so relative paths are processed properly
+				this.file	= new File(uri);
+				if(append !== true)
+				{
+					this.clear();
+				}
 			}
 		}
-	}
 
 	// ------------------------------------------------------------------------------------------------
 	// Static properties
@@ -265,7 +265,7 @@
 				 */
 				toString:function()
 				{
-					return '[object Logger template="' +this.template.input+ '" path="' +(this.file ? xjsfl.file.makePath(this.file.path, true) : '')+ '"]';
+					return '[object Logger template="' +(this.template ? this.template.input : '')+ '" path="' +(this.file ? URI.asPath(this.file.path, true) : '')+ '"]';
 				}
 		}
 

@@ -19,8 +19,9 @@
 		/**
 		 * Config class, loads and saves XML from the config folders
 		 *
-		 * @param	{String}	configPath	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
-		 * @param	{XML}		xml			An XMl object with which to populate the Config instance
+		 * @param	configPath	{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
+		 * @param	xml			{XML}		An XMl object with which to populate the Config instance
+		 * @author	Dave Stewart
 		 */
 		Config = function(configPath, xml)
 		{
@@ -40,7 +41,7 @@
 					//TODO decide if this is what we want. Should null configs be allowed?
 						if(uri == null)
 						{
-							uri = xjsfl.file.makeURI('user/config/' + configPath + '.xml');
+							uri = URI.toURI('//user/config/' + configPath + '.xml');
 						}
 				}
 
@@ -79,13 +80,11 @@
 		{
 			xml:	null,
 
-			/** @type {String}	The URI of the Config instance */
 			get uri()
 			{
 				return this.getFile ? this.getFile().uri : '';
 			},
 
-			/** @type {String}	The path of the Config instance */
 			get path()
 			{
 				return this.getFile ? this.getFile().path : '';
@@ -96,9 +95,9 @@
 			/**
 			 * Sets data on the wrapped XML data
 			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
-			 * @param	{String}	path	A dot-notation path to a node or attribute
-			 * @param	{Value}		value	Any value that can be converted to a string
-			 * @returns	{Config}			The current Config node
+			 * @param	path	{String}	A dot-notation path to a node or attribute
+			 * @param	value	{Value}		Any value that can be converted to a string
+			 * @returns			{Config}	The current Config node
 			 */
 			set:function(path, value)
 			{
@@ -140,10 +139,10 @@
 
 			/**
 			 * Gets the value of the specified node path
-			 * @param	{Srting}	path	A dot-notation path to a node or attribute
-			 * @param	{Boolean}	parse	A Boolean flag indicating that you want to parse the value to the currect datatype
-			 * @param	{Boolean}	test	A Boolean flag to test the path exists, but trap and return an Error object if not
-			 * @returns	{value}				The value of the node / attribute
+			 * @param	path	{Srting}	A dot-notation path to a node or attribute
+			 * @param	parse	{Boolean}	A Boolean flag indicating that you want to parse the value to the currect datatype
+			 * @param	test	{Boolean}	A Boolean flag to test the path exists, but trap and return an Error object if not
+			 * @returns			{value}		The value of the node / attribute
 			 */
 			get:function(path, parse, test)
 			{
@@ -175,7 +174,7 @@
 
 			/**
 			 * Loads the XML config from disk
-			 * @returns	{Config}			The current Config node
+			 * @returns			{Config}	The current Config node
 			 */
 			load:function()
 			{
@@ -185,7 +184,7 @@
 
 			/**
 			 * Saves the internal XML to disk
-			 * @returns	{Config}			The current Config node
+			 * @returns			{Config}	The current Config node
 			 */
 			save:function()
 			{
@@ -196,7 +195,7 @@
 
 			/**
 			 * Clears all nodes inside the internal XML
-			 * @returns	{Config}			The current Config node
+			 * @returns			{Config}	The current Config node
 			 */
 			clear:function()
 			{
@@ -206,9 +205,9 @@
 
 			/**
 			 * Returns either a standard String summary of the Config item or the pretty-printed XML contents
-			 * @param	{Boolean}		asXML	An optional flag to return the XML String
-			 * @returns	{String}				The standard String summary of the Config instance
-			 * @returns	{String}				The pretty-printed XML contents
+			 * @param	asXML	{Boolean}		An optional flag to return the XML String
+			 * @returns			{String}		The standard String summary of the Config instance
+			 * @returns			{String}		The pretty-printed XML contents
 			 */
 			toString:function(asXML)
 			{

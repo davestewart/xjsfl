@@ -958,11 +958,11 @@
 					// stack object
 						stack[i] =
 						{
-							line:parseInt(parts[3]) || '',
-							code:parts[1] || '',
-							file:file,
-							path:(xjsfl.file.makePath(path, shorten)),
-							uri:FLfile.platformPathToURI(path + file)
+							line	:parseInt(parts[3]) || '',
+							code	:parts[1] || '',
+							file	:file,
+							path	:window.URI ? URI.asPath(path, shorten) : path,
+							uri		:FLfile.platformPathToURI(path + file)
 						};
 				}
 
@@ -1400,15 +1400,15 @@
 			// Load file
 
 				// a URI was passed in
-					if(this.isURI(path))
+					if(URI.isURI(path))
 					{
 						result		= FLfile.exists(path) ? path : null;
 					}
 
-				// a single path was passed in, so it to a uri
+				// a single path was passed in, so convert it to a uri
 					else if(type == undefined || type === true || type === false)
 					{
-						var uri		= xjsfl.file.makeURI(path);
+						var uri		= URI.toURI(path, 1);
 						result		= FLfile.exists(uri) ? uri : null;
 					}
 
@@ -1424,15 +1424,16 @@
 				// if result is null, no files were found
 					if(result == null)
 					{
-						path = this.makePath(path);
+						path = URI.toPath(path);
 						if(type == null || type === true || type === false)
 						{
-							xjsfl.output.trace('Error in xjsfl.file.load(): The file "' +path+ '" could not be found');
+							var message = 'Error in xjsfl.file.load(): The file "' +path+ '" could not be found';
 						}
 						else
 						{
-							xjsfl.output.trace('Error in xjsfl.file.load(): Could not resolve type "' +type+ '" and path "' +path+ '" to an existing file');
+							var message = 'Error in xjsfl.file.load(): Could not resolve type "' +type+ '" and path "' +path+ '" to an existing file';
 						}
+						throw(new URIError(message));
 					}
 
 				// otherwise, do something with the uri / uris (plural) if more than 1 was found
@@ -1449,7 +1450,7 @@
 
 							// debug
 								//TODO Decide whether to display this or not
-								var _path	= xjsfl.file.makePath(uri, true);
+								var _path	= URI.asPath(uri, true);
 								xjsfl.output.log('xjsfl.file.load', 'loading "' + _path + '"');
 								if(xjsfl['loading'])
 								{
@@ -1487,159 +1488,6 @@
 
 			// return
 				return undefined;
-		},
-
-
-		/**
-		 * Create a valid URI from a supplied string
-		 * Function has the same internal functionality as makePath()
-		 *
-		 * @param	{String}	str			An absolute path, relative path, or uri
-		 * @param	{String}	context		An optional context (uri or path), from which to start the URI
-		 * @param	{Boolean}	context		An alternative optional Boolean indicating to automatically derive the URI from the calling function's file location
-		 * @returns	{String}				An absolute URI
-		 * @see								xjsfl.file.makePath
-		 */
-		makeURI:function(str, context)
-		{
-			// if str is already a URI, no need to convert so return immediately
-				str = String(str);
-				if(str.indexOf('file:') == 0)
-				{
-					return str;
-				}
-
-			// variables
-				var path		= str;
-
-			// if an additional filepath is passed in, the returned URI will be relative to it
-				if(typeof context === 'string')
-				{
-					context 	= context.replace(/[^\/\\]+$/, '');
-					path		= xjsfl.file.makePath(context) + path;
-				}
-
-			// if context is true, then the returned URI will be relative to the calling script
-			// if path is true, the returned URI will be the folder of the calling script
-				else if(context === true || path === true)
-				{
-					var stack	= xjsfl.utils.getStack();
-					path		= xjsfl.file.makePath(stack[1].path) + (path === true ? '' : path);
-				}
-
-			//TODO IMPORTANT! Throw error / passback false on empty string
-			//TODO If an empty string is passed back, the system assumes the URI is the root. This could be dangerous (especialy if files are to be deleted!) so consider throwing an error, or passing back xJSFL core
-			// Also, if a recursive operation is to be called, this could freeze flash if too many files
-
-			// error if empty string
-				if( ! path )
-				{
-					throw new Error('Error: Path "' +str+ '" evaluates to "" in xjsfl.file.makeURI()');
-				}
-
-			// return the final URI using the system FLfile commands
-				return FLfile.platformPathToURI(xjsfl.file.makePath(path));
-		},
-
-
-		/**
-		 * Create a valid path from a supplied string
-		 *
-		 * Function will:
-		 *
-		 * - convert file:/// to paths
-		 * - convert {xjsfl} and {config} tokens
-		 * - convert relative paths to absolute from xJSFL folder
-		 * - replace multiple / and \ with /
-		 * - resolve ../ tokens to correct parent folder
-		 *
-		 * @param	{String}	str			An absolute path, relative path, or uri
-		 * @param	{Boolean}	shorten		An optional boolean to return a path with {xjsfl} or {config} swapped out from the actual path
-		 * @returns	{String}				An absolute or shortened path
-		 */
-		makePath:function(str, shorten)
-		{
-			// make sure path is a string
-				var path = String(str);
-
-			// if a URI is passed in, just convert it
-				if(str.indexOf('file:///') === 0)
-				{
-					path = FLfile.uriToPlatformPath(str);
-				}
-				else
-				{
-					path = unescape(str);
-				}
-
-			// convert {config} and {xjsfl} tokens
-				var matches = path.match(/{(\w+)}/);
-				if(matches)
-				{
-					var uri = xjsfl.settings.folders[matches[1]];
-					if(uri)
-					{
-						path = path.replace(matches[0], FLfile.uriToPlatformPath(uri))
-					}
-					else
-					{
-						throw new URIError('URIError in xjsfl.file.makePath(): Unrecognised placeholder in path "' +path+ '"');
-					}
-				}
-
-			// if a relative path is passed in, convert it to absolute from the xJSFL root
-				if( ! xjsfl.file.isAbsolutePath(path))
-				{
-					path = FLfile.uriToPlatformPath(xjsfl.uri) + path;
-				}
-
-				//TODO Add support for "./", and confirm results of "../" and "/"
-
-			// replace backslashes
-				path = path.replace(/\\+/g, '/');
-
-			// replace double-slashes
-				path = path.replace(/\/+/g, '/');
-
-			// resolve ../
-				while(path.indexOf('../') > -1)
-				{
-					path = path.replace(/\/[^\/]+\/\.\.\//, "/");
-				}
-
-			// optionally, shorten path
-				if(shorten)
-				{
-					path = path
-						.replace(FLfile.uriToPlatformPath(xjsfl.settings.folders.flash).replace(/\\+/g, '/'), 'Configuration/')
-						.replace(FLfile.uriToPlatformPath(xjsfl.settings.folders.xjsfl).replace(/\\+/g, '/'), 'xJSFL/')
-				}
-
-			// return
-				return path
-		},
-
-		/**
-		 * Checks if a path is absolute or not
-		 *
-		 * @param	{String}	path		The path to the file
-		 * @returns	{Boolean}				True (absolute) or False (relative)
-		 */
-		isAbsolutePath:function(path)
-		{
-			if(xjsfl.settings.app.platform === 'mac')
-			{
-				return path.substr(0, 1).replace('\\', '/') === '/';
-			}
-			else
-			{
-				return /^[A-Z]:/i.test(path);
-			}
-		},
-
-		isURI:function(str)
-		{
-			return str.indexOf('file://') === 0;
 		}
 
 	}
@@ -1705,7 +1553,7 @@
 		file:function(uriOrPath)
 		{
 			// make uri
-				var uri = xjsfl.file.makeURI(uriOrPath);
+				var uri = URI.toURI(uriOrPath, 1);
 
 			if(FLfile.exists(uri))
 			{
@@ -1838,8 +1686,8 @@
 				}
 
 			// template uris
-				var uriErrors	= xjsfl.file.makeURI('core/assets/templates/errors/errors.txt');
-				var uriError	= xjsfl.file.makeURI('core/assets/templates/errors/error.txt');
+				var uriErrors	= xjsfl.uri + 'core/assets/templates/errors/errors.txt';
+				var uriError	= xjsfl.uri + 'core/assets/templates/errors/error.txt';
 
 			// reload template if not defined (caused by some kind of bug normally)
 				if( ! xjsfl.classes.Template)
@@ -1957,15 +1805,32 @@
 		/**
 		 * Load a class or array of classes from disk
 		 *
-		 * @param	{String}	filename	A class filename or path, relative to any jsfl/libraries folder
-		 * @param	{Array}		filename	An Array of class filepaths
+		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
+		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
+		 * @param	{Array}		fileRef		An Array of class filepaths
 		 * @param	{String}	debugType	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
 		 * @returns	{xjsfl}					The main xJSFL object
 		 */
-		load:function(filename, debugType)
+		load:function(fileRef, debugType)
 		{
+			// detect wildcards
+				if(typeof fileRef === 'string' && fileRef.indexOf('*') > -1)
+				{
+					var uri		= URI.toURI(fileRef, 1);
+					var pathURI	= URI.getPath(uri);
+					var files	= FLfile.listFolder(uri, 'files');
+					var paths	= [];
+					for each(var file in files)
+					{
+						paths.push(pathURI + file);
+					}
+				}
+
 			// arrayize paths
-				var paths = filename instanceof Array ? filename : [filename];
+				else
+				{
+					var paths = fileRef instanceof Array ? fileRef : [fileRef];
+				}
 
 			//TODO Add a check to see if we are loading, and if so, only load classes that are not yet defined. Can we do that? Do we need to cache load paths in that case?
 
@@ -1974,7 +1839,7 @@
 				{
 					if(paths[i].indexOf('xjsfl') == -1) // don't reload load xjsfl
 					{
-						if(debugType != undefined)
+						if(typeof debugType != 'undefined')
 						{
 							var str = 'Loading class file ' +(i + 1)+ '/' +paths.length+ ': ' + paths[i];
 							(debugType == xjsfl.output.OUTPUT_TYPE_TRACE ? xjsfl.output.trace : alert)(str);
@@ -1989,35 +1854,11 @@
 		},
 
 		/**
-		 * Load an entire folder of libraries
-		 * @param	{String}	filename	A class filename or path, relative to any jsfl/libraries folder
-		 * @param	{String}	debugType	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
-		 * @returns	{xjsfl}					The main xJSFL object
-		 */
-		loadFolder:function(path, debugType)
-		{
-            //TODO add a list of filenames to prioritize
-			//TODO refactor loadFolder to load() by detecting folder path or Folder class
-
-			// grab files
-				var uri		= xjsfl.file.makeURI(path);
-				var files	= FLfile.listFolder(uri, 'file')
-								.filter( function(file){ return /.jsfl$/.test(file); } )
-								.map( function(file){ return file.replace('.jsfl', ''); } );
-
-			// load files
-				xjsfl.classes.load(files);
-
-			// return
-				return this;
-		},
-
-		/**
 		 * Loads a class only if not already defined
-		 * @param	{String}	filename	The class name, such as 'Template', or 'Table'
+		 * @param	{String}	fileRef		The class name, such as 'Template', or 'Table'
 		 * @returns
 		 */
-		require:function(filename)
+		require:function(fileRef)
 		{
 			// load path
 				var path = this.paths[name];
@@ -2235,6 +2076,7 @@
 					// callback function to process files and folders
 						function processFile(element)
 						{
+							logger.log(element.uri)
 							if(element instanceof Folder)
 							{
 								// skip folders where manifests shouldn't be
@@ -2251,6 +2093,8 @@
 							}
 						};
 
+						var logger = new Logger('', '//user/temp/module.txt');
+
 					// find and load modules automatically
 						Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
 
@@ -2264,21 +2108,21 @@
 				 * Initializes, but does not instantiate a module, by caching its manifest files, and copying
 				 * any panel resources to the Flash/WindowSWF folder, and commands to the Commands folder
 				 *
-				 * @param	{String}	path		The module root path, relative to from xJSFL/modules/ i.e. "Snippets", or an absolute URI
+				 * @param	{String}	folderNameOrURI		The module folder name or path, relative to xJSFL/modules/ i.e. "Snippets", or an absolute URI
 				 */
-				init:function(path)
+				init:function(folderNameOrURI)
 				{
 					// ensure path has a trailing slash
-						path = path.replace(/\/*$/, '/');
+						folderNameOrURI = folderNameOrURI.replace(/\/*$/, '/');
 
 					// if path is not a URI, it will probably be a path fragment, so default to the modules folder
-						if( ! xjsfl.file.isURI(path))
+						if( ! URI.isURI(folderNameOrURI))
 						{
-							var uri			= xjsfl.settings.folders.modules + path;
+							var uri			= xjsfl.settings.folders.modules + folderNameOrURI;
 						}
 						else
 						{
-							var uri			= path;
+							var uri			= folderNameOrURI;
 						}
 
 					// attempt to load the module's manifest
@@ -2301,7 +2145,7 @@
 						xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
 
 					// copy any panels to the WindowSWF folder
-						var folder = new xjsfl.classes.Folder(xjsfl.file.makeURI(path + 'ui/'));
+						var folder = new xjsfl.classes.Folder(uri + 'ui/');
 						for each(var src in folder.files)
 						{
 							if(src.extension === 'swf')
@@ -2312,7 +2156,7 @@
 								// check exists and compare dates
 									if(! trg.exists || src.modified > trg.modified)
 									{
-										xjsfl.output.trace('copying "' + xjsfl.file.makePath(src.uri, true) + '" to "Flash/Configuration/WindowSWF/"');
+										xjsfl.output.trace('copying "' + URI.asPath(src.uri, true) + '" to "Flash/Configuration/WindowSWF/"');
 										src.copy(fl.configURI + 'WindowSWF/', true);
 									}
 
@@ -2435,7 +2279,7 @@
 									.replace(/xjsfl.ui.handleEvent\(0,/g, 'xjsfl.ui.handleEvent(' +xul.id+ ',');
 
 			// save XML to dialog.xml
-				var uri			= xul.uri || xjsfl.file.makeURI('core/temp/dialog.xul');
+				var uri			= xul.uri || xjsfl.uri + 'core/temp/dialog.xul';
 				new File(uri, xml);
 
 			// register XUL
@@ -2543,21 +2387,6 @@
 			trace:function()
 			{
 				xjsfl.output.trace.apply(this, arguments);
-			},
-
-			/**
-			 * Reload the framework from disk
-			 */
-			reload:function(force)
-			{
-				//TODO Possibly add in an alert box which is controlled by debug level
-				if( ! xjsfl['loading'] || force === true)
-				{
-					//alert('RELOADING!')
-					delete xjsfl.uri;
-					xjsfl.debug.state = false;
-					fl.runScript(fl.configURI + 'Tools/xJSFL Loader.jsfl');
-				}
 			},
 
 			/**

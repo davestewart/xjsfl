@@ -1167,11 +1167,10 @@
 
 					/**
 					 * Add a Flash control to the UI
-					 * @param	{String}	label		A label for the UI item
-					 * @param	{String}	id			An optional id, otherwise derived from the label
-					 * @param	{String}	source		Source path to the SWF, relative to the XML saved location
+					 * @param	{String}	src			Source path to the SWF, (important!) relative to the XML saved location
+					 * @param	{Number}	width		The width of the Flash window
+					 * @param	{Number}	height		The height of the Flash window
 					 * @param	{Array}		properties	An array of property names to be created
-					 * @param	{Object}	attributes	Optional attributes
 					 * @returns	{XUL}					The XUL dialog
 					 */
 					setFlash:function(src, width, height, properties)
@@ -1181,7 +1180,7 @@
 
 						// build xml
 							var xml			= XUL.templates.flash.copy();
-							var uri			= xjsfl.file.makeURI(src);
+							var uri			= URI.toURI(src, 1);
 							xml..flash.@src	= src;
 
 						// add control and set XML
@@ -1473,10 +1472,10 @@
 
 				/**
 				 * Save the dialog in a particular location so custom Flash controls can reference the src attribute properly
-				 * @param	{String}	uri			A valid URI of where to save the dialog's XML file
-				 * @returns	{XUL}					The XUL dialog
+				 * @param	{String}	uriOrPath		A valid URI or path of where to save the dialog's XML file
+				 * @returns	{XUL}						The XUL dialog
 				 */
-				saveAs:function(uri)
+				saveAs:function(uriOrPath)
 				{
 					// check file is an XML file
 						if( ! /\/[^\/]+\.xml/.test(uri))
@@ -1485,8 +1484,7 @@
 						}
 
 					// make URI
-						uri			= xjsfl.file.makeURI(uri);
-						this.uri	= uri;
+						this.uri	= URI.toURI(uriOrPath, 1);
 
 					// return
 						return this;

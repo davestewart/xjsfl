@@ -20,13 +20,13 @@
 		 * FileSytemObject class
 		 * @param	{String} pathOrUri The uri or path to the object
 		 */
-		FileSystemObject = function(pathOrUri)
+		FileSystemObject = function(uri)
 		{
 			//BUG Errors when file URIs go beyond 260 chars. Need to implement fix (replace FLfile methods?) or workaround.
 
-			if(pathOrUri)
+			if(uri)
 			{
-				this.uri = xjsfl.file.makeURI(pathOrUri);
+				this.uri = uri;
 			}
 			if(this.uri)
 			{
@@ -72,8 +72,7 @@
 					state = false;
 					if(skipConfirmation != true)
 					{
-						var text = 'Do you want to delete "' +FLfile.uriToPlatformPath(this.uri)+ '"';
-						state = confirm(text) === true;
+						state = confirm('Do you want to delete "' +this.path+ '"') === true;
 					}
 					if(skipConfirmation == true || state)
 					{
@@ -88,7 +87,7 @@
 				/**
 				 * @type {String} The platform-specific path to the item
 				 */
-				get path(){ return FLfile.uriToPlatformPath(this.uri); },
+				get path(){ return FLfile.uriToPlatformPath(this.uri).replace(/\\/g, '/'); },
 
 				/**
 				 * @type {Boolean} true if the file exists; false otherwise.
@@ -153,8 +152,8 @@
 				{
 					if(this.uri)
 					{
-						var uri = this.uri.replace(/\/[^\/]+$/, '');
-						return uri == 'file://' ? null : new Folder(uri);
+						var uri = URI.getPath(this.uri);
+						return new Folder(uri);
 					}
 					return null;
 				}
@@ -190,11 +189,14 @@
 		 */
 		Folder = function(pathOrUri, create)
 		{
-			// remove trailing slash, otherwise it refers to the child folder ''
-				pathOrUri = pathOrUri.replace(/\/+$/, '');
+			// ensure a trailing slash //
+				pathOrUri = pathOrUri.replace(/\/*$/, '/');
+
+			// uri
+				var uri = URI.getPath(URI.toURI(pathOrUri, 1));
 
 			// constructor
-				FileSystemObject.apply(this, [pathOrUri]);
+				FileSystemObject.call(this, uri);
 				if(create && ! this.exists)
 				{
 					this.create();
@@ -298,7 +300,7 @@
 				 */
 				filter:function(pattern)
 				{
-					//TODO check if pattern macthes an extension-only, then filter against extension only
+					//TODO check if pattern matches an extension-only, then filter against extension only
 					var rx = typeof pattern === 'string' ? new RegExp(pattern.replace(/\*/g, '.*')) : pattern;
 					if(rx instanceof RegExp)
 					{
@@ -308,14 +310,15 @@
 				},
 
 				/**
-				 * A string representation of the folder name and number of items
+				 * A string representation of the folder
+				 * @param	{Boolean}		name		A flag to show the name, rather than the full path
 				 * @returns	{String}					A string representation of the folder
 				 */
-				toString:function(path)
+				toString:function(name)
 				{
-					var items	= this.contents ? this.contents.length : 0;
-					var label	= path ? 'path' : 'name';
-					var value	= path ? this.path : this.name;
+					var items	= this.exists ? FLfile.listFolder(this.uri).length : 0;
+					var label	= name ? 'name' : 'path';
+					var value	= name ? this.name : this.path;
 					return '[object Folder ' +label+ '="' +value+ '" items=' +items+ ' exists="' +this.exists+ '"]';
 				},
 
@@ -335,11 +338,11 @@
 					if(this.exists)
 					{
 						var uri;
-						var items = FLfile.listFolder(this.uri);
+						var items = this.uris;
 						for(var i = 0; i < items.length; i++)
 						{
-							uri = this.uri + '/' + encodeURI(items[i]);
-							items[i] = items[i].match(/\.[^\/]+$/) ? new File(uri) : new Folder(uri);
+							uri			= items[i];
+							items[i]	= uri.substr(-1) === '/' ? new Folder(uri) : new File(uri);
 						}
 						return items;
 					}
@@ -354,11 +357,11 @@
 					if(this.exists)
 					{
 						var uri;
-						var items = FLfile.listFolder(this.uri, "directories");
+						var items = FLfile.listFolder(this.uri, 'directories');
 						for(var i = 0; i < items.length; i++)
 						{
-							uri = this.uri + '/' + encodeURI(items[i]);
-							items[i] = new Folder(uri);
+							uri			= this.uri + encodeURI(items[i] + '/');
+							items[i]	= new Folder(uri);
 						}
 						return items;
 					}
@@ -373,13 +376,40 @@
 					if(this.exists)
 					{
 						var uri;
-						var items = FLfile.listFolder(this.uri, "files");
+						var items = FLfile.listFolder(this.uri, 'files');
 						for(var i = 0; i < items.length; i++)
 						{
-							uri = this.uri + '/' + encodeURI(items[i]);
-							items[i] = new File(uri);
+							uri			= this.uri + encodeURI(items[i]);
+							items[i]	= new File(uri);
 						}
 						return items;
+					}
+					return null;
+				},
+
+				/**
+				 * @type {Array} The folder's contents as a list of absoulte uris
+				 */
+				get uris ()
+				{
+					if(this.exists)
+					{
+						var uri;
+						var uris = FLfile.listFolder(this.uri);
+						for (var i = 0; i < uris.length; i++)
+						{
+							uri = this.uri + encodeURI(uris[i]);
+							if(uri.length > 260)
+							{
+								URI.throwURILengthError(uri);
+							}
+							if(FLfile.getAttributes(uri).indexOf('D') > -1)
+							{
+								 uri += '/';
+							}
+							uris[i] = uri;
+						}
+						return uris;
 					}
 					return null;
 				}
@@ -419,8 +449,11 @@
 		 */
 		File = function(pathOrUri, contents)
 		{
+			// uri
+				var uri = URI.toURI(pathOrUri, 1);
+
 			// constructor
-				FileSystemObject.apply(this, [pathOrUri]);
+				FileSystemObject.call(this, uri);
 
 			// if there's any data, save it
 				if(contents !== undefined)
@@ -507,31 +540,27 @@
 
 				/**
 				 * Copies the file to a new location
-				 * @param	{String}		trgURI		The new uri to copy the file to. Can be a folder or file.
+				 * @param	{String}		uriOrPath	The new uri to copy the file to. Can be a folder or file.
 				 * @param	{Boolean}		overWrite	Optional Boolean indicating whether the target file should be overwritten without warning
 				 * @returns	{File}						A new File object
 				 */
-				copy:function(trgURI, overWrite)
+				copy:function(trgURIOrPath, overWrite)
 				{
-					//TODO ensure trgURI is an absolute path
+					// get target URI
+						var trgURI = URI.toURI(trgURIOrPath, 1);
 
 					//Output.inspect(this)
 					// if the file exists, copy it
 						if(this.exists)
 						{
 							// if the path doesn't have a filename (i.e. it's a folder) use the existing filename
-								var rx			= /[^\/]+\.[a-z0-9]+$/i;
-								var matches		= trgURI.match(rx);
-								var filename	= matches ? matches[0] : null;
-
-								if(filename == null)
+								if(URI.isFolder(trgURI))
 								{
-									trgURI = trgURI.replace(/\/*$/, '/') + this.name;
+									trgURI = trgURI + this.name;
 								}
-								trgURI =  xjsfl.file.makeURI(trgURI);
 
 							// make sure the target folder exists
-								var targetFolder = new Folder(trgURI.replace(/[^\/]+$/, ''));
+								var targetFolder = new Folder(URI.getPath(trgURI));
 								if( ! targetFolder.exists )
 								{
 									targetFolder.create();
@@ -541,7 +570,7 @@
 								if(FLfile.exists(trgURI))
 								{
 									// variable for prompting
-										var trgPath		= xjsfl.file.makePath(trgURI);
+										var trgPath		= URI.toPath(trgURI);
 										var prompt		= 'Copying: "' +this.path+ '"\n\nTo: "' +trgPath + '".\n\n';
 										var readOnly	= FLfile.getAttributes(trgURI).indexOf('R');
 
@@ -697,12 +726,14 @@
 
 				/**
 				 * A string representation of the file
-				 * @param	{Boolean}		path		A flag to show the full path, not just the name
-				 * @returns	{String}					A string containing the class and filename
+				 * @param	{Boolean}		name		A flag to show the name, rather than the full path
+				 * @returns	{String}					A string representation of the file
 				 */
-				toString:function(path)
+				toString:function(name)
 				{
-					return '[object File ' +(path ? 'path' : 'name')+ '="' +(path ? this.path : this.name)+ '" exists="' +this.exists+ '"]';
+					var label	= name ? 'name' : 'path';
+					var value	= name ? this.name : this.path;
+					return '[object File   ' +label+ '="' +value+ '" exists="' +this.exists+ '"]';
 				},
 
 			// -------------------------------------------------------------------------------------------------------------------
