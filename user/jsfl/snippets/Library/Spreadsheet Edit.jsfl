@@ -24,7 +24,7 @@
 			exportCSV:function()
 			{
 				// create file
-					var uri			= URI.URI('user/temp/spreadsheet-edit.csv');
+					var uri			= URI.toURI('//user/temp/spreadsheet-edit.csv');
 					this.file		= new File(uri, true);
 
 				// grab keys and filter
