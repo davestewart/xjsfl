@@ -432,9 +432,9 @@
 		 */
 		pad:function(value, length, chr, right)
 		{
-			value	= String(value);
+			value	= String(value || '');
 			chr		= chr || '0';
-			length	= length || 6;
+			length	= typeof length === 'undefined' ? 6 : length;
 			while(value.length < length)
 			{
 				right ? value += chr : value = chr + value;
