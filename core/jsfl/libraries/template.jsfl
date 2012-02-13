@@ -18,14 +18,15 @@
 
 		/**
 		 * Handes loading and population of text data, including nested templating and indentation
-		 * @param	{String}	uri		A URI or path to the template file
-		 * @param	{Object}	data	An object of key:value pairs
-		 * @returns	{Template}			A new Template instance
+		 * @param	{String}	pathOrURI	A URI or path to the template file
+		 * @param	{Object}	data		An object of key:value pairs
+		 * @returns	{Template}				A new Template instance
 		 */
-		function Template(uri, data)
+		function Template(pathOrURI, data)
 		{
-			if(uri)
+			if(pathOrURI)
 			{
+				var uri = URI.toURI(pathOrURI, 1);
 				this.load(uri);
 			}
 			if(data)
