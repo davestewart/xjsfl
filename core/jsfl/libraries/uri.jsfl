@@ -349,7 +349,7 @@
 					// check that URI is on or below the legal limit of 260 chars
 						if( (checkLength !== false) && uri.length > 260 )
 						{
-							URI.throwLengthError(uri);
+							URI.throwURILengthError(uri);
 						}
 
 					// return
