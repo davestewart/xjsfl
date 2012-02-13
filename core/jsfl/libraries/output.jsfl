@@ -120,17 +120,16 @@
 		 * @param	{Number}	$depth		An optional max depth to recurse to (defaults to 3)
 		 * @param	{String}	$label		An optional String label (defaults to "Inspect")
 		 * @param	{Boolean}	$debug		An optional boolean to indicate output type: true=debug, false=return, undefined=output
-		 * @param	{Object}	$filters	An optional filters object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
+		 * @param	{Object}	$options	An optional options object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
 		 * @param	{Function}	$callback	An optional output function in case you want to do any custom processing of the data
 		 * @returns	{String}				A String hierarchy of the object's properties
 		 */
-		inspect:function(obj, $depth, $label, $debug, $filters, $callback)
+		inspect:function(obj, $depth, $label, $debug, $options, $callback)
 		{
 			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
 			//TODO Maybe just have an include object, which could be like {underscores:false, functions:false,strings:false}
 			//TODO Refactor all iteration to the Data class
 			//TODO For callback / debug, output to file in two separate passes - 1:key, 2:value, that way you get to see the actual key name who's value breaks the iteration
-			//TODO Refactor {filters} argument to an {options} object so many parameters can be passed in
 
 			// ---------------------------------------------------------------------------------------------------------------------
 			// methods
@@ -170,7 +169,7 @@
 
 						// skip prototypes (seems to cause silent errors. Not sure if this is an issue with prototypes, or just some classes)
 							// trace(key);
-							if(key == 'prototype')
+							if(key === 'prototype')
 							{
 								//return false;
 							}
@@ -183,7 +182,7 @@
 
 						// skip if filter is set to false
 							//trace(value + ':' + type)
-							if(filters[type] === false)
+							if(options[type] === false)
 							{
 								return false;
 							}
@@ -388,7 +387,7 @@
 								{
 									for(var i in value)
 									{
-										if(i != 'prototype')
+										if(i !== 'prototype')
 										{
 											type = 'object';
 											className = 'Class';
@@ -458,10 +457,10 @@
 					var debug		= false;
 					var print		= true;
 					var callback	= null;
-					var filters		= {};
+					var options		= {};
 
 				// parameter shifting
-					for each(var arg in [$depth, $label, $debug, $filters, $callback])
+					for each(var arg in [$depth, $label, $debug, $options, $callback])
 					{
 						if(typeof arg === 'number')
 							depth = arg;
@@ -475,7 +474,7 @@
 								print = false;
 						}
 						else if(typeof arg === 'object')
-							filters = arg;
+							options = arg;
 						else if(typeof arg === 'function')
 							callback = arg;
 					}
