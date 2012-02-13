@@ -60,8 +60,8 @@
 						this.rowHeights		= [];
 
 					// widths and heights
-						this.mW				= maxColWidth || this.mW;
-						this.mH				= maxRowHeight || this.mH;
+						this.maxWidth		= maxColWidth || this.maxWidth;
+						this.maxHeight		= maxRowHeight || this.maxHeight;
 
 					// filter column data
 						this.setKeys(keys);
@@ -82,14 +82,7 @@
 									}
 
 								// get value
-									var value	= String(element[name]);
-
-								// filter cell data for newlines
-									if(/[\r\n]/.test(value))
-									{
-										value = value.split(/[\r\n]/).shift() + '...'
-										this.rows[y][this.keys[x]] = value;
-									}
+									var value	= this.getCellText(element[name]);
 
 								// set widths
 									this.setMax(y, x, value);
@@ -210,12 +203,12 @@
 				/**
 				 * @var {Number} max row height (returns)
 				 */
-				mH:		2,
+				maxHeight:		2,
 
 				/**
 				 * @var {Number} max column width (chars)
 				 */
-				mW:		100,
+				maxWidth:		100,
 
 				head:	null,
 
@@ -381,7 +374,7 @@
 				 */
 				setMaxWidth:function(maxWidth)
 				{
-					this.mW = Math.floor(maxWidth);
+					this.maxWidth = Math.floor(maxWidth);
 					return this;
 				},
 
@@ -392,24 +385,24 @@
 				 */
 				setMaxHeight:function(maxHeight)
 				{
-					this.mH = Math.floor(maxHeight);
+					this.maxHeight = Math.floor(maxHeight);
 					return this;
 				},
 
 				setMax:function(y, x, value)
 				{
 					// variables
-						var w	= String(value).length;
+						var w	= this.getCellText(value).length;
 						var h	= 1;
 
 					// constrain width and height to limits
-						if(w > this.mW)
+						if(w > this.maxWidth)
 						{
-							w	= this.mW;
-							h	= Math.ceil(w % this.mW);
-							if(h > this.mH)
+							w	= this.maxWidth;
+							h	= Math.ceil(w % this.maxWidth);
+							if(h > this.maxHeight)
 							{
-								h = this.mH;
+								h = this.maxHeight;
 							}
 						}
 
@@ -472,7 +465,7 @@
 				addRow:function(y)
 				{
 					// loop through each line of the row
-						for(var line = 1; line <= this.rowHeights[y]; line++)
+						for(var i = 0; i < this.rowHeights[y]; i++)
 						{
 							// output
 								var output = this.chars.col;
@@ -486,12 +479,12 @@
 
 									// get and format value (need to use PropertyResolver in case Symbols are passed in)
 										var value	= PropertyResolver.resolve(element, name);
-										var text	= value === undefined ? '' : value;
-										var pad		= this.colAlignOverride ? false : (typeof text == 'number' ? true : false);
+										var text	= this.getCellText(value).substr(0, this.colWidths[x]);
+										var pad		= this.colAlignOverride ? false : (typeof value == 'number' ? true : false);
 
 									// create output
 										output		+= " "
-													+ this.pad(String(text).substr(this.mW * (line-1), this.mW), this.colWidths[x], ' ', pad)
+													+ this.pad(text.substr(this.maxWidth * i, this.maxWidth), this.colWidths[x], ' ', pad)
 													+ " " + this.chars.col;
 								}
 
@@ -566,6 +559,24 @@
 
 			// ---------------------------------------------------------------------------------------------------------------
 			// utilities
+
+				getCellText:function(value)
+				{
+					if(typeof value === 'undefined')
+					{
+						return '';
+					}
+					else
+					{
+						value = String(value);
+						if(/[\r\n]/.test(value))
+						{
+							value = xjsfl.utils.trim(value.split(/[\r\n]/).shift()) + '...'
+						}
+					}
+
+					return value;
+				},
 
 				/**
 				 * Pad a string with characters to a certain length
