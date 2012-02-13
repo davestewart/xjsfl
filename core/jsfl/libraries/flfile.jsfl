@@ -11,17 +11,8 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // FLfile - Adds FLfile platform-to-URI conversion compatibility for pre-CS4 versions of Flash
 
-	//TODO Check whether this 260 char limit is an FLfile issue, or a general filesystem issue. @see FileSystem
-
 	if( ! FLfile['platformPathToURI'])
 	{
-
-		//TODO need to add spport for network paths
-		/*
-		network = file://COMPUTER/
-		local   = file:///drive
-		*/
-
 		/**
 		 * Converts a platform-specific path to a URI
 		 * @param	{String}	path		A string, expressed in a platform-specific format, specifying the filename you want to convert
