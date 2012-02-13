@@ -19,71 +19,93 @@
 	 */
 	Data =
 	{
-		//TODO review recursive function signatures & implementation, & provide default callbacks if appropriate. @see Data#recurseFolder
-
-		/**
-		 * Generic function to recurse / walk hierarchical structures calling user-supplied calllbacks on traversed elements
-		 * @param	{Object}	rootElement		The root element to start processing on
-		 * @param	{Function}	fnChild			A callback function to call on child elements
-		 * @param	{Function}	fnTestChildren	A callback function to determine whether child nodes should be processed
-		 * @returns	{value}						The result of the passed fnChild function
-		 */
-		recurse2:function(rootElement, fnChild, fnTestChildren)
-		{
-			function process(element, index)
-			{
-				var result = fnChild(element, index, depth);
-
-				if(fnTestChildren ? fnTestChildren(element, index, depth) : element.length > 0)
-				{
-					depth ++;
-					for(var i = 0; i < element.length; i++)
-					{
-						process(element[i], i);
-					}
-					depth--;
-				}
-
-				return result;
-			}
-
-			var depth = 0;
-			return process(rootElement, 0);
-		},
-
 		/**
 		 * Generic function to recurse a data structure, processing nodes and children with callbacks
 		 * @param	{Object}	rootElement		The root element to start processing on
 		 * @param	{Function}	fnChild			A callback function to call on child elements
-		 * @param	{Function}	fnTestChildren	A callback function to determine whether child nodes should be processed
+		 * @param	{Function}	fnContents		An optional callback function which should return an object which can be processed for its contents, i.e. folder.contents
 		 * @param	{Object}	scope			An optional Object on which to appy "this" scope to
 		 * @returns	{value}						The result of the passed fnChild function
 		 */
-		recurse:function(rootElement, fnChild, fnTestChildren, scope)
+		recurse:function(rootElement, fnChild, fnContents, scope)
 		{
-			function process(element, index)
-			{
-				//fl.trace('Processing:' + element)
-
-				var result = fnChild.apply(scope, [element, index, depth]);
-
-				if(fnTestChildren ? fnTestChildren.apply(scope, [element, index, depth]) : element.length > 0)
+			// processing function
+				function process(element, index)
 				{
-					depth ++;
-					for(var i = 0; i < element.length; i++)
-					{
-						//fl.trace('Processing folder item ' +element[i]+ ':' + [element, element.length, index, depth])
-						process(element[i], i);
-					}
-					depth--;
+					// process the element with the callback
+						var result = fnChild.apply(scope, [element, index, depth]);
+
+					// Now, depending on the result, we do one of three things:
+						/*
+							- Boolean false		Skip processing of this element
+							- Boolean true		Stop processing and return this element
+							- no return value	Continue processing child elements
+						*/
+
+					// if the result is a Boolean true, consider this element found, and return it
+						if(result === true)
+						{
+							return element;
+						}
+
+					// if false was not returned, process the current element
+						else if(result !== false)
+						{
+							// get the custom contents, or just use the object itself if no callback supplied
+								var contents = fnContents ? fnContents.apply(scope, [element, index, depth]) : element;
+
+							// process contents
+								if( contents && ! ((typeof contents) in simpleTypes) )
+								{
+									depth ++;
+									if(contents instanceof Array)
+									{
+										for (var i = 0; i < contents.length; i++)
+										{
+											var result = process(contents[i], i);
+											if( result )
+											{
+												return result;
+											}
+										}
+									}
+									else
+									{
+										for(var name in contents)
+										{
+											var result = process(contents[name], name);
+											if( result )
+											{
+												return result;
+											}
+										}
+									}
+									depth--;
+								}
+
+						}
+
+					// return null if everything is normal
+						return null;
 				}
 
-				return result;
-			}
+			// variables
+				var simpleTypes =
+				{
+					'number'	:1,
+					'string'	:1,
+					'boolean'	:1,
+					'xml'		:1,
+					'function'	:1,
+					'undefined'	:1
+				}
 
-			scope = scope || window;
-			var depth = 0;
-			return process(rootElement, 0);
+			// defaults
+				scope = scope || window;
+				var depth = 0;
+
+			// process
+				return process(rootElement, 0);
 		},
 
 		/**
@@ -92,10 +114,9 @@
 		 * @param	{Folder}	folder			A valid Folder object
 		 * @param	{Function}	$callback		An optional callback of the format callback(element, index, depth, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
 		 * @param	{Number}	$maxDepth		An optional max depth to recurse to, defaults to 100
-		 * @param	{Boolean}	$returnPaths	An optional max depth to recurse to, defaults to 100
 		 * @returns	{Array}						An array of URIs or paths
 		 */
-		recurseFolder:function(folder, $callback, $maxDepth, $returnPaths)
+		recurseFolder:function(pathOrURI, $callback, $maxDepth, $returnPaths)
 		{
 			// ------------------------------------------------------------
 			// functions
@@ -105,12 +126,15 @@
 					// callback
 						var state = callback ? callback(element, index, depth, indent) : null;
 
+					// return immediately if the callback returned true
+						if(state === true)
+						{
+							return element;
+						}
+
 					// process if the callback didn't return false (false == skip element)
 						if(state !== false)
 						{
-							// path
-								paths.push(returnPaths ? element.path : element.uri);
-
 							// return if callback passed back true (true == stop all processing)
 								if(state === true)
 								{
@@ -131,14 +155,14 @@
 											// catch long URI errors
 												if(contents[i].uri.length > 260)
 												{
-													URI.throwLengthError(contents[i].uri);
-													throw new Error('URIError in Data.recurseFolder(): The uri "' +contents[i].uri+ '" is longer than the maximum 260 char length JSFL can process');
+													URI.throwURILengthError(contents[i].uri);
 												}
 
 											// process content
-												if( process(contents[i], i) )
+												var result = process(contents[i], i)
+												if(result)
 												{
-													return true;
+													return result;
 												}
 										}
 
@@ -147,9 +171,6 @@
 										depth--;
 								}
 						}
-
-					// return
-						return null;
 				}
 
 			// ------------------------------------------------------------
@@ -158,7 +179,7 @@
 				// defaults
 					var maxDepth	= 100;
 					var callback	= null;
-					var returnPaths	= false;
+					var folder;
 
 				// parameter shift
 					for each(var arg in [$callback, $maxDepth, $returnPaths])
@@ -167,33 +188,36 @@
 							maxDepth = arg;
 						else if(typeof arg === 'function')
 							callback = arg;
-						else if(typeof arg === 'boolean')
-							returnPaths = arg;
 					}
 
 				// folder
-					if(typeof folder === 'string')
+					if(typeof pathOrURI === 'string')
 					{
-						folder = new Folder(folder);
+						var uri		= URI.toURI(pathOrURI, 1);
+						folder		= new Folder(uri);
 					}
 
 				// variables
-					var paths		= [];
 					var indent		= '';
 					var depth		= 0;
 
 				// process
-					if(folder instanceof Folder && folder.exists)
+					if(folder instanceof Folder)
 					{
-						process(folder, 0);
+						if(folder.exists)
+						{
+							return process(folder, 0);
+						}
+						else
+						{
+							throw new URIError('URIError in Data.recurseFolder(): the folder "' +folder.path+ '" does not exist');
+						}
 					}
 					else
 					{
-						throw new Error('URIError in Data.recurseFolder: the folder "' +folder.path+ '" does not exist');
+						throw new URIError('URIError in Data.recurseFolder(): the pathOrURI "' +pathOrURI+ '" must refer to a valid folder');
 					}
 
-			// return
-				return paths;
 		},
 
 		toString:function()
