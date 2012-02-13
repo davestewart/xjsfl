@@ -209,7 +209,7 @@
 				{
 					if( ! /^(all|add)$/.test(this.name) )
 					{
-						this[name] = uri;
+						this[name] = URI.toURI(uri);
 					}
 				},
 
@@ -241,14 +241,10 @@
 				user:	[ xjsfl.uri + 'user/' ],
 
 			// methods
-				add:function(uri, type)
+				add:function(pathOrURI, type)
 				{
 					// check uri is valid
-						if(uri.indexOf('file:///') !== 0)
-						{
-							uri = FLfile.platformPathToURI(uri);
-							//throw new URIError('Error in xjsfl.settings.uris.add(): URI "' +uri+ '" is not a valid URI');
-						}
+						var uri = URI.toURI(pathOrURI);
 
 					// check URI exists
 						if( ! FLfile.exists(uri))
@@ -1273,6 +1269,9 @@
 		{
 			// --------------------------------------------------------------------------------
 			// work out base uri
+
+				// variables
+					name = name ? String(name) : '';
 
 				// file-specific variables
 					var path, ext, which;
