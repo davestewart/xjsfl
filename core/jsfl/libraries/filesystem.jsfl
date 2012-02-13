@@ -234,8 +234,17 @@
 				 */
 				open:function()
 				{
-					var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
-					var exec = command + " \"\" \"" +this.path+ "\""
+					if(xjsfl.settings.app.platform === 'win')
+					{
+						var command		= xjsfl.settings.app.platform === 'win' ? 'start' : 'open';
+						var exec		= command + " \"\" \"" +this.path+ "\""
+					}
+					else
+					{
+						var uri			= xjsfl.uri + 'core/assets/templates/mac/open folder.applescript';
+						var command		= new Template(uri, {path:this.path}).render();
+						var exec		= 'osascript -e "' +command+ '"';
+					}
 					FLfile.runCommandLine(exec);
 					return this;
 				},
@@ -253,9 +262,20 @@
 				 * @param	{String}		toUri		The URI to copy to
 				 * @returns {Folder}					The original folder
 				 */
-				copy:function(toUri)
+				copy:function(toPathOrURI)
 				{
-					//TODO implemement xcopy on windows or the equivilent on a mac
+					var src			= this.path;
+					var trg			= URI.toPath(URI.toURI(toPathOrURI, 1));
+					if(xjsfl.settings.app.platform === 'win')
+					{
+						var command = 'robocopy "' +src+ '" "' +trg+ '" /S /E';
+					}
+					else
+					{
+						var command = 'cp -R "' +src+ '" "' +trg+ '"';
+					}
+					FLfile.runCommandLine(command);
+					return this;
 				},
 
 				/**
@@ -300,7 +320,6 @@
 				 */
 				filter:function(pattern)
 				{
-					//TODO check if pattern matches an extension-only, then filter against extension only
 					var rx = typeof pattern === 'string' ? new RegExp(pattern.replace(/\*/g, '.*')) : pattern;
 					if(rx instanceof RegExp)
 					{
@@ -546,6 +565,8 @@
 				 */
 				copy:function(trgURIOrPath, overWrite)
 				{
+					//TODO Double-check overwriting read-only files
+
 					// get target URI
 						var trgURI = URI.toURI(trgURIOrPath, 1);
 
