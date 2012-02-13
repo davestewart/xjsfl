@@ -19,29 +19,33 @@
 		/**
 		 * Config class, loads and saves XML from the config folders
 		 *
-		 * @param	configPath	{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
-		 * @param	xml			{XML}		An XMl object with which to populate the Config instance
-		 * @author	Dave Stewart
+		 * @param	pathOrURI	{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
+		 * @param	xml			{XML}		An XML object with which to populate the Config instance
 		 */
-		Config = function(configPath, xml)
+		Config = function(pathOrURI, xml)
 		{
-			// absolute uri
-				if(configPath.indexOf('file://') == 0)
+			// throw error if no path passed
+				if(typeof pathOrURI !== 'string')
 				{
-					var uri = configPath;
+					throw new TypeError('TypeError in Config: pathOrURI "' +pathOrURI+ '" must be a string')
+				}
+
+			// absolute uri
+				if(URI.isURI(pathOrURI))
+				{
+					var uri = pathOrURI;
 				}
 
 			// relative uri - find in paths
 				else
 				{
 					// find in paths
-						var uri	= xjsfl.file.find('config', configPath);
+						var uri	= xjsfl.file.find('config', pathOrURI);
 
 					// fall back to user config if module or user config doesn't exist
-					//TODO decide if this is what we want. Should null configs be allowed?
 						if(uri == null)
 						{
-							uri = URI.toURI('//user/config/' + configPath + '.xml');
+							uri = URI.toURI('//user/config/' + pathOrURI + '.xml');
 						}
 				}
 
