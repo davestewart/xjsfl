@@ -11,20 +11,25 @@
 //                                                                              ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// User Bootstrap - run any code here before libraries are loaded
+// User Bootstrap - run user code here
 
-	xjsfl.loading = true;
 	try
 	{
-		// add user paths
-			//xjsfl.settings.uris.add('z:/temp/user/');
+		// register any user paths
+			//xjsfl.settings.folders.add('temp', 'c:/temp/')
 
-		// add user settings here
+		// load user libraries
+			xjsfl.output.log('loading user libraries...', true);
+			xjsfl.classes.load('/jsfl/libraries/*.jsfl');
+
+		// add user code
+			// something...
 
 	}
-	catch(err)
+	catch(error)
 	{
-		xjsfl.output.trace('Error running user bootstrap');
+		xjsfl.output.log('error running user bootstrap');
+		fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 		fl.runScript(xjsfl.uri + 'core/jsfl/libraries/output.jsfl');
-		xjsfl.debug.error(err);
-	} 
+		xjsfl.output.log(xjsfl.debug.error(error), false, false);
+	}

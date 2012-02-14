@@ -23,7 +23,6 @@
 				// load only if not yet initialized (otherwise fl.reloadTools() runs this file)
 					if( ! xjsfl.initialized )
 					{
-
 						// ------------------------------------------------------------------------------------------------------------------------
 						// functions
 
@@ -77,7 +76,7 @@
 											fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
 
 										// done!
-											trace('> xjsfl: ready!');
+											trace('\n> xjsfl: READY!');
 											trace('\n=================================================================\n')
 									}
 							}

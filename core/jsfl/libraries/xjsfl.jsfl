@@ -274,15 +274,6 @@
 		},
 
 		/**
-		 * Debug level
-		 * Can be set by the developer to trace, alert, or error on xjsfl.output.warn()
-		 *
-		 * @type {Number} debug level 0: off, 1:trace, 2:alert, 3:error, 4+: off
-		 */
-		debugLevel:(window['debugLevel'] != undefined ? debugLevel : 1),
-
-
-		/**
 		 * Newline character depending on PC or Mac
 		 * @type {String}
 		 */
@@ -1151,85 +1142,6 @@
 		}
 	}
 
-// ------------------------------------------------------------------------------------------------------------------------
-//
-//  ██████        ██                ██
-//  ██  ██        ██                ██
-//  ██  ██ ██ ██ █████ █████ ██ ██ █████
-//  ██  ██ ██ ██  ██   ██ ██ ██ ██  ██
-//  ██  ██ ██ ██  ██   ██ ██ ██ ██  ██
-//  ██  ██ ██ ██  ██   ██ ██ ██ ██  ██
-//  ██████ █████  ████ █████ █████  ████
-//                     ██
-//                     ██
-//
-// ------------------------------------------------------------------------------------------------------------------------
-// Output
-
-	/**
-	 * A collection of useful output methods
-	 */
-	xjsfl.output =
-	{
-		//TODO Convert trace() or log() to use Logger class
-
-
-		OUTPUT_TYPE_TRACE:	'trace',
-		OUTPUT_TYPE_ALERT:	'alert',
-
-		/**
-		 * Framework-only output function
-		 */
-		trace:function(message, newLine)
-		{
-			if(newLine)
-			{
-				fl.trace('');
-				message = message.toUpperCase();
-			}
-			fl.trace('> xjsfl: ' + message);
-		},
-
-		/**
-		 * Logging function
-		 * @param	{String}	type		The type of log message
-		 * @param	{String}	message		The text of the log message
-		 * @returns
-		 */
-		log:function(type, message)
-		{
-			//TODO Connect this to user / framework settings, so messages are only logged if the setting allows it
-			if(xjsfl.settings.debugLevel > 0)
-			{
-			}
-				this.trace(message);
-		},
-
-		/**
-		 * Issue a warning to the user
-		 *
-		 * @param	{String} message		The message to be displayed
-		 * @param	{Number} debugLevel		1 traces the message to the output panel, 2 shows the alert dialog
-		 */
-		warn:function(message)
-		{
-			switch(xjsfl.settings.debugLevel)
-			{
-				case 1:
-					this.trace('Warning - ' + message);
-				break;
-				case 2:
-					alert(message);
-				break;
-				case 3:
-					throw new Error('Error: ' + message);
-				break;
-				default:
-					// do nothing
-			}
-		}
-
-	}
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -1438,35 +1350,53 @@
 				// otherwise, do something with the uri / uris (plural) if more than 1 was found
 					else
 					{
-
 						var uris = xjsfl.utils.isArray(result) ? result : [result];
 
-						for (var i = 0; i < uris.length; i++)
+						for each(var uri in uris)
 						{
 							// variables
-								var uri		= uris[i];
-								var ext		= uri.match(/(\w+)$/)[1];
-
-							// debug
-								//TODO Decide whether to display this or not
-								var _path	= URI.asPath(uri, true);
-								xjsfl.output.log('xjsfl.file.load', 'loading "' + _path + '"');
-								if(xjsfl['loading'])
-								{
-
-								}
+								var ext = uri.match(/(\w+)$/)[1];
 
 							// flag
 								xjsfl.file.stack.push(uri);
+
+							// log
+								xjsfl.output.log('loading "' + URI.asPath(uri, true) + '"');
 
 							// do something depending on extension
 								switch(ext)
 								{
 									case 'jsfl':
-										fl.runScript(uri);
-										//xjsfl.output.trace('Loaded ' + _path);
-										xjsfl.file.stack.pop();
-										return uri;
+										// load JSFL script
+											fl.runScript(uri);
+											xjsfl.file.stack.pop();
+
+										// detect any JavaScript errors
+											var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
+											fl.outputPanel.save(outputURI);
+											var output		= FLfile.read(outputURI);
+											FLfile.remove(outputURI);
+
+										// throw a new fake error if the file appeared to load incorrectly
+											if(/The following JavaScript error\(s\) occurred:\s*$/.test(output))
+											{
+												var error		= new Error('<error>', '', 0);
+												var stack		= xjsfl.utils.getStack();
+												var matches		= stack[0].code.match(/file:[^"]+/);
+												if(matches)
+												{
+													var errorURI	= String(matches).toString();
+													var errorPath	= URI.asPath(errorURI);
+													error.message	= 'The file "' +errorPath+ '" contains errors';
+													error.fileName	= errorURI;
+													error.stack		= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0')
+													xjsfl.loading	= false;
+													throw error;
+												}
+											}
+
+										// otherwise, just return the URI
+											return uri;
 									break;
 
 									case 'xul':
@@ -1533,7 +1463,7 @@
 				}
 				else
 				{
-					if(xjsfl.debug.state)
+					if(xjsfl.settings.flags.debugging)
 					{
 						xjsfl.output.trace('Turning file debugging: off');
 						fl.runScript = xjsfl.debug._runScript;
@@ -1597,7 +1527,7 @@
 									xjsfl.debug._error = true;
 
 								// variables
-									var evalLine	= 1562;	// this needs to be the actual line number of the eval(jsfl) line above
+									var evalLine	= 1514;	// this needs to be the actual line number of the eval(jsfl) line above
 									var line		= parseInt(err.lineNumber) - (evalLine) + 1;
 
 								// turn off debugging
@@ -1689,10 +1619,11 @@
 				var uriError	= xjsfl.uri + 'core/assets/templates/errors/error.txt';
 
 			// reload template if not defined (caused by some kind of bug normally)
-				if( ! xjsfl.classes.Template)
+				if( ! xjsfl.classes.Template )
 				{
-					xjsfl.classes.load('filesystem');
-					xjsfl.classes.load('template');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/uri.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/filesystem.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/template.jsfl');
 				}
 
 			// build errors
@@ -1704,11 +1635,15 @@
 				}
 
 			// build output
-				var data = { error:error.toString(), content:content };
-				fl.trace(new xjsfl.classes.Template(uriErrors, data).render());
+				var data		= { error:error.toString(), content:content };
+				var output		= new xjsfl.classes.Template(uriErrors, data).render();
 
 			// set loading to false
-				xjsfl['loading'] = false;
+				xjsfl.loading = false;
+
+			// trace and return
+				fl.trace(output);
+				return output;
 		},
 
 		/**
@@ -1748,7 +1683,7 @@
 					// delegate loading functionality
 						if(fl.runScript !== xjsfl.debug.file)
 						{
-							xjsfl.output.trace('Turning file debugging: on');
+							xjsfl.output.trace('turning file debugging: on');
 							fl.runScript = xjsfl.debug.file;
 							//fl.trace('>>' + fl.runScript)
 						}
@@ -1760,14 +1695,14 @@
 				{
 					if(xjsfl.debug.state)
 					{
-						xjsfl.output.trace('Turning file debugging: off');
+						xjsfl.output.trace('turning file debugging: off');
 						fl.runScript = xjsfl.debug._runScript;
 						delete fl._runScript;
 					}
 				}
 
 			// debug
-				xjsfl.output.trace('File debugging is: ' + (state ? 'on': 'off'));
+				xjsfl.output.trace('file debugging is: ' + (state ? 'on': 'off'));
 
 		},
 
@@ -1807,7 +1742,6 @@
 		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
 		 * @param	{Array}		fileRef		An Array of class filepaths
-		 * @param	{String}	debugType	An optional debug type. Pass xjsfl.output.OUTPUT_TYPE constants here
 		 * @returns	{xjsfl}					The main xJSFL object
 		 */
 		load:function(fileRef, debugType)
@@ -1825,7 +1759,7 @@
 					}
 				}
 
-			// arrayize paths
+			// make sure paths are in an array, so we can treat them all the same
 				else
 				{
 					var paths = fileRef instanceof Array ? fileRef : [fileRef];
@@ -1854,10 +1788,10 @@
 
 		/**
 		 * Loads a class only if not already defined
-		 * @param	{String}	fileRef		The class name, such as 'Template', or 'Table'
+		 * @param	{String}	name		The class name, such as 'Template', or 'Table'
 		 * @returns
 		 */
-		require:function(fileRef)
+		require:function(name)
 		{
 			// load path
 				var path = this.paths[name];
@@ -2379,15 +2313,6 @@
 	{
 		var props =
 		{
-			/**
-			 * Shortcut to trace function
-			 * @returns
-			 */
-			trace:function()
-			{
-				xjsfl.output.trace.apply(this, arguments);
-			},
-
 			/**
 			 * Stand toString function
 			 * @returns
