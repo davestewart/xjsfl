@@ -1,6 +1,15 @@
 // -----------------------------------------------------------------------------------------------------------------------------------------
 // Demo code
 
+	// variables
+		var arr = [1, 2, 3, 4, [5, 6, 7, 8, [9, 10, 11, 12, 13], 14, 15, 16, 17], 18, 19, 20, 21];
+		var obj = {a:1, b:2, c:3, d:4, e:{a:5, b:6, c:7, d:8, e:{a:9, b:10, c:11, d:12, e:13}, f:14, g:15, h:16, i:17}, f:18, g:19, h:20, i:21 };
+
+		function indent(depth)
+		{
+			return xjsfl.utils.pad(null, depth, '	');
+		}
+
 	// initialize
 		xjsfl.reload(this);
 		clear();
@@ -8,126 +17,153 @@
 		{
 
 	// --------------------------------------------------------------------------------
-	// Default iteration returns the array of iterated paths
+	// Objects and Arrays
 
-		if(1)
-		{
-			var paths = Data.recurseFolder('c:/temp/');
-			list(paths);
-		}
+		// --------------------------------------------------------------------------------
+		// Walk the structure of an Object or Array
 
-
-	// --------------------------------------------------------------------------------
-	// Call a callback function on each of the iterated items
-
-		if(0)
-		{
-			function callback(element, index, level, indent)
+			if(1)
 			{
-				trace (indent + '/' + element.name);
-			}
-
-			Data.recurseFolder('c:/temp/test/', callback);
-		}
-
-	// --------------------------------------------------------------------------------
-	// Skip subfolders with the letter a in them
-
-		if(0)
-		{
-			function callback(element, index, level, indent)
-			{
-				return element.name.indexOf('a') == -1;
-			}
-
-			var paths = Data.recurseFolder('c:/temp/test/', callback);
-			trace(paths.join('\n'));
-		}
-
-
-	// --------------------------------------------------------------------------------
-	// Test
-
-		if(0)
-		{
-			// stuff
-				//Data.recurse (new Folder('c:/temp/'))
-
-				function traceElement(element, index, level)
+				function process(value, index, depth)
 				{
-					var indent = Array(level).join('\t')
-					fl.trace (indent + '/' + element.name);
+					trace(indent(depth) + '[' +index+ '] ' + value);
 				}
 
-				function testFolder(element)
+				Data.recurse(arr, process);
+				Data.recurse(obj, process);
+			}
+
+		// --------------------------------------------------------------------------------
+		// Skip elements by returning a Boolean false from the callback
+
+			if(0)
+			{
+				function process(value, index, depth)
 				{
-					return element instanceof Folder;
+					if(index > 0 && depth > 0 && index % 2 == 0)
+					{
+						return false;
+					}
+					trace(indent(depth) + '[' +index+ '] ' + value);
 				}
 
+				Data.recurse(arr, process);
+			}
 
-				Data.recurse ('c:/temp/', traceElement, testFolder)
+		// --------------------------------------------------------------------------------
+		// Find an element by returning a Boolean true from the callback
 
-
-			/*
-			*/
-
-			/*
-				// object & scope example
-
-				fl.outputPanel.clear();
-
-				var obj =
+			if(0)
+			{
+				function process(value, index, depth)
 				{
-					str:'',
-
-					arr:[1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7],
-
-					traceElement:function(element, index, level)
+					trace(indent(depth) + '[' +index+ '] ' + value);
+					if(xjsfl.utils.getValues(value).indexOf(Number(search)) !== -1)
 					{
-						var indent = new Array(level + 1).join('\t');
-						var str = indent + level + ' : ' + element + '\n';
-						this.str += str;
-					},
+						return true;
+					}
+				}
 
-					testElement:function(element, level, index)
-					{
-						return element instanceof Array;
-					},
+				var search = prompt('Enter a number (1 - 21) to return the parent');
+				var result = Data.recurse(obj, process);
 
-					start:function()
+				result ? inspect(result, 'Found') : trace('Nothing was found');
+			}
+
+		// --------------------------------------------------------------------------------
+		// Process custom objects (in this case, folders) by providing a callback to get contents
+
+			if(0)
+			{
+				// the function to process the children
+					function process(element, index, depth)
 					{
-						Data.recurse(this.arr, this.traceElement, this.testElement, this)
+						trace (indent(depth) + '/' + element.name);
 					}
 
-				}
+				// the function to identify the children
+					function getContents(element)
+					{
+						return element instanceof Folder ? element.contents : null;
+					}
 
-				//obj.start();
-				//fl.trace(obj.str);
-			*/
+				// start processing
+					var folder = new Folder('{user}');
+					Data.recurse (folder, process, getContents)
+			}
 
-			/*
-				// function example
+	// --------------------------------------------------------------------------------
+	// Filesystem
 
-				function traceElement(element, index, level)
+		// --------------------------------------------------------------------------------
+		// Call a callback function on each of the iterated items
+
+			if(0)
+			{
+				function callback(element, index, level, indent)
 				{
-					var indent = new Array(level + 1).join('\t');
-					fl.trace (indent + level + ' : ' + element);
+					trace(indent + '/' + element.name);
 				}
 
-				function testElement(element, level, index)
+				Data.recurseFolder('{user}', callback);
+			}
+
+		// --------------------------------------------------------------------------------
+		// Collect all paths from a folder
+
+			if(0)
+			{
+				function collect(element)
 				{
-					return element instanceof Array;
+					paths.push(element.path);
 				}
 
-				fl.outputPanel.clear();
+				var paths = [];
+				Data.recurseFolder('{user}', collect);
+				list(paths)
+			}
 
-				var arr = [1,2,3,4,[1,2,3,4,[1,2,3,4],5,6,7,8],4,5,6,7];
+		// --------------------------------------------------------------------------------
+		// Skip processing of subfolders where the parent folder has the letter a in it
 
-				Data.recurse(arr, traceElement, testElement)
+			if(0)
+			{
+				function callback(element, index, level, indent)
+				{
+					if(element instanceof Folder && element.name.indexOf('a') != -1)
+					{
+						return false;
+					}
+					trace(indent + '/' + element.name);
+				}
 
+				Data.recurseFolder('{user}', callback);
+			}
 
-			*/
-		}
+		// --------------------------------------------------------------------------------
+		// Find a file by searching folders and comparing contents
+
+			if(0)
+			{
+				// set up the callback function
+					function callback(element, index, level, indent)
+					{
+						trace(indent + '/' + element.name);
+						if(element instanceof File && element.contents.indexOf(search) > -1)
+						{
+							return true;
+						}
+					}
+
+				// promt the user and search
+					var search = prompt('Enter some text to find', 'Find a file by searching folders and comparing contents')
+					var result = Data.recurseFolder('{user}', callback);
+
+				// do something with the result
+					result ? trace(result) : trace('Nothing was found');
+
+			}
+
 
 	// catch
 		}catch(err){xjsfl.debug.error(err);}
