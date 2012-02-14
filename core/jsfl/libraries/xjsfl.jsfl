@@ -1417,6 +1417,20 @@
 
 			// return
 				return undefined;
+		},
+
+		/**
+		 * Saves data to file
+		 * @param	{String}	pathOrURI	The path or URI to save data to
+		 * @param	{String}	contents	The data to save
+		 * @returns	{Boolean}				true or false depending on the result
+		 */
+		save:function(pathOrURI, contents)
+		{
+			var uri			= URI.toURI(pathOrURI, 1)
+			var file		= new File(uri);
+			file.contents	= contents;
+			return file.exists && file.size > 0;
 		}
 
 	}
