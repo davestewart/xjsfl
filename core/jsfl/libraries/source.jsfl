@@ -97,5 +97,15 @@
 
 		}
 
+	// ------------------------------------------------------------------------------------------------------------------------
+	// override Function.toString()
+
+		Function.prototype.toString = function()
+		{
+			return Source.parseFunction(this).signature + ' { ... }';
+		}
+
+	// ------------------------------------------------------------------------------------------------------------------------
 	// register class
+
 		xjsfl.classes.register('Source', Source);
