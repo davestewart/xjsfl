@@ -331,6 +331,11 @@
 
 			// done!
 				return false;
+		},
+
+		toString:function()
+		{
+			return '[class Iterators]';
 		}
 	}
 

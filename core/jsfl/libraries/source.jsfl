@@ -88,6 +88,11 @@
 					return {name:matches[1], params:params, signature:matches[0].replace(/function (\w+)/, '$1')};
 				}
 				return {name:null, params:[], signature:''};
+			},
+
+			toString:function()
+			{
+				return '[class Source]';
 			}
 
 		}

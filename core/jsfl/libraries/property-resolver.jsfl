@@ -83,7 +83,12 @@
 					}
 					return element.tintPercent;
 				},
-			}
+			},
+
+		toString:function()
+		{
+			return '[class PropertyResolver]';
+		}
 
 		}
 

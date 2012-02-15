@@ -385,6 +385,11 @@
 				{
 					throw new Error('Error in Selectors.register(): Invalid pattern "' +pattern+ '" supplied');
 				}
+		},
+
+		toString:function()
+		{
+			return '[class Selectors]';
 		}
 
 	}

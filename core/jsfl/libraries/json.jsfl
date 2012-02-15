@@ -177,6 +177,11 @@ JSON =
 			return eval('(' + src + ')');
 		}
 		return null;
+	},
+
+	toString:function()
+	{
+		return '[class JSON]';
 	}
 
 };
