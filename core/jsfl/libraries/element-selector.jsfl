@@ -17,66 +17,78 @@
 	 * Element Selector function to return an ElementCollection of stage elements
 	 *
 	 * @param	{String}				selector	A selector expression
-	 * @param	{Context}				context		A valid Context instance
+	 * @param	{Array}					context		An optional Array of Elements
+	 * @param	{Context}				context		An optional Context instance
+	 * @param	{ElementCollection}		context		An optional ElementCollection instance
 	 * @returns	{ElementCollection}					An Element Collection
 	 */
 	$ = function(expression, context, debug)
 	{
 		// --------------------------------------------------------------------------------
-		// setup
+		// resolve context and elemets
 
-			// reference to library
-				var dom	= $dom;
-				if( ! dom)
-				{
-					return null;
-				}
-				var library		= dom.library;
-
-		// --------------------------------------------------------------------------------
-		// resolve context
-
-			//TODO Review the use of context here
-
-				if(context)
-				{
-					context.goto();
-				}
-				else
-				{
-					if(dom)
-					{
-						context = Context.create();
-					}
-					else
-					{
-						return false;
-					}
-				}
-
-		// --------------------------------------------------------------------------------
-		// calculate selection and return
+			// variables
+				var elements;
+				var dom;
 
 			// resolve context
-
-			// grab items
-				var elements = [];
-				for each(var layer in context.timeline.layers)
+				if(context)
 				{
-					context.setLayer(layer).setFrame(true)
-					elements = elements.concat(context.frame.elements);
+					// ElementCollection
+						if(context instanceof ElementCollection)
+						{
+							elements	= context.elements;
+							dom			= context.dom;
+						}
+
+					// Array
+						else if(context instanceof Array)
+						{
+							elements	= context;
+							dom			= $dom; // unexpected results may occur if the dom doesn't reflect the location of the elements
+						}
+
+					// Context
+						else if(context instanceof Context)
+						{
+							context.goto();
+							var dom		= context.dom;
+						}
 				}
 
-			// filter items
-				elements = Selectors.select(expression, elements, context.dom, debug);
+			// current document
+				else
+				{
+					if($dom)
+					{
+						context		= Context.create();
+						dom			= context.dom;
+					}
+				}
 
-			// return
-				return new ElementCollection(elements);
-	}
+		// --------------------------------------------------------------------------------
+		// resolve elements if not already
 
-	$.toString = function()
-	{
-		return '[function $]';
+			if(dom)
+			{
+				// grab elements
+					if( ! elements)
+					{
+						var elements = [];
+						for each(var layer in context.timeline.layers)
+						{
+							context.setLayer(layer).setFrame(true)
+							elements = elements.concat(context.frame.elements);
+						}
+					}
+trace(elements)
+				// filter items
+					elements = Selectors.select(expression, elements, dom, debug);
+
+				// return
+					return new ElementCollection(elements);
+			}
+
 	}
 
 	xjsfl.classes.register('$', $);

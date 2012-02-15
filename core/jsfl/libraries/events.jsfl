@@ -59,6 +59,7 @@
 			DocumentEvent.prototype = new Event;
 			DocumentEvent.prototype.constructor = DocumentEvent;
 			DocumentEvent.prototype.toString = function(){ return '[object DocumentEvent type="' +this.type+ '" name="' +(this.document ? this.document.name : '')+ '" id="' +(this.document ? this.document.id : '')+ '"]'; }
+			DocumentEvent.toString = function(){ return '[class DocumentEvent]'; }
 
 			/**
 			 * An object representing a the JSFL Event that fires when a user changes a layer
@@ -77,6 +78,7 @@
 			LayerEvent.prototype = new Event;
 			LayerEvent.prototype.constructor = LayerEvent;
 			LayerEvent.prototype.toString = function(){ return '[object LayerEvent timeline="' +(this.timeline ? this.timeline.name : '')+ '" layer="' +(this.layer ? this.layer.name : '')+ '"]'; }
+			LayerEvent.toString = function(){ return '[class LayerEvent]'; }
 
 			/**
 			 * An object representing a the JSFL Event that fires when a user changes a frame
@@ -97,6 +99,7 @@
 			FrameEvent.prototype = new Event;
 			FrameEvent.prototype.constructor = FrameEvent;
 			FrameEvent.prototype.toString = function(){ return '[object FrameEvent timeline="' +(this.timeline ? this.timeline.name : '')+ '" layer="' +(this.layer ? this.layer.name : '')+ '" frame="' +(this.timeline ? this.timeline.currentFrame : '')+ '"]'; }
+			FrameEvent.toString = function(){ return '[class FrameEvent]'; }
 
 			/**
 			 * An object representing a the JSFL Event that fires when a user moves the mouse
@@ -119,6 +122,7 @@
 			MouseEvent.prototype = new Event;
 			MouseEvent.prototype.constructor = MouseEvent;
 			MouseEvent.prototype.toString = function(){ return '[object MouseEvent x="' +this.x+ '" y="' +this.y+ '" shift="' +this.shift+ '" ctrl="' +this.ctrl+ '" alt="' +this.alt+ '"]'; }
+			MouseEvent.toString = function(){ return '[class MouseEvent]'; }
 
 	// --------------------------------------------------------------------------------
 	// static Event constants

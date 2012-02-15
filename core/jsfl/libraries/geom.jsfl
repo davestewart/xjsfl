@@ -136,4 +136,9 @@
 			}
 		}
 
+		Bounds.toString = function()
+		{
+			return '[class Bounds]';
+		}
+
 		xjsfl.classes.register('Bounds', Bounds);
