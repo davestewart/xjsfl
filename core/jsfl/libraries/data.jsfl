@@ -114,9 +114,11 @@
 		 * @param	{Folder}	folder			A valid Folder object
 		 * @param	{Function}	$callback		An optional callback of the format callback(element, index, depth, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
 		 * @param	{Number}	$maxDepth		An optional max depth to recurse to, defaults to 100
-		 * @returns	{Array}						An array of URIs or paths
+		 * @param	{Boolean}	$returnURIs		An optional Boolean to return all parsed URIs
+		 * @returns	{String}					The URI of the current element if the callback returns true
+		 * @returns	{Array}						An array of URIs or paths if returnURIs is set as true
 		 */
-		recurseFolder:function(pathOrURI, $callback, $maxDepth, $returnPaths)
+		recurseFolder:function(folder, $callback, $maxDepth, $returnURIs)
 		{
 			// ------------------------------------------------------------
 			// functions
@@ -140,6 +142,9 @@
 								{
 									return true;
 								}
+
+							// collect uri
+								uris.push(element.uri);
 
 							// children
 								if(element instanceof Folder && depth < maxDepth)
@@ -179,43 +184,41 @@
 				// defaults
 					var maxDepth	= 100;
 					var callback	= null;
-					var folder;
+					var returnURIs	= false;
 
 				// parameter shift
-					for each(var arg in [$callback, $maxDepth, $returnPaths])
+					for each(var arg in [$callback, $maxDepth, $returnURIs])
 					{
 						if(typeof arg === 'number')
 							maxDepth = arg;
 						else if(typeof arg === 'function')
 							callback = arg;
-					}
-
-				// folder
-					if(typeof pathOrURI === 'string')
-					{
-						var uri		= URI.toURI(pathOrURI, 1);
-						folder		= new Folder(uri);
+						else if(typeof arg === 'boolean')
+							returnURIs = arg;
 					}
 
 				// variables
+					var uris		= [];
 					var indent		= '';
 					var depth		= 0;
+					var _folder		= typeof folder === 'string' ? new Folder(URI.toURI(folder, 1)) : null;
 
 				// process
-					if(folder instanceof Folder)
+					if(_folder instanceof Folder && _folder.exists)
 					{
-						if(folder.exists)
+						if(returnURIs)
 						{
-							return process(folder, 0);
+							process(_folder, 0);
+							return uris;
 						}
 						else
 						{
-							throw new URIError('URIError in Data.recurseFolder(): the folder "' +folder.path+ '" does not exist');
+							return process(_folder, 0);
 						}
 					}
 					else
 					{
-						throw new URIError('URIError in Data.recurseFolder(): the pathOrURI "' +pathOrURI+ '" must refer to a valid folder');
+						return returnURIs ? [] : null;
 					}
 
 		},
