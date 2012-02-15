@@ -81,13 +81,13 @@
 			 */
 			parseFunction:function(fn)
 			{
-				var matches = fn.toSource().match(/function(\s+\w*)\s*\(([^\)]*)\)/);
-				if(matches && matches[2])
+				var matches		= fn.toSource().match(/function\s*((\w*)\s*\(([^\)]*)\))/);
+				if(matches)
 				{
 					var params = matches[2].match(/(\w+)/g);
-					return {name:xjsfl.utils.trim(matches[1]), params:params};
+					return {name:matches[1], params:params, signature:matches[0].replace(/function (\w+)/, '$1')};
 				}
-				return {name:null, params:[]};
+				return {name:null, params:[], signature:''};
 			}
 
 		}
