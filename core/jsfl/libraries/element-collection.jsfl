@@ -126,6 +126,13 @@
 			return this;
 		},
 
+		group:function()
+		{
+			$selection = this.elements;
+			this.dom.group();
+			return this;
+		},
+
 		/**
 		 * Move the collection on stage to, or by, x and y values
 		 * @param	{Number}			x			The x pixel value to move to, or by
@@ -174,6 +181,33 @@
 
 			// return
 				return this;
+		},
+
+		/**
+		 * Rotates the collection by a specified number of degrees
+		 * @param	{Number}			angle		A floating-point value that specifies the angle of the rotation
+		 * @param	{String}			whichCorner	An optional String that specifies which side of the bounding box to rotate. Acceptable values are "top right", "top left", "bottom right", "bottom left", "top center", "right center", "bottom center", and "left center"
+		 * @returns	{ElementCollection}				The original ElementCollection
+		 */
+		rotate:function(angle, whichCorner)
+		{
+			this.dom.rotateSelection(angle, whichCorner)
+			return this;
+		},
+
+		/**
+		 * Scales the collection by a specified amount
+		 * @param	{Number}			xScale		A floating-point value that specifies the amount of x by which to scale
+		 * @param	{Number}			yScale		A floating-point value that specifies the amount of y by which to scale
+		 * @param	{String}			whichCorner	An optional String that specifies which side of the bounding box to rotate. Acceptable values are "top right", "top left", "bottom right", "bottom left", "top center", "right center", "bottom center", and "left center"
+		 * @returns	{ElementCollection}				The original ElementCollection
+		 */
+		scale:function(xScale, yScale, whichCorner)
+		{
+			xScale = typeof xScale !== 'undefined' ? xScale : 1;
+			yScale = typeof yScale !== 'undefined' ? yScale : 1;
+			this.dom.scaleSelection(xScale, yScale, whichCorner);
+			return this;
 		},
 
 		/**
@@ -899,7 +933,6 @@
 			// return
 				return this;
 		},
-
 
 		/**
 		 * Centers the transform points of the elements
