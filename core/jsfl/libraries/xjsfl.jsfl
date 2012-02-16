@@ -75,7 +75,6 @@
 		 */
 		dom:function(error)
 		{
-			//TODO Look to see if passing in an error message is good design or not
 			var dom = fl.getDocumentDOM();
 			if(dom)
 			{
@@ -92,7 +91,6 @@
 		 */
 		timeline:function(error)
 		{
-			//TODO Look to see if passing in an error message is good design or not
 			var dom = fl.getDocumentDOM();
 			if(dom)
 			{
@@ -537,9 +535,6 @@
 		 */
 		sortOn:function(arr, prop, alpha)
 		{
-
-			//TODO Add option to sort alphabetically, including switches in partition
-
 			function swap(arr, a, b)
 			{
 				var tmp = arr[a];
@@ -1212,6 +1207,7 @@
 
 						// for full config path return the last file found from: core, modules, user (xml)
 						case 'config':
+						case 'settings':
 							path	= 'config/' + name;
 							ext		= '.xml';
 							which	= -1;
@@ -1302,13 +1298,15 @@
 				// signatures
 					load(path)
 					load(name, type)
+
+				// also allow load() to take a wildcard URI, i.e. load('path/to/*.jsfl', true);
 			*/
 
 			// variables
 				var result	= null;
 
 			// --------------------------------------------------------------------------------
-			// Load file
+			// Resolve URI
 
 				// a URI was passed in
 					if(URI.isURI(path))
@@ -1432,7 +1430,6 @@
 			file.contents	= contents;
 			return file.exists && file.size > 0;
 		}
-
 	}
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -1583,13 +1580,8 @@
 		 */
 		func:function(fn, params, scope)
 		{
-			// variables
-				var source	= fn.toSource();
-				source		= source.substring(source.indexOf(' ') + 1, source.indexOf('('));
-				//TODO change function name parsing to recognise function() {...}
-
 			// feedback
-				xjsfl.output.trace('testing function: "' + source + '"');
+				xjsfl.output.trace('testing function: "' + Source.parseFunction(fn).signature + '"');
 
 			// test!
 				try
@@ -1600,7 +1592,6 @@
 				{
 					this.error(err, true);
 				}
-				return null;
 		},
 
 		/**
@@ -1727,8 +1718,6 @@
 		}
 	}
 
-
-
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██
@@ -1758,7 +1747,7 @@
 		 * @param	{Array}		fileRef		An Array of class filepaths
 		 * @returns	{xjsfl}					The main xJSFL object
 		 */
-		load:function(fileRef, debugType)
+		load:function(fileRef)
 		{
 			// detect wildcards
 				if(typeof fileRef === 'string' && fileRef.indexOf('*') > -1)
@@ -1782,17 +1771,11 @@
 			//TODO Add a check to see if we are loading, and if so, only load classes that are not yet defined. Can we do that? Do we need to cache load paths in that case?
 
 			// load classes
-				for(var i = 0; i < paths.length; i++)
+				for each(var path in paths)
 				{
-					if(paths[i].indexOf('xjsfl') == -1) // don't reload load xjsfl
+					if(path.indexOf('xjsfl') === -1) // don't reload load xjsfl
 					{
-						if(typeof debugType != 'undefined')
-						{
-							var str = 'Loading class file ' +(i + 1)+ '/' +paths.length+ ': ' + paths[i];
-							(debugType == xjsfl.output.OUTPUT_TYPE_TRACE ? xjsfl.output.trace : alert)(str);
-						}
-
-						xjsfl.file.load(paths[i], 'library', debugType === 2);
+						xjsfl.file.load(path, 'library');
 					}
 				}
 
@@ -1883,7 +1866,6 @@
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Modules
-
 
 	/**
 	 * Dummy properties for Komodo code inteligence
@@ -2023,7 +2005,6 @@
 					// callback function to process files and folders
 						function processFile(element)
 						{
-							logger.log(element.uri)
 							if(element instanceof Folder)
 							{
 								// skip folders where manifests shouldn't be
@@ -2039,8 +2020,6 @@
 								return false;
 							}
 						};
-
-						var logger = new Logger('', '//user/temp/module.txt');
 
 					// find and load modules automatically
 						Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
@@ -2079,6 +2058,9 @@
 							return this;
 						}
 
+					// debug
+						xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
+
 					// update with the actual URI & store
 						manifest.jsfl.uri		= uri;
 						var namespace			= String(manifest.jsfl.namespace);
@@ -2087,9 +2069,6 @@
 					// add the URI to the xjsfl.settings.uris.modules and xjsfl.settings.folders objects
 						xjsfl.settings.uris.add(uri, 'module');
 						xjsfl.settings.folders[namespace] = uri;
-
-					// debug
-						xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
 
 					// copy any panels to the WindowSWF folder
 						var folder = new xjsfl.classes.Folder(uri + 'ui/');
@@ -2114,8 +2093,6 @@
 									}
 							}
 						}
-
-					//TODO Add code to copy commands here as well
 
 					// preload
 						if(String(manifest.jsfl.preload) == 'true')
@@ -2178,7 +2155,6 @@
 			return obj;
 		}
 	)();
-
 
 
 // ------------------------------------------------------------------------------------------------------------------------
