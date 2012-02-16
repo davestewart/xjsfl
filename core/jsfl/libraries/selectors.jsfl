@@ -48,7 +48,7 @@
 			// process expression
 
 				// exit early if universal selector is supplied
-					if(expression == '*')
+					if(expression === '*')
 					{
 						return items;
 					}
@@ -66,7 +66,7 @@
 						// debug
 							if(debug)
 							{
-								Output.inspect(selectors, 'Selectors for "' + expression + '"');
+								inspect(selectors, 'Selectors for "' + expression + '"');
 							}
 
 						// get items
@@ -114,7 +114,7 @@
 						   12: value		value
 					*/
 					//var chunker = /(:([\-\w]+)\((.+)\))|([\*\d\w][\-\w\d\s_*{|}]+)|\/([\-\w\s\/_*{|}]+)|\.([*A-Z][\w*]+)|\.([a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
-					var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]*)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
+					var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]*)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[a-z][\w.*]+)|:([a-z]\w+)|\[(([\w\.]+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
 
 				// variables
 					var exec,
@@ -134,7 +134,7 @@
 					// setup
 
 						// debug
-							//Output.inspect(exec);
+							//inspect(exec);
 							//trace(limit++);
 
 						// create
@@ -275,7 +275,7 @@
 				}
 
 			// debug
-				//Output.inspect(selectors, 'SELECTORS');
+				//inspect(selectors, 'SELECTORS');
 
 			// return
 				return selectors;
@@ -333,7 +333,6 @@
 						{
 							break;
 						}
-						trace()
 				}
 
 			// return
@@ -409,7 +408,7 @@
 			 * @param	value		{String}	The String value to test against
 			 * @param	value		{Number}	The Number value to test against
 			 * @param	range		{Object}	A range object with .min and .max values
-			 * @param	custom		{Object}	The Selectors.foo.custom object which contains custom callbacks
+			 * @param	custom		{Object}	The Selectors.<type>.custom object which contains custom callbacks
 			 * @returns				{Boolean}	True if the test passes
 			 */
 			attribute:function(item, name, operand, value, range, custom)
@@ -417,15 +416,31 @@
 				// variables
 					var callback, prop;
 
-				// get the item property
-					if(name in item)
+				// get a deep property if there are periods in the name
+					if(name.indexOf('.') !== -1)
 					{
-						prop		= item[name];
+						prop = xjsfl.utils.getDeepValue(item, name);
 					}
+
+				// otherwise...
 					else
 					{
-						callback	= custom[name];
-						prop		= callback.apply(this, [item]);
+						// get a native property
+							if(name in item)
+							{
+								prop = item[name];
+							}
+
+						// grab a custom property using callbacks
+							else
+							{
+								callback = custom[name];
+								if( ! callback )
+								{
+									throw new ReferenceError('A callback for the custom attribute "' +name+ '" has not been registered');
+								}
+								prop = callback.call(this, item);
+							}
 					}
 
 				// no operand, just test for property
@@ -541,7 +556,7 @@
 				// get the items with the new selecor
 					var newItems = Selectors.select(selector, items, this);
 
-					Output.inspect(newItems)
+					//inspect(newItems)
 
 				// compare to items in
 					return newItems
@@ -923,7 +938,7 @@
 				// make array unique
 					paths = xjsfl.utils.toUniqueArray(paths);
 
-					Output.inspect(paths)
+					//inspect(paths)
 
 				// grab folders from library
 					var index, temp = [];
