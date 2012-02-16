@@ -31,6 +31,12 @@
 				var elements;
 				var dom;
 
+			// throw error if expression is not a string
+				if(typeof expression !== 'string')
+				{
+					throw new TypeError('TypeError in $(): parameter "expression" must be a string');
+				}
+
 			// resolve context
 				if(context)
 				{
@@ -81,7 +87,7 @@
 							elements = elements.concat(context.frame.elements);
 						}
 					}
-trace(elements)
+
 				// filter items
 					elements = Selectors.select(expression, elements, dom, debug);
 
