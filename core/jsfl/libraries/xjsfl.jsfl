@@ -2094,6 +2094,21 @@
 							}
 						}
 
+					// copy any flash assets
+						var srcFolder	= uri + 'flash/';
+						var assetURIs	= Data.recurseFolder(srcFolder, true);
+						if(assetURIs.length)
+						{
+							assetURIs = assetURIs.filter(URI.isFile);
+							xjsfl.output.trace('copying ' + assetURIs.length + ' asset(s) to "Flash/Configuration/"');
+							for each(var srcURI in assetURIs)
+							{
+								var trgURI = fl.configURI + srcURI.substr(srcFolder.length);
+								//xjsfl.output.trace('copying "' + URI.asPath(srcURI, true) + '" to "Flash/Configuration/"');
+								new File(srcURI).copy(trgURI, true);
+							}
+						}
+
 					// preload
 						if(String(manifest.jsfl.preload) == 'true')
 						{
