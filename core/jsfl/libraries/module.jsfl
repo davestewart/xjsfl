@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██   ██          ██       ██
 //  ███ ███          ██       ██
@@ -48,7 +48,7 @@
 				xjsfl.settings.uris.add(this.uri, 'module');
 
 			// panel
-				var panel		= xjsfl.utils.getPanel(String(this.manifest.jsfl.panel));
+				var panel		= Utils.getPanel(String(this.manifest.jsfl.panel));
 				if(panel)
 				{
 					this.panel = panel;

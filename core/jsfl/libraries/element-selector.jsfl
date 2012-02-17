@@ -94,6 +94,11 @@
 				// return
 					return new ElementCollection(elements);
 			}
+			else
+			{
+				throw new ReferenceError('ReferenceError in $(): You need to open a document before attempting to select elements');
+			}
+
 
 	}
 

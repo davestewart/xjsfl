@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                    ██        ██
 //    ██                      ██        ██
@@ -255,7 +255,7 @@
 						var rxGlobal	= new RegExp(rxLocal.source, 'g');
 
 					// recursion check
-						_stack = xjsfl.utils.isArray(_stack) ? _stack : [];
+						_stack = Utils.isArray(_stack) ? _stack : [];
 						if(_stack.indexOf(this) > -1)
 						{
 							return '// RECURSION! (' +URI.getFile(this.uri)+ ')';

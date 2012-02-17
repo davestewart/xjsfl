@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██                ██          ██████                      ██        ██
 //  ██                       ██            ██                        ██        ██
@@ -71,7 +71,7 @@
 				// variables
 					var rx, prop, value, placeholder;
 					var output			= this.input;
-					var placeholders	= xjsfl.utils.toUniqueArray(this.input.match(/{([^}]+)}/g))
+					var placeholders	= Utils.toUniqueArray(this.input.match(/{([^}]+)}/g))
 
 				// loop over placeholders and populate
 					for each(placeholder in placeholders)
@@ -88,7 +88,7 @@
 						// current value
 							if(prop.indexOf('.') != -1)
 							{
-								value = xjsfl.utils.getDeepValue(data, prop) || placeholder;
+								value = Utils.getDeepValue(data, prop) || placeholder;
 							}
 							else
 							{

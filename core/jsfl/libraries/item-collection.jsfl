@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██  ██                  ██████       ██ ██              ██   ██
 //  ██  ██                  ██           ██ ██              ██
@@ -66,7 +66,7 @@
 		 */
 		sort:function()
 		{
-			xjsfl.utils.sortOn(this.elements, 'name', true);
+			Utils.sortOn(this.elements, 'name', true);
 			return this;
 		},
 
@@ -209,7 +209,7 @@
 				function rename(element, index, elements, name)
 				{
 					var num			= index + startIndex;
-					var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
+					var str			= padding > 0 ? Utils.pad(num, padding) : num;
 					return baseName + str;
 				}
 

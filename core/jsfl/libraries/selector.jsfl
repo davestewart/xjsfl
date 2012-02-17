@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██              ██
 //  ██           ██              ██
@@ -65,7 +65,7 @@
 				var results	= this.method.apply(scope, params);
 
 				//TODO Decide where in the process toUniqueArray() should be called
-				results		= xjsfl.utils.toUniqueArray(results);
+				results		= Utils.toUniqueArray(results);
 
 				return results;
 			},

@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██                             ██   ██████       ██ ██              ██   ██
 //  ██     ██                             ██   ██           ██ ██              ██
@@ -354,7 +354,7 @@
 						for(var i = 0; i < this.elements.length; i++)
 						{
 							values				= typeof value === 'function' ? value.apply(this, [this.elements[i], i, this.elements]) : value;
-							values				= xjsfl.utils.isArray(values) ? [values[0], values[1]] : [values, values];
+							values				= Utils.isArray(values) ? [values[0], values[1]] : [values, values];
 							this.elements[i][x]	= values[0]
 							this.elements[i][y]	= values[1]
 						}
@@ -401,7 +401,7 @@
 						function rename(element, index, elements)
 						{
 							var num			= index + startIndex;
-							var str			= padding > 0 ? xjsfl.utils.pad(num, padding) : num;
+							var str			= padding > 0 ? Utils.pad(num, padding) : num;
 							return baseName + str;
 						}
 
@@ -583,7 +583,7 @@
 				this._deselect();
 
 			// distribute
-				props = xjsfl.utils.toArray(props);
+				props = Utils.toArray(props);
 				for(var i = 0; i < props.length; i++)
 				{
 					if(props[i].match(/(left|horizontal|right|top|vertical|bottom)/))
@@ -704,8 +704,8 @@
 				// get element
 					if(typeof element === 'boolean')
 					{
-						var widths	= xjsfl.utils.getExtremeValues(this.elements, 'width', element);
-						var heights	= xjsfl.utils.getExtremeValues(this.elements, 'height', element);
+						var widths	= Utils.getExtremeValues(this.elements, 'width', element);
+						var heights	= Utils.getExtremeValues(this.elements, 'height', element);
 
 						element =
 						{
@@ -847,7 +847,7 @@
 				}
 
 			// variable
-				var isArray	= xjsfl.utils.isArray(modifier);
+				var isArray	= Utils.isArray(modifier);
 
 			// handle single properties
 				if(/^(x|y|width|height|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)$/.test(prop))
@@ -855,8 +855,8 @@
 					for(var i = 0; i < this.elements.length; i++)
 					{
 						this.elements[i][prop] = isArray
-													? xjsfl.utils.randomValue(modifier)
-													: xjsfl.utils.randomizeValue(this.elements[i][prop], modifier);
+													? Utils.randomValue(modifier)
+													: Utils.randomizeValue(this.elements[i][prop], modifier);
 					}
 				}
 
@@ -901,23 +901,23 @@
 										{
 											if(values[2] === true)
 											{
-												values[0]	= xjsfl.utils.randomValue(modifier[0], modifier[1]);
+												values[0]	= Utils.randomValue(modifier[0], modifier[1]);
 												values[1]	= values[0];
 											}
 											else
 											{
-												values[0]	= xjsfl.utils.randomizeValue(element[px], modifier[0]);
-												values[1]	= xjsfl.utils.randomizeValue(element[py], modifier[1]);
+												values[0]	= Utils.randomizeValue(element[px], modifier[0]);
+												values[1]	= Utils.randomizeValue(element[py], modifier[1]);
 											}
 										}
 										else if(typeof modifier === 'string')
 										{
-											value		= xjsfl.utils.randomizeValue(element[px], modifier[0]);
+											value		= Utils.randomizeValue(element[px], modifier[0]);
 											values		= [value, value];
 										}
 										else
 										{
-											value		= xjsfl.utils.randomizeValue(Math.max(element[px], element[py]), modifier);
+											value		= Utils.randomizeValue(Math.max(element[px], element[py]), modifier);
 											values		= [value, value];
 										}
 

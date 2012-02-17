@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██              ██
 //  ██           ██              ██
@@ -54,7 +54,7 @@
 					}
 
 				// break up any comma-delimited expressions into an array of discrete expressions
-					var expressions	= xjsfl.utils.trim(expression).split(/,/g);
+					var expressions	= Utils.trim(expression).split(/,/g);
 
 				// get items
 					var results		= [];
@@ -77,7 +77,7 @@
 					}
 
 				// ensure items are unique
-					results = xjsfl.utils.toUniqueArray(results);
+					results = Utils.toUniqueArray(results);
 
 				// return
 					return results;
@@ -203,7 +203,7 @@
 									}
 
 								// find
-									if(/selected|children|descendants|parent|first|last/.test(exec[8]))
+									else if(/selected|children|descendants|parent|first|last/.test(exec[8]))
 									{
 										selector.type	= 'find';
 										method			= object.find[exec[8]];
@@ -255,6 +255,10 @@
 
 								// assign
 									selector.params	= [null, attName, attOperand, attValue, selector.range, object.custom];
+							}
+							else
+							{
+								throw new TypeError('TypeError in Selectors.parse(): Unrecognised pattern "' +selector.pattern+ '"');
 							}
 
 					// --------------------------------------------------------------------------------
@@ -419,7 +423,7 @@
 				// get a deep property if there are periods in the name
 					if(name.indexOf('.') !== -1)
 					{
-						prop = xjsfl.utils.getDeepValue(item, name);
+						prop = Utils.getDeepValue(item, name);
 					}
 
 				// otherwise...
@@ -936,7 +940,7 @@
 					}
 
 				// make array unique
-					paths = xjsfl.utils.toUniqueArray(paths);
+					paths = Utils.toUniqueArray(paths);
 
 					//inspect(paths)
 

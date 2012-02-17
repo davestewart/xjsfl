@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                    ██
 //  ██                        ██
@@ -284,7 +284,7 @@
 										delete this.handlers[type].callbacks[name];
 
 									// if no callbacks left, remove event handler
-										var keys = xjsfl.utils.getKeys(this.handlers[type].callbacks);
+										var keys = Utils.getKeys(this.handlers[type].callbacks);
 										if(keys.length == 0)
 										{
 											var handler = xjsfl.events.handlers[type].handler;

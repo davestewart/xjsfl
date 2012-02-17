@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██ ██       ██████              ██                  ██████ ██    ██              ██
 //  ██        ██       ██                  ██                  ██  ██ ██                    ██
@@ -438,7 +438,7 @@
 	// inheritance & assign methods
 
 		Folder.prototype = new FileSystemObject;
-		xjsfl.utils.extend(Folder.prototype, folder);
+		Utils.extend(Folder.prototype, folder);
 		delete folder;
 
 
@@ -807,7 +807,7 @@
 	// inheritance & assign methods
 
 		File.prototype = new FileSystemObject;
-		xjsfl.utils.extend(File.prototype, file);
+		Utils.extend(File.prototype, file);
 		delete file;
 
 // -----------------------------------------------------------------------------------------------------------------------------------------

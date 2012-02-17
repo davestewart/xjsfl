@@ -84,65 +84,6 @@
 
 				}
 
-			// init vars method
-
-				/**
-				 * Pre-initialization of the environment, extractinging key variables / functions to supplied scope
-				 * @param	scope		{Object}	The scope into which the framework should be extracted
-				 * @param	scopeName	{String}	An optional scopeName, which when supplied, traces a short message to the Output panel
-				 * @returns
-				 */
-				xjsfl.initVars = function(scope, scopeName)
-				{
-					// initialize only if core $dom method is not yet defined
-						if(typeof scope.$dom === 'undefined')
-						{
-							// debug
-								if(scopeName)
-								{
-									xjsfl.output.log('initializing [' +scopeName+ ']');
-								}
-
-							// global functions
-
-								// output
-									scope.trace		= function(){ fl.outputPanel.trace(Array.slice.call(this, arguments).join(', ')) };
-									scope.clear		= fl.outputPanel.clear;
-									scope.populate	= function(template, properties)
-									{
-										return new SimpleTemplate(template, properties).output;
-									}
-
-								// debugging
-									scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
-									scope.list		= function(){ fl.trace('list() not yet initialized'); };
-
-								// file
-									scope.load		= function(pathOrURI)
-									{
-										return xjsfl.file.load(URI.toURI(pathOrURI, 1));
-									}
-									scope.save		= function(pathOrURI, contents)
-									{
-										return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents);
-									}
-
-							// global shortcuts
-
-								// $dom
-									scope.__defineGetter__( '$dom', function(){ return fl.getDocumentDOM(); } );
-
-								// $timeline
-									scope.__defineGetter__( '$timeline', function(){ var dom = $dom; return dom ? dom.getTimeline() : null; } );
-
-								// $library
-									scope.__defineGetter__( '$library', function(){ var dom = $dom; return dom ? dom.library : null; } );
-
-								// $selection
-									scope.__defineGetter__( '$selection', function(){ var dom = $dom; return dom ? dom.selection : null; } );
-									scope.__defineSetter__( '$selection', function(elements){ var dom = $dom; if(dom){dom.selectNone(); dom.selection = elements} } );
-						}
-				}
 		})()
 
 	// --------------------------------------------------------------------------------
@@ -167,18 +108,12 @@
 						xjsfl.debug.state = false;
 					}
 
-				// log
-					xjsfl.output.log('initializing variables...')
+				// need to load Utils & URI libraries first as core methods rely on them
+					xjsfl.output.log('loading Utils library...');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils.jsfl');
 
-				// initialize core functions
-					xjsfl.initVars(this, 'window');
-
-				// need to load URI library first as core methods rely on it
-					if( ! window['URI'] )
-					{
-						xjsfl.output.log('loading URI library...');
-						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/uri.jsfl');
-					}
+					xjsfl.output.log('loading URI library...');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/uri.jsfl');
 
 			// --------------------------------------------------------------------------------
 			// load core
@@ -187,7 +122,12 @@
 					xjsfl.output.log('loading xJSFL...', true);
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 
-				// now, once core has loaded, register URI library
+				// initialize core functions
+					xjsfl.output.log('initializing variables...')
+					xjsfl.initVars(this, 'window');
+
+				// now, once core has loaded, register URI and Utils library
+					xjsfl.classes.register('Utils', Utils);
 					xjsfl.classes.register('URI', URI);
 
 				// reset file debugging
@@ -197,15 +137,18 @@
 					xjsfl.output.log('loading core libraries...', true);
 					xjsfl.classes.load(['filesystem', 'uri', 'template', 'output', 'class']);
 
-			// --------------------------------------------------------------------------------
-			// load additional libraries and modules
-
 				// load other libraries
 					xjsfl.classes.load('libraries/*.jsfl');
+
+			// --------------------------------------------------------------------------------
+			// load modules, then user bootstrap
 
 				// modules
 					xjsfl.output.log('loading modules...', true);
 					xjsfl.modules.find();
+
+			// --------------------------------------------------------------------------------
+			// load user bootstrap & finalise
 
 				// user bootstrap
 					xjsfl.output.log('loading user bootstrap...', true);
@@ -220,7 +163,8 @@
 		catch(error)
 		{
 			xjsfl.output.log('error running core bootstrap', true);
-			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
+			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils.jsfl');
 			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/output.jsfl');
+			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 			xjsfl.output.log(xjsfl.debug.error(error), false, false);
 		}

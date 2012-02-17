@@ -178,7 +178,7 @@
 														path		= path.substr(1);
 
 													// grab calling URI
-														var stack	= xjsfl.utils.getStack();
+														var stack	= Utils.getStack();
 														var source	= stack[stackIndex].uri;
 														var root	= URI.getPath(source);
 
@@ -229,7 +229,7 @@
 						// if still no URI, the root wasn't implied by the path (i.e. folder/file.txt) therefore it must be relative, so derive from the calling file
 							if( ! uri )
 							{
-								var stack	= xjsfl.utils.getStack();
+								var stack	= Utils.getStack();
 								var source	= stack[stackIndex].uri;
 								uri			= URI.getPath(source) + path;
 							}
@@ -390,7 +390,7 @@
 							// if there are any matches, sort the list and grab the longest match
 								if(folders.length)
 								{
-									xjsfl.utils.sortOn(folders, 'name');
+									Utils.sortOn(folders, 'name');
 									var folder = folders.shift();
 									uri = uri.replace(folder.uri, '{' +folder.name+ '}');
 								}

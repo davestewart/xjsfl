@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██    ██
 //    ██         ██    ██
@@ -38,7 +38,7 @@
 						var value = PropertyResolver.resolve(rows, prop);
 						if(keys === true)
 						{
-							arr.push({Property:prop, Value:value, Type:xjsfl.utils.getClass(value)});
+							arr.push({Property:prop, Value:value, Type:Utils.getClass(value)});
 						}
 						else
 						{
@@ -282,7 +282,7 @@
 					// string - split into keys
 						if(typeof keys === 'string')
 						{
-							keys = xjsfl.utils.trim(keys.replace(/\s*[^\w ]+\s*/g, ',')).split(/,/g);
+							keys = Utils.trim(keys.replace(/\s*[^\w ]+\s*/g, ',')).split(/,/g);
 						}
 
 					// Sort keys according to a Table.ORDER Constant
@@ -298,9 +298,9 @@
 									// found-order
 										for(var y = 0; y < this.rows.length; y++)
 										{
-											temp = temp.concat(xjsfl.utils.getKeys(this.rows[y]));
+											temp = temp.concat(Utils.getKeys(this.rows[y]));
 										}
-										temp = xjsfl.utils.toUniqueArray(temp);
+										temp = Utils.toUniqueArray(temp);
 
 									// alphapetical-order
 										if(keys === Table.ORDER_ALPHA)
@@ -318,7 +318,7 @@
 									// grab all keys individually
 										for(var y = 0; y < this.rows.length; y++)
 										{
-											var props = xjsfl.utils.getKeys(this.rows[y]);
+											var props = Utils.getKeys(this.rows[y]);
 											for each(var prop in props)
 											{
 												if( ! hash[prop])
@@ -339,7 +339,7 @@
 									// grab keys per entire row
 										for(var y = 0; y < this.rows.length; y++)
 										{
-											var props = xjsfl.utils.getKeys(this.rows[y]).join(',');
+											var props = Utils.getKeys(this.rows[y]).join(',');
 											if( ! hash[props])
 											{
 												hash[props] = 0;
@@ -353,12 +353,12 @@
 							// otherwise, just grab the keys from the first row
 								else
 								{
-									this.keys = xjsfl.utils.getKeys(this.rows[0]);
+									this.keys = Utils.getKeys(this.rows[0]);
 								}
 						}
 
 					// if keys are an array, set the keys property
-						if(xjsfl.utils.isArray(keys))
+						if(Utils.isArray(keys))
 						{
 							this.keys = keys;
 						}
@@ -436,7 +436,7 @@
 						}
 
 					// check data was provided
-						if(xjsfl.utils.isArray(data))
+						if(Utils.isArray(data))
 						{
 							this.head = data;
 						}
@@ -498,7 +498,7 @@
 				 */
 				addHeading:function()
 				{
-					if(xjsfl.utils.isArray(this.head))
+					if(Utils.isArray(this.head))
 					{
 						// output
 							var output = this.chars.col;
@@ -571,7 +571,7 @@
 						value = String(value);
 						if(/[\r\n]/.test(value))
 						{
-							value = xjsfl.utils.trim(value.split(/[\r\n]/).shift()) + '...'
+							value = Utils.trim(value.split(/[\r\n]/).shift()) + '...'
 						}
 					}
 
@@ -630,7 +630,7 @@
 
 					// convert the the array to a string, then to an array, then make unique
 						keys	= keys.join(',').split(',');
-						keys	= xjsfl.utils.toUniqueArray(keys);
+						keys	= Utils.toUniqueArray(keys);
 
 					// return
 						return keys;

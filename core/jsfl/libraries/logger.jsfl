@@ -112,7 +112,7 @@
 						}
 
 					// user data
-						data		= xjsfl.utils.extend(data, params);
+						data		= Utils.extend(data, params);
 
 					// populate
 						message		= message ? this.template.populate(data).output : '';

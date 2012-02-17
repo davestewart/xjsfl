@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██ ██              ██   ██
 //  ██           ██ ██              ██
@@ -41,7 +41,7 @@
 		 */
 		each:function(callback, params, scope)
 		{
-			if(params !== undefined && ! xjsfl.utils.isArray(params))
+			if(params !== undefined && ! Utils.isArray(params))
 			{
 				throw new TypeError('TypeError: parameter "params" must be an Array in Collection.each()');
 			}
@@ -68,7 +68,7 @@
 		 */
 		reach:function(callback, params, scope)
 		{
-			if(params !== undefined && ! xjsfl.utils.isArray(params))
+			if(params !== undefined && ! Utils.isArray(params))
 			{
 				throw new TypeError('TypeError: parameter "params" must be an Array in Collection.reach()');
 			}
@@ -193,7 +193,7 @@
 		 */
 		call:function(callback)
 		{
-			var params = xjsfl.utils.getArguments(arguments, 1);
+			var params = Utils.getArguments(arguments, 1);
 			callback.apply(this, params);
 			return this;
 		},
