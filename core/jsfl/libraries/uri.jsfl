@@ -14,7 +14,56 @@
 	// ---------------------------------------------------------------------------------------------------------------
 	// class
 
-		var URI =
+		function URI(pathOrURI)
+		{
+			this.uri = URI.toURI(pathOrURI, 1);
+		}
+
+		URI.prototype =
+		{
+			constructor:URI,
+
+			/** @type {String}	The file:/// URI of the URI instance (casting the URI object to a String gives the same result) */
+			uri:'',
+
+			/** @type {String}	The platform-specific path of the URI instance */
+			get path()
+			{
+				return URI.getPath(this.uri);
+			},
+
+			/** @type {String}	The xJSFL short path to the URI instance */
+			get shortPath()
+			{
+				return URI.toPath(this.uri, true);
+			},
+
+			/** @type {String}	The name of the file or folder referred to by the URI instance */
+			get name()
+			{
+				return URI.getName(this.uri);
+			},
+
+			/** @type {String}	The parent folder of the file or folder referred to by the URI instance */
+			get parent()
+			{
+				return URI.getParent(this.uri);
+			},
+
+			/**
+			 * The URI string of the URI instance
+			 * @returns	{String}		The string of the URI, i.e. file://path/to/file.txt
+			 */
+			toString:function()
+			{
+				return this.uri;
+			}
+		}
+
+	// ---------------------------------------------------------------------------------------------------------------
+	// static properties
+
+		var uri =
 		{
 
 			// ---------------------------------------------------------------------------------------------------------------
@@ -42,6 +91,12 @@
 				{
 					// ---------------------------------------------------------------------------------------------------------------
 					// process URI
+
+						// if pathOrURI is null, grab the calling file
+							if(typeof pathOrURI === 'undefined')
+							{
+								pathOrURI = Utils.getStack()[2].uri;
+							}
 
 						// ensure pathOrURI is a string
 							pathOrURI = String(pathOrURI || '');
@@ -431,7 +486,7 @@
 				 */
 				isURI:function(pathOrURI)
 				{
-					return typeof pathOrURI === 'string' && pathOrURI.indexOf('file:///') === 0;
+					return (typeof pathOrURI === 'string' || pathOrURI instanceof URI) && String(pathOrURI).indexOf('file:///') === 0;
 				},
 
 				/**
@@ -516,6 +571,11 @@
 			// ---------------------------------------------------------------------------------------------------------------
 			// utility functions
 
+				/**
+				 * Checks that the length of a URI is not longer than the maximum 260 characters supported by FLfile
+				 * @param	{String}	uri			A URI
+				 * @returns	{Boolean}				true of false depending on the result
+				 */
 				checkURILength:function(uri)
 				{
 					if(uri.length > 260)
@@ -535,6 +595,8 @@
 				}
 
 		}
+
+		Utils.extend(URI, uri);
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// register
