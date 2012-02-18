@@ -30,24 +30,42 @@
 			//TODO Add option to automatically skip functions, including constructors
 
 			// if a single, (non-Array) object is passed, transpose properties and values into two columns
+			// and only pull out the keys that are specified in keys
 				if( ! (rows instanceof Array) )
 				{
-					var arr = [];
-					for (var prop in rows)
-					{
-						var value = PropertyResolver.resolve(rows, prop);
-						if(keys === true)
+					// filter column data
+						var addAllProperties;
+						var addDataType;
+						if( ! Utils.isArray(keys) )
 						{
-							arr.push({Property:prop, Value:value, Type:Utils.getClass(value)});
+							if(typeof keys === 'string')
+							{
+								keys = Utils.toArray(keys);
+							}
+							else
+							{
+								keys = undefined;
+							}
 						}
-						else
+
+					// grab properties
+						var obj	= rows;
+						var arr = [];
+						var row;
+						for (var prop in obj)
 						{
-							arr.push({Property:prop, Value:value});
+							if(keys === undefined || keys.indexOf(prop) !== -1)
+							{
+								var value = PropertyResolver.resolve(obj, prop);
+								arr.push({Property:prop, Value:value});
+							}
 						}
-					}
-					this.colAlignOverride = true;
-					rows = arr;
-					keys = undefined;
+
+					// values
+						this.colAlignOverride = true;
+						rows			= arr;
+						keys			= undefined;
+						maxColWidth		= undefined;
 				}
 
 			// otherwise, start processing the rows of the Array
@@ -233,7 +251,7 @@
 				render:function(output)
 				{
 					// header
-						if(this.caption)
+						if(typeof this.caption !== 'undefined')
 						{
 							this.addCaption();
 						}
@@ -286,75 +304,79 @@
 						}
 
 					// Sort keys according to a Table.ORDER Constant
-						else if(typeof keys == 'number')
+						else if(typeof keys === 'number')
 						{
-							// variables
-								var temp	= [];
-								var hash	= {};
+							if(this.rows)
+							{
+								// variables
+									var temp	= [];
+									var hash	= {};
 
-							// found-order or alphapetical-order
-								if(keys === Table.ORDER_FOUND || keys === Table.ORDER_ALPHA)
-								{
-									// found-order
-										for(var y = 0; y < this.rows.length; y++)
-										{
-											temp = temp.concat(Utils.getKeys(this.rows[y]));
-										}
-										temp = Utils.toUniqueArray(temp);
-
-									// alphapetical-order
-										if(keys === Table.ORDER_ALPHA)
-										{
-											temp = temp.sort();
-										}
-
-									// assign
-										keys = temp;
-								}
-
-							// count-order
-								else if(keys === Table.ORDER_COLUMN)
-								{
-									// grab all keys individually
-										for(var y = 0; y < this.rows.length; y++)
-										{
-											var props = Utils.getKeys(this.rows[y]);
-											for each(var prop in props)
+								// found-order or alphapetical-order
+									if(keys === Table.ORDER_FOUND || keys === Table.ORDER_ALPHA)
+									{
+										// found-order
+											for(var y = 0; y < this.rows.length; y++)
 											{
-												if( ! hash[prop])
+												temp = temp.concat(Utils.getKeys(this.rows[y]));
+											}
+											temp = Utils.toUniqueArray(temp);
+
+										// alphapetical-order
+											if(keys === Table.ORDER_ALPHA)
+											{
+												temp = temp.sort();
+											}
+
+										// assign
+											keys = temp;
+									}
+
+								// count-order
+									else if(keys === Table.ORDER_COLUMN)
+									{
+										// grab all keys individually
+											for(var y = 0; y < this.rows.length; y++)
+											{
+												var props = Utils.getKeys(this.rows[y]);
+												for each(var prop in props)
 												{
-													hash[prop] = 0;
+													if( ! hash[prop])
+													{
+														hash[prop] = 0;
+													}
+													hash[prop] ++;
 												}
-												hash[prop] ++;
 											}
-										}
 
-									// add key values to an array
-										keys = this.getSortedKeys(hash);
-								}
+										// add key values to an array
+											keys = this.getSortedKeys(hash);
+									}
 
-							// group-order
-								else if(keys === Table.ORDER_ROW)
-								{
-									// grab keys per entire row
-										for(var y = 0; y < this.rows.length; y++)
-										{
-											var props = Utils.getKeys(this.rows[y]).join(',');
-											if( ! hash[props])
+								// group-order
+									else if(keys === Table.ORDER_ROW)
+									{
+										// grab keys per entire row
+											for(var y = 0; y < this.rows.length; y++)
 											{
-												hash[props] = 0;
+												var props = Utils.getKeys(this.rows[y]).join(',');
+												if( ! hash[props])
+												{
+													hash[props] = 0;
+												}
+												hash[props] ++;
 											}
-											hash[props] ++;
-										}
 
-									// add key values to an array
-										keys = this.getSortedKeys(hash);
-								}
-							// otherwise, just grab the keys from the first row
-								else
-								{
-									this.keys = Utils.getKeys(this.rows[0]);
-								}
+										// add key values to an array
+											keys = this.getSortedKeys(hash);
+									}
+								// otherwise, just grab the keys from the first row
+									else
+									{
+										this.keys = Utils.getKeys(this.rows[0]);
+									}
+							}
+
 						}
 
 					// if keys are an array, set the keys property
@@ -589,6 +611,7 @@
 				pad:function(str, length, chr, left)
 				{
 					chr = chr || ' ';
+					str = String(str);
 					while(str.length < length)
 					{
 						str = left ? chr + str : str + chr;
