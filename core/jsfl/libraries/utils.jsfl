@@ -162,6 +162,42 @@
 						}
 				},
 
+				/**
+				 * A better typeof function
+				 * @param	{Object}	obj		Any object or value
+				 * @returns	{String}			The type of the object
+				 * @see							http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
+				 */
+				toType:function(obj)
+				{
+					return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+				},
+
+				/**
+				 * Catch-all wrapper for the xjsfl.debug object
+				 * @param	{Error}		obj			A javaScript Error object
+				 * @param	{Function}	obj			A function to test
+				 * @param	{String}	obj			A URI or path of the file to load and debug
+				 * @param	{Array}		params		An Array or arguments to pass to the function
+				 * @param	{Object}	scope		An alternative scope to run the function in
+				* @returns	{Value}					The result of the function if successful
+				 */
+				debug:function(obj, params, scope)
+				{
+					if(obj instanceof Error)
+					{
+						xjsfl.debug.error(obj);
+					}
+					else if(typeof obj === 'function')
+					{
+						xjsfl.debug.func(obj, params, scope);
+					}
+					else if(typeof obj === 'string')
+					{
+						xjsfl.debug.file(obj);
+					}
+				},
+
 			// ---------------------------------------------------------------------------------------------------------------
 			// String methods
 
@@ -196,6 +232,31 @@
 				},
 
 				/**
+				 * Populates a template string with values
+				 * @param	{String}	template	A template String containing {placeholder} variables
+				 * @param	{Object}	properties	Any Object or instance of Class that with named properties
+				 * @param	{Array}		properties	An Array of values, which replace named placeholders in the order they are found
+				 * @param	{Mixed}		...rest		Any values, passed in as parameters, which replace named placeholders in the order they are found
+				 * @returns	{String}				The populated String
+				 */
+				populate:function(template, properties)
+				{
+					/*
+						Conditions where we derive the properties:
+						- there are more than 2 arguments
+						- properties is an Array
+						- properties is a primitive datatype, string, number, boolean
+					*/
+					if( arguments.length > 2 || Utils.isArray(properties) || (typeof properties in {string:1, number:1, boolean:1, date:1}) )
+					{
+						var keys	= Utils.toUniqueArray(String(template.match(/{\w+}/g)).match(/\w+/g));
+						var values	= Utils.isArray(properties) ? properties : Utils.getArguments(arguments, 1);
+						properties	= Utils.combine(keys, values);
+					}
+					return new SimpleTemplate(template, properties).output;
+				},
+
+				/**
 				 * camelCase a string or variable name, separating on alpha-numeric characters
 				 * @param	{String}	value	A string value
 				 * @returns	{String}			The camelCased string
@@ -217,8 +278,7 @@
 			// Array methods
 
 				/**
-				 * Checks if the object is a true array or not
-				 *
+				 * Checks if the object is a true Array or not
 				 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
 				 * @returns	{Boolean}				True or false
 				 */
@@ -401,6 +461,32 @@
 			// Object methods
 
 				/**
+				 * Checks if the object is a true Object or not
+				 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
+				 * @returns	{Boolean}				True or false
+				 */
+				isObject:function(value)
+				{
+					return Object.prototype.toString.call(value) === '[object Object]';
+				},
+
+				/**
+				 * Combines keys and values to make a new populated Object
+				 * @param	{Array}		keys		An array of key names
+				 * @param	{Array}		values		An array of values
+				 * @returns	{Object}				An Object containing the values assigned to keys
+				 */
+				combine:function(keys, values)
+				{
+					var obj = {};
+					for (var i = 0; i < keys.length; i++)
+					{
+						obj[keys[i]] = values[i];
+					}
+					return obj;
+				},
+
+				/**
 				 * Get an object's keys, or all the keys from an Array of Objects
 				 *
 				 * @param	{Object}	obj			Any object with iterable properties
@@ -421,7 +507,7 @@
 							}
 						}
 					}
-					return keys
+					return keys;
 				},
 
 				/**
@@ -696,6 +782,7 @@
 									// attempt to grab object toString() result
 										else
 										{
+											//matches = Object.prototype.toString.call(obj).match(/^\[\w+\s*(\w+)/);
 											matches = obj.toString().match(/^\[\w+\s*(\w+)/);
 											if(matches && matches[1])
 											{
