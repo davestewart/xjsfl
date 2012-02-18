@@ -519,6 +519,56 @@
 				},
 
 				/**
+				 * Comparison function to get a max or min value within an array of objects
+				 * @param	{Array}		elements		An Array of objects with named properties
+				 * @param	{String}	prop			The property to test
+				 * @param	{Boolean}	returnElements	An optional flag to return the element, rather than the value
+				 * @returns	{Array}						A 2-element Array containing the min and max values, or min and max elements
+				 */
+				getExtremeValues:function(elements, prop, returnElement)
+				{
+					// variables
+						var minElement,
+							maxElement,
+							minValue,
+							maxValue;
+
+					// comparison function
+						function test(element, index, elements)
+						{
+							var value = element[prop];
+							if(value > maxValue)
+							{
+								maxValue	= value;
+								maxElement	= element;
+							}
+							else if(value < minValue)
+							{
+								minValue	= value;
+								minElement	= element;
+							}
+						}
+
+					// catch empty array
+						if( ! elements || ! Utils.isArray(elements) || elements.length < 1)
+						{
+							return {min:undefined, max:undefined};
+						}
+
+					// variables
+						minElement		= elements[0];
+						maxElement		= elements[0];
+						minValue		= elements[0][prop];
+						maxValue		= elements[0][prop];
+
+					// test
+						elements.forEach(test);
+
+					// return
+						return returnElement ? [minElement, maxElement] : [minValue, maxValue];
+				},
+
+				/**
 				 * Gets properties from an object's namespace via a dot.syntax.path String
 				 * @param	{Object}	obj			The root object from which to extract the deep value
 				 * @param	{String}	path		The dot-path to an existing object property
@@ -595,56 +645,6 @@
 							}
 					}
 					while(keys.length);
-				},
-
-				/**
-				 * Comparison function to get a max or min value within an array of objects
-				 * @param	{Array}		elements		An Array of objects with named properties
-				 * @param	{String}	prop			The property to test
-				 * @param	{Boolean}	returnElements	An optional flag to return the element, rather than the value
-				 * @returns	{Array}						A 2-element Array containing the min and max values, or min and max elements
-				 */
-				getExtremeValues:function(elements, prop, returnElement)
-				{
-					// variables
-						var minElement,
-							maxElement,
-							minValue,
-							maxValue;
-
-					// comparison function
-						function test(element, index, elements)
-						{
-							var value = element[prop];
-							if(value > maxValue)
-							{
-								maxValue	= value;
-								maxElement	= element;
-							}
-							else if(value < minValue)
-							{
-								minValue	= value;
-								minElement	= element;
-							}
-						}
-
-					// catch empty array
-						if( ! elements || ! Utils.isArray(elements) || elements.length < 1)
-						{
-							return {min:undefined, max:undefined};
-						}
-
-					// variables
-						minElement		= elements[0];
-						maxElement		= elements[0];
-						minValue		= elements[0][prop];
-						maxValue		= elements[0][prop];
-
-					// test
-						elements.forEach(test);
-
-					// return
-						return returnElement ? [minElement, maxElement] : [minValue, maxValue];
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
