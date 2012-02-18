@@ -13,6 +13,10 @@
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // FileSystemObject - Base FileSystem class for Folder and File classes
 
+	// requires
+		xjsfl.init(this);
+		xjsfl.init(this, 'filesystem');
+
 	// -------------------------------------------------------------------------------------------------------------------
 	// constructor and inheritance
 
@@ -22,8 +26,6 @@
 		 */
 		FileSystemObject = function(uri)
 		{
-			//BUG Errors when file URIs go beyond 260 chars. Need to implement fix (replace FLfile methods?) or workaround.
-
 			if(uri)
 			{
 				this.uri = uri;
