@@ -46,7 +46,7 @@
 				{
 					FLfile.createFolder(uri);
 				}
-		})()
+		})();
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -241,12 +241,12 @@
 
 		/**
 		 * Debugs script files by loading and eval-ing them
-		 * @param	{String}	uriOrPath	The URI or path of the file to load
+		 * @param	{String}	pathOrURI	The URI or path of the file to load
 		 */
-		file:function(uriOrPath)
+		file:function(pathOrURI)
 		{
 			// make uri
-				var uri = URI.toURI(uriOrPath, 1);
+				var uri = URI.toURI(pathOrURI, 1);
 
 			if(FLfile.exists(uri))
 			{
@@ -256,7 +256,7 @@
 					{
 						xjsfl.debug._error	= false;
 						state				= true;
-						this['state'] = true; // brackets used, otherwise Komodo puts state above func in the code outliner
+						this['state']		= true; // brackets used, otherwise Komodo puts state above func in the code outliner
 					}
 
 				// debug
@@ -327,8 +327,8 @@
 		/**
 		 * Tests a callback and outputs the error stack if the call fails. Add additional parameters after the callback reference
 		 * @param	{Function}	fn			The function to test
-		 * @param	{Array}		params		An array or arguments to pass to the function
-		 * @param	{Object}	scope		An alternative scope to run the function in
+		 * @param	{Array}		params		An optional Array of arguments or Arguments object to pass to the function
+		 * @param	{Object}	scope		An optional scope to run the function in
 		 * @returns	{Value}					The result of the function if successful
 		 */
 		func:function(fn, params, scope)
@@ -350,7 +350,7 @@
 		/**
 		 * Traces a human-readable error stack to the Output Panel
 		 *
-		 * @param	{Error}		error		A javaScript Error object
+		 * @param	{Error}		error		A JavaScript Error object
 		 * @param	{Boolean}	testing		Internal use only. Removes test() stack items
 		 */
 		error:function(error, testing)
@@ -582,7 +582,7 @@
 					}
 
 				// return null if no URIs found
-					if(uris.length == 0)
+					if(uris.length === 0)
 					{
 						return null;
 					}
@@ -632,7 +632,7 @@
 					load(path)
 					load(name, type)
 
-				// also allow load() to take a wildcard URI, i.e. load('path/to/*.jsfl', true);
+				// also allow load() to take a wildcard URI, i.e. load('path/to/ *.jsfl', true);
 			*/
 
 			// variables
@@ -720,7 +720,7 @@
 													var errorPath	= URI.asPath(errorURI);
 													error.message	= 'The file "' +errorPath+ '" contains errors';
 													error.fileName	= errorURI;
-													error.stack		= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0')
+													error.stack		= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0');
 													xjsfl.loading	= false;
 													throw error;
 												}
@@ -785,11 +785,15 @@
 	 */
 	xjsfl.classes =
 	{
-		paths:{},
+		/**
+		 * @type {Object}	A hash of class/object name:uris
+		 */
+		uris:{},
 
 		/**
 		 * Load a class or array of classes from disk
 		 *
+		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
 		 * @param	{Array}		fileRef		An Array of class filepaths
@@ -797,52 +801,63 @@
 		 */
 		load:function(fileRef)
 		{
-			// detect wildcards
+			// variables
+				/**
+				 * @type {Array}	An Array of filename tokens / URIs
+				 */
+				var tokens = [];
+
+			// a wildcard path of the format 'path/to/folder/*'
 				if(typeof fileRef === 'string' && fileRef.indexOf('*') > -1)
 				{
-					var uri		= URI.toURI(fileRef, 1);
-					var pathURI	= URI.getPath(uri);
-					var files	= FLfile.listFolder(uri, 'files');
-					var paths	= [];
-					for each(var file in files)
-					{
-						paths.push(pathURI + file);
-					}
+					// resolve the (final) wildcard URI and folder URI
+						var uri			= URI.toURI(fileRef.replace(/\.jsfl$/, '.jsfl'), 1);
+						var folderURI	= URI.getPath(uri);
+
+					// this should result in an Array of URIs
+						var files		= FLfile.listFolder(uri, 'files');
+						for each(var file in files)
+						{
+							tokens.push(folderURI + file);
+						}
 				}
 
 			// make sure paths are in an array, so we can treat them all the same
 				else
 				{
-					var paths = fileRef instanceof Array ? fileRef : [fileRef];
+					tokens = fileRef instanceof Array ? fileRef : [fileRef];
 				}
-
-			//TODO Add a check to see if we are loading, and if so, only load classes that are not yet defined. Can we do that? Do we need to cache load paths in that case?
 
 			// load classes
-				for each(var path in paths)
+				for each(var token in tokens)
 				{
-					if(path.indexOf('xjsfl') === -1) // don't reload load xjsfl
+					if(token.indexOf('xjsfl') === -1) // never reload load xjsfl
 					{
-						xjsfl.file.load(path, 'library');
+						// if the token is not a URI, find the URI(s) of the token
+							if( ! URI.isURI(token) )
+							{
+								var uris = xjsfl.file.find('library', token) || [];
+							}
+							else
+							{
+								var uris = [token];
+							}
+
+						// now that we have an Array of URIs, loop over them and load any that have not already been loaded
+							for each(var uri in uris)
+							{
+								var loadedURIs = Utils.getValues(xjsfl.classes.uris);
+								if(loadedURIs.indexOf(uri) === -1)
+								{
+									xjsfl.file.load(uri);
+								}
+								else
+								{
+									var path = URI.toPath(uri, true);
+									xjsfl.output.log('skipping "' +path+ '" (already loaded!)', false, false);
+								}
+							}
 					}
-				}
-
-			// return
-				return this;
-		},
-
-		/**
-		 * Loads a class only if not already defined
-		 * @param	{String}	name		The class name, such as 'Template', or 'Table'
-		 * @returns
-		 */
-		require:function(name)
-		{
-			// load path
-				var path = this.paths[name];
-				if( ! path )
-				{
-					this.load(name);
 				}
 
 			// return
@@ -854,15 +869,19 @@
 		 *
 		 * @param	{String}	name		The name of the class / function / object to register
 		 * @param	{Object}	obj			The actual class / function / object
+		 * @param	{String}	uri			An optional URI to the object's file, defaults to the calling file's URI
 		 * @returns	{xjsfl}					The main xJSFL object
 		 */
-		register:function(name, obj)
+		register:function(name, obj, uri)
 		{
 			if( ! /^(paths|load|loadFolder|require|register|restore)$/.test(name) )
 			{
-				xjsfl.classes[name]    = obj;
-				var object             = Utils.getStack().pop();
-				this.paths[name]       = object.path + object.file;
+				// store class
+					xjsfl.classes[name]	= obj;
+
+				// store URI
+					var stack			= Utils.getStack();
+					this.uris[name]		= uri ? URI.toURI(uri) : stack.pop().uri;
 			}
 			return this;
 		},
@@ -870,29 +889,26 @@
 		/**
 		 * Internal function that restores a class/function to the supplied namespace
 		 *
-		 * @param	{string}	name		The name of the class to restore
 		 * @param	{Object}	scope		The scope to which the class should be restored to (defaults to window)
+		 * @param	{string}	name		An optional name of the class to restore. if this is omitted, all classes are restored
 		 * @returns	{xjsfl}					The main xJSFL object
 		 */
-		restore:function(name, scope)
+		restore:function(scope, name)
 		{
-			// restore all classes
-				if(typeof name !== 'string')
+			// restore all classes if no name is passed
+				if(arguments.length === 1)
 				{
-					scope = name;
 					for (name in xjsfl.classes)
 					{
-						xjsfl.classes.restore(name, scope);
+						xjsfl.classes.restore(scope, name);
 					}
 				}
 
 			// restore only one class
-				else if(typeof name == 'string')
+				else if(typeof name === 'string')
 				{
 					if( ! /^load|require|register|restore$/.test(name) )
 					{
-						//trace('Restoring:' + name)
-						scope = scope || window;
 						scope[name] = xjsfl.classes[name];
 					}
 				}
@@ -1426,16 +1442,25 @@
 					// debugging
 						scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
 						scope.list		= function(){ fl.trace('list() not yet initialized'); };
+						scope.debug		= function(obj, params, scope)
+						{
+							if(obj instanceof Error)
+							{
+								xjsfl.debug.error(obj);
+							}
+							else if(typeof obj === 'function')
+							{
+								xjsfl.debug.func(obj, params, scope);
+							}
+							else if(typeof obj === 'string')
+							{
+								xjsfl.debug.file(obj);
+							}
+						}
 
 					// file
-						scope.load		= function(pathOrURI)
-						{
-							return xjsfl.file.load(URI.toURI(pathOrURI, 1));
-						}
-						scope.save		= function(pathOrURI, contents)
-						{
-							return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents);
-						}
+						scope.load		= function(pathOrURI){ return xjsfl.file.load(URI.toURI(pathOrURI, 1)); }
+						scope.save		= function(pathOrURI, contents){ return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents); }
 
 			}
 	}
@@ -1448,18 +1473,31 @@
 	 */
 	xjsfl.init = function(scope, scopeName)
 	{
-		// copy core variables and functions into scope
-			xjsfl.initVars(scope, scopeName);
+		if( ! (xjsfl.initializing || xjsfl.loading) )
+		{
+			// set flag
+				xjsfl.initializing = true;
 
-		// debug
-			if(scopeName)
-			{
-				xjsfl.output.trace('copying classes to [' +scopeName+ ']');
-			}
+			// copy core variables and functions into scope
+				xjsfl.initVars(scope, scopeName);
 
-		// copy registered classes into scope
-			xjsfl.classes.restore(scope);
+			// debug
+				if(scopeName)
+				{
+					xjsfl.output.trace('copying classes to [' +scopeName+ ']');
+				}
 
-		// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
-			scope.xJSFL		= xjsfl;
+			// copy registered classes into scope
+				xjsfl.classes.restore(scope);
+
+			// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
+				scope.xJSFL = xjsfl;
+				xjsfl.initializing = false;
+		}
+		else
+		{
+			var uri = Utils.getStack().pop().uri;
+			xjsfl.output.log('"' +URI.toPath(uri, true)+ '" attempted to reinitialize...', false, false);
+		}
+
 	}
