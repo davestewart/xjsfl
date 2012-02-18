@@ -40,8 +40,12 @@
 
 			var paths =
 			[
-				// relative paths
+				// nothing
+					null,
+					undefined,
 					'',
+
+				// relative paths
 					'./',
 					'../',
 					'folder',
@@ -102,12 +106,38 @@
 					'/',
 					'//',
 					'C:/',
-					'C:'
+					'C:',
+
+				// misc
+					{},
+					[1, 2, 3],
+					new Date()
 
 			];
 
 	// --------------------------------------------------------------------------------
-	// Test filenames and URIs
+	// Test URI instances
+
+			if(1)
+			{
+				for each(var path in paths)
+				{
+					// attempt to get the conversion
+						try
+						{
+							var uri		= new URI(path);
+							Table.print(uri, path, 'uri,path,parent,name,type');
+						}
+						catch(err)
+						{
+							trace(populate('{err} on line {line} in file "{file}"', err, err.lineNumber, err.fileName));
+						}
+				}
+			}
+
+
+	// --------------------------------------------------------------------------------
+	// Test URI static methods
 
 		// --------------------------------------------------------------------------------
 		// xJSFL conversion to URIs
