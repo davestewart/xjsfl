@@ -797,9 +797,10 @@
 		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
 		 * @param	{Array}		fileRef		An Array of class filepaths
+		 * @param	{Boolean}	reload		An optional Boolean to force all files to reload if already loaded
 		 * @returns	{xjsfl}					The main xJSFL object
 		 */
-		load:function(fileRef)
+		load:function(fileRef, reload)
 		{
 			// variables
 				/**
@@ -847,7 +848,7 @@
 							for each(var uri in uris)
 							{
 								var loadedURIs = Utils.getValues(xjsfl.classes.uris);
-								if(loadedURIs.indexOf(uri) === -1)
+								if(loadedURIs.indexOf(uri) === -1 || reload)
 								{
 									xjsfl.file.load(uri);
 								}
@@ -1416,52 +1417,29 @@
 
 				// global variables
 
-					// $dom
-						scope.__defineGetter__( '$dom', function(){ return fl.getDocumentDOM(); } );
-
-					// $timeline
-						scope.__defineGetter__( '$timeline', function(){ var dom = $dom; return dom ? dom.getTimeline() : null; } );
-
-					// $library
-						scope.__defineGetter__( '$library', function(){ var dom = $dom; return dom ? dom.library : null; } );
-
-					// $selection
-						scope.__defineGetter__( '$selection', function(){ var dom = $dom; return dom ? dom.selection : null; } );
-						scope.__defineSetter__( '$selection', function(elements){ var dom = $dom; if(dom){dom.selectNone(); dom.selection = elements} } );
+					scope.__defineGetter__( '$dom', function(){ return fl.getDocumentDOM(); } );
+					scope.__defineGetter__( '$timeline', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.getTimeline() : null; } );
+					scope.__defineGetter__( '$library', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.library : null; } );
+					scope.__defineGetter__( '$selection', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.selection : null; } );
+					scope.__defineSetter__( '$selection', function(elements){ var dom = fl.getDocumentDOM(); if(dom){dom.selectNone(); dom.selection = elements} } );
 
 				// global functions
 
 					// output
-						scope.trace		= function(){ fl.outputPanel.trace(Array.slice.call(this, arguments).join(', ')) };
 						scope.clear		= fl.outputPanel.clear;
-						scope.populate	= function(template, properties)
-						{
-							return new SimpleTemplate(template, properties).output;
-						}
+						scope.trace		= function(){ fl.outputPanel.trace(Array.slice.call(this, arguments).join(', ')) };
 
-					// debugging
-						scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
-						scope.list		= function(){ fl.trace('list() not yet initialized'); };
-						scope.debug		= function(obj, params, scope)
-						{
-							if(obj instanceof Error)
-							{
-								xjsfl.debug.error(obj);
-							}
-							else if(typeof obj === 'function')
-							{
-								xjsfl.debug.func(obj, params, scope);
-							}
-							else if(typeof obj === 'string')
-							{
-								xjsfl.debug.file(obj);
-							}
-						}
+					// string
+						scope.populate	= function(template, properties){ return Utils.populate.apply(this, arguments); }
 
 					// file
 						scope.load		= function(pathOrURI){ return xjsfl.file.load(URI.toURI(pathOrURI, 1)); }
 						scope.save		= function(pathOrURI, contents){ return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents); }
 
+					// introspection
+						scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
+						scope.list		= function(){ fl.trace('list() not yet initialized'); };
+						scope.debug		= function(obj, params, scope){ Utils.debug(obj, params, scope); }
 			}
 	}
 
