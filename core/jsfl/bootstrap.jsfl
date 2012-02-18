@@ -27,6 +27,9 @@
 					}
 				}
 
+			// placeholder for settings
+				xjsfl.settings = {};
+
 			// output needs to be created before main library is loaded
 				xjsfl.output =
 				{
@@ -94,6 +97,12 @@
 			// --------------------------------------------------------------------------------
 			// set up
 
+					function loadClass(token)
+					{
+						xjsfl.output.log('loading "{core}jsfl/libraries/' +token+ '.jsfl"');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/' +token+ '.jsfl');
+					}
+
 				// log
 					xjsfl.output.log('running core bootstrap...', true, true, true)
 
@@ -109,33 +118,31 @@
 					}
 
 				// need to load Utils & URI libraries first as core methods rely on them
-					xjsfl.output.log('loading Utils library...');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils.jsfl');
-
-					xjsfl.output.log('loading URI library...');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/uri.jsfl');
+					xjsfl.output.log('loading core librraies...', true);
+					loadClass('utils');
+					loadClass('uri');
 
 			// --------------------------------------------------------------------------------
 			// load core
 
 				// core
 					xjsfl.output.log('loading xJSFL...', true);
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
+					loadClass('xjsfl');
 
 				// initialize core functions
 					xjsfl.output.log('initializing variables...')
 					xjsfl.initVars(this, 'window');
 
 				// now, once core has loaded, register URI and Utils library
-					xjsfl.classes.register('Utils', Utils);
-					xjsfl.classes.register('URI', URI);
+					xjsfl.classes.register('Utils', Utils, '{core}jsfl/libraries/utils.jsfl');
+					xjsfl.classes.register('URI', URI, '{core}jsfl/libraries/uri.jsfl');
 
 				// reset file debugging
 					//xjsfl.debug.state = false;
 
 				// load key libraries
-					xjsfl.output.log('loading core libraries...', true);
-					xjsfl.classes.load(['filesystem', 'uri', 'template', 'output', 'class']);
+					xjsfl.output.log('loading additional libraries...', true);
+					xjsfl.classes.load(['filesystem', 'class', 'output', 'template']);
 
 				// load other libraries
 					xjsfl.classes.load('libraries/*.jsfl');
@@ -154,11 +161,10 @@
 					xjsfl.output.log('loading user bootstrap...', true);
 					xjsfl.file.load('//user/jsfl/bootstrap.jsfl');
 
-				// flags
+				// cleanup
 					xjsfl.loading = false;
-
-				// reset any debugging
 					xjsfl.debug.state = debugState;
+					delete loadClass;
 		}
 		catch(error)
 		{
