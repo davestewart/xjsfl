@@ -13,9 +13,8 @@
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // FileSystemObject - Base FileSystem class for Folder and File classes
 
-	// requires
-		xjsfl.init(this);
-		xjsfl.init(this, 'filesystem');
+	// temp init
+		//xjsfl.init(this, 'filesystem');
 
 	// -------------------------------------------------------------------------------------------------------------------
 	// constructor and inheritance
@@ -154,7 +153,7 @@
 				{
 					if(this.uri)
 					{
-						var uri = URI.getPath(this.uri);
+						var uri = URI.getParent(this.uri);
 						return new Folder(uri);
 					}
 					return null;
@@ -195,7 +194,7 @@
 				pathOrUri = pathOrUri.replace(/\/*$/, '/');
 
 			// uri
-				var uri = URI.getPath(URI.toURI(pathOrUri, 1));
+				var uri = URI.getFolder(URI.toURI(pathOrUri, 1));
 
 			// constructor
 				FileSystemObject.call(this, uri);
@@ -583,7 +582,7 @@
 								}
 
 							// make sure the target folder exists
-								var targetFolder = new Folder(URI.getPath(trgURI));
+								var targetFolder = new Folder(trgURI);
 								if( ! targetFolder.exists )
 								{
 									targetFolder.create();
@@ -789,12 +788,21 @@
 				/**
 				 * @type {Boolean} Set or get the read-only state of the file
 				 */
-				get readOnly (){ return this.exists && FLfile.getAttributes(this.uri).indexOf('R') !== -1; },
-				set readOnly (state)
+				get writable (){ return this.exists && FLfile.getAttributes(this.uri).indexOf('R') === -1; },
+				set writable (state)
 				{
 					if(this.exists)
 					{
-						FLfile.setAttributes(this.uri, FLfile.getAttributes(this.uri) + 'W');
+						var attributes = FLfile.getAttributes(this.uri);
+						if(state)
+						{
+							attributes += 'W';
+						}
+						else
+						{
+							attributes = attributes.replace('W', '') + 'R';
+						}
+						FLfile.setAttributes(this.uri,  attributes);
 					}
 				},
 
