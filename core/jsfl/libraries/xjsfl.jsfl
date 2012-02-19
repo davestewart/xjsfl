@@ -397,7 +397,7 @@
 				var output		= new xjsfl.classes.Template(uriErrors, data).render();
 
 			// set loading to false
-				xjsfl.loading = false;
+				xjsfl.settings.loading = false;
 
 			// trace and return
 				fl.trace(output);
@@ -716,12 +716,12 @@
 												var matches		= stack[0].code.match(/file:[^"]+/);
 												if(matches)
 												{
-													var errorURI	= String(matches).toString();
-													var errorPath	= URI.asPath(errorURI);
-													error.message	= 'The file "' +errorPath+ '" contains errors';
-													error.fileName	= errorURI;
-													error.stack		= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0');
-													xjsfl.loading	= false;
+													var errorURI			= String(matches).toString();
+													var errorPath			= URI.asPath(errorURI);
+													error.message			= 'The file "' +errorPath+ '" contains errors';
+													error.fileName			= errorURI;
+													error.stack				= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0');
+													xjsfl.settings.loading	= false;
 													throw error;
 												}
 											}
@@ -1451,10 +1451,10 @@
 	 */
 	xjsfl.init = function(scope, scopeName)
 	{
-		if( ! (xjsfl.initializing || xjsfl.loading) )
+		if( ! (xjsfl.settings.initializing || xjsfl.settings.loading) )
 		{
 			// set flag
-				xjsfl.initializing = true;
+				xjsfl.settings.initializing = true;
 
 			// copy core variables and functions into scope
 				xjsfl.initVars(scope, scopeName);
@@ -1470,7 +1470,7 @@
 
 			// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 				scope.xJSFL = xjsfl;
-				xjsfl.initializing = false;
+				xjsfl.settings.initializing = false;
 		}
 		else
 		{
