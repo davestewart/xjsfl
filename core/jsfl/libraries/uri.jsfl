@@ -14,9 +14,9 @@
 	// ---------------------------------------------------------------------------------------------------------------
 	// class
 
-		function URI(pathOrURI)
+		function URI(pathOrURI, context)
 		{
-			this.uri = URI.toURI(pathOrURI, 1);
+			this.uri = URI.toURI(pathOrURI, context || 1);
 		}
 
 		URI.prototype =
@@ -26,10 +26,10 @@
 			/** @type {String}	The file:/// URI of the URI instance (casting the URI object to a String gives the same result) */
 			uri:'',
 
-			/** @type {String}	The path of the URI instance */
-			get path()
+			/** @type {String}	The folder path URI to the URI instance */
+			get folder()
 			{
-				return new URI(URI.getPath(this.uri));
+				return URI.getFolder(this.uri);
 			},
 
 			/** @type {String}	The name of the file or folder referred to by the URI instance */
@@ -38,25 +38,37 @@
 				return URI.getName(this.uri);
 			},
 
-			/** @type {URI}	The parent folder of the file or folder referred to by the URI instance */
-			get parent()
+			/** @type {String}	The platform-specific path of the file or folder referred to by the URI instance */
+			get path()
 			{
-				return new URI(URI.getParent(this.uri));
+				return URI.asPath(this.uri);
 			},
 
+			/** @type {String}	The type of the URI, 'file' or 'folder' */
 			get type()
 			{
 				return URI.isFile(this.uri) ? 'file' : 'folder';
 			},
 
-			resolve:function(pathOrURI)
+			/** @type {URI}		The parent folder of the file or folder referred to by the URI instance */
+			getParent:function()
 			{
-				return new URI(URI.toURI(pathOrURI, this.uri));
+				return new URI(URI.getParent(this.uri));
+			},
+
+			/**
+			 * Returns a new URI that resolves to the target path or URI
+			 * @param	{String}	pathOrURI	The target URI, such as '../../'
+			 * @returns	{URI}					The new URI
+			 */
+			pathTo:function(pathOrURI)
+			{
+				return URI.pathTo(this.uri, pathOrURI);
 			},
 
 			/**
 			 * The URI string of the URI instance
-			 * @returns	{String}		The string of the URI, i.e. file://path/to/file.txt
+			 * @returns	{String}				The string of the URI, i.e. file://path/to/file.txt
 			 */
 			toString:function()
 			{
@@ -164,7 +176,7 @@
 										}
 										else
 										{
-											uri = URI.getPath(root) + path;
+											uri = URI.getFolder(root) + path;
 										}
 								}
 								else
@@ -236,7 +248,7 @@
 												// grab calling URI
 													var stack	= Utils.getStack();
 													var source	= stack[stackIndex].uri;
-													var root	= URI.getPath(source);
+													var root	= URI.getFolder(source);
 
 												// grab root folder by comparing against registered URIs
 													var folders	= xjsfl.settings.folders.all;
@@ -287,7 +299,7 @@
 						{
 							var stack	= Utils.getStack();
 							var source	= stack[stackIndex].uri;
-							uri			= URI.getPath(source) + path;
+							uri			= URI.getFolder(source) + path;
 						}
 
 				// ---------------------------------------------------------------------------------------------------------------
@@ -513,6 +525,16 @@
 			}
 
 			/**
+			 * Tests if a path or URI is relative (includes tokens and special xJSFL syntax)
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @returns	{Boolean}				true or false, depending on the result
+			 */
+			URI.isRelative = function(pathOrURI)
+			{
+				return ! URI.isAbsolute(pathOrURI);
+			}
+
+			/**
 			 * Tests if a path or URI looks like a filename, rather than a folder
 			 * @param	{String}	pathOrURI	A valid path or URI
 			 * @returns	{Boolean}				true or false, depending on the result
@@ -541,7 +563,7 @@
 			 * @param	{String}	pathOrURI	A valid path or URI
 			 * @returns	{String}				The folder of the path or URI
 			 */
-			URI.getPath = function(pathOrURI)
+			URI.getFolder = function(pathOrURI)
 			{
 				return String(pathOrURI).replace(/([^\/\\]+)$/, '');
 			}
@@ -577,18 +599,18 @@
 			}
 
 			/**
-			 * Resolves a path from the Source URI to a target URI
+			 * Resolves a path from the Source URI to a target URI, returning a relative path-formatted path
 			 * @param	{String}	srcURI		The source path or URI
 			 * @param	{String}	trgURI		The target path or URI
-			 * @returns	{String}				The new relative path between the two, or the absolute path if it doesn't exist;
+			 * @returns	{String}				The new relative path between the two, or the absolute URI if there's no relationship
 			 */
-			URI.getRelative = function(srcURI, trgURI)
+			URI.pathTo = function(srcURI, trgURI)
 			{
 				// variables
 					var trgPath;
 					var srcPart, trgPart;
-					var srcParts	= srcURI.replace('file:///', '').split('/');
-					var trgParts	= trgURI.replace('file:///', '').split('/');
+					var srcParts	= URI.asURI(srcURI).replace('file:///', '').split('/');
+					var trgParts	= URI.asURI(trgURI).replace('file:///', '').split('/');
 
 				// loop over folders and remove common ancestors
 					while(srcParts.length > 1 && srcParts[0] == trgParts[0])
@@ -609,19 +631,58 @@
 						{
 							trgPath = trgParts.pop();
 						}
-					// src is above, so path will be 'path/to/trg.txt'
+					// src is below, so path will be '../../trg.txt'
 						else if(srcParts.length > 1)
 						{
 							trgPath = Utils.repeat('../', srcParts.length - 1) + trgParts.join('/');
 						}
-					// src is below, so path will be '../../../trg.txt'
+					// src is above, so path will be 'path/to/trg.txt'
 						else if(srcParts.length < trgParts.length)
 						{
 							trgPath = trgParts.join('/');
 						}
 
 				// return
-					return trgPath;
+					return URI.asPath(trgPath);
+			}
+
+			/**
+			 * Returns the path or URI truncated to the supplied folder name or path
+			 * @param	{String}	pathOrURI	A path or URI string
+			 * @param	{URI}		pathOrURI	A URI instance
+			 * @param	{String}	folder		The name or partial name of a folder to find in the path
+			 * @returns	{String}				The new URI or path
+			 */
+			URI.findFolder = function(pathOrURI, folder)
+			{
+				// build the string to match the folder
+					var str = '^.*' + Utils.rxEscape(folder);
+					if( ! /\/$/.test(folder))
+					{
+						str += '.*?/'; // only add wildcard if the last character is not a slash
+					}
+
+				// match and return
+					var rx			= new RegExp(str, 'i');
+					var matches		= pathOrURI.match(rx);
+					return matches ? matches[0] : null;
+			}
+
+			/**
+			 * Re-targets a specified portion of a URI (or URIs) to point at a new folder
+			 * @param	{String}	src			The source path or URI
+			 * @param	{Array}		src			An Array of source paths or URI
+			 * @param	{String}	base		The name or partial name of a folder in the src path or URI you want to branch from
+			 * @param	{String}	trg			A folder you want to retarget to, from the source base and downwards
+			 * @returns	{String}				The new path or URI
+			 * @returns	{Array}					An Array of new paths or URIs
+			 */
+			URI.reTarget = function(src, base, trg)
+			{
+				src		= String(src);
+				base	= URI.findFolder(src, base);
+				trg		= URI.getFolder(trg);
+				return trg + src.substr(base.length);
 			}
 
 		// ---------------------------------------------------------------------------------------------------------------
