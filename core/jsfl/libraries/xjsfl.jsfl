@@ -1453,7 +1453,7 @@
 						scope.populate	= function(template, properties){ return Utils.populate.apply(this, arguments); }
 
 					// file
-						scope.load		= function(pathOrURI){ return xjsfl.file.load(URI.toURI(pathOrURI, 1)); }
+						scope.load		= function(pathOrURI, quiet){ return xjsfl.file.load(URI.toURI(pathOrURI, 1), null, quiet); }
 						scope.save		= function(pathOrURI, contents){ return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents); }
 
 					// introspection
