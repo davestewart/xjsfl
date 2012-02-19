@@ -29,13 +29,11 @@
 		{
 			//TODO Add option to automatically skip functions, including constructors
 
-			// if a single, (non-Array) object is passed, transpose properties and values into two columns
-			// and only pull out the keys that are specified in keys
+			// if a single, (non-Array) object is passed, transpose properties and values
+			// into two columns and only pull out the keys that are specified in keys
 				if( ! (rows instanceof Array) )
 				{
 					// filter column data
-						var addAllProperties;
-						var addDataType;
 						if( ! Utils.isArray(keys) )
 						{
 							if(typeof keys === 'string')
@@ -62,10 +60,10 @@
 						}
 
 					// values
-						this.colAlignOverride = true;
-						rows			= arr;
-						keys			= undefined;
-						maxColWidth		= undefined;
+						this.setMaxWidth(1000);
+						this.colAlignOverride	= true;
+						rows					= arr;
+						keys					= undefined;
 				}
 
 			// otherwise, start processing the rows of the Array
