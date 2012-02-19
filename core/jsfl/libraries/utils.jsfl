@@ -286,6 +286,31 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
+			// RegExp methods
+
+				/**
+				 * Escapes a string for use in RegExp constructors
+				 * @param	{String}	value	The string to be RegExp escaped
+				 * @returns	{String}			The escaped string
+				 */
+				rxEscape:function(value)
+				{
+				    return String(value).replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+				},
+
+				/**
+				 * Converts a wildcard (*) string into a non-greedy RegExp
+				 * @param	{String}	value	The wildcard string to convert
+				 * @returns	{RegExp}			The new RegExp
+				 */
+				makeWildcard:function(value)
+				{
+					var rx = Utils.rxEscape(value).replace(/\\\*/g, '.*?');
+					return new RegExp(rx);
+				},
+
+
+			// ---------------------------------------------------------------------------------------------------------------
 			// Array methods
 
 				/**
@@ -923,7 +948,7 @@
 							}
 							else
 							{
-								return new Folder(URI.getPath(ref)).uris;
+								return new Folder(ref).uris;
 							}
 						}
 
@@ -1140,4 +1165,3 @@
 		{
 			xjsfl.classes.register('Utils', Utils);
 		}
-
