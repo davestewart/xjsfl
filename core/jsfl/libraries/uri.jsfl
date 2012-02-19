@@ -576,6 +576,54 @@
 					return drive + path.replace(rx, '');
 			}
 
+			/**
+			 * Resolves a path from the Source URI to a target URI
+			 * @param	{String}	srcURI		The source path or URI
+			 * @param	{String}	trgURI		The target path or URI
+			 * @returns	{String}				The new relative path between the two, or the absolute path if it doesn't exist;
+			 */
+			URI.getRelative = function(srcURI, trgURI)
+			{
+				// variables
+					var trgPath;
+					var srcPart, trgPart;
+					var srcParts	= srcURI.replace('file:///', '').split('/');
+					var trgParts	= trgURI.replace('file:///', '').split('/');
+
+				// loop over folders and remove common ancestors
+					while(srcParts.length > 1 && srcParts[0] == trgParts[0])
+					{
+						srcPart 	= srcParts.shift();
+						trgPart 	= trgParts.shift();
+					}
+
+				// determine relationship between srcURI and trgURI
+
+					// no relationship, so just return the trgURI
+						if(srcPart === undefined)
+						{
+							trgPath = trgURI;
+						}
+					// src is same level, so path will be 'trg.txt'
+						else if(srcParts.length == 1 && trgParts.length == 1)
+						{
+							trgPath = trgParts.pop();
+						}
+					// src is above, so path will be 'path/to/trg.txt'
+						else if(srcParts.length > 1)
+						{
+							trgPath = Utils.repeat('../', srcParts.length - 1) + trgParts.join('/');
+						}
+					// src is below, so path will be '../../../trg.txt'
+						else if(srcParts.length < trgParts.length)
+						{
+							trgPath = trgParts.join('/');
+						}
+
+				// return
+					return trgPath;
+			}
+
 		// ---------------------------------------------------------------------------------------------------------------
 		// utility functions
 
