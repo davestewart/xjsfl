@@ -554,6 +554,16 @@
 				return pathOrURI == '' || /[\/\\]$/.test(String(pathOrURI));
 			}
 
+			/**
+			 * Tests if a path or URI is at the highest folder level it can go
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @returns	{Boolean}				true or false, depending on the result
+			 */
+			URI.isRoot = function(pathOrURI)
+			{
+				return pathOrURI != null ? /^([\w ]+[:|]\/?|\/)$/.test(String(pathOrURI).replace('file:///', '')) : false;
+			}
+
 
 		// ---------------------------------------------------------------------------------------------------------------
 		// extraction functions
@@ -664,7 +674,7 @@
 
 				// match and return
 					var rx			= new RegExp(str, 'i');
-					var matches		= pathOrURI.match(rx);
+					var matches		= String(pathOrURI).match(rx);
 					return matches ? matches[0] : null;
 			}
 
