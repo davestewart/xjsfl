@@ -232,6 +232,17 @@
 				},
 
 				/**
+				 * Repeat a string a specified number of times
+				 * @param	{String}	str			The string to repeat
+				 * @param	{Number}	num			The number of times to repeat the string
+				 * @returns	{String}				The new string
+				 */
+				repeat:function(str, num)
+				{
+					return Array(num + 1).join(str);
+				},
+
+				/**
 				 * Populates a template string with values
 				 * @param	{String}	template	A template String containing {placeholder} variables
 				 * @param	{Object}	properties	Any Object or instance of Class that with named properties
@@ -360,16 +371,19 @@
 				},
 
 				/**
-				 * Basic numeric Array sort function
-				 * @param	{Array}		arr			An array to sort
-				 * @param	{Boolean}	reverse		An optional flag to sort in reverse (descending) order
-				 * @returns	{Array}					The sorted Array
+				 * Basic numeric Array sort function (native sort() sorts by string)
+				 * @param	{Array}		arr					An array to sort
+				 * @param	{Boolean}	reverse				An optional flag to sort in reverse (descending) order
+				 * @param	{Boolean}	caseInsensitive		An optional flag to sort case insensitively
+				 * @returns	{Array}							The sorted Array
 				 */
-				sort:function(arr, reverse)
+				sort:function(arr, reverse, caseInsensitive)
 				{
-					function asc(a, b)  { return a - b }
-					function desc(a, b) { return b - a }
-					return arr.sort(reverse == true ? desc : asc);
+					function asc(a, b)  { return a - b; }
+					function desc(a, b) { return b - a; }
+					function asci(a, b)  { return String(a).toLowerCase().localeCompare(String(b).toLowerCase()); }
+					function desci(a, b) { return String(b).toLowerCase().localeCompare(String(a).toLowerCase()); }
+					return caseInsensitive ? arr.sort(reverse ? desci : asci) : arr.sort(reverse == true ? desc : asc);
 				},
 
 				/**
@@ -1126,3 +1140,4 @@
 		{
 			xjsfl.classes.register('Utils', Utils);
 		}
+
