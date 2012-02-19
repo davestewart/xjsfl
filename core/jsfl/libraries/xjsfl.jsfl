@@ -397,11 +397,42 @@
 				var output		= new xjsfl.classes.Template(uriErrors, data).render();
 
 			// set loading to false
-				xjsfl.settings.loading = false;
+				xjsfl.loading = false;
 
 			// trace and return
 				fl.trace(output);
 				return output;
+		},
+
+		/**
+		 * Detects errors in loaded files
+		 */
+		load:function()
+		{
+			// detect any JavaScript errors
+				var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
+				fl.outputPanel.save(outputURI);
+				var output		= FLfile.read(outputURI);
+				FLfile.remove(outputURI);
+
+			// throw a new fake error if the file appeared to load incorrectly
+				if(/The following JavaScript error\(s\) occurred:\s*$/.test(output))
+				{
+					var error		= new Error('<error>', '', 0);
+					var stack		= Utils.getStack();
+					stack.shift();
+					var matches		= stack[0].code.match(/file:[^"]+/);
+					if(matches)
+					{
+						var errorURI			= String(matches).toString();
+						var errorPath			= URI.asPath(errorURI);
+						error.message			= 'The file "' +errorPath+ '" contains errors';
+						error.fileName			= errorURI;
+						error.stack				= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0');
+						xjsfl.loading	= false;
+						throw error;
+					}
+				}
 		},
 
 		/**
@@ -616,12 +647,13 @@
 		 *
 		 * @param	{String}		name	The name or path fragment to a file, with or without the file extension
 		 * @param	{String}		type	The folder type in which to look (i.e. settings) for the file(s)
+		 * @param	{Boolean}		quiet	Loads the file quietly, without tracing to the Outupt panel
 		 *
 		 * @returns	{Boolean}				A Boolean indicating Whether the file was successfully found and loaded
 		 * @returns	{XML}					An XML object of the content of the file, if XML
 		 * @returns	{String}				The string content of the file otherwise
 		 */
-		load:function (path, type)
+		load:function (path, type, quiet)
 		{
 			/*
 				// path types
@@ -692,7 +724,10 @@
 								xjsfl.file.stack.push(uri);
 
 							// log
-								xjsfl.output.log('loading "' + URI.asPath(uri, true) + '"');
+								if(quiet !== true)
+								{
+									xjsfl.output.log('loading "' + URI.asPath(uri, true) + '"');
+								}
 
 							// do something depending on extension
 								switch(ext)
@@ -702,29 +737,8 @@
 											fl.runScript(uri);
 											xjsfl.file.stack.pop();
 
-										// detect any JavaScript errors
-											var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
-											fl.outputPanel.save(outputURI);
-											var output		= FLfile.read(outputURI);
-											FLfile.remove(outputURI);
-
-										// throw a new fake error if the file appeared to load incorrectly
-											if(/The following JavaScript error\(s\) occurred:\s*$/.test(output))
-											{
-												var error		= new Error('<error>', '', 0);
-												var stack		= Utils.getStack();
-												var matches		= stack[0].code.match(/file:[^"]+/);
-												if(matches)
-												{
-													var errorURI			= String(matches).toString();
-													var errorPath			= URI.asPath(errorURI);
-													error.message			= 'The file "' +errorPath+ '" contains errors';
-													error.fileName			= errorURI;
-													error.stack				= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0');
-													xjsfl.settings.loading	= false;
-													throw error;
-												}
-											}
+										// test for load errors
+											xjsfl.debug.load()
 
 										// otherwise, just return the URI
 											return uri;
@@ -813,7 +827,7 @@
 				{
 					// resolve the (final) wildcard URI and folder URI
 						var uri			= URI.toURI(fileRef.replace(/\.jsfl$/, '.jsfl'), 1);
-						var folderURI	= URI.getPath(uri);
+						var folderURI	= URI.getFolder(uri);
 
 					// this should result in an Array of URIs
 						var files		= FLfile.listFolder(uri, 'files');
@@ -987,7 +1001,7 @@
 	xjsfl.modules =
 	(
 		/**
-		 * The module loading process goes like this...
+		 * The module lazy-loading process goes like this...
 		 *
 		 * 1 - 	All modules reside in their own folder, with a manifest.xml in the root, and a
 		 * 		bootstrap.jsfl in jsfl. The manifest stores all information about the module, and
@@ -999,8 +1013,10 @@
 		 *		folder.
 		 *
 		 * 3 -	For any modules that are found, xjsfl.modules.init(path) is called and the module's
-		 *		manifest information is cached, and any panel SWFs are copied to the WindowSWF folder.
-		 *		Note that no modules instances are instantiated yet.
+		 *		manifest information is cached, and any files in <module>/flash/ are copied to the
+		 *		main Flash folder.
+		 *
+		 *		Note that no modules instances are instantiated yet!
 		 *
 		 * 4 -	When any panels are opened, xjsfl.modules.load(namespace) is called via MMExecute()
 		 * 		from the AbtractModule.initialize() function. This loads the module's bootstrap.jsfl
@@ -1126,7 +1142,7 @@
 					// debug
 						xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
 
-					// update with the actual URI & store
+					// update manifest with the *actual* URI, and store on main xjsfl object
 						manifest.jsfl.uri		= uri;
 						var namespace			= String(manifest.jsfl.namespace);
 						manifests[namespace]	= manifest;
@@ -1135,46 +1151,46 @@
 						xjsfl.settings.uris.add(uri, 'module');
 						xjsfl.settings.folders[namespace] = uri;
 
-					// copy any panels to the WindowSWF folder
-						var folder = new xjsfl.classes.Folder(uri + 'ui/');
-						for each(var src in folder.files)
-						{
-							if(src.extension === 'swf')
-							{
-								// grab any existing target panels
-									var trg = new File(fl.configURI + 'WindowSWF/' + src.name);
-
-								// check exists and compare dates
-									if(! trg.exists || src.modified > trg.modified)
-									{
-										xjsfl.output.trace('copying "' + URI.asPath(src.uri, true) + '" to "Flash/Configuration/WindowSWF/"');
-										src.copy(fl.configURI + 'WindowSWF/', true);
-									}
-
-								// no need to copy if up to date
-									else
-									{
-										xjsfl.output.trace('panel "' + src.name.replace('.swf', '') + '" is already up to date');
-									}
-							}
-						}
-
 					// copy any flash assets
-						var srcFolder	= uri + 'flash/';
-						var assetURIs	= Data.recurseFolder(srcFolder, true);
-						if(assetURIs.length)
+						var assetsURI = uri + 'flash/';
+						if(FLfile.exists(assetsURI))
 						{
-							assetURIs = assetURIs.filter(URI.isFile);
-							xjsfl.output.trace('copying ' + assetURIs.length + ' asset(s) to "Flash/Configuration/"');
-							for each(var srcURI in assetURIs)
-							{
-								var trgURI = fl.configURI + srcURI.substr(srcFolder.length);
-								//xjsfl.output.trace('copying "' + URI.asPath(srcURI, true) + '" to "Flash/Configuration/"');
-								new File(srcURI).copy(trgURI, true);
-							}
+							// variable and callback
+								var copyURIs = [];
+								var process = function(element)
+								{
+									if(element instanceof File)
+									{
+										var targetURI	= URI.reTarget(element.uri, assetsURI, fl.configURI);
+										var targetFile	= new File(targetURI);
+										if( ! targetFile.exists || targetFile.modified < element.modified)
+										{
+											copyURIs.push({fromURI:element.uri, toURI:targetFile.uri, toPath:targetFile.path});
+										}
+									}
+								}
+
+							// find new or updated files
+								Data.recurseFolder(assetsURI, process);
+
+							// copy files, if any
+								if(copyURIs.length)
+								{
+									xjsfl.output.log('copying / updating ' + copyURIs.length + ' asset(s) to the Flash configuration folder');
+									for each(var obj in copyURIs)
+									{
+										new File(obj.fromURI).copy(obj.toURI, true);
+										xjsfl.output.log('copying asset to "' +obj.toPath+ '"', false, false);
+									}
+								}
+								else
+								{
+									xjsfl.output.log('assets are already up to date', false, false);
+								}
 						}
 
-					// preload
+
+					// preload any modules which asked to load immediately
 						if(String(manifest.jsfl.preload) == 'true')
 						{
 							this.load(manifest.jsfl.namespace);
@@ -1205,6 +1221,7 @@
 				 * Factory method to create an xJSFL module instance
 				 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
 				 * @param	{Object}	properties	The properties of the module
+				 * @param	{Window}	window		A reference to the window the function was called from
 				 * @returns	{Module}				An xJSFL Module instance
 				 */
 				create:function(namespace, properties, window)
@@ -1384,7 +1401,7 @@
 		var props =
 		{
 			/**
-			 * Stand toString function
+			 * Standard toString function
 			 * @returns
 			 */
 			toString:function()
@@ -1394,7 +1411,10 @@
 
 		}
 
-		Utils.extend(xjsfl, props)
+		if(this['Utils'])
+		{
+			Utils.extend(xjsfl, props);
+		}
 
 	})()
 
@@ -1451,10 +1471,10 @@
 	 */
 	xjsfl.init = function(scope, scopeName)
 	{
-		if( ! (xjsfl.settings.initializing || xjsfl.settings.loading) )
+		if( ! (xjsfl.initializing || xjsfl.loading) )
 		{
 			// set flag
-				xjsfl.settings.initializing = true;
+				xjsfl.initializing = true;
 
 			// copy core variables and functions into scope
 				xjsfl.initVars(scope, scopeName);
@@ -1470,7 +1490,7 @@
 
 			// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 				scope.xJSFL = xjsfl;
-				xjsfl.settings.initializing = false;
+				delete xjsfl.initializing;
 		}
 		else
 		{
