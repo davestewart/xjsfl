@@ -1,9 +1,12 @@
-﻿/**
+/**
  * Lists all defined variables
  * @icon {iconsURI}Feedback/action/action_help.png
  */
 (function()
 {
+	// init
+		xjsfl.init(this);
+		
 	// force a document open
 		if(! $dom)
 		{
@@ -30,7 +33,7 @@
 		var controls =
 		[
 			'title:Show variables...',
-			'radios:Scope=[' +xjsfl.utils.getKeys(scopes).join(',')+ ']',
+			'radios:Scope=[' +Utils.getKeys(scopes).join(',')+ ']',
 			'radios:Depth={Top-level only:1,2 levels down:2,3 levels down:3,4 levels down:4,5 levels down:5,6 levels down:6}',
 			'checkbox:Clear output panel=true'
 		]
@@ -48,8 +51,7 @@
 			{
 				fl.outputPanel.clear();
 			}
-			Output.inspect(scopes[xul.values.scope], true, xul.values.scope, xul.values.depth);
+			inspect(scopes[xul.values.scope], true, xul.values.scope, xul.values.depth);
 		}
 
 })()
-

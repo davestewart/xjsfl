@@ -4,6 +4,9 @@
  */
 (function()
 {
+	// setup
+		xjsfl.init(this);
+
 	// variables
 		var total = 0;
 		var collection;

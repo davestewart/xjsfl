@@ -1,8 +1,7 @@
 ﻿/**
  * Generates AS3 class declarations for stage instances
- * 
+ *
  * @author      Dave Stewart
- * @icon		{iconsURI}FileSystem/file/file_actionscript.png
  */
 
 
@@ -12,11 +11,6 @@
 	function tabify(code, tabWidth, tabStop)
 	{
 		// functions
-			function repeat(char, num)
-			{
-				return new Array(num + 1).join(char);
-			}
-
 			function getNextTabStop(colIndex)
 			{
 				if(colIndex % tabWidth == 0)
@@ -25,12 +19,12 @@
 				}
 				return Math.ceil(colIndex / tabWidth) * tabWidth;
 			}
-			
+
 			function getNumTabs(colIndex, colTarget)
 			{
 				return Math.ceil((colTarget - colIndex) / tabWidth);
 			}
-			
+
 			function getTabs(colIndex, colTarget)
 			{
 				if(colIndex % tabWidth == 0)
@@ -38,16 +32,16 @@
 					colIndex --;
 				}
 				var n = Math.ceil((colTarget - colIndex) / tabWidth);
-				return repeat('\t', n + 1)
+				return Utils.repeat('\t', n + 1);
 			}
-			
+
 		// properties
 			var tabSpaces	= '';
 			var tabStop		= tabStop ? tabStop * tabWidth : 0;
-			
+
 		// code
 			var lines		= code.split(/[\r\n]/);
-			
+
 		// variables
 			var tabWidth	= tabWidth || 8;
 			var char		= ':';
@@ -55,7 +49,7 @@
 
 		// code
 			// get max tab stop
-				var tabAsSpaces = repeat(' ', tabWidth);
+				var tabAsSpaces = Utils.repeat(' ', tabWidth);
 				for(var i = 0; i < lines.length; i++)
 				{
 					var line		= lines[i];
@@ -65,8 +59,7 @@
 						tabStop = colIndex;
 					}
 				}
-				
-				
+
 			// go through text and add tabs
 				for(var i = 0; i < lines.length; i++)
 				{
@@ -77,24 +70,14 @@
 
 			// echo
 				return lines.join('\n');
-		
+
 	}
-		
-		
-		
-// ----------------------------------------------------------------------------------------------------------------------
-// globals
-
-	var trace				= fl.trace;
-	var tl					= fl.getDocumentDOM().getTimeline();
-	var lib					= fl.getDocumentDOM().library;
 
 // ----------------------------------------------------------------------------------------------------------------------
-// locals
+// variables
 
-	var imports				= {};
-	var elements			= {};
-	var currentTimelineName = tl.name;
+	var imports		= {};
+	var elements	= {};
 
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -106,143 +89,120 @@
 		{
 			imports[path] = path;
 		}
-		
+
 		if(! elements[name])
 		{
 			elements[name] = {name:name, type:type}
 		}
 	}
 
-	function objectToArray(obj)
-	{
-		var arr		= [];
-		for (var prop in obj)
-		{
-			arr.push(obj[prop]);
-		}
-		return arr.reverse();
-	}
-
 	function getImports()
 	{
-		var arrIn	= objectToArray(imports)
+		var arrIn	= Utils.getValues(imports)
 		var arrOut	= [];
-		
-		for (var i = 0; i < arrIn.length; i++) 
+
+		for (var i = 0; i < arrIn.length; i++)
 		{
 			arrOut.push('import ' + arrIn[i] + ';');
 		}
-		
-		return arrOut.sort().join('\n') + '\n';
+
+		return Utils.sort(arrOut, false, true).join('\n') + '\n';
 	}
 
 	function getElements()
 	{
-		var arrIn	= objectToArray(elements)
+		var arrIn	= Utils.getValues(elements)
 		var arrOut	= [];
-		
-		for (var i = 0; i < arrIn.length; i++) 
+
+		for (var i = 0; i < arrIn.length; i++)
 		{
 			arrOut.push('public var ' + arrIn[i].name + '\t\t:' + arrIn[i].type + ';');
 		}
-		
+
 		return arrOut.sort().join('\n') + '\n';
 	}
 
 	function processElement(element)
 	{
-
-		switch( element.elementType ) 
+		if(element.name)
 		{
-			case "instance": 
-				var classname		= element.libraryItem.linkageClassName;  
-				var baseclassName	= element.libraryItem.linkageBaseClass;
-				
-				// If class attached, import it and use the base name, otherwise use the MovieClip class
-				if(baseclassName != '')
-				{
-					classname = baseclassName;
-				}
-				
-				if(classname != null)
-				{
-					addElement(element.name, classname.split('.').pop(), classname );
-				}
-				else
-				{
-					var type = element.libraryItem.itemType;
-					
-					if(type == 'button')
+			switch( element.elementType )
+			{
+				case "instance":
+					var type			= element.symbolType;
+					var classname		= element.libraryItem.linkageClassName;
+					var baseclassName	= element.libraryItem.linkageBaseClass;
+
+					if(type !== 'graphic')
 					{
-						addElement(element.name, 'SimpleButton', 'flash.display.SimpleButton');
-					}
-					else if(type == 'movie clip')
-					{
-						if(element.libraryItem.timeline.frameCount > 1)
+						// If class attached, import it and use the base name, otherwise use the MovieClip class
+						if(baseclassName != '')
 						{
-							addElement(element.name, 'MovieClip', 'flash.display.MovieClip');
+							classname = baseclassName;
+						}
+
+						if(classname != null)
+						{
+							addElement(element.name, classname.split('.').pop(), classname );
 						}
 						else
 						{
-							addElement(element.name, 'Sprite', 'flash.display.Sprite');
+							if(type === 'button')
+							{
+								addElement(element.name, 'SimpleButton', 'flash.display.SimpleButton');
+							}
+							else if(type === 'movie clip')
+							{
+								if(element.libraryItem.timeline.frameCount > 1)
+								{
+									addElement(element.name, 'MovieClip', 'flash.display.MovieClip');
+								}
+								else
+								{
+									addElement(element.name, 'Sprite', 'flash.display.Sprite');
+								}
+							}
 						}
 					}
-				}
-			break;
-				
-			case "text":
-				if(element.textType != 'static')
-				{
-					addElement(element.name, 'TextField', 'flash.text.TextField');
-				}
-			break;
-				
-			case "shape":
-				if(element.isGroup)
-				{
-					// found a group of items, not supported
-				}
-			break;
+				break;
+
+				case "text":
+					if(element.textType != 'static')
+					{
+						addElement(element.name, 'TextField', 'flash.text.TextField');
+					}
+				break;
+
+				case "shape":
+					if(element.isGroup)
+					{
+						// found a group of items, not supported
+					}
+				break;
+			}
 		}
-		
 	}
 
 
 // ----------------------------------------------------------------------------------------------------------------------
 // main code
 
-	function processTimeline(timeline)
-	{
-		if(timeline == undefined)
+	// init
+		xjsfl.init(this);
+		clear();
+
+	// process elements
+		$('*').each(processElement);
+
+	// trace
+		trace(getImports());
+		trace('// stage instances')
+		trace(tabify(getElements(), 4, 7))
+
+	// select any unnamed items on stage
+		var collection = $(':movieclip[name=]');
+		if(collection.elements.length)
 		{
-			timeline = tl; 
+			collection.select();
+			alert('The selected items are unnamed, so were skipped in the output process.');
 		}
-		
-		currentTimelineName = tl.name;
-		
-		// layers
-		var varlines = "";
-		for(l = 0; l < timeline.layers.length; l++) 
-		{	 
-			// frames
-			for(f = 0; f < timeline.layers[l].frames.length; f++) 
-			{		
-				// elements
-				var elements = timeline.layers[l].frames[f].elements;
-				for(var e = 0; e < elements.length; e++)
-				{
-					processElement( elements[e] );
-				}
-			}
-		}
-		
-		lib.editItem(currentTimelineName);
-
-		fl.trace(getImports());
-		fl.trace('// stage instances')
-		fl.trace(tabify(getElements(), 4, 7))
-		
-	}
-
-	fl.outputPanel.clear();
-	processTimeline();

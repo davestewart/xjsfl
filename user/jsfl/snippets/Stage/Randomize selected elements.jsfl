@@ -5,7 +5,7 @@
  */
 (function(){
 
-	if($selection)
+	if(Get.selection())
 	{
 		var collection = new ElementCollection($selection);
 

@@ -28,8 +28,8 @@
 					this.file		= new File(uri, true);
 
 				// grab keys and filter
-					var ignore		= 'constructor,timeline,scalingGridRect,sourceLibraryName,linkageImportForRS,linkageIdentifier,quality'.split(',');
-					var keys		= xjsfl.utils.getKeys(this.items);
+					var ignore		= 'constructor,timeline,sourceFilePath,scalingGridRect,sourceLibraryName,linkageImportForRS,linkageIdentifier,quality'.split(',');
+					var keys		= Utils.getKeys(this.items);
 					keys			= keys.filter(function(key){return ignore.indexOf(key) == -1});
 
 				// reorder keys, with path, then name, so user can easily rename items
@@ -38,7 +38,7 @@
 					keys			= ['name', 'name'].concat(keys);
 
 				// grab rows
-					var rows		= xjsfl.utils.getValues(this.items, keys);
+					var rows		= Utils.getValues(this.items, keys);
 
 				// update header
 					keys[0]			= 'original item';
@@ -115,8 +115,15 @@
 								// check if OK to assign, and assign
 									if(item[key] != undefined)
 									{
-										trace(item.name, key, value, xjsfl.utils.parseValue(value));
-										item[key] = xjsfl.utils.parseValue(value);
+										trace(item.name, key, value, Utils.parseValue(value));
+										try
+										{
+											item[key] = Utils.parseValue(value);
+										}
+										catch(error)
+										{
+											trace(error);
+										}
 									}
 							}
 					}
@@ -131,11 +138,13 @@
 
 			open:function()
 			{
-				this.items = xjsfl.get.items();
+				this.items = Get.items();
 				if(this.items)
 				{
 					// ui
 						var ui = <ui>
+							<label flex="1" width="370" value="This script exports the values of the selected objects to a CSV file, which is then opened in Excel for easy editing. Once edited, just click 'Import' to update the selected objects with the new values."/>
+							<spacer />
 							<label value="IMPORTANT: Ensure Excel is open before exporting values." flex="1" />
 							<spacer />
 							<separator />
@@ -144,22 +153,23 @@
 								<button id="import" label="Import" width="120" />
 								<button id="cancel" label="Cancel" width="120" />
 							</hbox>
-							<checkbox id="excel" label="Open exported file in Excel" checked="true" />
 						</ui>
 
 					// build UI
 						this.xul = new XUL('Spreadsheet Edit')
-							.setXML(ui)
 							.setButtons('')
-							.setEventScope(this)
 							.setTitle('Spreadsheet Edit (' +this.items.length+ ' items)')
+							.setXML(ui)
+							.addCheckbox('Open exported file in Excel', 'excel', {checked:true})
+							.setEventScope(this)
 							.addEvent('export', 'click', this.exportCSV)
 							.addEvent('import', 'click', this.importCSV)
-							.addEvent('cancel', 'click', fl.xmlui.cancel);
+							.addEvent('cancel', 'click', fl.xmlui.cancel)
 
 					// show ui
 						this.xul.show();
 				}
+
 			}
 
 	}

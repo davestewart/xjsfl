@@ -1,7 +1,6 @@
-﻿//xjsfl.init(this);
-
-/**
+﻿/**
  * Create a set of test elememts you can play with
+ * @icon {iconsURI}Design/imaging/imaging_large_tiles.png
  */
 function makeSquares(num, cols, gutter, setStage, clearStage)
 {
@@ -65,7 +64,7 @@ function makeSquares(num, cols, gutter, setStage, clearStage)
 				y	= (py * 50) + (py * gutter) + (gutter + 25)
 
 			// do it
-				var name = 'Item_' + xjsfl.utils.pad(i + 1, 2);
+				var name = 'Item_' + Utils.pad(i + 1, 2);
 				if( ! collection.find(name))
 				{
 					lib.addItemToDocument({x:x, y:y}, 'square');
@@ -78,5 +77,5 @@ function makeSquares(num, cols, gutter, setStage, clearStage)
 		fl.enableImmediateUpdates(true);
 
 }
-
+xjsfl.init(this);
 XUL.create('title:Create squares,numeric:Total=[10,0,100],numeric:Columns=[5,1,100],numeric:Gutter=[5,0,100],checkbox:Set stage size=true,checkbox:Clear stage=true', makeSquares);
