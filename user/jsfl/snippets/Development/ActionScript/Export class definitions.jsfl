@@ -100,7 +100,7 @@
 					this.data.elements	= this.elements.join('\n');
 	
 				// template
-					var template		= new Template('/assets/templates/as/class.txt', this.data);
+					var template		= new Template('/assets/templates/as/class.as.txt', this.data);
 	
 				// variables
 					var path			= this.data.package ? this.data.package.replace(/\./g, '/') + '/' : '';

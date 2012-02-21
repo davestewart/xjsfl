@@ -100,7 +100,7 @@
 			XUL
 				.factory('title:Propgate element names across frames')
 				.addRadiogroup('Rename using', 'type', {'First element name':'element', 'Layer name':'layer'})
-				.addRadiogroup('Style', 'style', {'camelCase':'camelCase', 'under_score':'underscore'})
+				.addRadiogroup('Style', 'style', {'camelCase':'toCamelCase', 'under_score':'toUnderscore'})
 				.addCheckboxgroup('Options', 'options', ['Only selected layers', 'Only animated layers'])
 				.show(onAccept);
 })()

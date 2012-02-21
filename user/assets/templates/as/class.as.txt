@@ -1,0 +1,46 @@
+package {package}
+{
+	{>imports?}
+	/**
+	 * {name}
+	 * @author {author}
+	 */
+	public class {name} {extends?}
+	{
+		// ------------------------------------------------------------------------------------------------
+		// declarations
+
+			// stage instances
+
+				{>elements?}
+
+			// properties
+
+				
+
+			// variables
+
+				
+
+		// ------------------------------------------------------------------------------------------------
+		// instantiation
+
+			/**
+			 * Constructor for {name}
+			 */
+			public function {name}()
+			{
+				initialize();
+			}
+
+			protected function initialize():void
+			{
+				
+			}
+
+		// ------------------------------------------------------------------------------------------------
+		// methods
+
+	}
+
+}

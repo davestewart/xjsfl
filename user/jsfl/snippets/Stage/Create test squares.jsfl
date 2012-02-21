@@ -2,7 +2,7 @@
  * Create a set of test elememts you can play with
  * @icon {iconsURI}Design/imaging/imaging_large_tiles.png
  */
-function makeSquares(num, cols, gutter, setStage, clearStage)
+function makeSquares(num, cols, gutter, style, setStage, clearStage)
 {
 	// variables
 		num				= num || 9;
@@ -25,25 +25,43 @@ function makeSquares(num, cols, gutter, setStage, clearStage)
 		}
 
 	// make square
-		if( ! lib.itemExists('square'))
+		var itemName = 'test square';
+		if(lib.itemExists(itemName))
 		{
-			lib.addNewItem('movie clip', 'square');
-			lib.editItem('square');
-			dom.addNewRectangle({left:-25, top:-25, right:25, bottom:25}, 0);
-			dom.selectAll();
-			dom.setFillColor('#FF000066');
-			dom.setStroke('#000000', 0.5, 'solid')
-			context.goto();
+			lib.deleteItem(itemName)
 		}
+		
+	// make square
+		lib.addNewItem('movie clip', itemName);
+		lib.editItem(itemName);
+		dom.addNewRectangle({left:-25, top:-25, right:25, bottom:25}, 0);
+		dom.selectAll();
+		switch(style)
+		{
+			case 'red':
+				dom.setFillColor('#FF000066');
+				dom.setStroke('#000000', 0.25, 'solid');
+			break;
+			case 'grey':
+				dom.setFillColor('#777777');
+				dom.setStroke('#7777777', 0.25, 'solid');
+			break;
+			case 'black':
+				dom.setFillColor('#000000');
+				dom.setStroke('#000000', 0.25, 'solid');
+			break;
+		}
+		
+	// switch back to original context
+		context.goto();
 
 	// variables
-		var collection = $('*');
-		var px		= 0
-		var py		= 0;
-		var rows	= Math.ceil(num / cols);
+		var collection	= $('*');
+		var px			= 0
+		var py			= 0;
+		var rows		= Math.ceil(num / cols);
 		var x;
 		var y;
-
 
 	// update stage size
 		if(setStage)
@@ -67,15 +85,18 @@ function makeSquares(num, cols, gutter, setStage, clearStage)
 				var name = 'Item_' + Utils.pad(i + 1, 2);
 				if( ! collection.find(name))
 				{
-					lib.addItemToDocument({x:x, y:y}, 'square');
+					lib.addItemToDocument({x:x, y:y}, itemName);
 					dom.selection[0].name = name;
 				}
 		}
-		dom.selectNone();
+		collection = $('*').select();
 
 	// debug
 		fl.enableImmediateUpdates(true);
 
 }
 xjsfl.init(this);
-XUL.create('title:Create squares,numeric:Total=[10,0,100],numeric:Columns=[5,1,100],numeric:Gutter=[5,0,100],checkbox:Set stage size=true,checkbox:Clear stage=true', makeSquares);
+if(Get.dom())
+{
+	XUL.create('title:Create squares,numeric:Total=[10,0,100],numeric:Columns=[5,1,100],numeric:Gutter=[5,0,100],dropdown:Style={Transparent Red:red,Grey:grey,Black:black},checkbox:Set stage size=true,checkbox:Clear stage=true', makeSquares);
+}

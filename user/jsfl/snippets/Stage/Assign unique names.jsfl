@@ -99,7 +99,7 @@
 		xjsfl.init(this);
 		if(Get.selection())
 		{
-			XUL.create('title:Assign unique names,radio:Name after={Class or item name:class,Item Name:item,Path:path},radio:Style={camelCase:camelCase,under_score:underscore}', onAccept)
+			XUL.create('title:Assign unique names,radio:Name after={Class or item name:class,Item Name:item,Path:path},radio:Style={camelCase:toCamelCase,under_score:toUnderscore}', onAccept)
 		}
 		
 })()
