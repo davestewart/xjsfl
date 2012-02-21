@@ -478,14 +478,11 @@
 
 				// reorder elements
 					this.dom.selectNone();
-					arr.forEach
-					(
-						function(element)
-						{
-							this.dom.selection = [element];
-							this.dom.arrange(reverseOrder ? 'back' : 'front');
-						}
-					)
+					for each(var element in arr)
+					{
+						this.dom.selection = [element]; // this actually adds the element to the selection! Weird old Flash :P
+						this.dom.arrange(reverseOrder ? 'back' : 'front');
+					}
 
 				// re-order
 					this.elements = arr;
