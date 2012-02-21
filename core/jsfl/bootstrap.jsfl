@@ -18,7 +18,7 @@
 
 		(function()
 		{
-			// clear existing values, in case we need to reload during development
+			// clear existing values, in case we're reloading
 				for(var name in xjsfl)
 				{
 					if( ! /^(reload|uri|reset|loading|debugState)$/.test(name) )
@@ -36,11 +36,11 @@
 					/**
 					 * Traces an "> xjsfl:" message to the Output panel
 					 * @param	{String}	message		The message to log
-					 * @param	{Boolean}	newLine		An optional Boolean to highlight the message
+					 * @param	{Boolean}	highlight	An optional Boolean to highlight the message
 					 */
-					trace:function(message, newLine)
+					trace:function(message, highlight)
 					{
-						if(newLine)
+						if(highlight)
 						{
 							fl.trace('');
 							message = String(message).toUpperCase();
@@ -51,27 +51,26 @@
 					/**
 					 * Logs a message to the xjsfl log, and optionally traces it
 					 * @param	{String}	message		The text of the log message
-					 * @param	{Boolean}	newLine		An optional Boolean to highlight the message
+					 * @param	{Boolean}	highlight	An optional Boolean to highlight the message
 					 * @param	{Boolean}	trace		An optional Boolean to trace the message, defaults to true
 					 * @param	{Boolean}	clear		An optional Boolean to clear the log file, defaults to false
 					 * @returns
 					 */
-					log:function(message, newLine, trace, clear)
+					log:function(message, highlight, trace, clear)
 					{
 						// trace
 							trace = typeof trace !== 'undefined' ? trace : true;
 							if(trace)
 							{
-								this.trace(message, newLine);
+								this.trace(message, highlight);
 							}
 
 						// variables
+							var newLine	= fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n';
 							var uri		= xjsfl.uri + 'core/temp/xjsfl.log';
-							if(newLine)
-							{
-								message = String(message).toUpperCase();
-							}
-
+							var date	= new Date();
+							var time	= date.toString().match(/\d{2}:\d{2}:\d{2}/) + ':' + (date.getMilliseconds() / 1000).toFixed(3).substr(2);
+						
 						// clear
 							if(clear)
 							{
@@ -80,9 +79,11 @@
 							}
 
 						// log
-							var date	= new Date();
-							var time	= date.toString().match(/\d{2}:\d{2}:\d{2}/) + ':' + (date.getMilliseconds() / 1000).toFixed(3).substr(2);
-							FLfile.write(uri, (newLine ? '\n' : '') + time + '\t' + message + '\n', 'append');
+							if(highlight)
+							{
+								message = String(message).toUpperCase();
+							}
+							FLfile.write(uri, (highlight ? newLine : '') + time + '\t' + message + newLine, 'append');
 					}
 
 				}
