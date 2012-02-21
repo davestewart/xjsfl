@@ -25,14 +25,14 @@
 			 * @returns	{Document}		A Document object
 			 * @returns	{Boolean}		False if not available
 			 */
-			dom:function(error)
+			dom:function()
 			{
 				var dom = fl.getDocumentDOM();
 				if(dom)
 				{
 					return dom;
 				}
-				alert(error || 'Open a Flash document (FLA) before running this script');
+				alert('Open a Flash document (FLA) before running this script');
 				return false;
 			},
 
@@ -41,14 +41,13 @@
 			 * @returns	{Timeline}		A Timelineobject
 			 * @returns	{Boolean}		False if not available
 			 */
-			timeline:function(error)
+			timeline:function()
 			{
-				var dom = fl.getDocumentDOM();
-				if(dom)
+				if(Get.dom())
 				{
-					return dom.getTimeline();
+					return fl.getDocumentDOM().getTimeline();
 				}
-				alert(error || 'Open a Flash document (FLA) before running this script');
+				alert('Open a Flash document (FLA) before running this script');
 				return false;
 			},
 
@@ -59,7 +58,7 @@
 			 */
 			items:function()
 			{
-				if(xjsfl.get.dom())
+				if(Get.dom())
 				{
 					var items = fl.getDocumentDOM().library.getSelectedItems();
 					if(items.length > 0)
@@ -79,13 +78,11 @@
 			 */
 			selection:function()
 			{
-				var dom = xjsfl.get.dom();
-				if(dom)
+				if(Get.dom())
 				{
-					var selection = dom.selection;
-					if(selection.length > 0)
+					if($selection.length > 0)
 					{
-						return selection;
+						return $selection;
 					}
 					alert('Make a selection before running this script');
 					return false;
