@@ -191,7 +191,7 @@
 		Folder = function(pathOrUri, create)
 		{
 			// ensure a trailing slash //
-				pathOrUri = pathOrUri.replace(/\/*$/, '/');
+				pathOrUri = String(pathOrUri).replace(/\/*$/, '/');
 
 			// uri
 				var uri = URI.getFolder(URI.toURI(pathOrUri, 1));
