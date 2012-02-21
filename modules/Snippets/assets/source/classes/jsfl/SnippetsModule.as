@@ -206,6 +206,7 @@
 						var items			:XMLList	= data.item;
 						var defaultIcon		:String		= settings.icons.icon.(hasOwnProperty('@name') && @name == 'file').@value;
 						
+						
 					// update icon paths from relative paths to absolute
 						for each(var item:XML in items)
 						{
@@ -215,6 +216,7 @@
 							}
 						}
 					
+						trace(items.toXMLString())
 				// complete
 					dispatchEvent(new Event(Event.COMPLETE));
 			}
