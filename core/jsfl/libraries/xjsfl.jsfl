@@ -891,6 +891,9 @@
 		{
 			if( ! /^(paths|load|loadFolder|require|register|restore)$/.test(name) )
 			{
+				// log
+					xjsfl.output.log('registering class "' + name + '"', false, false);
+					
 				// store class
 					xjsfl.classes[name]	= obj;
 
@@ -987,9 +990,10 @@
 		 * Factory method to create an xJSFL module instance
 		 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
 		 * @param	{Object}	properties	The properties of the module
+		 * @param	{Window}	window		A reference to the window the function was called from
 		 * @returns	{Module}				An xJSFL Module instance
 		 */
-		create:function(namespace, properties){ }
+		create:function(namespace, properties, window){ }
 	}
 
 	/**
@@ -1440,7 +1444,7 @@
 					scope.__defineGetter__( '$dom', function(){ return fl.getDocumentDOM(); } );
 					scope.__defineGetter__( '$timeline', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.getTimeline() : null; } );
 					scope.__defineGetter__( '$library', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.library : null; } );
-					scope.__defineGetter__( '$selection', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.selection : null; } );
+					scope.__defineGetter__( '$selection', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.selection.reverse() : null; } );
 					scope.__defineSetter__( '$selection', function(elements){ var dom = fl.getDocumentDOM(); if(dom){dom.selectNone(); dom.selection = elements} } );
 
 				// global functions
@@ -1450,7 +1454,8 @@
 						scope.trace		= function(){ fl.outputPanel.trace(Array.slice.call(this, arguments).join(', ')) };
 
 					// string
-						scope.populate	= function(template, properties){ return Utils.populate.apply(this, arguments); }
+						scope.populate	= function(template, properties){ return Utils.populate.apply(this, arguments); };
+						scope.format	= Utils ? Utils.format : scope.trace;
 
 					// file
 						scope.load		= function(pathOrURI, quiet){ return xjsfl.file.load(URI.toURI(pathOrURI, 1), null, quiet); }
