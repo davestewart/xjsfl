@@ -282,7 +282,7 @@
 				 * @param	{String}	value	A string value
 				 * @returns	{String}			The camelCased string
 				 */
-				camelCase:function(value)
+				toCamelCase:function(value)
 				{
 					var part;
 					var parts	= String(value).replace(/(^\W*|\W*$)/g, '').split(/[^0-9a-z]/i);
@@ -296,7 +296,40 @@
 					return str;
 				},
 				
-				underscore:function(value)
+				/**
+				 * Convert a value from "camelCase" to "separate words"
+				 * @param	{String}	value	The string to convert
+				 * @returns	{String}			The convtered string
+				 */
+				fromCamelCase:function(value)
+				{
+					//TDOD ignore multiple capital letters, except the last one in a group
+					// "somethingXMLToString" must come through as "something XML to string"
+					return String(value)
+						.replace(/_/, ' ')
+						.replace(/([a-z])?([A-Z0-9])/g, '$1 $2')
+						.replace(/^ /g, '');
+				},
+				
+				/**
+				 * Converts a value to sentense case, optionally de-camelcasing
+				 * @param	{String}	value	A string value
+				 * @returns	{String}			The sentence-cased string
+				 */
+				toSentenceCase:function(value)
+				{
+					//TODO ignore multiple capital letters
+					value	= String(value);
+					value	= value.substr(0, 1).toUpperCase() + value.substr(1).toLowerCase();
+					return value;
+				},
+				
+				/**
+				 * Converts a string of words to underscore_case
+				 * @param	{Object}	value	Description
+				 * @returns	{Object}			Description
+				 */
+				toUnderscore:function(value)
 				{
 					return String(value).toLowerCase().replace(/(^\W*|\W*$)/g, '').replace(/\W+/g, '_');
 				},
