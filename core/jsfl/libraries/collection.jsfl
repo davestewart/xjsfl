@@ -79,7 +79,7 @@
 			while(i >= 0)
 			{
 				params[0] = this.elements[i];
-				params[1] = i;
+				params[1] = j;
 				callback.apply(scope, params);
 				i--; j++;
 			}
@@ -142,6 +142,7 @@
 		 */
 		filter:function(callback, thisObject)
 		{
+			//TODO Add the option to filter by selector (or is this find?)
 			this.elements = this.elements.filter(callback, thisObject || this)
 			return this;
 		},
