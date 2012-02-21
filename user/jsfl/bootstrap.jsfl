@@ -15,7 +15,7 @@
 
 	try
 	{
-		// register any user paths
+		// register any placeholder paths
 			//xjsfl.settings.folders.add('temp', 'c:/temp/')
 
 		// load user libraries
@@ -29,7 +29,5 @@
 	catch(error)
 	{
 		xjsfl.output.log('error running user bootstrap');
-		fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
-		fl.runScript(xjsfl.uri + 'core/jsfl/libraries/output.jsfl');
-		xjsfl.output.log(xjsfl.debug.error(error), false, false);
+		debug(error, true);
 	}
