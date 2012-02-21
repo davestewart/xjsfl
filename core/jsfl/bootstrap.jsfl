@@ -91,85 +91,122 @@
 		})()
 
 	// --------------------------------------------------------------------------------
-	// attempt to load framework
+	// load framework
 
-		try
-		{
-			// --------------------------------------------------------------------------------
-			// set up
+		// --------------------------------------------------------------------------------
+		// attempt to load core
+	
+			try
+			{
+				// --------------------------------------------------------------------------------
+				// set up
+	
+					// log
+						xjsfl.output.log('running core bootstrap...', true, true, true)
+	
+					// utility function
+						function loadClass(token)
+						{
+							xjsfl.output.log('loading "{core}jsfl/core/' +token+ '.jsfl"');
+							fl.runScript(xjsfl.uri + 'core/jsfl/core/' +token+ '.jsfl');
+						}
+	
+					// flags
+						xjsfl.loading = true;
+	
+					// never debug the bootstrap!
+						var debugState = false;
+						if(xjsfl.debug)
+						{
+							debugState = xjsfl.debug.state;
+							xjsfl.debug.state = false;
+						}
 
-				// log
-					xjsfl.output.log('running core bootstrap...', true, true, true)
-
-				// utility function
-					function loadClass(token)
-					{
-						xjsfl.output.log('loading "{core}jsfl/libraries/' +token+ '.jsfl"');
-						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/' +token+ '.jsfl');
-					}
-
-				// flags
-					xjsfl.loading = true;
-
-				// never debug the bootstrap!
-					var debugState = false;
-					if(xjsfl.debug)
-					{
-						debugState = xjsfl.debug.state;
-						xjsfl.debug.state = false;
-					}
-
-				// need to load Utils & URI libraries first as core methods rely on them
+				// --------------------------------------------------------------------------------
+				// load files
+	
+					// need to load Utils & URI libraries first as core methods rely on them
+						xjsfl.output.log('loading core...', true);
+						loadClass('utils');
+						loadClass('uri');
+						loadClass('xjsfl');
+	
+					// initialize
+						xjsfl.initVars(this, 'window');
+						delete loadClass;
+	
+					// now, once xjsfl has loaded, register core libraries
+						xjsfl.classes.register('Utils', Utils, '{core}jsfl/core/utils.jsfl');
+						xjsfl.classes.register('URI', URI, '{core}jsfl/core/uri.jsfl');
+			}
+			catch(error)
+			{
+				xjsfl.output.log('error running core bootstrap', true);
+				fl.runScript(xjsfl.uri + 'core/jsfl/core/utils.jsfl');
+				fl.runScript(xjsfl.uri + 'core/jsfl/core/xjsfl.jsfl');
+				debug(error, true);
+			}
+			
+			
+		// --------------------------------------------------------------------------------
+		// attempt to load core libraries
+	
+			if(xjsfl.loading)
+			{
+				try
+				{
 					xjsfl.output.log('loading core libraries...', true);
-					loadClass('utils');
-					loadClass('uri');
-
-			// --------------------------------------------------------------------------------
-			// load core
-
-				// core
-					xjsfl.output.log('loading xJSFL...', true);
-					loadClass('xjsfl');
-
-				// initialize variables
-					xjsfl.initVars(this, 'window');
-
-				// now, once core has loaded, register URI and Utils library
-					xjsfl.classes.register('Utils', Utils, '{core}jsfl/libraries/utils.jsfl');
-					xjsfl.classes.register('URI', URI, '{core}jsfl/libraries/uri.jsfl');
-
-				// reset file debugging
-					//xjsfl.debug.state = false;
-
-				// load libraries
-					xjsfl.output.log('loading additional libraries...', true);
-					xjsfl.classes.load(['filesystem', 'class', 'output', 'template']);
+					xjsfl.classes.load(['filesystem', 'class', 'template']);
 					xjsfl.classes.load('libraries/*.jsfl');
-
-			// --------------------------------------------------------------------------------
-			// load modules, then user bootstrap
-
-				// modules
-					xjsfl.output.log('loading modules...', true);
+				}
+				catch(error)
+				{
+					xjsfl.output.log('error loading core libraries', true);
+					debug(error, true);
+				}			
+			}
+			
+		// --------------------------------------------------------------------------------
+		// attempt to load modules
+	
+			if(xjsfl.loading)
+			{
+				try
+				{
+					xjsfl.output.log('initialising modules...', true);
 					xjsfl.modules.find();
-
-			// --------------------------------------------------------------------------------
-			// load user bootstrap & finalise
-
-				// user bootstrap
-					xjsfl.output.log('loading user bootstrap...', true);
+				}
+				catch(error)
+				{
+					xjsfl.output.log('error initializing modules', true);
+					debug(error, true);
+				}			
+			}
+			
+		// --------------------------------------------------------------------------------
+		// attempt to load user bootstrap & finalise
+	
+			if(xjsfl.loading)
+			{
+				try
+				{
+					xjsfl.output.log('running user bootstrap...', true);
 					xjsfl.file.load('//user/jsfl/bootstrap.jsfl');
+				}
+				catch(error)
+				{
+					xjsfl.output.log('error running user bootstrap', true);
+					debug(error, true);
+				}			
+			}
+			
+	
+		// --------------------------------------------------------------------------------
+		// cleanup
+		
+			if(xjsfl.loading)
+			{
+				xjsfl.output.log('ready!', true);
+				delete xjsfl.loading;
+			}
 
-				// cleanup
-					xjsfl.debug.state = debugState;
-					delete xjsfl.loading;
-					delete loadClass;
-		}
-		catch(error)
-		{
-			xjsfl.output.log('error running core bootstrap', true);
-			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils.jsfl');
-			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/output.jsfl');
-			fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
-			xjsfl.output.log(xjsfl.debug.error(error), false, false);
-		}

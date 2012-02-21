@@ -291,7 +291,7 @@
 									xjsfl.debug._error = true;
 
 								// variables
-									var evalLine	= 270;	// this needs to be the actual line number of the eval(jsfl) line above
+									var evalLine	= 294;	// this needs to be the actual line number of the eval(jsfl) line above
 									var line		= parseInt(err.lineNumber) - (evalLine) + 1;
 
 								// turn off debugging
@@ -351,9 +351,10 @@
 		 * Traces a human-readable error stack to the Output Panel
 		 *
 		 * @param	{Error}		error		A JavaScript Error object
+		 * @param	{Boolean}	log			An optional Boolean to log the error
 		 * @param	{Boolean}	testing		Internal use only. Removes test() stack items
 		 */
-		error:function(error, testing)
+		error:function(error, log, testing)
 		{
 			// variables
 				var stack;
@@ -376,10 +377,11 @@
 				var uriErrors	= xjsfl.uri + 'core/assets/templates/errors/errors.txt';
 				var uriError	= xjsfl.uri + 'core/assets/templates/errors/error.txt';
 
-			// reload template if not defined (caused by some kind of bug normally)
+			// reload required classes if not defined
 				if( ! xjsfl.classes.Template )
 				{
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/uri.jsfl');
+					xjsfl.output.log('loading files needed for debugging...', false, false);
+					fl.runScript(xjsfl.uri + 'core/jsfl/core/URI.jsfl');
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/filesystem.jsfl');
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/template.jsfl');
 				}
@@ -400,38 +402,52 @@
 				xjsfl.loading = false;
 
 			// trace and return
-				fl.trace(output);
+				if(log)
+				{
+					xjsfl.output.log(output, false, true);
+				}
+				else
+				{
+					fl.trace(output);
+				}
 				return output;
 		},
 
 		/**
 		 * Detects errors in loaded files
 		 */
-		load:function()
+		load:function(path)
 		{
-			// detect any JavaScript errors
-				var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
-				fl.outputPanel.save(outputURI);
-				var output		= FLfile.read(outputURI);
-				FLfile.remove(outputURI);
-
+			// detect if there's an error loading files, either by the output panel, or by a delay, caused by the user responding to an alert box
+			
+				// grab panel output
+					var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
+					fl.outputPanel.save(outputURI);
+					var output		= FLfile.read(outputURI);
+					FLfile.remove(outputURI);
+					
+				// detect delay since the file was loaded
+					var delay = new Date().getTime() - xjsfl.file.lastLoadTime;
+					
 			// throw a new fake error if the file appeared to load incorrectly
-				if(/The following JavaScript error\(s\) occurred:\s*$/.test(output))
+				if(/(The following JavaScript error\(s\) occurred:|Open a Flash document \(FLA\) before running this script\.)\s*$/.test(output) || delay > 250)
 				{
-					var error		= new Error('<error>', '', 0);
-					var stack		= Utils.getStack();
-					stack.shift();
-					var matches		= stack[0].code.match(/file:[^"]+/);
-					if(matches)
-					{
-						var errorURI			= String(matches).toString();
-						var errorPath			= URI.asPath(errorURI);
-						error.message			= 'The file "' +errorPath+ '" contains errors';
-						error.fileName			= errorURI;
-						error.stack				= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +errorPath+ ':0');
-						xjsfl.loading	= false;
-						throw error;
-					}
+					// create a new error object the first time an error is trapped
+						if( ! xjsfl.debug._error)
+						{
+							// flag
+								xjsfl.debug._error	= true;
+
+							// throw error
+								var error			= new Error('<error>', '', 0);
+								var stack			= Utils.getStack();
+								stack.shift();      
+								error.message		= 'The file "' +path+ '" contains errors';
+								error.fileName		= URI.toURI(path);
+								error.stack			= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +path+ ':0');
+								xjsfl.loading		= false;
+								throw error;
+						}
 				}
 		},
 
@@ -524,6 +540,8 @@
 		{
 			return xjsfl.file.stack.length > 0;
 		},
+		
+		lastLoadTime:0,
 
 		stack:[],
 
@@ -734,11 +752,12 @@
 								{
 									case 'jsfl':
 										// load JSFL script
+											this.lastLoadTime = new Date().getTime();
 											fl.runScript(uri);
 											xjsfl.file.stack.pop();
 
 										// test for load errors
-											xjsfl.debug.load()
+											xjsfl.debug.load(URI.toPath(uri));
 
 										// otherwise, just return the URI
 											return uri;
@@ -1455,7 +1474,7 @@
 
 					// string
 						scope.populate	= function(template, properties){ return Utils.populate.apply(this, arguments); };
-						scope.format	= Utils ? Utils.format : scope.trace;
+						scope.format	= Utils.format;
 
 					// file
 						scope.load		= function(pathOrURI, quiet){ return xjsfl.file.load(URI.toURI(pathOrURI, 1), null, quiet); }
@@ -1464,7 +1483,7 @@
 					// introspection
 						scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
 						scope.list		= function(){ fl.trace('list() not yet initialized'); };
-						scope.debug		= function(obj, params, scope){ Utils.debug(obj, params, scope); }
+						scope.debug		= Utils.debug;
 			}
 	}
 

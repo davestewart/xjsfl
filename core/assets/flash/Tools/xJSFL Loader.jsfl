@@ -55,28 +55,26 @@
 								// don't load framework if disabled
 									if(config && config.settings.@disabled == 1)
 									{
-										trace('> xJSFL is currently disabled. To enable, go to Commands > xJSFL > Change startup settings');
+										trace('> xJSFL is currently disabled. To enable, go to Commands > xJSFL > Toggle Enabled');
 									}
 
 								// otherwise load framework
 									else
 									{
-										// load splash text
-											fl.outputPanel.clear();
-											trace(FLfile.read(fl.configURI + 'Tools/xJSFL Splash.txt').replace(/\r\n/g, '\n'));
-
 										// set debug mode off (can't remember why now)
 											if(typeof xjsfl.debug !== 'undefined')
 											{
 												xjsfl.debug.state = false;
 											}
 
+										// load splash text
+											fl.outputPanel.clear();
+											trace(FLfile.read(xjsfl.uri + 'assets/misc/splash.txt').replace(/\r\n/g, '\n'));
+
 										// load core bootstrap
-											trace('> xjsfl: install path: "' +uriToPath(xjsfl.uri)+ '"');
 											fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
 
 										// done!
-											trace('\n> xjsfl: READY!');
 											trace('\n=================================================================\n')
 									}
 							}
