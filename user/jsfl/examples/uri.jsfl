@@ -115,29 +115,48 @@
 
 			];
 
-	// --------------------------------------------------------------------------------
-	// Test URI instances
-
-			if(1)
+			var relativeSrc	= 'file:///c|/folder a/folder b/folder c/folder d/folder e/file.txt';
+			var relativePaths =
 			{
-				for each(var path in paths)
-				{
-					// attempt to get the conversion
-						try
-						{
-							var uri		= new URI(path);
-							Table.print(uri, path, 'uri,path,parent,name,type');
-						}
-						catch(err)
-						{
-							trace(populate('{err} on line {line} in file "{file}"', err, err.lineNumber, err.fileName));
-						}
-				}
+				shorter		:'file:///c|/folder a/folder b/folder c/file.txt',
+				same		:'file:///c|/folder a/folder b/folder c/folder d/folder e/another file.txt',
+				longer		:'file:///c|/folder a/folder b/folder c/folder d/folder e/folder f/folder g/folder h/folder i/file.txt',
+
+				branched1	:'file:///c|/folder a/folder b/folder c/folder d/other file.txt',
+				branched2	:'file:///c|/folder a/folder b/folder c/folder d/FOLDER E/other file.txt',
+				branched3	:'file:///c|/folder a/folder b/folder c/FOLDER D/other file.txt',
+				branched4	:'file:///c|/folder a/folder b/folder c/FOLDER D/FOLDER E/other file.txt',
+				branched5	:'file:///c|/other file.txt',
+				different	:'file:///E|/other folder/other file.txt',
 			}
 
 
 	// --------------------------------------------------------------------------------
+	// Test URI instances
+
+		trace('\n\nTEST URI INSTANCES\n')
+
+		if(1)
+		{
+			for each(var path in paths)
+			{
+				try
+				{
+					var uri		= new URI(path);
+					Table.print(uri, path, 'uri,folder,path,name,type');
+				}
+				catch(err)
+				{
+					format('{err} on line {line} in file "{file}"', err, err.lineNumber, err.fileName);
+				}
+			}
+		}
+
+
+	// --------------------------------------------------------------------------------
 	// Test URI static methods
+
+		trace('\n\nTEST URI STATIC METHODS\n')
 
 		// --------------------------------------------------------------------------------
 		// xJSFL conversion to URIs
@@ -212,6 +231,12 @@
 					test('test if path', paths, URI.isPath);
 				}
 
+			// test if path
+				if(1)
+				{
+					test('test if root', paths, URI.isRoot);
+				}
+
 		// --------------------------------------------------------------------------------
 		// Path, containing folder, or name
 
@@ -232,6 +257,29 @@
 				{
 					test('get folder', paths, URI.getParent);
 				}
+
+		// --------------------------------------------------------------------------------
+		// Test relative URIs
+
+			trace('\n\nTEST RELATIVE URIS with URI.pathTo\n')
+
+			if(1)
+			{
+				try
+				{
+					for(var name in relativePaths)
+					{
+						var target = URI.pathTo(relativeSrc, relativePaths[name], name);
+						inspect({srcURI:relativeSrc, trgURI:relativePaths[name], target:target}, name.toUpperCase())
+
+					}
+				}
+				catch(err)
+				{
+					debug(err)
+				}
+			}
+
 
 	// catch
 		}catch(err){xjsfl.debug.error(err);}

@@ -7,7 +7,7 @@
 
 		function indent(depth)
 		{
-			return xjsfl.utils.pad(null, depth, '	');
+			return Utils.pad(null, depth, '	');
 		}
 
 	// initialize
@@ -58,7 +58,7 @@
 				function process(value, index, depth)
 				{
 					trace(indent(depth) + '[' +index+ '] ' + value);
-					if(xjsfl.utils.getValues(value).indexOf(Number(search)) !== -1)
+					if(Utils.getValues(value).indexOf(Number(search)) !== -1)
 					{
 						return true;
 					}
