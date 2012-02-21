@@ -173,6 +173,9 @@
 					return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 				},
 
+			// ---------------------------------------------------------------------------------------------------------------
+			// Development methods
+
 				/**
 				 * Catch-all wrapper for the xjsfl.debug object
 				 * @param	{Error}		obj			A javaScript Error object
@@ -196,6 +199,13 @@
 					{
 						xjsfl.debug.file(obj);
 					}
+				},
+				
+				format:function(value, params)
+				{
+					var str = Utils.populate.apply(this, arguments);
+					fl.outputPanel.trace(str);
+					return str;
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
@@ -275,14 +285,20 @@
 				camelCase:function(value)
 				{
 					var part;
-					var parts	= String(value).split(/[^0-9a-z]/i);
+					var parts	= String(value).replace(/(^\W*|\W*$)/g, '').split(/[^0-9a-z]/i);
 					var str		= parts.shift().toLowerCase();
+					
 					while(parts.length)
 					{
 						part = parts.shift();
 						str += part[0].toUpperCase() + part.substr(1);
 					}
 					return str;
+				},
+				
+				underscore:function(value)
+				{
+					return String(value).toLowerCase().replace(/(^\W*|\W*$)/g, '').replace(/\W+/g, '_');
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
@@ -416,6 +432,7 @@
 				 * @param	{Array}		arr			An Array of Objects
 				 * @param	{String}	prop		A property name to sort on; defaults to 'name'
 				 * @param	{Boolean}	alpha		An optional flag to sort alphabetically
+				 * @returns	{Array}					The sorted Array)
 				 */
 				sortOn:function(arr, prop, alpha)
 				{
@@ -458,6 +475,7 @@
 
 					prop = prop || 'name';
 					qsort(arr, 0, arr.length);
+					return arr;
 				},
 
 				/**
