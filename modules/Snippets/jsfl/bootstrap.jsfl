@@ -1,1 +1,1 @@
-xjsfl.file.load($dir + 'snippets.jsfl');
+load('snippets.jsfl');

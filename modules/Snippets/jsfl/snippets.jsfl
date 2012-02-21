@@ -1,8 +1,9 @@
-﻿var Snippets =
+﻿xjsfl.init(this)
+var Snippets =
 {
 	// ------------------------------------------------------------------------------------------------
 	// constructor,
-
+	
 		init:function()
 		{
 			// load settings
@@ -211,86 +212,91 @@
 		 */
 		createData:function(folderURI, dataURI)
 		{
-			// callack for recusrsive function
-				function callback(element, index, level, indent)
-				{
-					// always skip the first folder
+			// debug
+				trace('Building snippet set for "' + URI.asPath(folderURI, true)+ '"');
+
+			// --------------------------------------------------------------------------------
+			// get URIs
+			
+				// callack for recusrsive function
+					function callback(element, index, level, indent)
+					{
 						if(
-							level == 0 ||
 							(element.name.substr(0, 1) == '_') ||
 							(element instanceof File && element.extension != 'jsfl')
 						)
 						{
-							return;
+							return false;
 						}
-
-					// create XML node
-						var item	= <item />
-
-					// set basic properties
-						//item.@level	= level - 1;
-						item.@type	= (element instanceof Folder ? 'folder' : 'file');
-						item.@label	= element.name.replace(/\.jsfl$/, '');
-						item.@path	= element.uri + (item.@type == 'folder' ? '/' : '');
-
-					// file properties
-						if(element instanceof File)
+						
+						if(level > 0)
 						{
-							//TODO use Source class instead
-							//TODO also parse functions
-
-							var contents	= element.contents || '';
-							var comments	= contents.match(/\/\*(?:(?!\*\/|\/\*)[\s\S])*(?:\/\*(?:(?!\*\/|\/\*)[\s\S])*\*\/(?:(?!\*\/|\/\*)[\s\S])*)*[\s\S]*?\*\//);
-							if(comments)
+							elements.push(element);
+						}
+					}
+	
+				// update folderURI
+					folderURI			= URI.toURI(folderURI);
+	
+				// process files
+					var elements		= [];
+					var uris			= Data.recurseFolder(folderURI, callback, true);
+					
+			// --------------------------------------------------------------------------------
+			// create data
+			
+				// generate xml
+					var xml				= <files type="folder" label="scripts" />;
+					xml.@path			= folderURI;
+	
+				// create data
+					var iconsURI		= this.uri + 'assets/icons/16x16/';
+					
+				// loop
+					for each(var element in elements)
+					{
+						// create XML node
+							var item		= <item />
+	
+						// set basic properties
+							//item.@level	= level - 1;
+							item.@type		= element instanceof Folder ? 'folder' : 'file';
+							item.@label		= element.name.replace(/\.jsfl$/, '');
+							item.@path		= element.uri;
+	
+						// file properties
+							if(element instanceof File)
 							{
-								// desc
-									var desc	= comments[0].match(/@desc\s+([^\r\n]+)/);
-									if(desc == null)
+								// get comment
+									var comment = Source.parseDocComment(element);
+									if(comment)
 									{
-										var desc	= comments[0].match(/\* (\w[^\r\n]+)/);
-									}
-
-								// icon
-									var icon	= comments[0].match(/@icon\s+([^\r\n]+)/);
-									if(icon)
-									{
-										item.@icon = icon[1].replace(/{iconsURI}/g, iconsURI);
-									}
-
-								// desc ... again? TODO Tidy up
-									if(desc)
-									{
-										item.@desc = desc[1].replace(/"/g, '\"');
+										item.@desc	= comment.intro;
+										var icon	= comment.getTag('icon');
+										if(icon)
+										{
+											item.@icon	= icon.comment.replace(/{iconsURI}/g, iconsURI);
+										}
 									}
 							}
-						}
-
-					// folder properties
-						else if(element instanceof Folder)
-						{
-							item.@items = element.length;
-						}
-
-					// add child
-						xml.appendChild(item);
-				}
-
-			// update folderURI
-				folderURI			= URI.toURI(folderURI);
-				var iconsURI		= this.uri + 'assets/icons/16x16/';
-
-			// generate xml
-				var xml				= <files type="folder" label="scripts" />;
-				xml.@path			= folderURI;
-
-			// debug
-				trace('Building snippet set for "' + URI.asPath(folderURI, true)+ '"');
-
-			// process files
-				Data.recurseFolder(folderURI, callback);
-
+	
+						// folder properties
+							else if(element instanceof Folder)
+							{
+								item.@items = element.length;
+							}
+	
+						// add child
+							xml.appendChild(item);
+					}
+	
+			// --------------------------------------------------------------------------------
 			// save config
-				var file			= new File(dataURI, xml).save();
+			
+				if(dataURI)
+				{
+					save(dataURI, xml);
+				}
 		},
 
 
@@ -352,51 +358,30 @@
 
 		makeFolder:function(uri)
 		{
-			//fl.trace('Creating folder: ' + uri)
-			var folder = new Folder(uri, true);
-			return folder.exists();
+			return new Folder(uri, true).exists;
 		},
 
-		//TODO update to use Template class
 		makeFile:function(uri, contents, desc, icon, version, author)
 		{
 			// debug
-				fl.trace('Creating file: ' + FLfile.uriToPlatformPath(uri))
+				trace('Creating file: ' + URI.toPath(uri))
 
+			//TODO load in proper user data
+			
 			// default values
-				var date		= new Date();
-				var name		= uri.match(/([^\/]+)\.jsfl$/)[1];
-				desc			= desc || name;
-				icon			= icon || 'Filesystem/page/page_white.png';
-				version			= version || '1.0';
-				author			= author || 'Dave Stewart (dave@xjsfl.com)'
-
-			// read template file
-				var template	= new File(xjsfl.uri + 'user/config/templates/template.jsfl').contents;
-
-			// grab contents
-				var docs		= '';
-				var stub		= '';
-				var matches		= template.match(/(\/\*\*[\s\S]+?\*\/)/i);
-
-				if (matches != null)
+				var data =
 				{
-					docs		= matches[1];
-					stub		= matches[0].substr(docs.length)
-					docs		= docs
-						.replace('{date}', date)
-						.replace('{desc}', desc)
-						.replace('{icon}', icon)
-						.replace('{version}', version)
-						.replace('{author}', author)
+					date		:new Date(),
+					name		:uri.match(/([^\/]+)\.jsfl$/)[1],
+					desc		:desc || name,
+					icon		:icon || 'Filesystem/page/page_white.png',
+					version		:version || '1.0',
+					author		:author || 'Dave Stewart (dave@xjsfl.com)'
 				}
 
-			// update contents
-				contents		= docs + '\n\n' + (contents || stub);
-
-			// save file
-				var file		= new File(path, contents)
-				file.save()
+			// update template
+				var template = new Template(xjsfl.uri + 'user/config/templates/template.jsfl', data);
+				template.save(uri);
 		}
 
 
@@ -409,3 +394,5 @@
  * @type {Module}
  */
 Snippets = xjsfl.modules.create('Snippets', Snippets, this);
+
+//Snippets.createData('{xjsfl}user/jsfl/snippets/')
