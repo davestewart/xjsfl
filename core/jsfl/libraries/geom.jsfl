@@ -21,7 +21,7 @@
 		 * Useful for quickly creating objects on the stage
 		 * @param	{Element}	element		A stage element
 		 * @param	{Number}	element		A radius
-		 * @param	{Array}		element		A 2-element Array of width and height
+		 * @param	{Array}		element		A selection
 		 * @param	{Number}	width		The bounds width
 		 * @param	{Number}	height		The bounds height
 		 * @param	{Number}	x			The bounds x position
@@ -124,13 +124,34 @@
 							this.bottom		= args[3] + args[1];
 						break;
 				}
-
-			this.toString = function()
+				
+		}
+		
+		Bounds.prototype =
+		{
+			get width()
+			{
+				return this.right - this.left;
+			},
+			
+			get height()
+			{
+				return this.bottom - this.top;
+			},
+			
+			get center()
+			{
+				var x = this.left + (this.width / 2);
+				var y = this.top + (this.height / 2);
+				return {x:x, y:y};
+			},
+			
+			toString:function()
 			{
 				return '[object Bounds top="' +this.top+ '" right="' +this.right+ '" bottom="' +this.bottom+ '" left="' +this.left+ '"]';
-			}
+			},
 
-			this.clone = function()
+			clone:function()
 			{
 				return new Bounds(this);
 			}
@@ -142,3 +163,8 @@
 		}
 
 		xjsfl.classes.register('Bounds', Bounds);
+		
+		
+	// --------------------------------------------------------------------------------
+	// Other objects...
+
