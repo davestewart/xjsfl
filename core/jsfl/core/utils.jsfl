@@ -429,17 +429,36 @@
 				 * Returns a unique array without any duplicate items
 				 *
 				 * @param	{Array}		arr			Any array
+				 * @param	{String}	prop		An optional property (if an Array of Objects is passed) to compare against
 				 * @returns	{Array}					A unique array
 				 */
-				toUniqueArray:function(arr)
+				toUniqueArray:function(arr, prop)
 				{
 					var arrOut	= [];
-					var i		= -1;
-					while(i++ < arr.length - 1)
+					var i = -1;
+					if(prop)
 					{
-						if(arrOut.indexOf(arr[i]) === -1)
+						var props = [];
+						var value;
+						while(i++ < arr.length - 1)
 						{
-							arrOut.push(arr[i]);
+							value = arr[i][prop];
+							if(props.indexOf(value) === -1)
+							{
+								props.push(value);
+								arrOut.push(arr[i]);
+							}
+						}
+					}
+					else
+					{
+						var i = -1;
+						while(i++ < arr.length - 1)
+						{
+							if(arrOut.indexOf(arr[i]) === -1)
+							{
+								arrOut.push(arr[i]);
+							}
 						}
 					}
 					return arrOut;

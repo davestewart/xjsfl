@@ -11,138 +11,107 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // xJSFL Installation file
 
-	function install()
+	function install(window)
 	{
 		// ----------------------------------------------------------------------------------------
-		// preflight checks...
-
+		// set up
+		
+			// variables
+				xjsfl =
+				{
+					uri:String(fl.scriptURI).replace('core/jsfl/install/install.jsfl', '')
+				}
+			
 			// Check for native E4X
 				if( ! window.XMLList)
 				{
 					alert('xJSFL cannot be installed on this version of Flash.\n\nThe framework requires E4X, which is available only in Flash CS3 or newer.');
 					return false;
 				}
+				
+			// load bootstrap
+				fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
+				
+			// load strap
+				fl.outputPanel.clear();
+				fl.trace(FLfile.read(xjsfl.uri + 'core/assets/misc/splash.txt').replace(/\r\n/g, '\n'));
 
-			// check that root folder is *only* named xJSFL
-				var xjsflURI = String(fl.scriptURI).replace('core/install/install.jsfl', '');
-				if( ! /\bxJSFL\/$/.test(xjsflURI))
-				{
-					alert('xJSFL installation issue.\n\nThe xJSFL root folder must only be named "xJSFL".\n\nPlease rename the folder and start the installation process again.');
-					return false;
-				}
-
-			// check that there is only one xJSFL folder in the install path
-				var matches = xjsflURI.match(/\bxJSFL\//g)
-				if(matches.length > 2)
-				{
-					alert('xJSFL installation issue.\n\nThere must only be one folder named "xJSFL" in the installation path.\n\nPlease move the real xJSFL folder to a new location and start the installation process again.');
-					return false;
-				}
-
-
+			// feedback
+				xjsfl.output.log('installing xjsfl', true);
+				
 		// ----------------------------------------------------------------------------------------
-		// OK, let's go!
-
-			// variables
-				var src, trg, file;
-				var win		= fl.version.indexOf('WIN') != -1;
-				var uris	=
-				{
-					xjsfl		:xjsflURI,
-					install		:xjsflURI + 'core/install/',
-					config		:fl.configURI,
-					tools		:fl.configURI + 'Tools/',
-					commands	:fl.configURI + 'Commands/',
-					swf			:fl.configURI + 'WindowSWF/'
-				};
-
-			// functions
-				function populate(obj, srcURI, trgURI)
-				{
-					// read file
-						var text = FLfile.read(srcURI);
-
-					// populate
-						var rx;
-						for(var name in obj)
-						{
-							rx		= new RegExp('{' +name+ '}', 'g')
-							text	= text.replace(rx, obj[name]);
-						}
-
-					// save
-						if(trgURI)
-						{
-							FLfile.write(trgURI, text);
-						}
-				}
-
+		// variables
+		
+			// function
 				function copy(srcURI, trgURI)
 				{
-					if(FLfile.exists(trgURI))
+					var trgPath = URI.toPath(trgURI, true);
+					if(URI.isFolder(trgURI))
 					{
-						FLfile.remove(trgURI);
+						if( ! FLfile.exists(trgURI))
+						{
+							xjsfl.output.log('creating folder "' +trgPath+ '"');
+							FLfile.createFolder(trgURI);
+						}
 					}
-					FLfile.copy(srcURI, trgURI);
+					else
+					{
+						xjsfl.output.log('copying file to "' +trgPath+ '"');
+						if(FLfile.exists(trgURI))
+						{
+							FLfile.remove(trgURI);
+						}
+						FLfile.copy(srcURI, trgURI);
+					}
 				}
-
+		
+			// variables
+				var srcURI;
+				var trgURI;
+				var win				= fl.version.indexOf('WIN') !== -1;
+				var installURI		= xjsfl.uri + 'core/assets/flash/';
+				var uris			= Data.recurseFolder(installURI, true);
+				
 		// ----------------------------------------------------------------------------------------
-		// copy files
-
-			// dll
-				file			= win ? 'xjsfl.dll' : 'xjsfl.bundle';
-				src				= uris.install + 'External Libraries/' + file;
-				trg				= uris.config + 'External Libraries/' + file;
-				copy(src, trg);
-
-			// ini
-				src				= uris.install + 'Tools/xJSFL.ini';
-				trg				= uris.tools + 'xJSFL.ini';
-				populate(uris, src, trg);
-
-			// loader
-				src				= uris.install + 'Tools/xJSFL Loader.jsfl';
-				trg				= uris.tools + 'xJSFL Loader.jsfl';
-				populate(uris, src, trg);
-
-			// Splash
-				src				= uris.install + 'Tools/xJSFL Splash.txt';
-				trg				= uris.tools + 'xJSFL Splash.txt';
-				populate(uris, src, trg);
-
-			// Snippets
-				src				= uris.xjsfl + 'modules/Snippets/ui/xJSFL Snippets.swf';
-				trg				= uris.swf + 'xJSFL Snippets.swf';
-				copy(src, trg);
-
-			// Commands
-				var commands = FLfile.listFolder(uris.install + 'Commands/*.jsfl');
-				for each(var command in commands)
+		// OK, let's go!
+		
+			// copy files
+				xjsfl.output.log('copying installation files', true);
+				for each(var uri in uris)
 				{
-					src			= uris.install + 'Commands/' + command;
-					trg			= uris.commands + 'xJSFL/' + command;
-					copy(src, trg);
+					// URIs
+						srcURI		= new URI(uri);
+						trgURI		= URI.reTarget(srcURI, installURI, fl.configURI);
+						
+					// libs
+						if(srcURI.path.indexOf('External Libraries') !== -1)
+						{
+							if( (win && srcURI.name == 'xjsfl.dll') || (! win && srcURI.name == 'xjsfl.bundle') )
+							{
+								copy(srcURI, trgURI);
+							}
+						}
+						else
+						{
+							copy(srcURI, trgURI);
+						}
 				}
+				
+			// write install URI
+				xjsfl.output.log('writing xjsfl.uri file');
+				save(fl.configURI + 'Tools/xjsfl.ini', 'xjsfl.uri = "' +xjsfl.uri+ '";');
 
-		// ----------------------------------------------------------------------------------------
-		// initialize framework and show splash
-
-			// xJSFL
-				xjsfl.initialized = false;
-				fl.runScript(uris.install + 'Tools/xJSFL Loader.jsfl');
-
-			// splash
+			// we're done!
+				xjsfl.output.log('installation complete\n', true);
+				xjsfl.output.log('Restart Flash to start using xJSFL!');
+				
+			// so show the splash dialog :)
 				var dom = fl.getDocumentDOM();
 				if( ! dom )
 				{
 					dom = fl.createDocument();
 				}
-				dom.xmlPanel(xjsflURI + 'core/install/ui/install.xul')
-
-		// ----------------------------------------------------------------------------------------
-		// done
-
-			return true;
+				dom.xmlPanel(xjsfl.uri + 'core/ui/install.xul')
 	}
 
-	install();
+	install(this);
