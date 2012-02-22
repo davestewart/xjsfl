@@ -69,7 +69,7 @@
 
 										// load splash text
 											fl.outputPanel.clear();
-											trace(FLfile.read(xjsfl.uri + 'assets/misc/splash.txt').replace(/\r\n/g, '\n'));
+											trace(FLfile.read(xjsfl.uri + 'core/assets/misc/splash.txt').replace(/\r\n/g, '\n'));
 
 										// load core bootstrap
 											fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
