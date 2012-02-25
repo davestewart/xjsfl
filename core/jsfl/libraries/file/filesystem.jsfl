@@ -77,6 +77,7 @@
 					}
 					if(skipConfirmation == true || state)
 					{
+						FLfile.setAttributes(this.uri, 'W');
 						return FLfile.remove(this.uri);
 					}
 					return this;
@@ -144,6 +145,27 @@
 				set attributes(attributes)
 				{
 					return this.exists ? FLfile.setAttributes(this.uri, attributes) : null;
+				},
+
+				/**
+				 * @type {Boolean} Set or get the read-only state of the filesystem object
+				 */
+				get writable (){ return this.exists && FLfile.getAttributes(this.uri).indexOf('R') === -1; },
+				set writable (state)
+				{
+					if(this.exists)
+					{
+						var attributes = FLfile.getAttributes(this.uri);
+						if(state)
+						{
+							attributes += 'W';
+						}
+						else
+						{
+							attributes = attributes.replace('W', '') + 'R';
+						}
+						FLfile.setAttributes(this.uri,  attributes);
+					}
 				},
 
 				/**
@@ -783,28 +805,6 @@
 				 * @type {Number} Get the size of the file
 				 */
 				get size (){ return FLfile.getSize(this.uri); },
-
-
-				/**
-				 * @type {Boolean} Set or get the read-only state of the file
-				 */
-				get writable (){ return this.exists && FLfile.getAttributes(this.uri).indexOf('R') === -1; },
-				set writable (state)
-				{
-					if(this.exists)
-					{
-						var attributes = FLfile.getAttributes(this.uri);
-						if(state)
-						{
-							attributes += 'W';
-						}
-						else
-						{
-							attributes = attributes.replace('W', '') + 'R';
-						}
-						FLfile.setAttributes(this.uri,  attributes);
-					}
-				},
 
 			// -------------------------------------------------------------------------------------------------------------------
 			// properties

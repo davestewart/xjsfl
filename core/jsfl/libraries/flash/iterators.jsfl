@@ -11,13 +11,11 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Iterators - Iterate thorugh documents, items, timelines, layers, frames and elements
 
-	//TODO Create global find() method
 	/*
 		Iterates through every item, layer, frame, element, and in the callback
 		add the context to the a global array. Then afterwards, the user can jump
 		to each object with contexts[i].goto();
 	*/
-
 	Iterators =
 	{
 		/**

@@ -108,7 +108,10 @@
 				/**
 				 * @type {String} The shortened path to the module's folder
 				 */
-				get path(){ return URI.asPath(this.uri, true); },
+				get path()
+				{
+					return URI.asPath(this.uri, true);
+				},
 
 
 			// ----------------------------------------------------------------------------------------
@@ -133,8 +136,7 @@
 				{
 					if(this.panel)
 					{
-						this.panel.call.apply(this.panel, arguments)
-						return true;
+						return this.panel.call.apply(this.panel, arguments)
 					}
 					return false;
 				},
@@ -159,7 +161,7 @@
 				 */
 				toString:function()
 				{
-					return '[object Module name="' +this.name+ '" path="' +this.path+ '"]';
+					return '[object Module name="' +this.name+ '" path="' +this.getPath()+ '"]';
 				}
 
 		}

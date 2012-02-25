@@ -34,7 +34,7 @@
 			// throw error if expression is not a string
 				if(typeof expression !== 'string')
 				{
-					throw new TypeError('TypeError in $(): parameter "expression" must be a string');
+					//throw new TypeError('TypeError in $(): parameter "expression" must be a string');
 				}
 
 			// resolve context
@@ -54,11 +54,18 @@
 							dom			= $dom; // unexpected results may occur if the dom doesn't reflect the location of the elements
 						}
 
+					// Timeline
+						else if(context instanceof Timeline)
+						{
+							//TODO Add ability to pass in Timeline, without going there
+							dom			= true;
+						}
+
 					// Context
 						else if(context instanceof Context)
 						{
 							context.goto();
-							var dom		= context.dom;
+							dom			= context.dom;
 						}
 				}
 
@@ -89,10 +96,20 @@
 					}
 
 				// filter items
-					elements = Selectors.select(expression, elements, dom, debug);
+					if(typeof expression === 'string')
+					{
+						elements = Selectors.select(expression, elements, dom, debug);
+					}
+					else
+					{
+						elements = expression;
+					}
 
 				// return
-					return new ElementCollection(elements);
+					if(Utils.isArray(elements))
+					{
+						return new ElementCollection(elements);
+					}
 			}
 			else
 			{

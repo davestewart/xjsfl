@@ -140,6 +140,16 @@
 	}
 
 	/**
+	 * Returns a pretty-printed XML string with correct tabbing and linespacing
+	 * @param	{Object}		useSystemNewline	An optional Boolean to 
+	 * @returns					{String}			An XML String
+	 */
+	XML.prototype.function::prettyPrint = function(useSystemNewline)
+	{
+		return this.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, useSystemNewline ? xjsfl.settings.newLine : '\n');
+	}	
+	
+	/**
 	 * Remove nodes according to a callback or expression
 	 * @returns					{String}		The XML converted to a string
 	 */

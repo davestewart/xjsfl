@@ -16,11 +16,12 @@
 	
 		/**
 		 * Color Utils library
-		 * @see http://www.madebypi.co.uk/labs/colorutils/
+		 * @see			http://www.madebypi.co.uk/labs/colorutils/
+		 * @requires	Dean Edwards "Base" class (included with original library)
 		 */
 
-		/* Lets build upon Dean Edwards "Base" class, as it makes for good foundations for code like this */
-		var aColor = Base.extend({
+		var aColor =
+		{
 			constructor : function (){ this.warn(); },
 			toHex : function (){ this.warn(); },
 			toRGB : function (){ this.warn(); },
@@ -150,9 +151,14 @@
 			warn : function (){
 				alert('aColor should not be created directly. Treat this as an abstract class.');
 			}
-		});
+		}		
+		aColor = Base.extend(aColor);
 		
-		var Hex = aColor.extend({
+	// ----------------------------------------------------------------------------------------------------
+	// Hex
+	
+		var Hex =
+		{
 			constructor : function (hex){
 				this.hex = hex;
 				if (this.hex.substring(0,1) == '#') this.hex = this.hex.substring(1,7);
@@ -186,9 +192,14 @@
 				return this.toCIELab().toCIELCh();
 			},
 			toSelf : "toHex"
-		});
+		}
+		Hex = aColor.extend(Hex);
 		
-		var RGB = aColor.extend({
+	// ----------------------------------------------------------------------------------------------------
+	// RGB
+	
+		var RGB =
+		{
 			constructor : function (r,g,b){
 				this.r = Math.min(255,Math.max(r,0));
 				this.g = Math.min(255,Math.max(g,0));
@@ -284,9 +295,14 @@
 				return this.toCIELab().toCIELCh();
 			},
 			toSelf : "toRGB"
-		});
+		}
+		RGB = aColor.extend(RGB);
 		
-		var XYZ = aColor.extend({
+	// ----------------------------------------------------------------------------------------------------
+	// XYZ
+	
+		var XYZ =
+		{
 			constructor : function (x,y,z){
 				this.x = x;
 				this.y = y;
@@ -378,9 +394,14 @@
 				return this.x+','+this.y+','+this.z;
 			},
 			toSelf : "toXYZ"
-		});
+		}
+		XYZ = aColor.extend(XYZ);
 		
-		var CIELab = aColor.extend ({
+	// ----------------------------------------------------------------------------------------------------
+	// CIELab
+	
+		var CIELab = 
+		{
 			constructor : function (l,a,b){
 				this.l = l;
 				this.a = a;
@@ -416,9 +437,9 @@
 				}else {
 					var_Z = (var_Z - 16 / 116) / 7.787;
 				}
-				x = ref_X * var_X;
-				y = ref_Y * var_Y;
-				z = ref_Z * var_Z;
+				var x = ref_X * var_X;
+				var y = ref_Y * var_Y;
+				var z = ref_Z * var_Z;
 				return new XYZ(x,y,z);
 			},
 			toCIELab : function (){
@@ -452,8 +473,14 @@
 				return this.l+','+this.a+','+this.b;
 			},
 			toSelf : "toCIELab"
-		});
-		var HSV = aColor.extend({
+		}
+		CIELab = aColor.extend(CIELab);
+		
+	// ----------------------------------------------------------------------------------------------------
+	// HSV
+	
+		var HSV =
+		{
 			constructor : function (h,s,v){
 				this.h = h;
 				this.s = s;
@@ -471,12 +498,13 @@
 				}
 				else
 				{
-				   var_h = this.h * 6
+				   var var_r, var_g, var_b;
+				   var var_h = this.h * 6
 				   if ( var_h == 6 ) var_h = 0
-				   var_i = Math.floor( var_h )
-				   var_1 = this.v * ( 1 - this.s )
-				   var_2 = this.v * ( 1 - this.s * ( var_h - var_i ) )
-				   var_3 = this.v * ( 1 - this.s * ( 1 - ( var_h - var_i ) ) )
+				   var var_i = Math.floor( var_h )
+				   var var_1 = this.v * ( 1 - this.s )
+				   var var_2 = this.v * ( 1 - this.s * ( var_h - var_i ) )
+				   var var_3 = this.v * ( 1 - this.s * ( 1 - ( var_h - var_i ) ) )
 		
 				   if      ( var_i == 0 ) { var_r = this.v     ; var_g = var_3 ; var_b = var_1 }
 				   else if ( var_i == 1 ) { var_r = var_2 ; var_g = this.v     ; var_b = var_1 }
@@ -514,9 +542,14 @@
 			},
 			toSelf : "toHSV"
 		
-		});
+		}
+		HSV = aColor.extend(HSV);
 		
-		var CMY = aColor.extend({
+	// ----------------------------------------------------------------------------------------------------
+	// CMY
+	
+		var CMY =
+		{
 			constructor : function (c,m,y){
 				this.c = c;
 				this.m = m;
@@ -566,8 +599,14 @@
 				return this.c+','+this.m+','+this.y;
 			},
 			toSelf : "toCMY"
-		});
-		var CMYK = aColor.extend({
+		}
+		CMY = aColor.extend(CMY);
+		
+	// ----------------------------------------------------------------------------------------------------
+	// CMYK	
+
+		var CMYK =
+		{
 			constructor : function (c,m,y,k){
 				this.c = c;
 				this.m = m;
@@ -602,9 +641,14 @@
 				return this.c+','+this.m+','+this.y+','+this.k;
 			},
 			toSelf : "toCMYK"
-		});
+		}
+		CMYK = aColor.extend(CMYK);
 		
-		var CIELCh = aColor.extend({
+	// ----------------------------------------------------------------------------------------------------
+	// CIELCh
+	
+		var CIELCh =
+		{
 			constructor : function (l,c,h){
 				this.l = l;
 				this.c = c;
@@ -642,7 +686,8 @@
 				return this;
 			},
 			toSelf : "toHex"
-		});
+		}
+		CIELCh = aColor.extend(CIELCh);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// Register classes

@@ -113,6 +113,18 @@
 		 */
 		Context.from = function(value)
 		{
+
+			//TODO Create context using shorthand string
+			Context.create('file:///c|path/to.fla>path/to/item~layer name@frame number or name:element name');
+
+			Context.create('file:///c|path/to.fla');
+			Context.create('>path/to/item');
+			Context.create('~layer name or index');
+			Context.create('~[layer name,layer name,layer name,layer name]');
+			Context.create('@frame number or name');
+			Context.create(':element name');
+			Context.create(URI.toURI());
+
 			switch(Utils.getClass(value))
 			{
 

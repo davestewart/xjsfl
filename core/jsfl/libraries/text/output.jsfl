@@ -115,7 +115,7 @@
 		},
 
 		/**
-		 * Output object in hierarchical format (note that $ arguments are optional, and can be passed in any order)
+		 * Output object to Output panel in hierarchical format (note that $ arguments are optional, and can be passed in any order)
 		 * @param	{Object}	obj			Any Object or value
 		 * @param	{Number}	$depth		An optional max depth to recurse to (defaults to 3)
 		 * @param	{String}	$label		An optional String label (defaults to "Inspect")
@@ -571,7 +571,7 @@
 				}
 
 			// process
-				var files = Data.recurseFolder(pathOrURI, callback, depth);
+				var files = Utils.walkFolder(pathOrURI, callback, depth);
 
 			// print
 				if(output !== false)

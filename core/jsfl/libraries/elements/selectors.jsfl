@@ -196,7 +196,7 @@
 									var method;
 
 								// type
-									if(/instance|symbol|bitmap|embeddedvideo|linkedvideo|video|compiledclip|text|static|dynamic|input|primitive|group|shape|movieclip|graphic|button/.test(exec[8]))
+									if(/instance|symbol|bitmap|embeddedvideo|linkedvideo|video|compiledclip|text|folder|static|dynamic|input|primitive|group|shape|movieclip|graphic|button/.test(exec[8]))
 									{
 										selector.type	= 'type';
 										method			= object.filter.type;

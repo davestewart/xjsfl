@@ -249,7 +249,7 @@
 				render:function(output)
 				{
 					// header
-						if(typeof this.caption !== 'undefined')
+						if(this.caption !== null)
 						{
 							this.addCaption();
 						}

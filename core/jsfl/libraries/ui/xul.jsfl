@@ -29,7 +29,7 @@
 			//TODO Add functionality for basic arithmetic to be performed inside textboxes
 
 			// public properties
-				this.xml		= xjsfl.file.load('xul/dialog.xul', 'template', true);
+				this.xml		= xjsfl.file.load('xul/dialog.xul', 'template');
 				this.controls	= {};
 				this.settings	= {};
 
@@ -41,7 +41,7 @@
 				this.id			= -1;
 
 			// load controls
-				var xml			= xjsfl.file.load('xul/controls.xul', 'template', true);
+				var xml			= xjsfl.file.load('xul/controls.xul', 'template');
 				for each(var node in xml.grid.rows.*)
 				{
 					XUL.templates[node.@template.toString()] = node.copy();
@@ -135,7 +135,7 @@
 				var xul = XUL.factory(props);
 
 			// show
-				if(xul && Utils.getKeys(xul.controls).length > 0)
+				if(xul && xjsfl.utils.getKeys(xul.controls).length > 0)
 				{
 					xul.show(accept, cancel);
 					return xul.values;
@@ -367,7 +367,7 @@
 									}
 									else
 									{
-										if(Utils.isArray(values))
+										if(xjsfl.utils.isArray(values))
 										{
 											item.@value		= value;
 											item.@label		= value;
@@ -500,7 +500,7 @@
 							while(matches = chunker.exec(str))
 							{
 								// debug
-									var match = Utils.trim(matches[0])
+									var match = xjsfl.utils.trim(matches[0])
 									//Output.inspect(matches);
 
 								// spacer
@@ -513,9 +513,9 @@
 									else
 									{
 										// variables
-											var control = Utils.trim(matches[1]);
-											var label	= Utils.trim(matches[2]);
-											var value	= Utils.trim(matches[3]);
+											var control = xjsfl.utils.trim(matches[1]);
+											var label	= xjsfl.utils.trim(matches[2]);
+											var value	= xjsfl.utils.trim(matches[3]);
 
 										// control
 											if(label == '|') // small hack, as the RegExp doesn't catch \| as a control
@@ -536,7 +536,7 @@
 												control = control.substring(0, matches[1].length - 1);
 											}
 
-										//TODO update this to work with Utils.parseValue
+										//TODO update this to work with xjsfl.utils.parseValue
 
 											// Output.inspect([control, label, value])
 
@@ -555,14 +555,14 @@
 															mats = values[i].match(rxObj)
 															if(mats)
 															{
-																var lab		= Utils.trim(mats[1]);
-																var val		= Utils.trim(mats[2]);
+																var lab		= xjsfl.utils.trim(mats[1]);
+																var val		= xjsfl.utils.trim(mats[2]);
 																values[i]	= {label:lab, value:val};
 															}
 														}
 														else
 														{
-															var val		= Utils.trim(values[i]);
+															var val		= xjsfl.utils.trim(values[i]);
 															values[i]	= /^popupslider|slider|numeric$/.test(control) ? val : {label:val, value:val};
 														}
 													}
@@ -689,7 +689,7 @@
 													break;
 
 													case 'columns':
-														this.setColumns(Utils.parseValue(label));
+														this.setColumns(xjsfl.utils.parseValue(label));
 													break;
 
 											default:
@@ -698,7 +698,7 @@
 									}
 
 								// output
-									//Output.inspect([Utils.trim(matches[0]), control, label, value], 'Add');
+									//Output.inspect([xjsfl.utils.trim(matches[0]), control, label, value], 'Add');
 
 
 							}
@@ -818,7 +818,7 @@
 									attributes.format = 'string';
 									if(!isNaN(parseInt(attributes.value)))
 									{
-										attributes.value = '#' + Utils.pad(parseInt(value).toString(16).toUpperCase());
+										attributes.value = '#' + xjsfl.utils.pad(parseInt(value).toString(16).toUpperCase());
 									}
 									else
 									{
@@ -1353,8 +1353,8 @@
 								types	= types.replace(/click/g, 'command');
 
 							// convert ids and types to Arrays
-								ids		= Utils.trim(ids).split(/\W+/g);
-								types	= Utils.trim(types).split(/\W+/g);
+								ids		= xjsfl.utils.trim(ids).split(/\W+/g);
+								types	= xjsfl.utils.trim(types).split(/\W+/g);
 
 							// add events
 								for each(var id in ids)
@@ -1532,7 +1532,7 @@
 						// get control values and convert to array for callbacks
 							if(onAccept || onCancel)
 							{
-								var args = Utils.getValues(this.values);
+								var args = xjsfl.utils.getValues(this.values);
 							}
 
 						// test for validation
@@ -1710,7 +1710,7 @@
 				 */
 				toString:function()
 				{
-					return '[object XUL id="' +this.id+ '" title="' +Utils.trim((this.xml ? this.xml.@title : ''))+ '" controls:' +Utils.getKeys(this.controls).length+ ']';
+					return '[object XUL id="' +this.id+ '" title="' +xjsfl.utils.trim((this.xml ? this.xml.@title : ''))+ '" controls:' +xjsfl.utils.getKeys(this.controls).length+ ']';
 				}
 		}
 
@@ -1814,7 +1814,7 @@
 						this.elements = {};
 						for each(var element in elements)
 						{
-							var value = Utils.parseValue(String(element.@value));
+							var value = xjsfl.utils.parseValue(String(element.@value));
 							this.elements[value] = {id:element.@id, label:element.@label, value:value};
 						}
 				}
@@ -1884,7 +1884,7 @@
 							case 'checkbox':
 							case 'textbox':
 							case 'targetlist':
-								value = Utils.parseValue(value);
+								value = xjsfl.utils.parseValue(value);
 								if(this.type === 'textbox' && typeof value === 'string')
 								{
 									value = value.replace(/\r\n/g, '\n');
@@ -1896,7 +1896,7 @@
 							break;
 
 							default:
-								value = Utils.parseValue(value);
+								value = xjsfl.utils.parseValue(value);
 						}
 
 					// debug
@@ -2094,7 +2094,7 @@
 						case 'textbox':
 						case 'expression':
 						case 'colorchip':
-							if(Utils.trim(this.rawValue) == '')
+							if(xjsfl.utils.trim(this.rawValue) == '')
 							{
 								valid = false;
 							}

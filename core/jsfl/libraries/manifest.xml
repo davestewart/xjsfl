@@ -1,0 +1,13 @@
+<manifest>
+	<folder>
+		<first>
+			template.jsfl
+			filesystem.jsfl
+			output.jsfl
+			events.jsfl
+		</first>
+		<ignore>
+			text/*
+		</ignore>
+	</folder>
+</manifest>
