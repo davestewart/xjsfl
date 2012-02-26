@@ -14,8 +14,37 @@
 // Core Bootstrap - Sets up the framework, then loads core classes and modules
 
 	// --------------------------------------------------------------------------------
-	// initialize
+	// Log constants
 
+		/**
+		 * @type {Object}	A selection of constants that can be used with xjsfl.output.log
+		 */
+		Log =
+		{
+			EVENT_SPLASH			:'EVENT_SPLASH',
+			EVENT_INIT				:'EVENT_INIT',
+		
+			FILE_FIND				:'FILE_FIND',
+			FILE_LOAD				:'FILE_LOAD',
+			FILE_COPY				:'FILE_COPY',
+		
+			CLASS_LOAD				:'CLASS_LOAD',
+			CLASS_REGISTER			:'CLASS_REGISTER',
+		
+			SYSTEM_INFO				:'SYSTEM_INFO',
+			SYSTEM_MESSAGE			:'SYSTEM_MESSAGE',
+			SYSTEM_WARNING			:'SYSTEM_WARNING',
+			SYSTEM_ERROR			:'SYSTEM_ERROR',
+			
+			USER_INFO				:'USER_INFO',
+			USER_MESSAGE			:'USER_MESSAGE',
+			USER_WARNING			:'USER_WARNING',
+			USER_ERROR				:'USER_ERROR',
+		};
+
+	// --------------------------------------------------------------------------------
+	// initialize
+	
 		(function()
 		{
 			// clear existing values, in case we're reloading
@@ -27,6 +56,9 @@
 					}
 				}
 
+			// temp trace
+				trace = fl.trace;
+				
 			// placeholder for settings
 				xjsfl.settings = {};
 
@@ -92,7 +124,7 @@
 
 	// --------------------------------------------------------------------------------
 	// load framework
-
+	
 		// --------------------------------------------------------------------------------
 		// attempt to load core
 	
@@ -124,11 +156,11 @@
 
 				// --------------------------------------------------------------------------------
 				// load files
-	
 					// need to load Utils & URI libraries first as core methods rely on them
 						xjsfl.output.log('loading core...', true);
 						loadClass('utils');
 						loadClass('uri');
+						loadClass('uri-list');
 						loadClass('xjsfl');
 	
 					// initialize
@@ -138,6 +170,7 @@
 					// now, once xjsfl has loaded, register core libraries
 						xjsfl.classes.register('Utils', Utils, '{core}jsfl/core/utils.jsfl');
 						xjsfl.classes.register('URI', URI, '{core}jsfl/core/uri.jsfl');
+						xjsfl.classes.register('URIList', URIList, '{core}jsfl/core/uri.jsfl');
 			}
 			catch(error)
 			{
@@ -156,8 +189,8 @@
 				try
 				{
 					xjsfl.output.log('loading core libraries...', true);
-					xjsfl.classes.load(['filesystem', 'class', 'template']);
-					xjsfl.classes.load('libraries/*.jsfl');
+					xjsfl.classes.load(['filesystem', 'template', 'class', 'base', 'events']);
+					xjsfl.classes.load('libraries/**'); // could just send a folder refrernce through here (it knows it needs to be .jsfl)
 				}
 				catch(error)
 				{
@@ -188,10 +221,10 @@
 	
 			if(xjsfl.loading)
 			{
+				xjsfl.output.log('running user bootstrap...', true);
+				xjsfl.file.load('//user/jsfl/bootstrap.jsfl');
 				try
 				{
-					xjsfl.output.log('running user bootstrap...', true);
-					xjsfl.file.load('//user/jsfl/bootstrap.jsfl');
 				}
 				catch(error)
 				{
@@ -199,7 +232,6 @@
 					debug(error, true);
 				}			
 			}
-			
 	
 		// --------------------------------------------------------------------------------
 		// cleanup

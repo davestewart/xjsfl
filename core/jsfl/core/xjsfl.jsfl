@@ -75,6 +75,7 @@
 		app:
 		{
 			// Apple: "mac" | Windows: "win"
+			//TODO consider adding object properties here: isWin, isMac
 				platform:	fl.version.substr(0, 3).toLowerCase(),
 
 			// the product name of flash, i.e. CS4
@@ -94,7 +95,7 @@
 
 		/**
 		 * Folder URIs
-		 * Common folders which developers may wish to reference from within scripts or plugins
+		 * Common folders which may be used as placeholders in URI references, i.e. '{core}path/to/file.txt'
 		 */
 		folders:
 		{
@@ -105,15 +106,6 @@
 				user:		xjsfl.uri + 'user/',
 				flash:		fl.configURI,
 				swf:		fl.configURI + 'WindowSWF/',
-
-			// methods
-				add:function(name, uri)
-				{
-					if( ! /^(all|add)$/.test(this.name) )
-					{
-						this[name] = URI.toURI(uri);
-					}
-				},
 
 				/** @type {Array}	An Array of all registered placeholder URIs in reverse-order (for searching) */
 				get all()
@@ -127,22 +119,33 @@
 						}
 					}
 					return uris.sort().reverse();
-				}
+				},
+				
+			// methods
+				add:function(name, uri)
+				{
+					if( ! /^(all|add)$/.test(this.name) )
+					{
+						this[name] = URI.toURI(uri);
+					}
+				},
+
 		},
 
 		/**
-		 * Search paths
-		 * A cache of uris which xJSFL searches in order when loading files
+		 * URIs
+		 * An ordered list of base URIs which xJSFL uses when searching for files
 		 * module uris are updated automatically when new modules are added
 		 */
 		uris:
 		{
 			// properties
-				core:	[ xjsfl.uri + 'core/' ],
+				core:	[ ],
 				module: [ ],
-				user:	[ xjsfl.uri + 'user/' ],
-
+				user:	[ ],
+				
 			// methods
+			
 				add:function(pathOrURI, type)
 				{
 					// check uri is valid
@@ -162,17 +165,86 @@
 						if(this[type].indexOf(uri) == -1)
 						{
 							this[type].push(uri);
+							xjsfl.settings.searchPaths.add(uri);
 						}
 				},
 
-				/** @type {Array}	An Array of all search URIs */
-				get all()
+				/**
+				 * Gets all URIs in order
+				 * @returns	{Array}		An Array or URIs
+				 */
+				get:function()
 				{
 					var uris = xjsfl.settings.uris;
-					return [].concat(uris.core)
-								.concat(uris.module)
-								.concat(uris.user);
+					return [].concat(uris.core).concat(uris.module).concat(uris.user);
+				},
+				
+		},
+		
+		/**
+		 * Search paths
+		 * A cache of folder paths which xJSFL searches when loading files
+		 */
+		searchPaths:
+		{
+			add:function(uri)
+			{
+				if(URI.isURI(uri))
+				{
+					// grab the path
+						var path = URI.toPath(uri, true);
+						xjsfl.output.log('Adding search paths for "' +path+ '"');
+						
+					// get all searchable paths
+						var paths = Utils.getSearchableURIs(uri, 'folders', true);
+						xjsfl.output.log(paths.length+ ' search paths added');
+						if(paths.length > 50)
+						{
+							xjsfl.output.log('WARNING! Adding this many search paths can slow down file searching. Consider using manifest.xml files to exlude sub folders');
+						}
+						
+					//BUG - for some reason, an error is thrown when there are 70+ paths in pocket god.
+							// it's not always this pattern either. And the error is only thrown when 
+							// calling xjsfl.settings.uris.add from the bootstrap.
+							// WTF?
+						
+					// assign the paths as a new URIList
+						this[uri] = new URIList(paths);
 				}
+			},
+			
+			/**
+			 * returns an Array or URILists
+			 * @param	{String}			Filter all paths by the first folder
+			 * @returns	{Array}				An Array of URILists
+			 */
+			get:function(filter)
+			{
+				// variables
+					/** @type {URIList}	A list of URIs */
+					var list;
+					var inputPaths;
+					var outputPaths	= [];
+					var uris		= xjsfl.settings.uris.get();
+					
+				// loop over URI lists in order, extract paths, and collect source URI + paths
+					for each(var uri in uris)
+					{
+						list = this[uri];
+						if(list)
+						{
+							inputPaths = filter ? list.filter(new RegExp('^' + filter.replace(/\/*$/, '/'))) : list.getURIs();
+							for each(var path in inputPaths)
+							{
+								outputPaths.push(uri + path);
+							}
+						}
+					}
+					
+				// return
+					return outputPaths;
+			},
+
 		},
 
 		/**
@@ -382,8 +454,8 @@
 				{
 					xjsfl.output.log('loading files needed for debugging...', false, false);
 					fl.runScript(xjsfl.uri + 'core/jsfl/core/URI.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/filesystem.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/template.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/filesystem.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/template.jsfl');
 				}
 
 			// build errors
@@ -400,6 +472,11 @@
 
 			// set loading to false
 				xjsfl.loading = false;
+
+				/*				
+				var data = Utils.getValues(stack, ['file','line','path','code'], true)
+				Table.print(data)
+				*/
 
 			// trace and return
 				if(log)
@@ -563,7 +640,7 @@
 					name = name ? String(name) : '';
 
 				// file-specific variables
-					var path, ext, which;
+					var path, name, ext, which;
 
 				// switch type
 					switch(type)
@@ -572,7 +649,7 @@
 						case 'script':
 						case 'scripts':
 						case 'jsfl':
-							path	= 'jsfl/' + name;
+							path	= 'jsfl/';
 							ext		= '.jsfl';
 							which	= -1;
 						break;
@@ -582,7 +659,7 @@
 						case 'libs':
 						case 'library':
 						case 'libraries':
-							path	= 'jsfl/libraries/' + name;
+							path	= 'jsfl/libraries/';
 							ext		= '.jsfl';
 							which	= 0;
 						break;
@@ -590,27 +667,27 @@
 						// for full config path return the last file found from: core, modules, user (xml)
 						case 'config':
 						case 'settings':
-							path	= 'config/' + name;
+							path	= 'config/';
 							ext		= '.xml';
 							which	= -1;
 						break;
 
 						// for templates, return the last file found, from: core, modules, user (txt, or supplied extension)
 						case 'template':
-							path	= 'assets/templates/' + name;
+							path	= 'assets/templates/';
 							ext		= '.txt';
 							which	= -1;
 						break;
 
 						// otherwise, return all files found, from: core, modules, user
 						default:
-							path	= type.replace(/\/+$/g, '') + '/' + name;
+							path	= type.replace(/\/+$/g, '') + '/';
 							ext		= '';
 							which	= 0;
 					}
 
 				// add default extension if not provided;
-					path += name.match(/\.\w+$/) ? '' : ext;
+					name += name.match(/\.\w+$/) ? '' : ext;
 
 
 			// --------------------------------------------------------------------------------
@@ -618,12 +695,12 @@
 
 				// variables
 					var uris		= [];
-					var paths		= xjsfl.settings.uris.all;
-
+					var paths		= xjsfl.settings.searchPaths.get(path);
+					
 				// check all paths for files
 					for(var i = 0; i < paths.length; i++)
 					{
-						var uri = paths[i] + path;
+						var uri = paths[i] + name;
 						if(FLfile.exists(uri))
 						{
 							uris.push(uri);
@@ -656,7 +733,7 @@
 						return uris;
 					}
 		},
-
+		
 		/**
 		 * Attempts to find and run or return files from the cascading file structure.
 		 * Parameters and return type vary depending on file type!
@@ -687,6 +764,7 @@
 
 			// variables
 				var result	= null;
+
 
 			// --------------------------------------------------------------------------------
 			// Resolve URI
@@ -735,11 +813,19 @@
 
 						for each(var uri in uris)
 						{
+
 							// variables
-								var ext = uri.match(/(\w+)$/)[1];
+								uri		= String(uri);
+								var ext	= uri.match(/(\w+)$/)[1];
 
 							// flag
 								xjsfl.file.stack.push(uri);
+								
+							// logging
+								if(uri.indexOf('manifest.xml') !== -1)
+								{
+									quiet = true;
+								}
 
 							// log
 								if(quiet !== true)
@@ -795,6 +881,17 @@
 			var file		= new File(uri);
 			file.contents	= contents;
 			return file.exists && file.size > 0;
+		},
+		
+		/**
+		 * Copies a file from one location to another
+		 * @param	{String}	srcPathOrURI	The source path or URI
+		 * @param	{String}	trgPathOrURI	The target path or URI
+		 * @returns	{Boolean}					true or false depending on whether the copy was successful or not
+		 */
+		copy:function(srcPathOrURI, trgPathOrURI)
+		{
+			
 		}
 	}
 
@@ -849,19 +946,28 @@
 						var folderURI	= URI.getFolder(uri);
 
 					// this should result in an Array of URIs
-						var files		= FLfile.listFolder(uri, 'files');
-						for each(var file in files)
+					
+					// test for recursive
+						if(fileRef.indexOf('**') > -1)
 						{
-							tokens.push(folderURI + file);
+							var tokens = Utils.walkFolder(folderURI, true);
+						}
+						else
+						{
+							var files = FLfile.listFolder(uri, 'files');
+							for each(var file in files)
+							{
+								tokens.push(folderURI + file);
+							}
 						}
 				}
 
-			// make sure paths are in an array, so we can treat them all the same
+			// make sure paths/URIs are in an array, so we can treat them all the same
 				else
 				{
 					tokens = fileRef instanceof Array ? fileRef : [fileRef];
 				}
-
+				
 			// load classes
 				for each(var token in tokens)
 				{
@@ -880,15 +986,18 @@
 						// now that we have an Array of URIs, loop over them and load any that have not already been loaded
 							for each(var uri in uris)
 							{
-								var loadedURIs = Utils.getValues(xjsfl.classes.uris);
-								if(loadedURIs.indexOf(uri) === -1 || reload)
+								if(URI.isFile(uri))
 								{
-									xjsfl.file.load(uri);
-								}
-								else
-								{
-									var path = URI.toPath(uri, true);
-									xjsfl.output.log('skipping "' +path+ '" (already loaded!)', false, false);
+									var loadedURIs = Utils.getValues(xjsfl.classes.uris);
+									if(loadedURIs.indexOf(uri) === -1 || reload)
+									{
+										xjsfl.file.load(uri);
+									}
+									else
+									{
+										var path = URI.toPath(uri, true);
+										xjsfl.output.log('skipping "' +path+ '" (already loaded!)', false, false);
+									}
 								}
 							}
 					}
@@ -911,6 +1020,7 @@
 			if( ! /^(paths|load|loadFolder|require|register|restore)$/.test(name) )
 			{
 				// log
+				//TODO determine type of obj, and change log message
 					xjsfl.output.log('registering class "' + name + '"', false, false);
 					
 				// store class
@@ -1117,16 +1227,20 @@
 									return false;
 								}
 							}
-							// if a manifest is found, initialize it
+							// if a manifest is found, with module information, initialize it
 							else if(element.name === 'manifest.xml')
 							{
-								xjsfl.modules.init(element.parent.uri);
-								return false;
+								var manifest = xjsfl.file.load(element.uri);
+								if(manifest.module.length())
+								{
+									xjsfl.modules.init(element.parent.uri);
+									return false;
+								}
 							}
 						};
 
 					// find and load modules automatically
-						Data.recurseFolder(uri || xjsfl.settings.folders.modules, processFile);
+						Utils.walkFolder(uri || xjsfl.settings.folders.modules, processFile);
 
 					// return
 						return this;
@@ -1148,16 +1262,20 @@
 					// if path is not a URI, it will probably be a path fragment, so default to the modules folder
 						if( ! URI.isURI(folderNameOrURI))
 						{
-							var uri			= xjsfl.settings.folders.modules + folderNameOrURI;
+							var uri	 = xjsfl.settings.folders.modules + folderNameOrURI;
 						}
 						else
 						{
-							var uri			= folderNameOrURI;
+							var uri = folderNameOrURI;
 						}
 
 					// attempt to load the module's manifest
-						var manifest		= xjsfl.file.load(uri + 'manifest.xml');
-						if( ! manifest)
+						var manifest = xjsfl.file.load(uri + 'manifest.xml');
+						if(manifest)
+						{
+							manifest = manifest.module;
+						}
+						else
 						{
 							return this;
 						}
@@ -1194,7 +1312,7 @@
 								}
 
 							// find new or updated files
-								Data.recurseFolder(assetsURI, process);
+								Utils.walkFolder(assetsURI, process);
 
 							// copy files, if any
 								if(copyURIs.length)
@@ -1317,12 +1435,12 @@
 
 			// update XML id placeholders with correct id
 				 var xml		= xul
-									.xml.toXMLString()
+									.xml.prettyPrint()
 									.replace(/{xulid}/g, xul.id)
 									.replace(/xjsfl.ui.handleEvent\(0,/g, 'xjsfl.ui.handleEvent(' +xul.id+ ',');
 
 			// save XML to dialog.xml
-				var uri			= xul.uri || xjsfl.uri + 'core/temp/dialog.xul';
+				var uri			= xul.uri || xjsfl.uri + 'core/ui/dialog.xul';
 				xjsfl.file.save(uri, xml);
 
 			// register XUL
@@ -1417,27 +1535,19 @@
 // Initialize
 
 	/**
-	 * These properties are assigned using extend, to remain hidden from Komodo's code-intelligence
+	 * Final setup
 	 */
 	(function()
 	{
-		var props =
-		{
-			/**
-			 * Standard toString function
-			 * @returns
-			 */
-			toString:function()
+		// These properties are assigned using extend, to remain hidden from Komodo's code-intelligence
+			if(this['Utils'])
 			{
-				return '[object xJSFL]';
+				Utils.extend(xjsfl, { toString:function(){ return '[object xJSFL]'; } });
 			}
-
-		}
-
-		if(this['Utils'])
-		{
-			Utils.extend(xjsfl, props);
-		}
+		
+		// add core and user URIs
+			xjsfl.settings.uris.add(xjsfl.uri + 'core/', 'core');
+			xjsfl.settings.uris.add(xjsfl.uri + 'user/', 'user');
 
 	})()
 
@@ -1459,7 +1569,6 @@
 					}
 
 				// global variables
-
 					scope.__defineGetter__( '$dom', function(){ return fl.getDocumentDOM(); } );
 					scope.__defineGetter__( '$timeline', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.getTimeline() : null; } );
 					scope.__defineGetter__( '$library', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.library : null; } );
@@ -1467,10 +1576,9 @@
 					scope.__defineSetter__( '$selection', function(elements){ var dom = fl.getDocumentDOM(); if(dom){dom.selectNone(); dom.selection = elements} } );
 
 				// global functions
-
 					// output
-						scope.clear		= fl.outputPanel.clear;
 						scope.trace		= function(){ fl.outputPanel.trace(Array.slice.call(this, arguments).join(', ')) };
+						scope.clear		= fl.outputPanel.clear;
 
 					// string
 						scope.populate	= function(template, properties){ return Utils.populate.apply(this, arguments); };
