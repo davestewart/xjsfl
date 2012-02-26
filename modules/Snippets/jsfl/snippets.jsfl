@@ -1,4 +1,4 @@
-﻿xjsfl.init(this)
+xjsfl.reload(this)
 var Snippets =
 {
 	// ------------------------------------------------------------------------------------------------
@@ -213,18 +213,15 @@ var Snippets =
 		createData:function(folderURI, dataURI)
 		{
 			// debug
-				trace('Building snippet set for "' + URI.asPath(folderURI, true)+ '"');
+				this.log('building set for "' + URI.asPath(folderURI, true)+ '"');
 
 			// --------------------------------------------------------------------------------
 			// get URIs
 			
 				// callack for recusrsive function
-					function callback(element, index, level, indent)
+					function callback(element)
 					{
-						if(
-							(element.name.substr(0, 1) == '_') ||
-							(element instanceof File && element.extension != 'jsfl')
-						)
+						if( (element instanceof File && element.extension != 'jsfl') || (element.name.substr(0, 1) == '_') )
 						{
 							return false;
 						}
@@ -240,7 +237,7 @@ var Snippets =
 	
 				// process files
 					var elements		= [];
-					var uris			= Data.recurseFolder(folderURI, callback, true);
+					var uris			= Utils.walkFolder(folderURI, callback, true);
 					
 			// --------------------------------------------------------------------------------
 			// create data
@@ -364,7 +361,7 @@ var Snippets =
 		makeFile:function(uri, contents, desc, icon, version, author)
 		{
 			// debug
-				trace('Creating file: ' + URI.toPath(uri))
+				this.log('creating file: ' + URI.toPath(uri))
 
 			//TODO load in proper user data
 			
