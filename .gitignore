@@ -5,3 +5,5 @@ _old/
 /modules/Snippets/config/data
 /projects
 /user/jsfl/libraries/load-modules.jsfl
+/dev
+/core/ui/dialog.xul
