@@ -1,4 +1,5 @@
 <settings>
+	<template name="jsfl" uri="{user}assets/templates/snippet.jsfl.txt"/>
 	<icons uri="{xjsfl}modules/Snippets/assets/icons/16x16">
 		<icon name="folder_closed" value="Filesystem/folder/folder_closed.png"/>
 		<icon name="folder_open" value="Filesystem/folder/folder.png"/>
