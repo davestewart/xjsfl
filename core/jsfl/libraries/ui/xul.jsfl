@@ -29,7 +29,7 @@
 			//TODO Add functionality for basic arithmetic to be performed inside textboxes
 
 			// public properties
-				this.xml		= xjsfl.file.load('xul/dialog.xul', 'template');
+				this.xml		= xjsfl.file.load('xul/dialog.xul', 'template', true);
 				this.controls	= {};
 				this.settings	= {};
 
@@ -41,7 +41,7 @@
 				this.id			= -1;
 
 			// load controls
-				var xml			= xjsfl.file.load('xul/controls.xul', 'template');
+				var xml			= xjsfl.file.load('xul/controls.xul', 'template', true);
 				for each(var node in xml.grid.rows.*)
 				{
 					XUL.templates[node.@template.toString()] = node.copy();
@@ -106,11 +106,23 @@
 						{
 							xul.setXML(props);
 						}
+					// props is URI, load XML
+						else if(props instanceof URI)
+						{
+							xul.load(props);
+						}
 
-					// props is a string, use shorthand notation to create controls
+					// props is a string, load XML if is a URI, or use shorthand notation to create controls
 						else if(typeof props == 'string')
 						{
-							xul.add(props);
+							if(URI.isURI(props))
+							{
+								xul.load(props);
+							}
+							else
+							{
+								xul.add(props);
+							}
 						}
 
 					// return
@@ -186,6 +198,7 @@
 				// flags
 					built:		false,
 					open:		false,
+					accepted:	false,
 
 			// --------------------------------------------------------------------------------
 			// accessors
@@ -239,7 +252,7 @@
 					 * @param	{Object}	attributes	Any additional attributes that should be applied to the control XML
 					 * @param	{Object}	validation	Any validation rules that should be applied to the control
 					 * @param	{Object}	events		An Object containing event:callback pairs
-					 * @param	{Boolean}	user		An optional Boolean containing event:callback pairs
+					 * @param	{Boolean}	user		An optional Boolean specifying to use use XML? //TODO check this
 					 * @returns	{XUL}					The XUL dialog
 					 */
 					_addControl:function(type, id, label, xml, attributes, validation, events, user)
@@ -984,7 +997,9 @@
 						// add child items
 							var parent			= xml..vbox;
 							this._addChildren(parent, values, id || label.toLowerCase());
-
+							
+							//TODO Add functionality to pre-check checkboxes by passing in a "checked" Array ( [1,0,1,1] ) in attributes
+							
 						// add control
 							xml					= this._addControl('checkboxgroup', id, label, xml, attributes, validation);
 							return this;
@@ -1208,13 +1223,21 @@
 					 */
 					setXML:function(xml)
 					{
-						this.controls	= {};
-						this.events		= {};
-						this.settings	= {};
-						delete this.xml..content.*
-						this.xml..content.@id	= 'controls'
-						this.content			= this._parseUserXML(new XMLList(xml));
-						return this;
+						// variables
+							this.controls	= {};
+							this.events		= {};
+							this.settings	= {};
+
+						// xml							
+							var nodes = new XMLList(xml);
+							
+						// update content
+							delete this.xml..content.*;
+							this.xml..content.@id	= 'controls'
+							this.content			= this._parseUserXML(nodes);
+							
+						// add new controls
+							return this;
 					},
 
 
@@ -1224,13 +1247,24 @@
 				/**
 				 * Sets the initial values of controls in the dialog
 				 * @param	{Object}	values			A hash of control:value values
+				 * @param	{XML}		values			An XML node of <name>value</name> elements
 				 * @returns	{XUL}						The XUL dialog
 				 */
 				setValues:function(values)
 				{
-					for(var id in values)
+					if(typeof values == 'xml')
 					{
-						this.setValue(id, values[id]);
+						for each(var node in values.*)
+						{
+							this.setValue(node.name(), String(node));
+						}
+					}
+					else
+					{
+						for(var id in values)
+						{
+							this.setValue(id, values[id]);
+						}
 					}
 					return this;
 				},
@@ -1469,6 +1503,33 @@
 
 			// --------------------------------------------------------------------------------
 			// show
+			
+				/**
+				 * Loads a dialog in from an external file
+				 * @param	{String}	pathOrURI	A valid path or URI
+				 * @param	{URI}		pathOrURI	A URI instance
+				 * @returns	{XUL}					The XUL dialog
+				 */
+				load:function(pathOrURI)
+				{
+					// get URI
+						var xml = xjsfl.file.load(pathOrURI);
+
+					// grab nodes
+						if(xml.name() == 'dialog')
+						{
+							var title = xml.@title;
+							if(title.length())
+							{
+								this.setTitle(title);
+							}
+						}
+						var nodes = xml.*;
+						
+					// set nodes
+						this.setXML(nodes);
+						return this;
+				},
 
 				/**
 				 * Save the dialog in a particular location so custom Flash controls can reference the src attribute properly
@@ -1521,13 +1582,12 @@
 
 						// show panel
 							this.open		= true;
+							this.accepted	= false;
 							this.settings	= xjsfl.ui.show(this);
 							this.open		= false;
 
 					// --------------------------------------------------------------------------------
 					// process result
-
-							//Output.inspect(this.settings)
 
 						// get control values and convert to array for callbacks
 							if(onAccept || onCancel)
@@ -1536,8 +1596,11 @@
 							}
 
 						// test for validation
-							if(this.settings && this.settings.dismiss == 'accept')
+							if(this.settings && this.settings.dismiss === 'accept')
 							{
+								// set accepted
+									this.accepted	= true;
+									
 								// validate
 
 									// prevalidate event
@@ -1584,7 +1647,6 @@
 								{
 									onCancel.apply(this, args);
 								}
-								this.settings = null;
 							}
 
 						// return
@@ -1656,7 +1718,7 @@
 										// assign handler. Note that the xulid will be assigned and the {xulid} placeholder replaced during xjsfl.ui.show()
 											for each(var event in events)
 											{
-												node.@['on' + event] = "xjsfl.ui.handleEvent('{xulid}', '" +event+ "', '" +id+ "')";
+												node.@['on' + event] = "xjsfl.ui.handleEvent('{xulid}', '" +event+ "', '" +id+ "');";
 											}
 									}
 							}
@@ -1822,6 +1884,9 @@
 
 	// --------------------------------------------------------------------------------
 	// Prototype
+	
+		//TODO Subclass XULControl with simple and complex types
+		//TODO Add ability to query both indices and values of compound controls
 
 		XULControl.prototype =
 		{
@@ -1839,7 +1904,7 @@
 				{
 					// work out if the dialog is open, or closed (existance of settings.dismiss implies it's closed)
 						var settings	= this.getXUL().settings;
-						var open		= settings.dismiss === undefined;
+						var open		= settings && settings.dismiss === undefined;
 
 					// grab the (String) value for the control
 						var value		= open ? fl.xmlui.get(this.id) : settings[this.id];
@@ -1853,8 +1918,14 @@
 				 */
 				get value()
 				{
+					//TODO - see how we can tidy up this settings > open > state chain - it's unweildy!
+					
+					// work out if the dialog is open, or closed (existance of settings.dismiss implies it's closed)
+						var settings	= this.getXUL().settings;
+						var open		= settings && settings.dismiss === undefined;
+
 					// raw value
-						var value = this.rawValue;
+						var value		= this.rawValue;
 
 					// parse to a real value
 						switch(this.type)
