@@ -1,9 +1,9 @@
 /desktop.ini
 _archive/
 _old/
-/core/temp
-/modules/Snippets/config/data
-/projects
-/user/jsfl/libraries/load-modules.jsfl
 /dev
+/core/temp
 /core/ui/dialog.xul
+/user/temp
+/user/jsfl/libraries/load-modules.jsfl
+/modules/Snippets/config/data

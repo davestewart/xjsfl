@@ -3,6 +3,7 @@ if(window.xjsfl && xjsfl.uri)
 	// callback
 		function onAccept(name, email, url)
 		{
+			url = url.replace(/^(http:\/\/)?/, 'http://');
 			var params = ['name', 'email', 'url'];
 			for (var i = 0; i < params.length; i++)
 			{

@@ -33,7 +33,7 @@ var Snippets =
 				if( ! file.exists || force)
 				{
 					var folderURI = sets.find(function(node){ return node.@name == name; }).@uri;
-					this.makeData(folderURI, dataURI);
+					this.makeSet(folderURI, dataURI);
 				}
 
 			// update and save settings
@@ -210,7 +210,7 @@ var Snippets =
 		 * @param	uri
 		 * @returns
 		 */
-		makeData:function(folderURI, dataURI)
+		makeSet:function(folderURI, dataURI)
 		{
 			// debug
 				this.log('building set for "' + URI.asPath(folderURI, true)+ '"');
