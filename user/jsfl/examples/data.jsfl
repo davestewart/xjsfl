@@ -29,8 +29,8 @@
 					trace(indent(depth) + '[' +index+ '] ' + value);
 				}
 
-				Data.recurse(arr, process);
-				Data.recurse(obj, process);
+				Utils.walk(arr, process);
+				Utils.walk(obj, process);
 			}
 
 		// --------------------------------------------------------------------------------
@@ -47,7 +47,7 @@
 					trace(indent(depth) + '[' +index+ '] ' + value);
 				}
 
-				Data.recurse(arr, process);
+				Utils.walk(arr, process);
 			}
 
 		// --------------------------------------------------------------------------------
@@ -65,7 +65,7 @@
 				}
 
 				var search = prompt('Enter a number (1 - 21) to return the parent');
-				var result = Data.recurse(obj, process);
+				var result = Utils.walk(obj, process);
 
 				result ? inspect(result, 'Found') : trace('Nothing was found');
 			}
@@ -89,7 +89,7 @@
 
 				// start processing
 					var folder = new Folder('{user}');
-					Data.recurse (folder, process, getContents)
+					Utils.walk (folder, process, getContents)
 			}
 
 	// --------------------------------------------------------------------------------
@@ -105,7 +105,7 @@
 					trace(indent + '/' + element.name);
 				}
 
-				Data.recurseFolder('{user}', callback);
+				Utils.walkFolder('{user}', callback);
 			}
 
 		// --------------------------------------------------------------------------------
@@ -119,7 +119,7 @@
 				}
 
 				var paths = [];
-				Data.recurseFolder('{user}', collect);
+				Utils.walkFolder('{user}', collect);
 				list(paths)
 			}
 
@@ -137,7 +137,7 @@
 					trace(indent + '/' + element.name);
 				}
 
-				Data.recurseFolder('{user}', callback);
+				Utils.walkFolder('{user}', callback);
 			}
 
 		// --------------------------------------------------------------------------------
@@ -157,7 +157,7 @@
 
 				// promt the user and search
 					var search = prompt('Enter some text to find', 'Find a file by searching folders and comparing contents')
-					var result = Data.recurseFolder('{user}', callback);
+					var result = Utils.walkFolder('{user}', callback);
 
 				// do something with the result
 					result ? trace(result) : trace('Nothing was found');

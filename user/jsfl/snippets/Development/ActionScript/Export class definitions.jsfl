@@ -38,10 +38,14 @@
 					this.data.super		= item.linkageBaseClass;
 					this.data.extends	= 'extends ' + parts.name;
 				}
+				
+			// date
+				this.data.date			= (new Date()).format();
 
 			// elements
 				//var elements = item.timeline
 				var elements = {clip:'flash.display.Sprite', text:'flash.text.TextField'};
+				//TODO implement this
 
 
 			// finally, get the imports
@@ -93,22 +97,31 @@
 				return Utils.sort(arrOut, false, true).join('\n') + '\n';
 			},
 	
-			save:function(folderURI)
+			save:function(folderURI, simulate)
 			{
 				// get imports
 					this.data.imports	= this.getImports();
 					this.data.elements	= this.elements.join('\n');
 	
 				// template
-					var template		= new Template('/assets/templates/as/class.as.txt', this.data);
+					var template		= new Template(templateURI, this.data);
 	
 				// variables
 					var path			= this.data.package ? this.data.package.replace(/\./g, '/') + '/' : '';
 					var uri				= new URI(folderURI + path + this.data.name+ '.as');
 	
-				// save					
+				// save
 					trace('Exporting "' +uri.path+ '" ');
-					template.save(uri);
+					if( simulate )
+					{
+						trace(template.render());
+						trace('');
+					}
+					else
+					{
+						template.save(uri);
+					}
+					
 			}
 
 	}
@@ -125,17 +138,17 @@
 		}
 	}
 
-	function processItem(item)
+	function processItem(item, index, items, simulate)
 	{
 		var exporter = new ItemExporter(item);
-		exporter.save(folderURI);
+		exporter.save(folderURI, simulate);
 	}
 	
-	function processItems(names, path, author, open)
+	function processItems(names, path, author, open, simulate)
 	{
 		trace('Exporting ' +collection.elements.length+ ' items...')
-		collection.each(processItem);
-		if(open)
+		collection.each(processItem, [simulate]);
+		if( ! simulate && open)
 		{
 			new Folder(folderURI).reveal();
 		}
@@ -145,52 +158,69 @@
 // ----------------------------------------------------------------------------------------------------------------------
 // main code
 
-	function main()
-	{
-		// init
-			xjsfl.init(this);
-			clear();
-	
-		// global variables
-			var author		= 'Dave Stewart';
-			var folderURI	= new URI('/temp/src/');
-			var path		= folderURI.path;
-	
-		// grab exported elements
-			if($library.getSelectedItems() == 0)
-			{
-				selectionType = 'all'
-				collection = $$(':exported');
-			}
-			else
-			{
-				var selectionType = 'selected';
-				var collection = $$(':selected:exported'); //TODO check that this is working properly - looks like one selector result is overwriting the other!
-				if(collection.elements.length == 0)
-				{
-					alert('None of the selected item(s) are set to export');
-					return;
-				}
-			}
-			
-		// process items
-			if(collection.elements.length)
-			{
-				var names	= Utils.sortOn(Utils.getValues(collection.elements, 'linkageClassName'), 'linkageClassName');
-				var rows	= names.length < 10 ? 10 : names.length + 3;
-				XUL
-					.factory()
-					.setTitle('Export ' +collection.elements.length+ ' classes (' +selectionType+ ')')
-					.addListbox('Items', 'items', names, {rows:rows, multiple:true})
-					.addTextbox('Output Path', 'path', {width:400, value:path})
-					.addTextbox('Author', 'author', {width:400, value:author, required:false})
-					.addCheckbox('Open folder when done', 'openfolder', {checked:true})
-					.show(processItems)
-			}
-			else
-			{
-				alert('There are no exported items in the Library');
-			}		
-	}
+	//TODO
+	/*
+		Add in user pref functionality
+		Test for custom templates
+		Sprite.as.txt
+		MovieClip.as.txt
+	*/
 
-	main()
+	// main function
+		function main()
+		{
+			// init
+				xjsfl.init(this);
+				clear();
+		
+			// grab exported elements
+				if($library.getSelectedItems() == 0)
+				{
+					selectionType = 'all'
+					collection = $$(':exported');
+				}
+				else
+				{
+					var selectionType = 'selected';
+					collection = $$(':selected:exported'); //TODO check that this is working properly - looks like one selector result is overwriting the other!
+					if(collection.elements.length == 0)
+					{
+						alert('None of the selected item(s) are set to export');
+						return;
+					}
+				}
+				
+			// process items
+				if(collection.elements.length)
+				{
+					var names	= Utils.sortOn(Utils.getValues(collection.elements, 'linkageClassName'), 'linkageClassName');
+					var rows	= names.length < 10 ? 10 : names.length + 3;
+					XUL
+						.factory()
+						.setTitle('Export ' +collection.elements.length+ ' classes (' +selectionType+ ')')
+						.addListbox('Items', 'items', names, {rows:rows, multiple:true})
+						.addTextbox('Template path', 'template', {width:500, value:templateURI.path})
+						.addTextbox('Output path', 'path', {width:500, value:path})
+						.addTextbox('Author', 'author', {width:500, value:author, required:false})
+						.addCheckbox('Open folder when done', 'openfolder', {checked:true})
+						.addCheckbox('Simulate', 'simulate', {checked:false})
+						.show(processItems)
+				}
+				else
+				{
+					alert('There are no exported items in the Library');
+				}		
+		}
+
+	// init
+		xjsfl.init(this);
+	
+	// global variables
+		var collection;
+		var author		= 'Dave Stewart';
+		var templateURI	= new URI('/assets/templates/class.as.txt');
+		var folderURI	= new URI('/temp/src/');
+		var path		= folderURI.path;
+
+	// start
+		main();

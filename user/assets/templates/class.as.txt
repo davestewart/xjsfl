@@ -3,7 +3,8 @@ package {package}
 	{>imports?}
 	/**
 	 * {name}
-	 * @author {author}
+	 * @author	{author}
+	 * @date	{date}
 	 */
 	public class {name} {extends?}
 	{
@@ -30,6 +31,7 @@ package {package}
 			 */
 			public function {name}()
 			{
+				{super?}
 				initialize();
 			}
 

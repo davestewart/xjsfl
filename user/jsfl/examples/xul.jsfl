@@ -258,6 +258,32 @@
 		}
 	
 	// --------------------------------------------------------------------------------
+	// load XML source
+	
+		if(0)
+		{
+			XUL
+				.factory()
+				.load('//core/ui/install.xul')
+				//.setValues({name:'Dave', email:'dave@xjsfl.com'})
+				.setValues(new Config('user').get('personal'))
+				.show()
+		}
+		
+	// --------------------------------------------------------------------------------
+	// Set values
+	
+		if(0)
+		{
+			XUL
+				.factory()
+				.setTitle('Set Values')
+				.add('name,email')
+				.setValues({name:'Dave', email:'dave@xjsfl.com'})
+				.show()
+		}
+	
+	// --------------------------------------------------------------------------------
 	// Events, callbacks, and OO control of UI elements
 	
 		if(0)

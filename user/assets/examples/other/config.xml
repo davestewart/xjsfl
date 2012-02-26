@@ -1,0 +1,16 @@
+<settings>
+	<personal>
+		<name></name>
+		<email></email>
+		<url></url>
+	</personal>
+	<stuff>
+		<node>1</node>
+		<node>2</node>
+		<node>3</node>
+		
+		<obj>1</obj>
+		<obj>2</obj>
+		<obj>3</obj>
+	</stuff>
+</settings>

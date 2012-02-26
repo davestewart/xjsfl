@@ -240,7 +240,7 @@
 						slider:Steps=[{length},0,{length}],
 						slider:Amount=[100,0,100],
 						slider:Alpha=[100,0,100],
-						radio:Operation=[Gradient,Wheel,Split,Analogous,Rectangle],
+						radio:Operation=[Wheel,Gradient,Split,Analogous,Rectangle],
 						checkbox:Randomize Order,
 						button:Apply,
 						button:Randomize Colors,

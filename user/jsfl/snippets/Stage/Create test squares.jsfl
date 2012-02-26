@@ -82,7 +82,7 @@ function makeSquares(num, cols, gutter, style, setStage, clearStage)
 				y	= (py * 50) + (py * gutter) + (gutter + 25)
 
 			// do it
-				var name = 'Item_' + Utils.pad(i + 1, 2);
+				var name = 'item_' + Utils.pad(i + 1, 2);
 				if( ! collection.find(name))
 				{
 					lib.addItemToDocument({x:x, y:y}, itemName);

@@ -143,7 +143,7 @@
 
 		// Same function, but using the Data library
 
-			//TODO - implemement Data.recurse properly!
+			//TODO - implemement Utils.walk properly!
 
 			if(0)
 			{
@@ -151,5 +151,5 @@
 				var fileCallback	= function(e){ trace(e) };
 				var folderCallback	= function(e){ return e instanceof Folder };
 
-				Data.recurse(folder, fileCallback, folderCallback);
+				Utils.walk(folder, fileCallback, folderCallback);
 			}
