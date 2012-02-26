@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██              ██         ██ ██
 //  ██              ██         ██ ██
@@ -30,6 +30,7 @@
 				}
 				
 			// load bootstrap
+				//TODO - Add in checks in case bootstrap fails
 				fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
 				
 			// load strap
@@ -69,8 +70,8 @@
 				var srcURI;
 				var trgURI;
 				var win				= fl.version.indexOf('WIN') !== -1;
-				var installURI		= xjsfl.uri + 'core/assets/flash/';
-				var uris			= Data.recurseFolder(installURI, true);
+				var installURI		= xjsfl.uri + 'core/assets/install/flash/';
+				var uris			= Utils.walkFolder(installURI, true);
 				
 		// ----------------------------------------------------------------------------------------
 		// OK, let's go!
@@ -105,13 +106,37 @@
 				xjsfl.output.log('installation complete\n', true);
 				xjsfl.output.log('Restart Flash to start using xJSFL!');
 				
-			// so show the splash dialog :)
-				var dom = fl.getDocumentDOM();
-				if( ! dom )
+		// ----------------------------------------------------------------------------------------
+		// show installation spalsh, and set user info
+		
+			// callbacks
+				function onAccept(name, email, url)
 				{
-					dom = fl.createDocument();
+					var params = ['name', 'email', 'url'];
+					for (var i = 0; i < params.length; i++)
+					{
+						config.set('personal.' + params[i], arguments[i]);
+					}
+					onCancel();
 				}
-				dom.xmlPanel(xjsfl.uri + 'core/ui/install.xul')
+				
+				function onCancel()
+				{
+					var str	= 'Thanks for installing xJSFL!'
+							+ '\n\nTo update your user details in future, go to: Commands > xJSFL > Update User Info.'
+							+ '\n\nTo start using xJSFL now, restart Flash, then go to: Window > Other Panels > xJSFL Snippets.'
+							+ '\n\nGo to www.xjsfl.com/support for help, documentation & tutorials.'
+					alert(str);
+				}
+				
+			// get values and show splash
+				var config	= new Config('user');
+				var values	= config.get('personal');
+				var xul = XUL
+					.factory()
+					.load('//core/ui/install.xul')
+					.setValues(values)
+					.show(onAccept, onCancel);
 	}
 
 	install(this);

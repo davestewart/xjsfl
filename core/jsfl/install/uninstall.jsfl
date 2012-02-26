@@ -39,14 +39,14 @@
 				var baseURI, trgURI, uris;
 				var trgURIs			= [];
 				var xulURI			= xjsfl.uri + 'core/ui/uninstall.xul';
-				var installURI		= xjsfl.uri + 'core/assets/';
+				var installURI		= xjsfl.uri + 'core/assets/install/';
 				var folderURIs		= xjsfl.settings.uris.all.concat([installURI]);
 				
 			// collate URIs
 				for each(var uri in folderURIs)
 				{
 					baseURI			= uri + 'flash/'
-					uris			= Data.recurseFolder(baseURI, true);
+					uris			= Utils.walkFolder(baseURI, true);
 					for each(uri in uris)
 					{
 						trgURI = URI.reTarget(uri, baseURI, fl.configURI);
@@ -81,7 +81,10 @@
 								{
 									var file = new File(uri);
 									xjsfl.output.log('deleting file "' +path+ '"');
-									FLfile.remove(uri);
+									if( ! file.remove(true) )
+									{
+										xjsfl.output.log('WARNING: the file "' +path+ '" could not be removed!');
+									}
 								}
 								
 							// handle folder
@@ -93,17 +96,16 @@
 										xjsfl.output.log('deleting folder "' +path+ '"');
 										if( ! folder.remove(true) )
 										{
-											xjsfl.output.log('WARNING: the folder "' +path+ '" could not be removed!')
+											xjsfl.output.log('WARNING: the folder "' +path+ '" could not be removed!');
 										}
 									}
 								}
 						}
 						
-					// delete values
-						for(var name in xjsfl)
-						{
-							delete xjsfl[name];
-						}
+					// warn user about xJSFL extension
+						xjsfl.output.log('One last thing...', true);
+						xjsfl.output.log('The xJSFL extension is currently in use, so you will need to remove it manually from:');
+						xjsfl.output.log(URI.asPath(fl.configURI + 'External Libraries/'));
 				}
 				else
 				{
@@ -111,16 +113,20 @@
 				}
 
 			// we're done! so show the splash dialog :)
-				var dom = fl.getDocumentDOM();
-				if( ! dom )
+				if( ! $dom )
 				{
-					dom = fl.createDocument();
+					fl.createDocument();
 				}
-				dom.xmlPanel(xulURI);
+				$dom.xmlPanel(xulURI);
 				
 			// sob!
-				fl.trace('\n> xjsfl: UNINSTALLATION COMPLETE. SOB :(');
+				xjsfl.output.log('uninstallation complete. sob :(', true);
 				
+			// delete values
+				for(var name in xjsfl)
+				{
+					delete xjsfl[name];
+				}
 	}
 
 	uninstall(this);
