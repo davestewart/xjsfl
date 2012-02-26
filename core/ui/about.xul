@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<dialog id="sample" title=" About xJSFL" buttons="accept">
+	<flash class="control" id="flash" src="swf/splash.swf" width="320" height="280" />
+	<spacer />
+	<label width="310" value="xJSFL is an open source JSFL framework for creating tools and plugins for the Adobe Flash IDE, copyright 2012 Dave Stewart." />
+</dialog>
