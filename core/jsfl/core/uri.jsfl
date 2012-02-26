@@ -580,12 +580,14 @@
 
 			/**
 			 * Returns the file or folder name of the item referenced by the path or URI (note names are unescaped)
-			 * @param	{String}	pathOrURI	A vald path or URI
-			 * @returns	{String}				The file or folder name
+			 * @param	{String}	pathOrURI		A vald path or URI
+			 * @param	{Boolean}	removeExtension	An optional Boolean to remove the extension
+			 * @returns	{String}					The file or folder name
 			 */
-			URI.getName = function(pathOrURI)
+			URI.getName = function(pathOrURI, removeExtension)
 			{
-				return (String(pathOrURI).replace(/\/$/, '')).split(/[\/\\]/).pop().replace(/%20/, ' ');
+				var name = (String(pathOrURI).replace(/\/$/, '')).split(/[\/\\]/).pop().replace(/%20/, ' ');
+				return removeExtension ? name.replace(/\.\w+$/, '') : name;
 			}
 
 			/**
