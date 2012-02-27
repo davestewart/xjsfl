@@ -161,7 +161,7 @@
 				 */
 				toString:function()
 				{
-					return '[object Module name="' +this.name+ '" path="' +this.getPath()+ '"]';
+					return '[object Module name="' +this.name+ '" path="' +this.path+ '"]';
 				}
 
 		}

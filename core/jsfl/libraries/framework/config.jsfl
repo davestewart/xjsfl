@@ -26,25 +26,25 @@
 		{
 			// ----------------------------------------------------------------------------------------------------
 			// resolve the URI
-			
+
 				// throw error if no path passed
 					if(typeof pathOrURI !== 'string')
 					{
 						throw new TypeError('TypeError in Config: pathOrURI "' +pathOrURI+ '" must be a string')
 					}
-	
+
 				// absolute uri
 					if(URI.isURI(pathOrURI))
 					{
 						var uri = pathOrURI;
 					}
-	
+
 				// relative uri - find in paths
 					else
 					{
 						// find in paths
 							var uri	= xjsfl.file.find('config', pathOrURI);
-	
+
 						// fall back to user config if module or user config doesn't exist (but don't save yet)
 							if(uri == null)
 							{
@@ -54,20 +54,20 @@
 
 				// make sure URI has an xml extension
 					uri = uri.replace(/(\.xml)?$/, '.xml');
-	
+
 			// ----------------------------------------------------------------------------------------------------
 			// protected functions
-			
-				// file
+
+				// override prototype function with protected getter
 					var file = new File(uri);
 					this.getFile = function()
 					{
 						return file;
 					}
-	
+
 			// ----------------------------------------------------------------------------------------------------
 			// save passed in data, or load existing file
-			
+
 				// if data is passed in, save
 					if(xml)
 					{
@@ -78,13 +78,13 @@
 						this.xml = xml;
 						this.save();
 					}
-	
+
 				// if not, load the existing data if a file exists
 					else if(this.getFile().exists)
 					{
 						this.load();
 					}
-	
+
 				// otherwise, just initialize XML
 					else
 					{
@@ -99,9 +99,15 @@
 		{
 			xml:	null,
 
+			getFile:function()
+			{
+				return null;
+			},
+
 			get uri()
 			{
-				return this.getFile() ? this.getFile().uri : '';
+				var file = this.getFile();
+				return file ? file.uri : null;
 			},
 
 			constructor:Config,
@@ -141,11 +147,11 @@
 							case 'string':
 								parent[nodeName] = value;
 							break;
-	
+
 							case 'xml':
 								node[nodeName] += value
 							break;
-	
+
 							default:
 								node[nodeName] += new XML('<![CDATA[' + String(value) + ']]>');
 						}
@@ -171,11 +177,11 @@
 				 * nodes that don't exist will return undefined, but not null (value === undefined)
 				 * test for XML with typeof value == 'xml'
 				 */
-				
+
 				// get the value
 					var result = path ? eval('this.xml.' + path) : this.xml;
 					var length = result.length();
-					
+
 				// result will always be an XML node, now choose whether to convert it
 					if(length == 0)
 					{
@@ -234,12 +240,17 @@
 			 */
 			toString:function()
 			{
-				var file	= this.getFile();
-				var exists	= file.exists;
-				var path	= file.path;
 				var nodes	= this.xml ? this.xml.*.length() : 0;
+				var file	= this.getFile();
+				var exists	= false;
+				var path	= ''
+				if(file)
+				{
+					exists	= file.exists;
+					path	= file.path;
+				}
 				return '[object Config path="' +path+ '" rootnodes=' +nodes+ ' exists=' +exists+ ']';
-			},			
+			},
 
 			/**
 			 * Returns the pretty-printed XML contents
