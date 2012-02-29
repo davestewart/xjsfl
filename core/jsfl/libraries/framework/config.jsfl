@@ -231,7 +231,12 @@
 			remove:function()
 			{
 				this.clear();
-				return this.getFile().remove(true);
+				var uri = this.getFile().uri;
+				if(uri.indexOf('/xJSFL/core/config/') === -1)
+				{
+					return this.getFile().remove(true);
+				}
+				return false;
 			},
 
 			/**
