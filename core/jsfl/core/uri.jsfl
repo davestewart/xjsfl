@@ -70,8 +70,16 @@
 		*/
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// class
+	// /* URI Instance - Instantiatable class that can be used to easily create and manipulate URI strings */
 
+		/**
+		 * URI Constructor
+		 * @param	{String}	pathOrURI		A token, path or URI-formatted string
+		 * @param	{String}	context			An optional uri or path context, from which to start the URI
+		 * @param	{File}		context			An optional File from which to start the URI
+		 * @param	{Folder}	context			An optional Folder from which to start the URI
+		 * @param	{Number}	context			An optional stack-function index, the location of which to derive the URI from
+		 */
 		function URI(pathOrURI, context)
 		{
 			this.uri = URI.toURI(pathOrURI, context || 1);
@@ -135,10 +143,10 @@
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// static properties
+	// /* Static methods - a host of static utility functions that can be used to manipulate paths or URIs */
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// creation functions
+		// /* Creation functions */
 
 			/**
 			 * Create a valid URI from virtually any URI or path
@@ -419,7 +427,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// conversion functions
+		// /* Conversion functions */
 
 			/**
 			 * Perform simple path to URI conversion
@@ -537,7 +545,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// testing functions
+		// /* Testing functions */
 
 			/**
 			 * Test if the supplied value is a URI-formatted string
@@ -611,7 +619,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// extraction functions
+		// /* Extraction functions */
 
 			/**
 			 * Returns the current folder path of the item referenced by the path or URI
@@ -748,7 +756,7 @@
 			}
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// utility functions
+		// /* Utility functions */
 
 			URI.tidy = function(pathOrURI)
 			{
