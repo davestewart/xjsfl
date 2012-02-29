@@ -21,7 +21,7 @@
 		Utils =
 		{
 			// ---------------------------------------------------------------------------------------------------------------
-			// <OO methods>
+			// /* OO methods */
 
 				/**
 				 * Extends an object or array with more properties or elements
@@ -175,7 +175,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Development methods>
+			// /* Development methods */
 
 				/**
 				 * Catch-all wrapper for the xjsfl.debug object
@@ -210,7 +210,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <String methods>
+			// /* String methods */
 
 				/**
 				 * Pads a value to a certain length with a specific character
@@ -336,7 +336,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <RegExp methods>
+			// /* RegExp methods */
 
 				/**
 				 * Escapes a string for use in RegExp constructors
@@ -361,7 +361,7 @@
 
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Array methods>
+			// /* Array methods */
 
 				/**
 				 * Checks if the object is a true Array or not
@@ -568,7 +568,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Object methods>
+			// /* Object methods */
 
 				/**
 				 * Checks if the object is a true Object or not
@@ -933,7 +933,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Get methods>
+			// /* Get methods */
 
 				/**
 				 * Get the arguments of a function as an Array
@@ -1072,7 +1072,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Value methods>
+			// /* Value methods */
 
 				/**
 				 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
@@ -1259,7 +1259,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <File methods>
+			// /* File methods */
 
 				/**
 				 * Returns the first valid path or URI from an Array of paths and/or URIs
