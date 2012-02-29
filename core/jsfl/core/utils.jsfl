@@ -21,7 +21,7 @@
 		Utils =
 		{
 			// ---------------------------------------------------------------------------------------------------------------
-			// <OO methods>
+			// /* OO methods */
 
 				/**
 				 * Extends an object or array with more properties or elements
@@ -160,7 +160,7 @@
 									}
 							}
 						}
-						
+
 				},
 
 				/**
@@ -175,7 +175,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Development methods>
+			// /* Development methods */
 
 				/**
 				 * Catch-all wrapper for the xjsfl.debug object
@@ -201,7 +201,7 @@
 						xjsfl.debug.file(obj);
 					}
 				},
-				
+
 				format:function(value, params)
 				{
 					var str = Utils.populate.apply(this, arguments);
@@ -210,7 +210,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <String methods>
+			// /* String methods */
 
 				/**
 				 * Pads a value to a certain length with a specific character
@@ -288,7 +288,7 @@
 					var part;
 					var parts	= String(value).replace(/(^\W*|\W*$)/g, '').split(/[^0-9a-z]/i);
 					var str		= parts.shift().toLowerCase();
-					
+
 					while(parts.length)
 					{
 						part = parts.shift();
@@ -296,7 +296,7 @@
 					}
 					return str;
 				},
-				
+
 				/**
 				 * Convert a value from "camelCase" to "separate words"
 				 * @param	{String}	value	The string to convert
@@ -311,7 +311,7 @@
 						.replace(/([a-z])?([A-Z0-9])/g, '$1 $2')
 						.replace(/^ /g, '');
 				},
-				
+
 				/**
 				 * Converts a value to sentense case, optionally de-camelcasing
 				 * @param	{String}	value	A string value
@@ -324,7 +324,7 @@
 					value	= value.substr(0, 1).toUpperCase() + value.substr(1).toLowerCase();
 					return value;
 				},
-				
+
 				/**
 				 * Converts a string of words to underscore_case
 				 * @param	{Object}	value	Description
@@ -336,7 +336,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <RegExp methods>
+			// /* RegExp methods */
 
 				/**
 				 * Escapes a string for use in RegExp constructors
@@ -361,7 +361,7 @@
 
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Array methods>
+			// /* Array methods */
 
 				/**
 				 * Checks if the object is a true Array or not
@@ -568,7 +568,7 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Object methods>
+			// /* Object methods */
 
 				/**
 				 * Checks if the object is a true Object or not
@@ -858,26 +858,26 @@
 						{
 							// process the element with the callback
 								var result = fnChild.apply(scope, [element, index, depth]);
-		
+
 							// Now, depending on the result, we do one of three things:
 								/*
 									- Boolean false		Skip processing of this element
 									- Boolean true		Stop processing and return this element
 									- no return value	Continue processing child elements
 								*/
-		
+
 							// if the result is a Boolean true, consider this element found, and return it
 								if(result === true)
 								{
 									return element;
 								}
-		
+
 							// if false was not returned, process the current element
 								else if(result !== false)
 								{
 									// get the custom contents, or just use the object itself if no callback supplied
 										var contents = fnContents ? fnContents.apply(scope, [element, index, depth]) : element;
-		
+
 									// process contents
 										if( contents && ! ((typeof contents) in simpleTypes) )
 										{
@@ -906,13 +906,13 @@
 											}
 											depth--;
 										}
-		
+
 								}
-		
+
 							// return null if everything is normal
 								return null;
 						}
-		
+
 					// variables
 						var simpleTypes =
 						{
@@ -923,17 +923,17 @@
 							'function'	:1,
 							'undefined'	:1
 						}
-		
+
 					// defaults
 						scope = scope || window;
 						var depth = 0;
-		
+
 					// process
 						return process(rootElement, 0);
 				},
-				
+
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Get methods>
+			// /* Get methods */
 
 				/**
 				 * Get the arguments of a function as an Array
@@ -1071,155 +1071,8 @@
 						return stack;
 				},
 
-				/**
-				 * Returns a list of URIs for a given folder reference and optional condition
-				 * @param	{String}	ref			An absolute or relative folder path or URI (wildcards allowed)
-				 * @param	{Folder}	ref			A valid Folder instance
-				 * @param	{Array}		ref			An Array of URIs (each of which are filtered then passed back)
-				 * @param	{Number}	$depth		An optional max depth to search to
-				 * @param	{Boolean}	$filesOnly	An optional Boolean to get files only
-				 * @param	{RegExp}	$filter		A RegExp to match each URI
-				 * @param	{Array}		$extensions	An Array of extensions to match
-				 * @returns	{Array}					An Array of URIs
-				 */
-				getURIs:function(ref, $depth, $filesOnly, $filter, $extensions)
-				{
-					// folder uri;
-						var uri;
-
-					// Array
-						if(ref instanceof Array)
-						{
-							return ref;
-						}
-
-					// Folder: new Folder()
-						if(ref instanceof Folder)
-						{
-							uri = ref.uri;
-						}
-
-					// path or URI
-						else if(URI.isURI(ref))
-						{
-							if(ref.indexOf('*') > -1)
-							{
-								Utils.walkFolder(ref, true);
-							}
-							else
-							{
-								return new Folder(ref).uris;
-							}
-						}
-
-					// otherwise, return Array
-						return [ref];
-
-					// folder URI: c:/temp/
-					// folder URI: c:/temp/*
-					// name: 'template', 'library'
-					// Array: ['template', 'filesystem'], 'library'
-
-				},
-				
-				/**
-				 * Returns URIs which are searchable as defined within manifest.xml files in parent folders
-				 * @param	{String}	pathOrURI		A valid path or URI
-				 * @param	{String}	itemType		An optional String, 'files', 'folders' or 'all', defaults to 'all'
-				 * @param	{Boolean}	returnPaths		An optional Boolean to return only the dowstream path segments
-				 * @returns	{URIList}					A URIList instance of the collected URIs / paths
-				 */	
-				getSearchableURIs:function(pathOrURI, itemType, returnPaths)
-				{
-					// utility function
-						function folderIsSearchable(folderURI)
-						{
-							var manifestURI = folderURI + 'manifest.xml';
-							if(FLfile.exists(manifestURI))
-							{
-								var manifest = new XML(FLfile.read(manifestURI));
-								if(manifest.folder.searchable == false)
-								{
-									return false;
-								}
-							}
-							return true;
-						}
-					
-					// callbacks
-						function processFolder(folderURI)
-						{
-							// check if folder has a manifest, and if it says to ignore this folder
-								if( ! folderIsSearchable(folderURI) )
-								{
-									return;
-								}
-								
-							// update paths								
-								paths.push(returnPaths ? folderURI.substr(rootURI.length) : folderURI);
-								
-							// process contents
-								var names = FLfile.listFolder(folderURI, 'directories');
-								for each(var name in names)
-								{
-									processFolder(folderURI + name + '/');
-								}
-						}
-						
-						function processAll(folderURI)
-						{
-							// check if folder has a manifest, and if it says to ignore this folder
-								if( ! folderIsSearchable(folderURI) )
-								{
-									return;
-								}
-							
-							// update paths
-								if(itemType !== 'files')
-								{
-									paths.push(returnPaths ? folderURI.substr(rootURI.length) : folderURI);
-								}
-								
-							// process contents
-								var itemURI;
-								var names = FLfile.listFolder(folderURI);
-								for each(var name in names)
-								{
-									itemURI = folderURI + name;
-									if(String(FLfile.getAttributes(itemURI)).indexOf('D') !== -1)
-									{
-										processAll(itemURI + '/');
-									}
-									else
-									{
-										paths.push(returnPaths ? itemURI.substr(rootURI.length) : itemURI);
-									}
-								}
-						}
-						
-				// parameters
-					itemType		= {files:'files', folders:'directories'}[itemType];
-					
-				// variables
-					var rootURI		= new URI(pathOrURI).folder;
-
-				// build search paths
-					if(FLfile.exists(rootURI))
-					{
-						var paths	= [];
-						var fn		= itemType === 'directories' ? processFolder : processAll;
-						fn(rootURI);
-						return paths;
-					}
-					else
-					{
-						throw new URIError('URIError in Utils.getSearchableURIs: The folder "' +pathOrURI+ '" is not a valid folder');
-					}
-
-				},
-				
 			// ---------------------------------------------------------------------------------------------------------------
-			// <Value methods>
+			// /* Value methods */
 
 				/**
 				 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
@@ -1406,8 +1259,177 @@
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// <File methods>
-			
+			// /* File methods */
+
+				/**
+				 * Returns the first valid path or URI from an Array of paths and/or URIs
+				 * @param	{Array}		pathsOrURIs		An array of paths or URIs
+				 * @returns	{String}					A URI-formatted String
+				 */
+				getFirstValidURI:function(uris)
+				{
+					var uri;
+					while(uris.length)
+					{
+						uri = URI.toURI(uris.shift());
+						if(FLfile.exists(uri))
+						{
+							return uri;
+						}
+					}
+					return null;
+				},
+
+				/**
+				 * Returns a list of URIs for a given folder reference and optional condition
+				 * @param	{String}	ref			An absolute or relative folder path or URI (wildcards allowed)
+				 * @param	{Folder}	ref			A valid Folder instance
+				 * @param	{Array}		ref			An Array of URIs (each of which are filtered then passed back)
+				 * @param	{Number}	$depth		An optional max depth to search to
+				 * @param	{Boolean}	$filesOnly	An optional Boolean to get files only
+				 * @param	{RegExp}	$filter		A RegExp to match each URI
+				 * @param	{Array}		$extensions	An Array of extensions to match
+				 * @returns	{Array}					An Array of URIs
+				 */
+				getURIs:function(ref, $depth, $filesOnly, $filter, $extensions)
+				{
+					//TODO - check this works for recursive URIs
+					//TODO - Pass true to set max depth to infinite
+
+					// folder uri;
+						var uri;
+
+					// Array
+						if(ref instanceof Array)
+						{
+							return ref;
+						}
+
+					// Folder: new Folder()
+						if(ref instanceof Folder)
+						{
+							uri = ref.uri;
+						}
+
+					// path or URI
+						else if(URI.isURI(ref))
+						{
+							if(ref.indexOf('*') > -1)
+							{
+								return Utils.walkFolder(ref, true);
+							}
+							else
+							{
+								return new Folder(ref).uris;
+							}
+						}
+
+					// otherwise, return Array
+						return [ref];
+
+					// folder URI: c:/temp/
+					// folder URI: c:/temp/*
+					// name: 'template', 'library'
+					// Array: ['template', 'filesystem'], 'library'
+
+				},
+
+				/**
+				 * Returns URIs which are searchable as defined within manifest.xml files in parent folders
+				 * @param	{String}	pathOrURI		A valid path or URI
+				 * @param	{String}	itemType		An optional String, 'files', 'folders' or 'all', defaults to 'all'
+				 * @param	{Boolean}	returnPaths		An optional Boolean to return only the dowstream path segments
+				 * @returns	{Array}						A URIList instance of the collected URIs / paths
+				 */
+				getSearchableURIs:function(pathOrURI, itemType, returnPaths)
+				{
+					// utility function
+						function folderIsSearchable(folderURI)
+						{
+							var manifestURI = folderURI + 'manifest.xml';
+							if(FLfile.exists(manifestURI))
+							{
+								var manifest = new XML(FLfile.read(manifestURI));
+								if(manifest.folder.searchable == false)
+								{
+									return false;
+								}
+							}
+							return true;
+						}
+
+					// callbacks
+						function processFolder(folderURI)
+						{
+							// check if folder has a manifest, and if it says to ignore this folder
+								if( ! folderIsSearchable(folderURI) )
+								{
+									return;
+								}
+
+							// update paths
+								paths.push(returnPaths ? folderURI.substr(rootURI.length) : folderURI);
+
+							// process contents
+								var names = FLfile.listFolder(folderURI, 'directories');
+								for each(var name in names)
+								{
+									processFolder(folderURI + name + '/');
+								}
+						}
+
+						function processAll(folderURI)
+						{
+							// check if folder has a manifest, and if it says to ignore this folder
+								if( ! folderIsSearchable(folderURI) )
+								{
+									return;
+								}
+
+							// update paths
+								if(itemType !== 'files')
+								{
+									paths.push(returnPaths ? folderURI.substr(rootURI.length) : folderURI);
+								}
+
+							// process contents
+								var itemURI;
+								var names = FLfile.listFolder(folderURI);
+								for each(var name in names)
+								{
+									itemURI = folderURI + name;
+									if(String(FLfile.getAttributes(itemURI)).indexOf('D') !== -1)
+									{
+										processAll(itemURI + '/');
+									}
+									else
+									{
+										paths.push(returnPaths ? itemURI.substr(rootURI.length) : itemURI);
+									}
+								}
+						}
+
+				// parameters
+					itemType		= {files:'files', folders:'directories'}[itemType];
+
+				// variables
+					var rootURI		= new URI(pathOrURI).folder;
+
+				// build search paths
+					if(FLfile.exists(rootURI))
+					{
+						var paths	= [];
+						var fn		= itemType === 'directories' ? processFolder : processAll;
+						fn(rootURI);
+						return paths;
+					}
+					else
+					{
+						throw new URIError('URIError in Utils.getSearchableURIs: The folder "' +pathOrURI+ '" is not a valid folder');
+					}
+
+				},
+
 				/**
 				 * Recursively trawl a folder's contents, optionally calling a callback per element (note that $ arguments may passed in any order)
 				 * @param	{String}	folder			The path or uri to a valid folder
@@ -1422,18 +1444,20 @@
 				{
 					// ------------------------------------------------------------
 					// functions
-		
+
+						var indent;
+
 						function process(element, index)
 						{
 							// callback
 								var state = callback ? callback(element, index, depth, indent) : null;
-		
+
 							// return immediately if the callback returned true
 								if(state === true)
 								{
 									return element;
 								}
-		
+
 							// process if the callback didn't return false (false == skip element)
 								if(state !== false)
 								{
@@ -1442,17 +1466,17 @@
 										{
 											return true;
 										}
-		
+
 									// collect uri
 										uris.push(element.uri);
-		
+
 									// children
 										if(element instanceof Folder && depth < maxDepth)
 										{
 											// dow down a level
 												depth ++;
 												indent += '	';
-		
+
 											// iterate
 												var contents = element.contents;
 												for(var i = 0 ; i < contents.length; i++)
@@ -1462,7 +1486,7 @@
 														{
 															URI.throwURILengthError(contents[i].uri);
 														}
-		
+
 													// process content
 														var result = process(contents[i], i)
 														if(result)
@@ -1470,22 +1494,22 @@
 															return result;
 														}
 												}
-		
+
 											// go up a level
 												indent = indent.substring(1);
 												depth--;
 										}
 								}
 						}
-		
+
 					// ------------------------------------------------------------
 					// code
-		
+
 						// defaults
 							var maxDepth	= 100;
 							var callback	= null;
 							var returnURIs	= false;
-		
+
 						// parameter shift
 							for each(var arg in [$callback, $maxDepth, $returnURIs])
 							{
@@ -1496,13 +1520,13 @@
 								else if(typeof arg === 'boolean')
 									returnURIs = arg;
 							}
-		
+
 						// variables
 							var uris		= [];
 							var indent		= '';
 							var depth		= 0;
 							var _folder		= typeof folder === 'string' ? new Folder(URI.toURI(folder, 1)) : null;
-		
+
 						// process
 							if(_folder instanceof Folder && _folder.exists)
 							{
@@ -1514,9 +1538,9 @@
 							{
 								return returnURIs ? [] : null;
 							}
-		
+
 				},
-				
+
 
 				/**
 				 * Returns a multiline string, showing the file/folder hierarchy of an input array of paths or URIs
@@ -1526,10 +1550,10 @@
 				makeTree:function(paths)
 				{
 					var segments, name, indent;
-					var tree = '';
-					for each(var path in paths)
+					var path, tree = '';
+					for each(path in paths)
 					{
-						path		= path.replace('file:///', '').replace(/\/*$/, '');
+						path = path.replace('file:///', '').replace(/\/*$/, '');
 						if(path == '')
 						{
 							continue;

@@ -1,19 +1,19 @@
 // ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████       ██            
-//  ██           ██            
-//  ██     █████ ██ █████ ████ 
-//  ██     ██ ██ ██ ██ ██ ██   
-//  ██     ██ ██ ██ ██ ██ ██   
-//  ██     ██ ██ ██ ██ ██ ██   
-//  ██████ █████ ██ █████ ██   
+//  ██████       ██
+//  ██           ██
+//  ██     █████ ██ █████ ████
+//  ██     ██ ██ ██ ██ ██ ██
+//  ██     ██ ██ ██ ██ ██ ██
+//  ██     ██ ██ ██ ██ ██ ██
+//  ██████ █████ ██ █████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // Color
 
 	// ----------------------------------------------------------------------------------------------------
 	// Class
-	
+
 		/**
 		 * Color Utils library
 		 * @see			http://www.madebypi.co.uk/labs/colorutils/
@@ -70,7 +70,7 @@
 				for (var i=1; i<parts; i++){
 					palette.push(new CIELCh(current.l, current.c,current.h+(distance*i))[this.toSelf]());
 				}
-		
+
 				return palette;
 			},
 			split : function(include, distance){
@@ -151,12 +151,12 @@
 			warn : function (){
 				alert('aColor should not be created directly. Treat this as an abstract class.');
 			}
-		}		
+		}
 		aColor = Base.extend(aColor);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// Hex
-	
+
 		var Hex =
 		{
 			constructor : function (hex){
@@ -186,7 +186,7 @@
 				return this.toCMY().toCMYK();
 			},
 			toString : function (){
-				return this.hex.toUpperCase();
+				return this.hex ?  this.hex.toUpperCase() : '';
 			},
 			toCIELCh : function (){
 				return this.toCIELab().toCIELCh();
@@ -194,10 +194,10 @@
 			toSelf : "toHex"
 		}
 		Hex = aColor.extend(Hex);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// RGB
-	
+
 		var RGB =
 		{
 			constructor : function (r,g,b){
@@ -212,7 +212,7 @@
 				  var chara = "0123456789ABCDEF";
 				  hex += chara.charAt(Math.floor(rgbcols[i] / 16)) + chara.charAt(rgbcols[i] - (Math.floor(rgbcols[i] / 16) * 16));
 				}
-		
+
 				return new Hex(hex);
 			},
 			toRGB : function (){ return this; },
@@ -250,13 +250,13 @@
 				var var_R = (this.r / 255);
 				var var_G = (this.g / 255);
 				var var_B = (this.b / 255);
-		
+
 				var var_Min = Math.min( var_R, var_G, var_B );
 				var var_Max = Math.max( var_R, var_G, var_B );
 				var del_Max = var_Max - var_Min;
-		
+
 				var V = var_Max;
-		
+
 				if ( del_Max == 0 )
 				{
 				   var H = 0
@@ -265,15 +265,15 @@
 				else
 				{
 				   var S = del_Max / var_Max
-		
+
 				   var del_R = ( ( ( var_Max - var_R ) / 6 ) + ( del_Max / 2 ) ) / del_Max
 				   var del_G = ( ( ( var_Max - var_G ) / 6 ) + ( del_Max / 2 ) ) / del_Max
 				   var del_B = ( ( ( var_Max - var_B ) / 6 ) + ( del_Max / 2 ) ) / del_Max
-		
+
 				   if      ( var_R == var_Max ) H = del_B - del_G
 				   else if ( var_G == var_Max ) H = ( 1 / 3 ) + del_R - del_B
 				   else if ( var_B == var_Max ) H = ( 2 / 3 ) + del_G - del_R
-		
+
 				   if ( H < 0 )  H += 1;
 				   if ( H > 1 )  H -= 1;
 				}
@@ -297,10 +297,10 @@
 			toSelf : "toRGB"
 		}
 		RGB = aColor.extend(RGB);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// XYZ
-	
+
 		var XYZ =
 		{
 			constructor : function (x,y,z){
@@ -315,11 +315,11 @@
 				var var_X = this.x / 100;
 				var var_Y = this.y / 100;
 				var var_Z = this.z / 100;
-		
+
 				var var_R = var_X *  3.2406 + var_Y * -1.5372 + var_Z * -0.4986;
 				var var_G = var_X * -0.9689 + var_Y *  1.8758 + var_Z *  0.0415;
 				var var_B = var_X *  0.0557 + var_Y * -0.2040 + var_Z *  1.0570;
-		
+
 				if (var_R > 0.0031308) {
 					var_R = 1.055 * Math.pow(var_R,(1/2.4)) - 0.055;
 				}else {
@@ -338,20 +338,20 @@
 				var r = Math.round(var_R * 255);
 				var g = Math.round(var_G * 255);
 				var b = Math.round(var_B * 255);
-		
+
 				return new RGB(r,g,b);
 			},
 			toXYZ : function (){ return this; },
 			toCIELab : function (){
-		
+
 				var Xn =  95.047;
 				var Yn = 100.000;
 				var Zn = 108.883;
-		
+
 				var x = this.x / Xn;
 				var y = this.y / Yn;
 				var z = this.z / Zn;
-		
+
 				if (x > 0.008856){
 					x = Math.pow(x, 1/3);
 				}else {
@@ -367,7 +367,7 @@
 				}else {
 					z = (7.787 * z) + (16 / 116);
 				}
-		
+
 				if (y>0.008856){
 					var l = (116 * y) - 16;
 				}else {
@@ -375,7 +375,7 @@
 				}
 				var a = 500 * (x - y);
 				var b = 200 * (y - z);
-		
+
 				return new CIELab(l, a, b);
 			},
 			toHSV : function (){
@@ -396,11 +396,11 @@
 			toSelf : "toXYZ"
 		}
 		XYZ = aColor.extend(XYZ);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// CIELab
-	
-		var CIELab = 
+
+		var CIELab =
 		{
 			constructor : function (l,a,b){
 				this.l = l;
@@ -417,11 +417,11 @@
 				var ref_X =  95.047;
 				var ref_Y = 100.000;
 				var ref_Z = 108.883;
-		
+
 				var var_Y = (this.l + 16 ) / 116;
 				var var_X = this.a / 500 + var_Y;
 				var var_Z = var_Y - this.b / 200;
-		
+
 				if (Math.pow(var_Y,3) > 0.008856){
 					var_Y = Math.pow(var_Y,3);
 				}else {
@@ -456,17 +456,17 @@
 			},
 			toCIELCh : function (){
 				var var_H = Math.atan2( this.b, this.a );
-		
+
 				if ( var_H > 0 ) {
 					var_H = ( var_H / Math.PI ) * 180;
 				}else{
 					var_H = 360 - ( Math.abs( var_H ) / Math.PI ) * 180
 				}
-		
+
 				var l = this.l;
 				var c = Math.sqrt(Math.pow(this.a,2) + Math.pow(this.b,2));
 				var h = var_H;
-		
+
 				return new CIELCh(l,c,h);
 			},
 			toString : function (){
@@ -475,10 +475,10 @@
 			toSelf : "toCIELab"
 		}
 		CIELab = aColor.extend(CIELab);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// HSV
-	
+
 		var HSV =
 		{
 			constructor : function (h,s,v){
@@ -505,14 +505,14 @@
 				   var var_1 = this.v * ( 1 - this.s )
 				   var var_2 = this.v * ( 1 - this.s * ( var_h - var_i ) )
 				   var var_3 = this.v * ( 1 - this.s * ( 1 - ( var_h - var_i ) ) )
-		
+
 				   if      ( var_i == 0 ) { var_r = this.v     ; var_g = var_3 ; var_b = var_1 }
 				   else if ( var_i == 1 ) { var_r = var_2 ; var_g = this.v     ; var_b = var_1 }
 				   else if ( var_i == 2 ) { var_r = var_1 ; var_g = this.v     ; var_b = var_3 }
 				   else if ( var_i == 3 ) { var_r = var_1 ; var_g = var_2 ; var_b = this.v     }
 				   else if ( var_i == 4 ) { var_r = var_3 ; var_g = var_1 ; var_b = this.v     }
 				   else                   { var_r = this.v     ; var_g = var_1 ; var_b = var_2 }
-		
+
 				   var R = var_r * 255
 				   var G = var_g * 255
 				   var B = var_b * 255
@@ -541,13 +541,13 @@
 				return this.h+','+this.s+','+this.v;
 			},
 			toSelf : "toHSV"
-		
+
 		}
 		HSV = aColor.extend(HSV);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// CMY
-	
+
 		var CMY =
 		{
 			constructor : function (c,m,y){
@@ -575,7 +575,7 @@
 			},
 			toCMYK : function (){
 				var var_K = 1
-		
+
 				if ( this.c < var_K )   var_K = this.c;
 				if ( this.m < var_K )   var_K = this.m;
 				if ( this.y < var_K )   var_K = this.y;
@@ -601,9 +601,9 @@
 			toSelf : "toCMY"
 		}
 		CMY = aColor.extend(CMY);
-		
+
 	// ----------------------------------------------------------------------------------------------------
-	// CMYK	
+	// CMYK
 
 		var CMYK =
 		{
@@ -643,10 +643,10 @@
 			toSelf : "toCMYK"
 		}
 		CMYK = aColor.extend(CMYK);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// CIELCh
-	
+
 		var CIELCh =
 		{
 			constructor : function (l,c,h){
@@ -688,10 +688,10 @@
 			toSelf : "toHex"
 		}
 		CIELCh = aColor.extend(CIELCh);
-		
+
 	// ----------------------------------------------------------------------------------------------------
 	// Register classes
-	
+
 		if(xjsfl && xjsfl.classes)
 		{
 			xjsfl.classes.register('Hex', Hex);

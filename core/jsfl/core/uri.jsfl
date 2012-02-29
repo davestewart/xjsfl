@@ -12,8 +12,74 @@
 // URI - Handles URI and path conversion, including detection and resolution of relative paths
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// class
+	// notes on JSFL and xJSFL URI juggling
 
+		/*
+			FLASH URI FORMAT
+
+				Both
+					URI format must be file:/// (the standard is file://<host>/<filepath>, but Flash ignores the host) @see http://en.wikipedia.org/wiki/File_URI_scheme
+
+				Windows
+
+					All relative URIs fail
+					c:/ appears to be valid, as well as c|/
+					Spaces appear to be valid, they get converted to %20 inside FLfile
+
+				Mac
+
+					Relative URIs, i.e. file.ext, ./file.ext and ../file.ext are relative to HD root
+					Absolute URIs, i.e. /file.ext are relative to HD root
+					Leading Hard drive name is valid, i.e. Macintosh HD/file, but NOT /Macintosh HD/file (note the leading slash)
+
+			FLASH CONSTANTS
+
+				Mac
+					fl.configDirectory:	/Users/davestewart/Library/Application Support/Adobe/Flash CS4/en/Configuration/
+					fl.configURI:		file:///Macintosh%20HD/Users/davestewart/Library/Application%20Support/Adobe/Flash%20CS4/en/Configuration/
+
+				Windows
+					fl.configDirectory:	F:\Users\Dave Stewart\AppData\Local\Adobe\Flash CS4\en\Configuration\
+					fl.configURI:		file:///F|/Users/Dave%20Stewart/AppData/Local/Adobe/Flash%20CS4/en/Configuration/
+
+			xJSFL STRING FORMAT
+
+				Relative-location syntax
+
+					Relative URIs, i.e. file, ./ or ../ are relative to the calling file
+					/ is relative to the "current root" i.e. user, or the current module
+					// is relative to the "framework root" i.e. the xJSFL root
+					C: or Drive: is relative to the drive (platform specific)
+
+				Parsing
+
+					Paths are parsed for
+
+						- Relative-locations as outlined above (./, ../, /, //, c:, drive name:)
+						- {placeholder} variables, which are replaced
+
+					URIs and Paths are parsed for
+
+						- drive names are converted to and from drive| and drive:
+						- \ are converted to /
+						- ../ are resolved
+						- //+ are converted to /
+						- Spaces are converted to %20
+
+
+		*/
+
+	// ---------------------------------------------------------------------------------------------------------------
+	// /* URI Instance - Instantiatable class that can be used to easily create and manipulate URI strings */
+
+		/**
+		 * URI Constructor
+		 * @param	{String}	pathOrURI		A token, path or URI-formatted string
+		 * @param	{String}	context			An optional uri or path context, from which to start the URI
+		 * @param	{File}		context			An optional File from which to start the URI
+		 * @param	{Folder}	context			An optional Folder from which to start the URI
+		 * @param	{Number}	context			An optional stack-function index, the location of which to derive the URI from
+		 */
 		function URI(pathOrURI, context)
 		{
 			this.uri = URI.toURI(pathOrURI, context || 1);
@@ -77,10 +143,10 @@
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// static properties
+	// /* Static methods - a host of static utility functions that can be used to manipulate paths or URIs */
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// creation functions
+		// /* Creation functions */
 
 			/**
 			 * Create a valid URI from virtually any URI or path
@@ -91,14 +157,14 @@
 			 * - Expands registered {placeholder} variables
 			 * - Tidies badly-formatted URIs
 			 *
-			 * @param	{String}	pathOrURI	A token, path or URI-formatted string
-			 * @param	{String}	context		An optional uri or path context, from which to start the URI
-			 * @param	{File}		context		An optional File from which to start the URI
-			 * @param	{Folder}	context		An optional Folder from which to start the URI
-			 * @param	{Number}	context		An optional stack-function index, the location of which to derive the URI from
-			 * @param	{Boolean}	parseURI	An optional Boolean, to bypass immediate returning of file:/// URIs, and parse their content
-			 * @param	{Boolean}	checkLength	An optional Boolean, to test resulting URIs are not longer than the 260 characters allowed for most FLfile operations. Defaults to true
-			 * @returns	{String}				An absolute URI
+			 * @param	{String}	pathOrURI		A token, path or URI-formatted string
+			 * @param	{String}	context			An optional uri or path context, from which to start the URI
+			 * @param	{File}		context			An optional File from which to start the URI
+			 * @param	{Folder}	context			An optional Folder from which to start the URI
+			 * @param	{Number}	context			An optional stack-function index, the location of which to derive the URI from
+			 * @param	{Boolean}	parseURI		An optional Boolean, to bypass immediate returning of file:/// URIs, and parse their content. Defaults to off
+			 * @param	{Boolean}	checkLength		An optional Boolean, to test resulting URIs are not longer than the 260 characters allowed for most FLfile operations. Defaults to true
+			 * @returns	{String}					An absolute URI
 			 */
 			URI.toURI = function(pathOrURI, context, parseURI, checkLength)
 			{
@@ -111,23 +177,27 @@
 							pathOrURI = Utils.getStack()[2].uri;
 						}
 
-					// ensure pathOrURI is a string
-						pathOrURI = String(pathOrURI || '');
+					// variables
+						pathOrURI	= String(pathOrURI || '');
+						parseURI	= typeof parseURI === 'undefined' ? false : parseURI;
+						checkLength = typeof checkLength === 'undefined' ? true : checkLength;
 
 					// process URIs
 						if(pathOrURI.indexOf('file:///') === 0)
 						{
-							// if pathOrURI is already a URI, return immediately
-								if( ! parseURI )
+							// check length
+								if(checkLength)
 								{
-									if(checkLength !== false)
-									{
-										URI.checkURILength(pathOrURI);
-									}
+									URI.checkURILength(pathOrURI);
+								}
+
+							// if URI parsing ise set to off, return immediately
+								if(parseURI == false)
+								{
 									return pathOrURI;
 								}
 
-							// convert URI to a path
+							// otherwise, convert URI to a path
 								pathOrURI = URI.asPath(pathOrURI);
 						}
 
@@ -311,31 +381,14 @@
 							uri = uri.substr(8);
 						}
 
-					// replace backslashes
-						uri = uri.replace(/\\+/g, '/');
-
-					// replace double-slashes
-						uri = uri.replace(/\/+/g, '/');
-
-					// replace redundant ./
-						uri = uri.replace(/(^|\/)\.\//img, '$1');
-
-					// replace %20 with spaces
-						uri = uri.replace(/ /g, '%20');
-
 					// tidy drive letter
 						uri	= uri.replace(/^([a-z ]+):/i, '$1|')
 
-					// resolve relative tokens
-						while(uri.indexOf('../') > 0)
-						{
-							// kill folder/../ pairs
-								uri = uri.replace(/(^|\/)[^\/]+\/\.\.\//, '/');
+					// tidy path
+						uri = URI.tidy(uri);
 
-							// replace any leading ../ tokens (as you can't go higher than root)
-								uri = uri.replace(/^([a-z ]+[:|])\/[.\/]+/img, '$1/');
-								//path = path.replace(/^\/\.\.\//img, '');
-						}
+					// replace %20 with spaces
+						pathOrURI = pathOrURI.replace(/ /g, '%20');
 
 					// add 'file:///'
 						uri = 'file:///' + uri;
@@ -374,7 +427,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// conversion functions
+		// /* Conversion functions */
 
 			/**
 			 * Perform simple path to URI conversion
@@ -492,7 +545,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// testing functions
+		// /* Testing functions */
 
 			/**
 			 * Test if the supplied value is a URI-formatted string
@@ -566,7 +619,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// extraction functions
+		// /* Extraction functions */
 
 			/**
 			 * Returns the current folder path of the item referenced by the path or URI
@@ -691,14 +744,56 @@
 			 */
 			URI.reTarget = function(src, base, trg)
 			{
-				src		= String(src);
+				src = String(src);
+				if(base.indexOf('..') !== -1)
+				{
+					var folder = URI.getFolder(src);
+					base = URI.tidy(folder + base);
+				}
 				base	= URI.findFolder(src, base);
 				trg		= URI.getFolder(trg);
 				return trg + src.substr(base.length);
 			}
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// utility functions
+		// /* Utility functions */
+
+			URI.tidy = function(pathOrURI)
+			{
+				// cast to string
+					pathOrURI = String(pathOrURI);
+
+				// remove file:///
+					var protocol = '';
+					if(pathOrURI.indexOf('file:///') > -1)
+					{
+						protocol =  'file:///';
+						pathOrURI = pathOrURI.substr(8);
+					}
+
+				// replace backslashes
+					pathOrURI = pathOrURI.replace(/\\+/g, '/');
+
+				// replace double-slashes
+					pathOrURI = pathOrURI.replace(/\/+/g, '/');
+
+				// replace redundant ./
+					pathOrURI = pathOrURI.replace(/(^|\/)\.\//img, '$1');
+
+				// resolve relative tokens
+					while(pathOrURI.indexOf('../') > 0)
+					{
+						// kill folder/../ pairs
+							pathOrURI = pathOrURI.replace(/(^|\/)[^\/]+\/\.\.\//, '/');
+
+						// replace any leading ../ tokens (as you can't go higher than root)
+							pathOrURI = pathOrURI.replace(/^([a-z ]+[:|])\/[.\/]+/img, '$1/');
+							//path = path.replace(/^\/\.\.\//img, '');
+					}
+
+				// return
+					return protocol + pathOrURI;
+			}
 
 			/**
 			 * Checks that the length of a URI is not longer than the maximum 260 characters supported by FLfile
@@ -731,62 +826,3 @@
 		{
 			xjsfl.classes.register('URI', URI);
 		}
-
-
-	// ---------------------------------------------------------------------------------------------------------------
-	// notes on JSFL and xJSFL URI juggling
-
-		/*
-			FLASH URI FORMAT
-
-				Both
-					URI format must be file:/// (the standard is file://<host>/<filepath>, but Flash ignores the host) @see http://en.wikipedia.org/wiki/File_URI_scheme
-
-				Windows
-
-					All relative URIs fail
-					c:/ appears to be valid, as well as c|/
-					Spaces appear to be valid, they get converted to %20 inside FLfile
-
-				Mac
-
-					Relative URIs, i.e. file.ext, ./file.ext and ../file.ext are relative to HD root
-					Absolute URIs, i.e. /file.ext are relative to HD root
-					Leading Hard drive name is valid, i.e. Macintosh HD/file, but NOT /Macintosh HD/file (note the leading slash)
-
-			FLASH CONSTANTS
-
-				Mac
-					fl.configDirectory:	/Users/davestewart/Library/Application Support/Adobe/Flash CS4/en/Configuration/
-					fl.configURI:		file:///Macintosh%20HD/Users/davestewart/Library/Application%20Support/Adobe/Flash%20CS4/en/Configuration/
-
-				Windows
-					fl.configDirectory:	F:\Users\Dave Stewart\AppData\Local\Adobe\Flash CS4\en\Configuration\
-					fl.configURI:		file:///F|/Users/Dave%20Stewart/AppData/Local/Adobe/Flash%20CS4/en/Configuration/
-
-			xJSFL STRING FORMAT
-
-				Relative-location syntax
-
-					Relative URIs, i.e. file, ./ or ../ are relative to the calling file
-					/ is relative to the "current root" i.e. user, or the current module
-					// is relative to the "framework root" i.e. the xJSFL root
-					C: or Drive: is relative to the drive (platform specific)
-
-				Parsing
-
-					Paths are parsed for
-
-						- Relative-locations as outlined above (./, ../, /, //, c:, drive name:)
-						- {placeholder} variables, which are replaced
-
-					URIs and Paths are parsed for
-
-						- drive names are converted to and from drive| and drive:
-						- \ are converted to /
-						- ../ are resolved
-						- //+ are converted to /
-						- Spaces are converted to %20
-
-
-		*/
