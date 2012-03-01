@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██  ██  ██   ██ ██
 //  ██  ██  ██      ██
@@ -233,27 +233,6 @@
 				},
 
 				/**
-				 * Trims the whitespace from both sides of a string
-				 * @param	{String}	string		The input string to trim
-				 * @returns	{String}				The trimmed string
-				 */
-				trim:function(string)
-				{
-					return String(string || '').replace(/(^\s*|\s*$)/g, '');
-				},
-
-				/**
-				 * Repeat a string a specified number of times
-				 * @param	{String}	str			The string to repeat
-				 * @param	{Number}	num			The number of times to repeat the string
-				 * @returns	{String}				The new string
-				 */
-				repeat:function(str, num)
-				{
-					return Array(num + 1).join(str);
-				},
-
-				/**
 				 * Populates a template string with values
 				 * @param	{String}	template	A template String containing {placeholder} variables
 				 * @param	{Object}	properties	Any Object or instance of Class that with named properties
@@ -276,63 +255,6 @@
 						properties	= Utils.combine(keys, values);
 					}
 					return new SimpleTemplate(template, properties).output;
-				},
-
-				/**
-				 * camelCase a string or variable name, separating on alpha-numeric characters
-				 * @param	{String}	value	A string value
-				 * @returns	{String}			The camelCased string
-				 */
-				toCamelCase:function(value)
-				{
-					var part;
-					var parts	= String(value).replace(/(^\W*|\W*$)/g, '').split(/[^0-9a-z]/i);
-					var str		= parts.shift().toLowerCase();
-
-					while(parts.length)
-					{
-						part = parts.shift();
-						str += part[0].toUpperCase() + part.substr(1);
-					}
-					return str;
-				},
-
-				/**
-				 * Convert a value from "camelCase" to "separate words"
-				 * @param	{String}	value	The string to convert
-				 * @returns	{String}			The convtered string
-				 */
-				fromCamelCase:function(value)
-				{
-					//TDOD ignore multiple capital letters, except the last one in a group
-					// "somethingXMLToString" must come through as "something XML to string"
-					return String(value)
-						.replace(/_/, ' ')
-						.replace(/([a-z])?([A-Z0-9])/g, '$1 $2')
-						.replace(/^ /g, '');
-				},
-
-				/**
-				 * Converts a value to sentense case, optionally de-camelcasing
-				 * @param	{String}	value	A string value
-				 * @returns	{String}			The sentence-cased string
-				 */
-				toSentenceCase:function(value)
-				{
-					//TODO ignore multiple capital letters
-					value	= String(value);
-					value	= value.substr(0, 1).toUpperCase() + value.substr(1).toLowerCase();
-					return value;
-				},
-
-				/**
-				 * Converts a string of words to underscore_case
-				 * @param	{Object}	value	Description
-				 * @returns	{Object}			Description
-				 */
-				toUnderscore:function(value)
-				{
-					return String(value).toLowerCase().replace(/(^\W*|\W*$)/g, '').replace(/\W+/g, '_');
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
@@ -402,7 +324,7 @@
 						else if(typeof value === 'string')
 						{
 							// trim
-								value = Utils.trim(value);
+								value = value.trim();
 
 							// variables
 
@@ -1088,7 +1010,7 @@
 				parseValue:function(value, trim)
 				{
 					// trim
-						value = trim !== false ? Utils.trim(value) : value;
+						value = trim !== false ? String(value).trim() : String(value);
 
 					// undefined
 						if(value === 'undefined')
@@ -1416,10 +1338,10 @@
 							{
 								var obj =
 								{
-									pattern:pattern,
-									match:Utils.rxUnescape(rxMatch.source),
-									search:Utils.rxUnescape(rxSearch.source),
-									parts:parts
+									pattern	:pattern,
+									match	:Utils.rxUnescape(rxMatch.source),
+									search	:Utils.rxUnescape(rxSearch.source),
+									parts	:parts
 								}
 								inspect(obj, 'Pattern breakdown for glob("' + pattern + '")');
 							}
@@ -1737,7 +1659,7 @@
 						}
 						segments	= path.split('/');
 						name		= segments.pop();
-						indent		= Utils.repeat('\t', segments.length);
+						indent		= '\t'.repeat(segments.length);
 						tree		+= indent + '/' + name + '\n';
 					}
 					return tree;

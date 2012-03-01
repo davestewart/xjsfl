@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██  ██ ██  ██ ██
 //  ██  ██ ██  ██ ██
@@ -513,7 +513,7 @@
 							while(matches = chunker.exec(str))
 							{
 								// debug
-									var match = Utils.trim(matches[0])
+									var match = matches[0].trim();
 									//Output.inspect(matches);
 
 								// spacer
@@ -526,9 +526,9 @@
 									else
 									{
 										// variables
-											var control = Utils.trim(matches[1]);
-											var label	= Utils.trim(matches[2]);
-											var value	= Utils.trim(matches[3]);
+											var control = matches[1].trim();
+											var label	= matches[2].trim();
+											var value	= matches[3].trim();
 
 										// control
 											if(label == '|') // small hack, as the RegExp doesn't catch \| as a control
@@ -568,14 +568,14 @@
 															mats = values[i].match(rxObj)
 															if(mats)
 															{
-																var lab		= Utils.trim(mats[1]);
-																var val		= Utils.trim(mats[2]);
+																var lab		= mats[1].trim();
+																var val		= mats[2].trim();
 																values[i]	= {label:lab, value:val};
 															}
 														}
 														else
 														{
-															var val		= Utils.trim(values[i]);
+															var val		= values[i].trim();
 															values[i]	= /^popupslider|slider|numeric$/.test(control) ? val : {label:val, value:val};
 														}
 													}
@@ -711,7 +711,7 @@
 									}
 
 								// output
-									//Output.inspect([Utils.trim(matches[0]), control, label, value], 'Add');
+									//Output.inspect([matches[0]..trim(), control, label, value], 'Add');
 
 
 							}
@@ -1387,8 +1387,8 @@
 								types	= types.replace(/click/g, 'command');
 
 							// convert ids and types to Arrays
-								ids		= Utils.trim(ids).split(/\W+/g);
-								types	= Utils.trim(types).split(/\W+/g);
+								ids		= Utils.toArray(ids);
+								types	= Utils.toArray(types);
 
 							// add events
 								for each(var id in ids)
@@ -1772,7 +1772,7 @@
 				 */
 				toString:function()
 				{
-					return '[object XUL id="' +this.id+ '" title="' +Utils.trim((this.xml ? this.xml.@title : ''))+ '" controls:' +Utils.getKeys(this.controls).length+ ']';
+					return '[object XUL id="' +this.id+ '" title="' +(this.xml ? String(this.xml.@title).trim() : '')+ '" controls:' +Utils.getKeys(this.controls).length+ ']';
 				}
 		}
 
@@ -2165,7 +2165,7 @@
 						case 'textbox':
 						case 'expression':
 						case 'colorchip':
-							if(Utils.trim(this.rawValue) == '')
+							if(String(this.rawValue).trim() == '')
 							{
 								valid = false;
 							}

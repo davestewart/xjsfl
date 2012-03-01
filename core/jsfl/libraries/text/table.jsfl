@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██    ██
 //    ██         ██    ██
@@ -298,7 +298,7 @@
 					// string - split into keys
 						if(typeof keys === 'string')
 						{
-							keys = Utils.trim(keys.replace(/\s*[^\w ]+\s*/g, ',')).split(/,/g);
+							keys = Utils.toArray(keys);
 						}
 
 					// Sort keys according to a Table.ORDER Constant
@@ -591,7 +591,7 @@
 						value = String(value);
 						if(/[\r\n]/.test(value))
 						{
-							value = Utils.trim(value.split(/[\r\n]/).shift()) + '...'
+							value = value.split(/[\r\n]/).shift().trim() + '...'
 						}
 					}
 

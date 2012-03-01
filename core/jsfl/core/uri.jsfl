@@ -699,7 +699,7 @@
 					// src is below, so path will be '../../trg.txt'
 						else if(srcParts.length > 1)
 						{
-							trgPath = Utils.repeat('../', srcParts.length - 1) + trgParts.join('/');
+							trgPath = '../'.repeat(srcParts.length - 1) + trgParts.join('/');
 						}
 					// src is above, so path will be 'path/to/trg.txt'
 						else if(srcParts.length < trgParts.length)

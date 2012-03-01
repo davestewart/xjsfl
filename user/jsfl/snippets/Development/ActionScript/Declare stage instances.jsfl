@@ -32,7 +32,7 @@
 					colIndex --;
 				}
 				var n = Math.ceil((colTarget - colIndex) / tabWidth);
-				return Utils.repeat('\t', n + 1);
+				return '\t'.repeat(n + 1);
 			}
 
 		// properties
@@ -49,7 +49,7 @@
 
 		// code
 			// get max tab stop
-				var tabAsSpaces = Utils.repeat(' ', tabWidth);
+				var tabAsSpaces = ' '.repeat(tabWidth);
 				for(var i = 0; i < lines.length; i++)
 				{
 					var line		= lines[i];

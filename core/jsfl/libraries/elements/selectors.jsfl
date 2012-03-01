@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████       ██              ██
 //  ██           ██              ██
@@ -54,7 +54,7 @@
 					}
 
 				// break up any comma-delimited expressions into an array of discrete expressions
-					var expressions	= Utils.trim(expression).split(/,/g);
+					var expressions	= Utils.toArray(expression);
 
 				// get items
 					var results		= [];
