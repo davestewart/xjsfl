@@ -347,6 +347,11 @@
 				{
 				    return String(value).replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 				},
+				
+				rxUnescape:function(value)
+				{
+					 return String(value).replace(/\\\//g, '/');
+				},
 
 				/**
 				 * Converts a wildcard (*) string into a non-greedy RegExp
@@ -1262,6 +1267,174 @@
 			// /* File methods */
 
 				/**
+				 * Returns a list of URIs for a glob string
+				 * @see									http://www.codeproject.com/Articles/2809/Recursive-patterned-File-Globbing
+				 * @param	{String}	path			The root path to the folder to search
+				 * @param	{String}	pattern			The wildcard pattern, * = any character, ** = files recursive, ** / folders recursive
+				 * @param	{Boolean}	searchableOnly	An optional Boolean to respect any folders with file manifests that set themselves as non-searchable
+				 * @param	{Boolean}	debug			An optional Boolean to print debugging information about the generated RegExp
+				 * @returns	{Array}						An Array or URIs
+				 */
+				glob:function(pathOrURI, pattern, searchableOnly, debug)
+				{
+					// ----------------------------------------------------------------------------------------------------
+					// callback function
+					
+						function process(folderURI)
+						{
+							var itemURI, matchURI, isFolder, matches;
+							var names		= FLfile.listFolder(folderURI);
+							for each(var name in names)
+							{
+								// create URI
+									itemURI		= folderURI + name;
+									isFolder	= String(FLfile.getAttributes(itemURI)).indexOf('D') !== -1;
+									if(isFolder)
+									{
+										itemURI += '/';
+									}
+									matchURI = itemURI.substr(uri.length);
+									
+								// skip if folder is not searchable
+									if(searchableOnly && isFolder)
+									{
+										if( ! Utils.isSearchable(itemURI) )
+										{
+											continue;
+										}
+									}
+									
+								// do matching
+									var matches	= matchURI.match(rxSearch);
+									if(matches)
+									{
+										if(rxMatch.test(matchURI))
+										{
+											uris.push(itemURI);
+										}
+										if(recursive && isFolder)
+										{
+											process(itemURI);
+										}
+									}
+							}
+						}
+				
+					// ----------------------------------------------------------------------------------------------------
+					// build glob regexp
+					
+						// explanation
+					
+							/*
+								How this works, is that the pattern (ignore the space after
+								the ** (otherwise it breaks commenting)):
+								
+									jsfl/** /*.txt
+								
+								Is first chunked into parts:
+								
+									1 - jsfl/
+									2 - .+/
+									3 - .+.txt
+									
+								Then the parts are built into sequentially inclusive groups,
+								in reverse order, which allows the matching to match none, some,
+								or all segments of the current URI:
+								
+									^((jsfl\/.+\/.+.txt$)|(jsfl\/.+\/$)|(jsfl\/$))
+									
+								This allows us to exit early from a URI match if the part of
+								the pattern before any recursive tokens (**) is not found.
+									
+								When a match is found, it is then re-matched again against the 
+								single, full matching mattern:
+								
+									^jsfl/.+/.+.txt$
+								
+								And added the final URI list if it matches.
+							*/
+								
+						// build glob pattern
+						
+							// variables
+								var recursive	= false;
+								var current		= '';
+								var parts		= [];
+								
+							// update parameters
+								pattern			= pattern.replace(/ /g, '%20');
+								
+							// special treatment for leading recursive file (but not folder) wildcards, e.g. **, **file, **file.jsfl
+								if(/^\*\*[^\/]+$/.test(pattern))
+								{
+									var part = pattern
+										.replace(/\./, '\\.')
+										.replace(/\*\*/, '[^/]+')
+										.replace(/\*/, '[^/]+')
+										+ '$'
+									parts.push('.*');
+									parts.push(part);
+									recursive = true;
+								}
+								
+							// else
+								else
+								{
+									// create reg exp for parsing
+										var chunkerPattern	= '(file:///|[^:]+:/|[^/]+/|[^/]+$)'.replace(/\//g, '\\/');
+										var chunker			= new RegExp(chunkerPattern, 'g');
+										
+									// build
+										var exec, part;
+										while(exec = chunker.exec(pattern))
+										{
+											part = exec[0];
+											if(part.indexOf('**') !== -1)
+											{
+												part = part.replace(/\*+/g, '.*');
+												recursive = true;
+											}
+											else if(part.indexOf('*') !== -1)
+											{
+												part = part.replace(/\*/g, '.*');
+											}
+											current += part;
+											parts.push(current + '$');
+										}									
+								}
+							
+							// make regexps
+								var strParts	= ('^((' + parts.reverse().join(')|(').replace(/\//g, '\\/') + '))');
+								var rxSearch	= new RegExp(strParts);
+								var rxMatch		= new RegExp(parts[0]);
+							
+					// ----------------------------------------------------------------------------------------------------
+					// final setup and run
+					
+						// output debugging information
+							if(debug)
+							{
+								var obj =
+								{
+									pattern:pattern,
+									match:Utils.rxUnescape(rxMatch.source),
+									search:Utils.rxUnescape(rxSearch.source),
+									parts:parts
+								}
+								inspect(obj, 'Pattern breakdown for glob("' + pattern + '")');
+							}
+							
+						// process paths and grab URIs
+							var uri			= URI.toURI(pathOrURI);
+							var uris		= [];
+							process(uri);
+						
+						// return
+							return uris;
+				},
+				
+				
+				/**
 				 * Returns the first valid path or URI from an Array of paths and/or URIs
 				 * @param	{Array}		pathsOrURIs		An array of paths or URIs
 				 * @returns	{String}					A URI-formatted String
@@ -1343,26 +1516,11 @@
 				 */
 				getSearchableURIs:function(pathOrURI, itemType, returnPaths)
 				{
-					// utility function
-						function folderIsSearchable(folderURI)
-						{
-							var manifestURI = folderURI + 'manifest.xml';
-							if(FLfile.exists(manifestURI))
-							{
-								var manifest = new XML(FLfile.read(manifestURI));
-								if(manifest.folder.searchable == false)
-								{
-									return false;
-								}
-							}
-							return true;
-						}
-
 					// callbacks
 						function processFolder(folderURI)
 						{
 							// check if folder has a manifest, and if it says to ignore this folder
-								if( ! folderIsSearchable(folderURI) )
+								if( ! Utils.isSearchable(folderURI) )
 								{
 									return;
 								}
@@ -1381,7 +1539,7 @@
 						function processAll(folderURI)
 						{
 							// check if folder has a manifest, and if it says to ignore this folder
-								if( ! folderIsSearchable(folderURI) )
+								if( ! Utils.isSearchable(folderURI) )
 								{
 									return;
 								}
@@ -1428,6 +1586,25 @@
 						throw new URIError('URIError in Utils.getSearchableURIs: The folder "' +pathOrURI+ '" is not a valid folder');
 					}
 
+				},
+				
+				/**
+				 * Checks is a folder is searchable, depending on its manifest
+				 * @param	{String}	pathOrURI	A valid path or URI
+				 * @returns	{Boolean}				true or false depending on the result
+				 */
+				isSearchable:function(pathOrURI)
+				{
+					var uri = URI.toURI(pathOrURI) + 'manifest.xml';
+					if(FLfile.exists(uri))
+					{
+						var manifest = new XML(FLfile.read(uri));
+						if(manifest.folder.searchable == false)
+						{
+							return false;
+						}
+					}
+					return true;
 				},
 
 				/**
