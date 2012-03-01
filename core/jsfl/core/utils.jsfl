@@ -756,12 +756,12 @@
 								//trace(obj)
 								if( ! (key in obj) )
 								{
-									trace('assigning')
+									//trace('assigning')
 									obj[key] = properties;
 								}
 								else
 								{
-									trace('extending')
+									//trace('extending')
 									Utils.extend(obj[key], properties);
 								}
 
