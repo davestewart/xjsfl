@@ -1248,12 +1248,11 @@
 						// explanation
 					
 							/*
-								How this works, is that the pattern (ignore the space after
-								the ** (otherwise it breaks commenting)):
-								
-									jsfl/** /*.txt
-								
-								Is first chunked into parts:
+								How this works, is that the pattern:
+							*/
+							//		jsfl/**/*.txt
+							/*
+								Is first chunked into RegExp parts:
 								
 									1 - jsfl/
 									2 - .+/
@@ -1265,7 +1264,7 @@
 								
 									^((jsfl\/.+\/.+.txt$)|(jsfl\/.+\/$)|(jsfl\/$))
 									
-								This allows us to exit early from a URI match if the part of
+								This also allows us to exit early from a URI match if the part of
 								the pattern before any recursive tokens (**) is not found.
 									
 								When a match is found, it is then re-matched again against the 
@@ -1284,13 +1283,14 @@
 								var parts		= [];
 								
 							// update parameters
-								pattern			= pattern.replace(/ /g, '%20');
+								var _pattern		= (pattern || '**')
+													.replace(/ /g, '%20')
+													.replace(/\./g, '\\.');
 								
 							// special treatment for leading recursive file (but not folder) wildcards, e.g. **, **file, **file.jsfl
-								if(/^\*\*[^\/]+$/.test(pattern))
+								if(/^\*\*[^\/]+$/.test(_pattern))
 								{
-									var part = pattern
-										.replace(/\./, '\\.')
+									var part = _pattern
 										.replace(/\*\*/, '[^/]+')
 										.replace(/\*/, '[^/]+')
 										+ '$'
@@ -1308,7 +1308,7 @@
 										
 									// build
 										var exec, part;
-										while(exec = chunker.exec(pattern))
+										while(exec = chunker.exec(_pattern))
 										{
 											part = exec[0];
 											if(part.indexOf('**') !== -1)
@@ -1336,14 +1336,21 @@
 						// output debugging information
 							if(debug)
 							{
-								var obj =
+								var print;
+								if(debug === true)
 								{
-									pattern	:pattern,
-									match	:Utils.rxUnescape(rxMatch.source),
-									search	:Utils.rxUnescape(rxSearch.source),
-									parts	:parts
+									print = true;
+									debug = {};
 								}
-								inspect(obj, 'Pattern breakdown for glob("' + pattern + '")');
+								debug.pattern	= pattern;
+								debug.match		= Utils.rxUnescape(rxMatch.source);
+								debug.search	= Utils.rxUnescape(rxSearch.source);
+								debug.parts		= parts;
+								
+								if(print)
+								{
+									inspect(debug, 'Pattern breakdown for glob("' + pattern + '")');
+								}
 							}
 							
 						// process paths and grab URIs
