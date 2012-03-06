@@ -5,8 +5,8 @@
 		<size folder="32x32" />
 	</sizes>
 	<categories>
-		<category folder="actions" desc="">
-			<group folder="basket" desc="">
+		<category folder="actions" label="Actions">
+			<group folder="basket" label="Basket">
 				<icon file="actions/basket/basket.png" />
 				<icon file="actions/basket/basket_add.png" />
 				<icon file="actions/basket/basket_delete.png" />
@@ -16,7 +16,7 @@
 				<icon file="actions/basket/basket_put.png" />
 				<icon file="actions/basket/basket_remove.png" />
 			</group>
-			<group folder="cart" desc="">
+			<group folder="cart" label="Cart">
 				<icon file="actions/cart/cart.png" />
 				<icon file="actions/cart/cart_add.png" />
 				<icon file="actions/cart/cart_delete.png" />
@@ -26,7 +26,7 @@
 				<icon file="actions/cart/cart_put.png" />
 				<icon file="actions/cart/cart_remove.png" />
 			</group>
-			<group folder="clock" desc="">
+			<group folder="clock" label="Clock">
 				<icon file="actions/clock/clock.png" />
 				<icon file="actions/clock/clock_add.png" />
 				<icon file="actions/clock/clock_delete.png" />
@@ -39,50 +39,50 @@
 				<icon file="actions/clock/clock_red.png" />
 				<icon file="actions/clock/clock_stop.png" />
 			</group>
-			<group folder="connect" desc="">
+			<group folder="connect" label="Connect">
 				<icon file="actions/connect/network_connect.png" />
 				<icon file="actions/connect/network_disconnect.png" />
 			</group>
-			<group folder="cut" desc="">
+			<group folder="cut" label="Cut">
 				<icon file="actions/cut/cut.png" />
 				<icon file="actions/cut/cut_red.png" />
 			</group>
-			<group folder="disk" desc="">
+			<group folder="disk" label="Disk">
 				<icon file="actions/disk/disk.png" />
 				<icon file="actions/disk/disk_multiple.png" />
 			</group>
-			<group folder="door" desc="">
+			<group folder="door" label="Door">
 				<icon file="actions/door/door.png" />
 				<icon file="actions/door/door_in.png" />
 				<icon file="actions/door/door_open.png" />
 				<icon file="actions/door/door_out.png" />
 			</group>
-			<group folder="find" desc="">
+			<group folder="find" label="Find">
 				<icon file="actions/find/find.png" />
 			</group>
-			<group folder="heart" desc="">
+			<group folder="heart" label="Heart">
 				<icon file="actions/heart/heart.png" />
 				<icon file="actions/heart/heart_add.png" />
 				<icon file="actions/heart/heart_delete.png" />
 			</group>
-			<group folder="house" desc="">
+			<group folder="house" label="House">
 				<icon file="actions/house/house.png" />
 				<icon file="actions/house/house_go.png" />
 				<icon file="actions/house/house_link.png" />
 			</group>
-			<group folder="key" desc="">
+			<group folder="key" label="Key">
 				<icon file="actions/key/key.png" />
 				<icon file="actions/key/key_add.png" />
 				<icon file="actions/key/key_delete.png" />
 				<icon file="actions/key/key_go.png" />
 			</group>
-			<group folder="lightning" desc="">
+			<group folder="lightning" label="Lightning">
 				<icon file="actions/lightning/lightning.png" />
 				<icon file="actions/lightning/lightning_add.png" />
 				<icon file="actions/lightning/lightning_delete.png" />
 				<icon file="actions/lightning/lightning_go.png" />
 			</group>
-			<group folder="link" desc="">
+			<group folder="link" label="Link">
 				<icon file="actions/link/link.png" />
 				<icon file="actions/link/link_add.png" />
 				<icon file="actions/link/link_break.png" />
@@ -90,7 +90,7 @@
 				<icon file="actions/link/link_edit.png" />
 				<icon file="actions/link/link_go.png" />
 			</group>
-			<group folder="lock" desc="">
+			<group folder="lock" label="Lock">
 				<icon file="actions/lock/lock.png" />
 				<icon file="actions/lock/lock_add.png" />
 				<icon file="actions/lock/lock_break.png" />
@@ -99,34 +99,34 @@
 				<icon file="actions/lock/lock_go.png" />
 				<icon file="actions/lock/lock_open.png" />
 			</group>
-			<group folder="paste" desc="">
+			<group folder="paste" label="Paste">
 				<icon file="actions/paste/paste_plain.png" />
 				<icon file="actions/paste/paste_word.png" />
 			</group>
-			<group folder="pencil" desc="">
+			<group folder="pencil" label="Pencil">
 				<icon file="actions/pencil/pencil.png" />
 				<icon file="actions/pencil/pencil_add.png" />
 				<icon file="actions/pencil/pencil_delete.png" />
 				<icon file="actions/pencil/pencil_go.png" />
 			</group>
-			<group folder="shield" desc="">
+			<group folder="shield" label="Shield">
 				<icon file="actions/shield/shield.png" />
 				<icon file="actions/shield/shield_add.png" />
 				<icon file="actions/shield/shield_delete.png" />
 				<icon file="actions/shield/shield_go.png" />
 			</group>
-			<group folder="stopwatch" desc="">
+			<group folder="stopwatch" label="Stopwatch">
 				<icon file="actions/stopwatch/stopwatch_finish.png" />
 				<icon file="actions/stopwatch/stopwatch_pause.png" />
 				<icon file="actions/stopwatch/stopwatch_start.png" />
 			</group>
-			<group folder="time" desc="">
+			<group folder="time" label="Time">
 				<icon file="actions/time/time.png" />
 				<icon file="actions/time/time_add.png" />
 				<icon file="actions/time/time_delete.png" />
 				<icon file="actions/time/time_go.png" />
 			</group>
-			<group folder="transmit" desc="">
+			<group folder="transmit" label="Transmit">
 				<icon file="actions/transmit/transmit.png" />
 				<icon file="actions/transmit/transmit_add.png" />
 				<icon file="actions/transmit/transmit_blue.png" />
@@ -135,12 +135,12 @@
 				<icon file="actions/transmit/transmit_error.png" />
 				<icon file="actions/transmit/transmit_go.png" />
 			</group>
-			<group folder="winrar" desc="">
+			<group folder="winrar" label="WinRAR">
 				<icon file="actions/winrar/winrar_add.png" />
 				<icon file="actions/winrar/winrar_extract.png" />
 				<icon file="actions/winrar/winrar_view.png" />
 			</group>
-			<group folder="world" desc="">
+			<group folder="world" label="World">
 				<icon file="actions/world/world.png" />
 				<icon file="actions/world/world_add.png" />
 				<icon file="actions/world/world_delete.png" />
@@ -148,13 +148,13 @@
 				<icon file="actions/world/world_go.png" />
 				<icon file="actions/world/world_link.png" />
 			</group>
-			<group folder="wrench" desc="">
+			<group folder="wrench" label="Wrench">
 				<icon file="actions/wrench/wrench.png" />
 				<icon file="actions/wrench/wrench_orange.png" />
 			</group>
 		</category>
-		<category folder="design" desc="">
-			<group folder="color" desc="">
+		<category folder="design" label="Design">
+			<group folder="color" label="Color">
 				<icon file="design/color/color_gradient.png" />
 				<icon file="design/color/color_management.png" />
 				<icon file="design/color/color_palette.png" />
@@ -163,14 +163,14 @@
 				<icon file="design/color/color_swatch.png" />
 				<icon file="design/color/color_wheel.png" />
 			</group>
-			<group folder="contrast" desc="">
+			<group folder="contrast" label="Contrast">
 				<icon file="design/contrast/contrast.png" />
 				<icon file="design/contrast/contrast_decrease.png" />
 				<icon file="design/contrast/contrast_high.png" />
 				<icon file="design/contrast/contrast_increase.png" />
 				<icon file="design/contrast/contrast_low.png" />
 			</group>
-			<group folder="draw" desc="">
+			<group folder="draw" label="Draw">
 				<icon file="design/draw/draw_edit_path.png" />
 				<icon file="design/draw/draw_line.png" />
 				<icon file="design/draw/draw_line_split.png" />
@@ -190,13 +190,13 @@
 				<icon file="design/draw/draw_vertex.png" />
 				<icon file="design/draw/draw_wave.png" />
 			</group>
-			<group folder="font" desc="">
+			<group folder="font" label="Font">
 				<icon file="design/font/font.png" />
 				<icon file="design/font/font_add.png" />
 				<icon file="design/font/font_delete.png" />
 				<icon file="design/font/font_go.png" />
 			</group>
-			<group folder="image" desc="">
+			<group folder="image" label="Image">
 				<icon file="design/image/image.png" />
 				<icon file="design/image/image_add.png" />
 				<icon file="design/image/image_delete.png" />
@@ -204,7 +204,7 @@
 				<icon file="design/image/image_link.png" />
 				<icon file="design/image/image_multiple.png" />
 			</group>
-			<group folder="imaging" desc="">
+			<group folder="imaging" label="Imaging">
 				<icon file="design/imaging/imaging_canvas_size.png" />
 				<icon file="design/imaging/imaging_convert_color_to_gray.png" />
 				<icon file="design/imaging/imaging_convert_gray_to_color.png" />
@@ -219,7 +219,7 @@
 				<icon file="design/imaging/imaging_small_tiles.png" />
 				<icon file="design/imaging/imaging_workspace.png" />
 			</group>
-			<group folder="layer" desc="">
+			<group folder="layer" label="Layer">
 				<icon file="design/layer/layer.png" />
 				<icon file="design/layer/layer_add.png" />
 				<icon file="design/layer/layer_aspect_arrow.png" />
@@ -250,7 +250,7 @@
 				<icon file="design/layer/layer_vector.png" />
 				<icon file="design/layer/layer_wms.png" />
 			</group>
-			<group folder="layout" desc="">
+			<group folder="layout" label="Layout">
 				<icon file="design/layout/layout.png" />
 				<icon file="design/layout/layout_add.png" />
 				<icon file="design/layout/layout_content.png" />
@@ -261,14 +261,14 @@
 				<icon file="design/layout/layout_link.png" />
 				<icon file="design/layout/layout_sidebar.png" />
 			</group>
-			<group folder="photo" desc="">
+			<group folder="photo" label="Photo">
 				<icon file="design/photo/photo.png" />
 				<icon file="design/photo/photo_add.png" />
 				<icon file="design/photo/photo_delete.png" />
 				<icon file="design/photo/photo_link.png" />
 				<icon file="design/photo/photo_multiple.png" />
 			</group>
-			<group folder="picture" desc="">
+			<group folder="picture" label="Picture">
 				<icon file="design/picture/picture.png" />
 				<icon file="design/picture/picture_add.png" />
 				<icon file="design/picture/picture_delete.png" />
@@ -281,7 +281,7 @@
 				<icon file="design/picture/picture_multiple.png" />
 				<icon file="design/picture/picture_save.png" />
 			</group>
-			<group folder="select" desc="">
+			<group folder="select" label="Select">
 				<icon file="design/select/select.png" />
 				<icon file="design/select/select_by_adding_to_selection.png" />
 				<icon file="design/select/select_by_color.png" />
@@ -293,7 +293,7 @@
 				<icon file="design/select/select_lasso.png" />
 				<icon file="design/select/select_restangular.png" />
 			</group>
-			<group folder="shape" desc="">
+			<group folder="shape" label="Shape">
 				<icon file="design/shape/shape_align_bottom.png" />
 				<icon file="design/shape/shape_align_center.png" />
 				<icon file="design/shape/shape_align_left.png" />
@@ -320,14 +320,14 @@
 				<icon file="design/shape/shape_square_link.png" />
 				<icon file="design/shape/shape_ungroup.png" />
 			</group>
-			<group folder="style" desc="">
+			<group folder="style" label="Style">
 				<icon file="design/style/style.png" />
 				<icon file="design/style/style_add.png" />
 				<icon file="design/style/style_delete.png" />
 				<icon file="design/style/style_edit.png" />
 				<icon file="design/style/style_go.png" />
 			</group>
-			<group folder="text" desc="">
+			<group folder="text" label="Text">
 				<icon file="design/text/text_align_center.png" />
 				<icon file="design/text/text_align_justity.png" />
 				<icon file="design/text/text_align_left.png" />
@@ -368,7 +368,7 @@
 				<icon file="design/text/text_underline.png" />
 				<icon file="design/text/text_uppercase.png" />
 			</group>
-			<group folder="toolbox" desc="">
+			<group folder="toolbox" label="Toolbox">
 				<icon file="design/toolbox/toolbox_airbrush.png" />
 				<icon file="design/toolbox/toolbox_calligraphic.png" />
 				<icon file="design/toolbox/toolbox_clone.png" />
@@ -384,7 +384,7 @@
 				<icon file="design/toolbox/toolbox_path.png" />
 				<icon file="design/toolbox/toolbox_smudge.png" />
 			</group>
-			<group folder="transform" desc="">
+			<group folder="transform" label="Transform">
 				<icon file="design/transform/transform_crop.png" />
 				<icon file="design/transform/transform_crop_resize.png" />
 				<icon file="design/transform/transform_flip.png" />
@@ -401,7 +401,7 @@
 				<icon file="design/transform/transform_shear.png" />
 				<icon file="design/transform/transform_straighten.png" />
 			</group>
-			<group folder="zoom" desc="">
+			<group folder="zoom" label="Zoom">
 				<icon file="design/zoom/zoom.png" />
 				<icon file="design/zoom/zoom_extend.png" />
 				<icon file="design/zoom/zoom_in.png" />
@@ -412,8 +412,8 @@
 				<icon file="design/zoom/zoom_selection.png" />
 			</group>
 		</category>
-		<category folder="development" desc="">
-			<group folder="brick" desc="">
+		<category folder="development" label="Development">
+			<group folder="brick" label="Brick">
 				<icon file="development/brick/brick.png" />
 				<icon file="development/brick/brick_add.png" />
 				<icon file="development/brick/brick_delete.png" />
@@ -423,7 +423,7 @@
 				<icon file="development/brick/brick_link.png" />
 				<icon file="development/brick/brick_multiple.png" />
 			</group>
-			<group folder="bug" desc="">
+			<group folder="bug" label="Bug">
 				<icon file="development/bug/bug.png" />
 				<icon file="development/bug/bug_add.png" />
 				<icon file="development/bug/bug_delete.png" />
@@ -432,7 +432,7 @@
 				<icon file="development/bug/bug_go.png" />
 				<icon file="development/bug/bug_link.png" />
 			</group>
-			<group folder="cog" desc="">
+			<group folder="cog" label="Cog">
 				<icon file="development/cog/cog.png" />
 				<icon file="development/cog/cog_add.png" />
 				<icon file="development/cog/cog_delete.png" />
@@ -440,7 +440,7 @@
 				<icon file="development/cog/cog_error.png" />
 				<icon file="development/cog/cog_go.png" />
 			</group>
-			<group folder="database" desc="">
+			<group folder="database" label="Database">
 				<icon file="development/database/database.png" />
 				<icon file="development/database/database_add.png" />
 				<icon file="development/database/database_connect.png" />
@@ -457,12 +457,12 @@
 				<icon file="development/database/database_table.png" />
 				<icon file="development/database/database_multiple.png" />
 			</group>
-			<group folder="filter" desc="">
+			<group folder="filter" label="Filter">
 				<icon file="development/filter/filter.png" />
 				<icon file="development/filter/filter_add.png" />
 				<icon file="development/filter/filter_delete.png" />
 			</group>
-			<group folder="plugin" desc="">
+			<group folder="plugin" label="Plugin">
 				<icon file="development/plugin/plugin.png" />
 				<icon file="development/plugin/plugin_add.png" />
 				<icon file="development/plugin/plugin_delete.png" />
@@ -472,13 +472,13 @@
 				<icon file="development/plugin/plugin_go.png" />
 				<icon file="development/plugin/plugin_link.png" />
 			</group>
-			<group folder="resultset" desc="">
+			<group folder="resultset" label="ResultSet">
 				<icon file="development/resultset/resultset_first.png" />
 				<icon file="development/resultset/resultset_last.png" />
 				<icon file="development/resultset/resultset_next.png" />
 				<icon file="development/resultset/resultset_previous.png" />
 			</group>
-			<group folder="script" desc="">
+			<group folder="script" label="Script">
 				<icon file="development/script/script.png" />
 				<icon file="development/script/script_add.png" />
 				<icon file="development/script/script_code.png" />
@@ -494,13 +494,13 @@
 				<icon file="development/script/script_palette.png" />
 				<icon file="development/script/script_save.png" />
 			</group>
-			<group folder="sitemap" desc="">
+			<group folder="sitemap" label="Site Map">
 				<icon file="development/sitemap/sitemap.png" />
 				<icon file="development/sitemap/sitemap_color.png" />
 			</group>
 		</category>
-		<category folder="feedback" desc="">
-			<group folder="action" desc="">
+		<category folder="feedback" label="Feedback">
+			<group folder="action" label="Action">
 				<icon file="feedback/action/action_accept.png" />
 				<icon file="feedback/action/action_add.png" />
 				<icon file="feedback/action/action_cancel.png" />
@@ -513,7 +513,7 @@
 				<icon file="feedback/action/action_stop.png" />
 				<icon file="feedback/action/action_tick.png" />
 			</group>
-			<group folder="arrow" desc="">
+			<group folder="arrow" label="Arrow">
 				<icon file="feedback/arrow/arrow_branch.png" />
 				<icon file="feedback/arrow/arrow_divide.png" />
 				<icon file="feedback/arrow/arrow_down.png" />
@@ -535,11 +535,11 @@
 				<icon file="feedback/arrow/arrow_undo.png" />
 				<icon file="feedback/arrow/arrow_up.png" />
 			</group>
-			<group folder="asterisk" desc="">
+			<group folder="asterisk" label="Asterisk">
 				<icon file="feedback/asterisk/asterisk_orange.png" />
 				<icon file="feedback/asterisk/asterisk_yellow.png" />
 			</group>
-			<group folder="award" desc="">
+			<group folder="award" label="Award">
 				<icon file="feedback/award/award_star_add.png" />
 				<icon file="feedback/award/award_star_bronze_1.png" />
 				<icon file="feedback/award/award_star_bronze_2.png" />
@@ -552,7 +552,7 @@
 				<icon file="feedback/award/award_star_silver_2.png" />
 				<icon file="feedback/award/award_star_silver_3.png" />
 			</group>
-			<group folder="bell" desc="">
+			<group folder="bell" label="Bell">
 				<icon file="feedback/bell/bell.png" />
 				<icon file="feedback/bell/bell_add.png" />
 				<icon file="feedback/bell/bell_delete.png" />
@@ -560,12 +560,12 @@
 				<icon file="feedback/bell/bell_go.png" />
 				<icon file="feedback/bell/bell_link.png" />
 			</group>
-			<group folder="bin" desc="">
+			<group folder="bin" label="Bin">
 				<icon file="feedback/bin/bin.png" />
 				<icon file="feedback/bin/bin_closed.png" />
 				<icon file="feedback/bin/bin_empty.png" />
 			</group>
-			<group folder="bullet" desc="">
+			<group folder="bullet" label="Bullet">
 				<icon file="feedback/bullet/bullet_add.png" />
 				<icon file="feedback/bullet/bullet_arrow_bottom.png" />
 				<icon file="feedback/bullet/bullet_arrow_down.png" />
@@ -592,7 +592,7 @@
 				<icon file="feedback/bullet/bullet_wrench.png" />
 				<icon file="feedback/bullet/bullet_yellow.png" />
 			</group>
-			<group folder="emotion" desc="">
+			<group folder="emotion" label="Emotion">
 				<icon file="feedback/emotion/emotion_evilgrin.png" />
 				<icon file="feedback/emotion/emotion_grin.png" />
 				<icon file="feedback/emotion/emotion_happy.png" />
@@ -603,13 +603,13 @@
 				<icon file="feedback/emotion/emotion_waii.png" />
 				<icon file="feedback/emotion/emotion_wink.png" />
 			</group>
-			<group folder="error" desc="">
+			<group folder="error" label="Error">
 				<icon file="feedback/error/error.png" />
 				<icon file="feedback/error/error_add.png" />
 				<icon file="feedback/error/error_delete.png" />
 				<icon file="feedback/error/error_go.png" />
 			</group>
-			<group folder="flag" desc="">
+			<group folder="flag" label="Flag">
 				<icon file="feedback/flag/flag_1.png" />
 				<icon file="feedback/flag/flag_2.png" />
 				<icon file="feedback/flag/flag_3.png" />
@@ -622,20 +622,20 @@
 				<icon file="feedback/flag/flag_square_red.png" />
 				<icon file="feedback/flag/flag_square_yellow.png" />
 			</group>
-			<group folder="hourglass" desc="">
+			<group folder="hourglass" label="Hourglass">
 				<icon file="feedback/hourglass/hourglass.png" />
 				<icon file="feedback/hourglass/hourglass_add.png" />
 				<icon file="feedback/hourglass/hourglass_delete.png" />
 				<icon file="feedback/hourglass/hourglass_go.png" />
 				<icon file="feedback/hourglass/hourglass_link.png" />
 			</group>
-			<group folder="lightbulb" desc="">
+			<group folder="lightbulb" label="Lightbulb">
 				<icon file="feedback/lightbulb/lightbulb.png" />
 				<icon file="feedback/lightbulb/lightbulb_add.png" />
 				<icon file="feedback/lightbulb/lightbulb_delete.png" />
 				<icon file="feedback/lightbulb/lightbulb_off.png" />
 			</group>
-			<group folder="medal" desc="">
+			<group folder="medal" label="Medal">
 				<icon file="feedback/medal/medal_bronze_1.png" />
 				<icon file="feedback/medal/medal_bronze_2.png" />
 				<icon file="feedback/medal/medal_bronze_3.png" />
@@ -652,7 +652,7 @@
 				<icon file="feedback/medal/medal_silver_add.png" />
 				<icon file="feedback/medal/medal_silver_delete.png" />
 			</group>
-			<group folder="tag" desc="">
+			<group folder="tag" label="Tag">
 				<icon file="feedback/tag/tag.png" />
 				<icon file="feedback/tag/tag_blue.png" />
 				<icon file="feedback/tag/tag_blue_add.png" />
@@ -666,20 +666,20 @@
 				<icon file="feedback/tag/tag_red.png" />
 				<icon file="feedback/tag/tag_yellow.png" />
 			</group>
-			<group folder="temperature" desc="">
+			<group folder="temperature" label="Temperature">
 				<icon file="feedback/temperature/temperature_1.png" />
 				<icon file="feedback/temperature/temperature_2.png" />
 				<icon file="feedback/temperature/temperature_3.png" />
 				<icon file="feedback/temperature/temperature_4.png" />
 				<icon file="feedback/temperature/temperature_5.png" />
 			</group>
-			<group folder="thumb" desc="">
+			<group folder="thumb" label="Thumb">
 				<icon file="feedback/thumb/thumb_down.png" />
 				<icon file="feedback/thumb/thumb_up.png" />
 			</group>
 		</category>
-		<category folder="filesystem" desc="">
-			<group folder="drive" desc="">
+		<category folder="filesystem" label="Filesystem">
+			<group folder="drive" label="Drive">
 				<icon file="filesystem/drive/drive.png" />
 				<icon file="filesystem/drive/drive_add.png" />
 				<icon file="filesystem/drive/drive_burn.png" />
@@ -698,7 +698,7 @@
 				<icon file="filesystem/drive/drive_user.png" />
 				<icon file="filesystem/drive/drive_web.png" />
 			</group>
-			<group folder="file" desc="">
+			<group folder="file" label="File">
 				<icon file="filesystem/file/file_acrobat.png" />
 				<icon file="filesystem/file/file_actionscript.png" />
 				<icon file="filesystem/file/file_c.png" />
@@ -719,7 +719,7 @@
 				<icon file="filesystem/file/file_visualstudio.png" />
 				<icon file="filesystem/file/file_word.png" />
 			</group>
-			<group folder="folder" desc="">
+			<group folder="folder" label="Folder">
 				<icon file="filesystem/folder/folder.png" />
 				<icon file="filesystem/folder/folder_add.png" />
 				<icon file="filesystem/folder/folder_bell.png" />
@@ -753,7 +753,7 @@
 				<icon file="filesystem/folder/folder_user.png" />
 				<icon file="filesystem/folder/folder_wrench.png" />
 			</group>
-			<group folder="page" desc="">
+			<group folder="page" label="Page">
 				<icon file="filesystem/page/page.png" />
 				<icon file="filesystem/page/page_add.png" />
 				<icon file="filesystem/page/page_attach.png" />
@@ -812,7 +812,7 @@
 				<icon file="filesystem/page/page_word.png" />
 				<icon file="filesystem/page/page_world.png" />
 			</group>
-			<group folder="server" desc="">
+			<group folder="server" label="Server">
 				<icon file="filesystem/server/server.png" />
 				<icon file="filesystem/server/server_add.png" />
 				<icon file="filesystem/server/server_chart.png" />
@@ -829,8 +829,8 @@
 				<icon file="filesystem/server/server_uncompress.png" />
 			</group>
 		</category>
-		<category folder="hardware" desc="">
-			<group folder="calculator" desc="">
+		<category folder="hardware" label="Hardware">
+			<group folder="calculator" label="Calculator">
 				<icon file="hardware/calculator/calculator.png" />
 				<icon file="hardware/calculator/calculator_add.png" />
 				<icon file="hardware/calculator/calculator_delete.png" />
@@ -838,7 +838,7 @@
 				<icon file="hardware/calculator/calculator_error.png" />
 				<icon file="hardware/calculator/calculator_link.png" />
 			</group>
-			<group folder="component" desc="">
+			<group folder="component" label="Component">
 				<icon file="hardware/component/component_agp.png" />
 				<icon file="hardware/component/component_battery_full.png" />
 				<icon file="hardware/component/component_battery_half.png" />
@@ -861,7 +861,7 @@
 				<icon file="hardware/component/component_video_mode.png" />
 				<icon file="hardware/component/component_widescreen.png" />
 			</group>
-			<group folder="computer" desc="">
+			<group folder="computer" label="Computer">
 				<icon file="hardware/computer/computer.png" />
 				<icon file="hardware/computer/computer_add.png" />
 				<icon file="hardware/computer/computer_delete.png" />
@@ -871,13 +871,13 @@
 				<icon file="hardware/computer/computer_key.png" />
 				<icon file="hardware/computer/computer_link.png" />
 			</group>
-			<group folder="controller" desc="">
+			<group folder="controller" label="Controller">
 				<icon file="hardware/controller/controller.png" />
 				<icon file="hardware/controller/controller_add.png" />
 				<icon file="hardware/controller/controller_delete.png" />
 				<icon file="hardware/controller/controller_error.png" />
 			</group>
-			<group folder="devices" desc="">
+			<group folder="devices" label="Devices">
 				<icon file="hardware/devices/devices_calculator_black.png" />
 				<icon file="hardware/devices/devices_cash_register.png" />
 				<icon file="hardware/devices/devices_fax.png" />
@@ -892,26 +892,26 @@
 				<icon file="hardware/devices/devices_subwoofer.png" />
 				<icon file="hardware/devices/devices_video.png" />
 			</group>
-			<group folder="ipod" desc="">
+			<group folder="ipod" label="iPod">
 				<icon file="hardware/ipod/ipod.png" />
 				<icon file="hardware/ipod/ipod_cast.png" />
 				<icon file="hardware/ipod/ipod_cast_add.png" />
 				<icon file="hardware/ipod/ipod_cast_delete.png" />
 				<icon file="hardware/ipod/ipod_sound.png" />
 			</group>
-			<group folder="joystick" desc="">
+			<group folder="joystick" label="Joystick">
 				<icon file="hardware/joystick/joystick.png" />
 				<icon file="hardware/joystick/joystick_add.png" />
 				<icon file="hardware/joystick/joystick_delete.png" />
 				<icon file="hardware/joystick/joystick_error.png" />
 			</group>
-			<group folder="keyboard" desc="">
+			<group folder="keyboard" label="Keyboard">
 				<icon file="hardware/keyboard/keyboard.png" />
 				<icon file="hardware/keyboard/keyboard_add.png" />
 				<icon file="hardware/keyboard/keyboard_delete.png" />
 				<icon file="hardware/keyboard/keyboard_magnify.png" />
 			</group>
-			<group folder="mobile" desc="">
+			<group folder="mobile" label="Mobile">
 				<icon file="hardware/mobile/mobile_android.png" />
 				<icon file="hardware/mobile/mobile_blackberry.png" />
 				<icon file="hardware/mobile/mobile_blackberry_white.png" />
@@ -919,7 +919,7 @@
 				<icon file="hardware/mobile/mobile_nokia_s60.png" />
 				<icon file="hardware/mobile/mobile_other_phone.png" />
 			</group>
-			<group folder="monitor" desc="">
+			<group folder="monitor" label="Monitor">
 				<icon file="hardware/monitor/monitor.png" />
 				<icon file="hardware/monitor/monitor_add.png" />
 				<icon file="hardware/monitor/monitor_delete.png" />
@@ -929,26 +929,26 @@
 				<icon file="hardware/monitor/monitor_lightning.png" />
 				<icon file="hardware/monitor/monitor_link.png" />
 			</group>
-			<group folder="mouse" desc="">
+			<group folder="mouse" label="Mouse">
 				<icon file="hardware/mouse/mouse.png" />
 				<icon file="hardware/mouse/mouse_add.png" />
 				<icon file="hardware/mouse/mouse_delete.png" />
 				<icon file="hardware/mouse/mouse_error.png" />
 			</group>
-			<group folder="phone" desc="">
+			<group folder="phone" label="Phone">
 				<icon file="hardware/phone/phone.png" />
 				<icon file="hardware/phone/phone_add.png" />
 				<icon file="hardware/phone/phone_delete.png" />
 				<icon file="hardware/phone/phone_sound.png" />
 			</group>
-			<group folder="printer" desc="">
+			<group folder="printer" label="Printer">
 				<icon file="hardware/printer/printer.png" />
 				<icon file="hardware/printer/printer_add.png" />
 				<icon file="hardware/printer/printer_delete.png" />
 				<icon file="hardware/printer/printer_empty.png" />
 				<icon file="hardware/printer/printer_error.png" />
 			</group>
-			<group folder="telephone" desc="">
+			<group folder="telephone" label="Telephone">
 				<icon file="hardware/telephone/telephone.png" />
 				<icon file="hardware/telephone/telephone_add.png" />
 				<icon file="hardware/telephone/telephone_delete.png" />
@@ -958,20 +958,20 @@
 				<icon file="hardware/telephone/telephone_key.png" />
 				<icon file="hardware/telephone/telephone_link.png" />
 			</group>
-			<group folder="television" desc="">
+			<group folder="television" label="Television">
 				<icon file="hardware/television/television.png" />
 				<icon file="hardware/television/television_add.png" />
 				<icon file="hardware/television/television_delete.png" />
 			</group>
-			<group folder="webcam" desc="">
+			<group folder="webcam" label="Webcam">
 				<icon file="hardware/webcam/webcam.png" />
 				<icon file="hardware/webcam/webcam_add.png" />
 				<icon file="hardware/webcam/webcam_delete.png" />
 				<icon file="hardware/webcam/webcam_error.png" />
 			</group>
 		</category>
-		<category folder="media" desc="">
-			<group folder="camera" desc="">
+		<category folder="media" label="Media">
+			<group folder="camera" label="Camera">
 				<icon file="media/camera/camera.png" />
 				<icon file="media/camera/camera_add.png" />
 				<icon file="media/camera/camera_delete.png" />
@@ -981,7 +981,7 @@
 				<icon file="media/camera/camera_link.png" />
 				<icon file="media/camera/camera_small.png" />
 			</group>
-			<group folder="cd" desc="">
+			<group folder="cd" label="CD">
 				<icon file="media/cd/cd.png" />
 				<icon file="media/cd/cd_add.png" />
 				<icon file="media/cd/cd_burn.png" />
@@ -990,7 +990,7 @@
 				<icon file="media/cd/cd_eject.png" />
 				<icon file="media/cd/cd_go.png" />
 			</group>
-			<group folder="control" desc="">
+			<group folder="control" label="Control">
 				<icon file="media/control/control_eject.png" />
 				<icon file="media/control/control_eject_blue.png" />
 				<icon file="media/control/control_end.png" />
@@ -1012,7 +1012,7 @@
 				<icon file="media/control/control_stop.png" />
 				<icon file="media/control/control_stop_blue.png" />
 			</group>
-			<group folder="dvd" desc="">
+			<group folder="dvd" label="DVD">
 				<icon file="media/dvd/dvd.png" />
 				<icon file="media/dvd/dvd_add.png" />
 				<icon file="media/dvd/dvd_delete.png" />
@@ -1022,7 +1022,7 @@
 				<icon file="media/dvd/dvd_key.png" />
 				<icon file="media/dvd/dvd_link.png" />
 			</group>
-			<group folder="film" desc="">
+			<group folder="film" label="Film">
 				<icon file="media/film/film.png" />
 				<icon file="media/film/film_add.png" />
 				<icon file="media/film/film_delete.png" />
@@ -1036,12 +1036,12 @@
 				<icon file="media/film/film_save.png" />
 				<icon file="media/film/film_split.png" />
 			</group>
-			<group folder="hd" desc="">
+			<group folder="hd" label="HD">
 				<icon file="media/hd/hd_720.png" />
 				<icon file="media/hd/hd_1080.png" />
 				<icon file="media/hd/hd_ready.png" />
 			</group>
-			<group folder="volume" desc="">
+			<group folder="volume" label="Volume">
 				<icon file="media/volume/volume.png" />
 				<icon file="media/volume/volume_add.png" />
 				<icon file="media/volume/volume_delete.png" />
@@ -1050,8 +1050,8 @@
 				<icon file="media/volume/volume_none.png" />
 			</group>
 		</category>
-		<category folder="objects" desc="">
-			<group folder="animal" desc="">
+		<category folder="objects" label="Objects">
+			<group folder="animal" label="Animal">
 				<icon file="objects/animal/animal_butterfly.png" />
 				<icon file="objects/animal/animal_cat.png" />
 				<icon file="objects/animal/animal_chameleon.png" />
@@ -1062,17 +1062,17 @@
 				<icon file="objects/animal/animal_peacock.png" />
 				<icon file="objects/animal/animal_toucan.png" />
 			</group>
-			<group folder="blackboard" desc="">
+			<group folder="blackboard" label="Blackboard">
 				<icon file="objects/blackboard/blackboard_drawing.png" />
 				<icon file="objects/blackboard/blackboard_empty.png" />
 				<icon file="objects/blackboard/blackboard_steps.png" />
 				<icon file="objects/blackboard/blackboard_sum.png" />
 			</group>
-			<group folder="box" desc="">
+			<group folder="box" label="Box">
 				<icon file="objects/box/box.png" />
 				<icon file="objects/box/box_down.png" />
 			</group>
-			<group folder="building" desc="">
+			<group folder="building" label="Building">
 				<icon file="objects/building/building.png" />
 				<icon file="objects/building/building_add.png" />
 				<icon file="objects/building/building_delete.png" />
@@ -1082,12 +1082,12 @@
 				<icon file="objects/building/building_key.png" />
 				<icon file="objects/building/building_link.png" />
 			</group>
-			<group folder="car" desc="">
+			<group folder="car" label="Car">
 				<icon file="objects/car/car.png" />
 				<icon file="objects/car/car_add.png" />
 				<icon file="objects/car/car_delete.png" />
 			</group>
-			<group folder="cup" desc="">
+			<group folder="cup" label="Cup">
 				<icon file="objects/cup/cup.png" />
 				<icon file="objects/cup/cup_add.png" />
 				<icon file="objects/cup/cup_delete.png" />
@@ -1097,11 +1097,11 @@
 				<icon file="objects/cup/cup_key.png" />
 				<icon file="objects/cup/cup_link.png" />
 			</group>
-			<group folder="drink" desc="">
+			<group folder="drink" label="Drink">
 				<icon file="objects/drink/drink.png" />
 				<icon file="objects/drink/drink_empty.png" />
 			</group>
-			<group folder="lorry" desc="">
+			<group folder="lorry" label="Lorry">
 				<icon file="objects/lorry/lorry.png" />
 				<icon file="objects/lorry/lorry_add.png" />
 				<icon file="objects/lorry/lorry_delete.png" />
@@ -1110,7 +1110,7 @@
 				<icon file="objects/lorry/lorry_go.png" />
 				<icon file="objects/lorry/lorry_link.png" />
 			</group>
-			<group folder="money" desc="">
+			<group folder="money" label="Money">
 				<icon file="objects/money/money.png" />
 				<icon file="objects/money/money_add.png" />
 				<icon file="objects/money/money_coins.png" />
@@ -1122,7 +1122,7 @@
 				<icon file="objects/money/money_pound.png" />
 				<icon file="objects/money/money_yen.png" />
 			</group>
-			<group folder="object" desc="">
+			<group folder="object" label="Object">
 				<icon file="objects/object/object_alarm_bell.png" />
 				<icon file="objects/object/object_anchor.png" />
 				<icon file="objects/object/object_battery.png" />
@@ -1178,7 +1178,7 @@
 				<icon file="objects/object/object_umbrella.png" />
 				<icon file="objects/object/object_wand.png" />
 			</group>
-			<group folder="package" desc="">
+			<group folder="package" label="Package">
 				<icon file="objects/package/package.png" />
 				<icon file="objects/package/package_add.png" />
 				<icon file="objects/package/package_delete.png" />
@@ -1186,13 +1186,13 @@
 				<icon file="objects/package/package_green.png" />
 				<icon file="objects/package/package_link.png" />
 			</group>
-			<group folder="pill" desc="">
+			<group folder="pill" label="Pill">
 				<icon file="objects/pill/pill.png" />
 				<icon file="objects/pill/pill_add.png" />
 				<icon file="objects/pill/pill_delete.png" />
 				<icon file="objects/pill/pill_go.png" />
 			</group>
-			<group folder="sport" desc="">
+			<group folder="sport" label="Sport">
 				<icon file="objects/sport/sport_8ball.png" />
 				<icon file="objects/sport/sport_basketball.png" />
 				<icon file="objects/sport/sport_cricket.png" />
@@ -1206,7 +1206,7 @@
 				<icon file="objects/sport/sport_tennis.png" />
 				<icon file="objects/sport/sport_whistle.png" />
 			</group>
-			<group folder="weather" desc="">
+			<group folder="weather" label="Weather">
 				<icon file="objects/weather/weather_breeze.png" />
 				<icon file="objects/weather/weather_clouds.png" />
 				<icon file="objects/weather/weather_cloudy.png" />
@@ -1226,8 +1226,8 @@
 				<icon file="objects/weather/weather_windy.png" />
 			</group>
 		</category>
-		<category folder="office" desc="">
-			<group folder="book" desc="">
+		<category folder="office" label="Office">
+			<group folder="book" label="Book">
 				<icon file="office/book/book.png" />
 				<icon file="office/book/book_add.png" />
 				<icon file="office/book/book_addresses.png" />
@@ -1244,7 +1244,7 @@
 				<icon file="office/book/book_previous.png" />
 				<icon file="office/book/book_stack.png" />
 			</group>
-			<group folder="document" desc="">
+			<group folder="document" label="Document">
 				<icon file="office/document/document_check_compatibility.png" />
 				<icon file="office/document/document_info.png" />
 				<icon file="office/document/document_inspector.png" />
@@ -1254,7 +1254,7 @@
 				<icon file="office/document/document_quote.png" />
 				<icon file="office/document/document_signature.png" />
 			</group>
-			<group folder="email" desc="">
+			<group folder="email" label="Email">
 				<icon file="office/email/email.png" />
 				<icon file="office/email/email_add.png" />
 				<icon file="office/email/email_attach.png" />
@@ -1269,14 +1269,14 @@
 				<icon file="office/email/email_spam_filter.png" />
 				<icon file="office/email/email_to_friend.png" />
 			</group>
-			<group folder="newspaper" desc="">
+			<group folder="newspaper" label="Newspaper">
 				<icon file="office/newspaper/newspaper.png" />
 				<icon file="office/newspaper/newspaper_add.png" />
 				<icon file="office/newspaper/newspaper_delete.png" />
 				<icon file="office/newspaper/newspaper_go.png" />
 				<icon file="office/newspaper/newspaper_link.png" />
 			</group>
-			<group folder="report" desc="">
+			<group folder="report" label="Report">
 				<icon file="office/report/report.png" />
 				<icon file="office/report/report_add.png" />
 				<icon file="office/report/report_delete.png" />
@@ -1290,15 +1290,15 @@
 				<icon file="office/report/report_user.png" />
 				<icon file="office/report/report_word.png" />
 			</group>
-			<group folder="vcard" desc="">
+			<group folder="vcard" label="VCard">
 				<icon file="office/vcard/vcard.png" />
 				<icon file="office/vcard/vcard_add.png" />
 				<icon file="office/vcard/vcard_delete.png" />
 				<icon file="office/vcard/vcard_edit.png" />
 			</group>
 		</category>
-		<category folder="ui" desc="">
-			<group folder="application" desc="">
+		<category folder="ui" label="UI">
+			<group folder="application" label="Application">
 				<icon file="ui/application/application.png" />
 				<icon file="ui/application/application_add.png" />
 				<icon file="ui/application/application_cascade.png" />
@@ -1337,7 +1337,7 @@
 				<icon file="ui/application/application_xp.png" />
 				<icon file="ui/application/application_xp_terminal.png" />
 			</group>
-			<group folder="calendar" desc="">
+			<group folder="calendar" label="Calendar">
 				<icon file="ui/calendar/calendar.png" />
 				<icon file="ui/calendar/calendar_add.png" />
 				<icon file="ui/calendar/calendar_delete.png" />
@@ -1347,7 +1347,7 @@
 				<icon file="ui/calendar/calendar_view_month.png" />
 				<icon file="ui/calendar/calendar_view_week.png" />
 			</group>
-			<group folder="chart" desc="">
+			<group folder="chart" label="Chart">
 				<icon file="ui/chart/chart_bar.png" />
 				<icon file="ui/chart/chart_bar_add.png" />
 				<icon file="ui/chart/chart_bar_delete.png" />
@@ -1377,7 +1377,7 @@
 				<icon file="ui/chart/chart_pie_error.png" />
 				<icon file="ui/chart/chart_pie_link.png" />
 			</group>
-			<group folder="comment" desc="">
+			<group folder="comment" label="Comment">
 				<icon file="ui/comment/comment.png" />
 				<icon file="ui/comment/comment_add.png" />
 				<icon file="ui/comment/comment_delete.png" />
@@ -1386,7 +1386,7 @@
 				<icon file="ui/comment/comment_multiple_add.png" />
 				<icon file="ui/comment/comment_multiple_delete.png" />
 			</group>
-			<group folder="date" desc="">
+			<group folder="date" label="Date">
 				<icon file="ui/date/date.png" />
 				<icon file="ui/date/date_add.png" />
 				<icon file="ui/date/date_delete.png" />
@@ -1398,7 +1398,7 @@
 				<icon file="ui/date/date_next.png" />
 				<icon file="ui/date/date_previous.png" />
 			</group>
-			<group folder="dialog" desc="">
+			<group folder="dialog" label="Dialog">
 				<icon file="ui/dialog/dialog_attributes_display.png" />
 				<icon file="ui/dialog/dialog_cats_display.png" />
 				<icon file="ui/dialog/dialog_directory_listing.png" />
@@ -1408,7 +1408,7 @@
 				<icon file="ui/dialog/dialog_save_as.png" />
 				<icon file="ui/dialog/dialog_snapshot.png" />
 			</group>
-			<group folder="icon" desc="">
+			<group folder="icon" label="Icon">
 				<icon file="ui/icon/icon_attach.png" />
 				<icon file="ui/icon/icon_female.png" />
 				<icon file="ui/icon/icon_location_pin.png" />
@@ -1423,7 +1423,7 @@
 				<icon file="ui/icon/icon_update.png" />
 				<icon file="ui/icon/icon_widgets.png" />
 			</group>
-			<group folder="map" desc="">
+			<group folder="map" label="Map">
 				<icon file="ui/map/map.png" />
 				<icon file="ui/map/map_add.png" />
 				<icon file="ui/map/map_delete.png" />
@@ -1431,7 +1431,7 @@
 				<icon file="ui/map/map_go.png" />
 				<icon file="ui/map/map_magnify.png" />
 			</group>
-			<group folder="note" desc="">
+			<group folder="note" label="Note">
 				<icon file="ui/note/note.png" />
 				<icon file="ui/note/note_add.png" />
 				<icon file="ui/note/note_delete.png" />
@@ -1439,20 +1439,20 @@
 				<icon file="ui/note/note_error.png" />
 				<icon file="ui/note/note_go.png" />
 			</group>
-			<group folder="status" desc="">
+			<group folder="status" label="Status">
 				<icon file="ui/status/status_away.png" />
 				<icon file="ui/status/status_busy.png" />
 				<icon file="ui/status/status_offline.png" />
 				<icon file="ui/status/status_online.png" />
 			</group>
-			<group folder="tab" desc="">
+			<group folder="tab" label="Tab">
 				<icon file="ui/tab/tab.png" />
 				<icon file="ui/tab/tab_add.png" />
 				<icon file="ui/tab/tab_delete.png" />
 				<icon file="ui/tab/tab_edit.png" />
 				<icon file="ui/tab/tab_go.png" />
 			</group>
-			<group folder="table" desc="">
+			<group folder="table" label="Table">
 				<icon file="ui/table/table.png" />
 				<icon file="ui/table/table_add.png" />
 				<icon file="ui/table/table_delete.png" />
@@ -1471,14 +1471,14 @@
 				<icon file="ui/table/table_save.png" />
 				<icon file="ui/table/table_sort.png" />
 			</group>
-			<group folder="textfield" desc="">
+			<group folder="textfield" label="Textfield">
 				<icon file="ui/textfield/textfield.png" />
 				<icon file="ui/textfield/textfield_add.png" />
 				<icon file="ui/textfield/textfield_delete.png" />
 				<icon file="ui/textfield/textfield_key.png" />
 				<icon file="ui/textfield/textfield_rename.png" />
 			</group>
-			<group folder="user" desc="">
+			<group folder="user" label="User">
 				<icon file="ui/user/user_multiple.png" />
 				<icon file="ui/user/user_multiple_add.png" />
 				<icon file="ui/user/user_multiple_delete.png" />
@@ -1503,15 +1503,15 @@
 				<icon file="ui/user/user_special_angel.png" />
 			</group>
 		</category>
-		<category folder="web" desc="">
-			<group folder="css" desc="">
+		<category folder="web" label="Web">
+			<group folder="css" label="CSS">
 				<icon file="web/css/css.png" />
 				<icon file="web/css/css_add.png" />
 				<icon file="web/css/css_delete.png" />
 				<icon file="web/css/css_go.png" />
 				<icon file="web/css/css_valid.png" />
 			</group>
-			<group folder="feed" desc="">
+			<group folder="feed" label="Feed">
 				<icon file="web/feed/feed.png" />
 				<icon file="web/feed/feed_add.png" />
 				<icon file="web/feed/feed_delete.png" />
@@ -1522,14 +1522,14 @@
 				<icon file="web/feed/feed_key.png" />
 				<icon file="web/feed/feed_magnify.png" />
 			</group>
-			<group folder="html" desc="">
+			<group folder="html" label="HTML">
 				<icon file="web/html/html.png" />
 				<icon file="web/html/html_add.png" />
 				<icon file="web/html/html_delete.png" />
 				<icon file="web/html/html_go.png" />
 				<icon file="web/html/html_valid.png" />
 			</group>
-			<group folder="qip" desc="">
+			<group folder="qip" label="QIP">
 				<icon file="web/qip/qip_angry.png" />
 				<icon file="web/qip/qip_at_home.png" />
 				<icon file="web/qip/qip_at_work.png" />
@@ -1545,14 +1545,14 @@
 				<icon file="web/qip/qip_offline.png" />
 				<icon file="web/qip/qip_online.png" />
 			</group>
-			<group folder="rss" desc="">
+			<group folder="rss" label="RSS">
 				<icon file="web/rss/rss.png" />
 				<icon file="web/rss/rss_add.png" />
 				<icon file="web/rss/rss_delete.png" />
 				<icon file="web/rss/rss_go.png" />
 				<icon file="web/rss/rss_valid.png" />
 			</group>
-			<group folder="software" desc="">
+			<group folder="software" label="Software">
 				<icon file="web/software/software_android.png" />
 				<icon file="web/software/software_aol_mail.png" />
 				<icon file="web/software/software_brain_trainer.png" />
@@ -1574,11 +1574,11 @@
 				<icon file="web/software/software_wordpress.png" />
 				<icon file="web/software/software_www_page.png" />
 			</group>
-			<group folder="twitter" desc="">
+			<group folder="twitter" label="Twitter">
 				<icon file="web/twitter/twitter_1.png" />
 				<icon file="web/twitter/twitter_2.png" />
 			</group>
-			<group folder="web icon" desc="">
+			<group folder="web icon" label="Web icon">
 				<icon file="web/web icon/webicon_advertising.png" />
 				<icon file="web/web icon/webicon_anti_xss.png" />
 				<icon file="web/web icon/webicon_ask_and_answer.png" />
@@ -1636,7 +1636,7 @@
 				<icon file="web/web icon/webicon_wine_pairings.png" />
 				<icon file="web/web icon/webicon_wishlist_add.png" />
 			</group>
-			<group folder="xhtml" desc="">
+			<group folder="xhtml" label="XHTML">
 				<icon file="web/xhtml/xhtml.png" />
 				<icon file="web/xhtml/xhtml_add.png" />
 				<icon file="web/xhtml/xhtml_delete.png" />
