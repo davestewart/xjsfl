@@ -1,0 +1,50 @@
+stage
+	different element types on stage
+		symbol
+		video
+		graphic
+		video
+		textfield
+		shape
+		group
+		
+	hierarchies
+	selection
+	
+elements
+	
+layers
+	layers
+		different start and end points
+		empty layers
+		animated layers
+			keyframed
+			motion paths
+		animation
+		guided
+		masked
+	
+library
+	different library types
+		folder
+		movieclip
+		graphic
+		button
+		bitmap
+		sound
+		video
+		font
+		component
+		compiled clip
+	
+	hierarchy
+		folders
+		files
+		
+	different kinds of names
+		short
+		path/to/item
+	
+	different export types
+		exported
+		non-exported

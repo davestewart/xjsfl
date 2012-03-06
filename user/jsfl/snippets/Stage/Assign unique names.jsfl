@@ -15,7 +15,7 @@
 		function rename(element, name)
 		{
 			// variables
-				var name	= fnCase(name);
+				var name	= String(name)[fnCase]();
 				var index	= name;
 		
 			// initialize hash
@@ -50,7 +50,7 @@
 			try
 			{
 				// set rename style
-					fnCase = Utils[style];
+					fnCase = style;
 					
 				// loop over elements and rename
 					for each(var element in $selection)

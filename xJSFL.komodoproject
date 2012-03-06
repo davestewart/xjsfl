@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Komodo Project File - DO NOT EDIT -->
 <project id="2ebb994f-d28f-4973-9834-dd34c466c301" kpf_version="5" name="xJSFL.komodoproject">
+<livefolder id="1a95bacc-0b92-452d-ae6f-2f555138e452" idref="2ebb994f-d28f-4973-9834-dd34c466c301" name="Pocket God Tools" url="file:///H:/Perforce/Bolt%20Creative/dev_Mesh_Desktop/iPhone/BoltLib/xJSFL/modules/Pocket%20God%20Tools">
+</livefolder>
+<livefolder id="f4cdbc10-375e-45ab-8811-20be22182357" idref="2ebb994f-d28f-4973-9834-dd34c466c301" name="xJSFL Projects" url="file:///E:/05%20-%20Commercial%20Projects/xJSFL/3%20-%20development/xJSFL%20Projects">
+</livefolder>
 <preference-set idref="2ebb994f-d28f-4973-9834-dd34c466c301">
   <string relative="path" id="import_dirname"></string>
-  <string id="import_exclude_matches">*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;_svn;*%*;tmp*.html;.DS_Store; .git;*.komodo*;.git*;README;desktop.ini;*.as3proj;</string>
+  <string id="import_exclude_matches">*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;_svn;*%25*;tmp*.html;.DS_Store; .git;*.komodo*;.git*;README;desktop.ini;*.as3proj;</string>
   <string id="import_include_matches"></string>
   <boolean id="import_live">1</boolean>
   <string id="javascriptExtraPaths"></string>
