@@ -225,8 +225,7 @@ var Snippets =
 			// create data
 			
 				// generate xml
-					var xml				= <files type="folder" label="scripts" />;
-					xml.@path			= folderURI;
+					var xml				= <items type="folder" label="Snippets" path={folderURI} />;
 	
 				// create data
 					var iconsURI		= this.uri + 'assets/icons/16x16/';
@@ -289,7 +288,12 @@ var Snippets =
 
 		runFile:function(uri)
 		{
-			new File(uri).run();
+			fl.runScript(uri);
+		},
+
+		runFunction:function(uri, name)
+		{
+			fl.runScript(uri, name);
 		},
 
 		openFile:function(uri)

@@ -235,8 +235,8 @@
 			// UI
 				var controls =
 					<xml>
-						color:Color A=FFFFFF,
-						color:Color B=000000,
+						color:Color A=FFFF00,
+						color:Color B=FF0000,
 						slider:Steps=[{length},0,{length}],
 						slider:Amount=[100,0,100],
 						slider:Alpha=[100,0,100],
