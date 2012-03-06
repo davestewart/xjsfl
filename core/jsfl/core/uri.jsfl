@@ -744,6 +744,8 @@
 			 */
 			URI.reTarget = function(src, base, trg)
 			{
+				//TODO - relook at this function - is it too confusing!?
+				// perhaps have src, trg, base
 				src = String(src);
 				if(base.indexOf('..') !== -1)
 				{
