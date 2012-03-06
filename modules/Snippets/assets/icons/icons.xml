@@ -1,1647 +1,1647 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<icons folder="xJSFL/modules/Snippets/assets/icons/">
+<icons uri="{xjsfl}modules/Snippets/assets/icons/">
 	<sizes>
 		<size folder="16x16" />
 		<size folder="32x32" />
 	</sizes>
 	<categories>
-		<category folder="Actions" desc="">
+		<category folder="actions" desc="">
 			<group folder="basket" desc="">
-				<icon file="Actions/basket/basket.png" />
-				<icon file="Actions/basket/basket_add.png" />
-				<icon file="Actions/basket/basket_delete.png" />
-				<icon file="Actions/basket/basket_edit.png" />
-				<icon file="Actions/basket/basket_error.png" />
-				<icon file="Actions/basket/basket_go.png" />
-				<icon file="Actions/basket/basket_put.png" />
-				<icon file="Actions/basket/basket_remove.png" />
+				<icon file="actions/basket/basket.png" />
+				<icon file="actions/basket/basket_add.png" />
+				<icon file="actions/basket/basket_delete.png" />
+				<icon file="actions/basket/basket_edit.png" />
+				<icon file="actions/basket/basket_error.png" />
+				<icon file="actions/basket/basket_go.png" />
+				<icon file="actions/basket/basket_put.png" />
+				<icon file="actions/basket/basket_remove.png" />
 			</group>
 			<group folder="cart" desc="">
-				<icon file="Actions/cart/cart.png" />
-				<icon file="Actions/cart/cart_add.png" />
-				<icon file="Actions/cart/cart_delete.png" />
-				<icon file="Actions/cart/cart_edit.png" />
-				<icon file="Actions/cart/cart_error.png" />
-				<icon file="Actions/cart/cart_go.png" />
-				<icon file="Actions/cart/cart_put.png" />
-				<icon file="Actions/cart/cart_remove.png" />
+				<icon file="actions/cart/cart.png" />
+				<icon file="actions/cart/cart_add.png" />
+				<icon file="actions/cart/cart_delete.png" />
+				<icon file="actions/cart/cart_edit.png" />
+				<icon file="actions/cart/cart_error.png" />
+				<icon file="actions/cart/cart_go.png" />
+				<icon file="actions/cart/cart_put.png" />
+				<icon file="actions/cart/cart_remove.png" />
 			</group>
 			<group folder="clock" desc="">
-				<icon file="Actions/clock/clock.png" />
-				<icon file="Actions/clock/clock_add.png" />
-				<icon file="Actions/clock/clock_delete.png" />
-				<icon file="Actions/clock/clock_edit.png" />
-				<icon file="Actions/clock/clock_error.png" />
-				<icon file="Actions/clock/clock_go.png" />
-				<icon file="Actions/clock/clock_link.png" />
-				<icon file="Actions/clock/clock_pause.png" />
-				<icon file="Actions/clock/clock_play.png" />
-				<icon file="Actions/clock/clock_red.png" />
-				<icon file="Actions/clock/clock_stop.png" />
+				<icon file="actions/clock/clock.png" />
+				<icon file="actions/clock/clock_add.png" />
+				<icon file="actions/clock/clock_delete.png" />
+				<icon file="actions/clock/clock_edit.png" />
+				<icon file="actions/clock/clock_error.png" />
+				<icon file="actions/clock/clock_go.png" />
+				<icon file="actions/clock/clock_link.png" />
+				<icon file="actions/clock/clock_pause.png" />
+				<icon file="actions/clock/clock_play.png" />
+				<icon file="actions/clock/clock_red.png" />
+				<icon file="actions/clock/clock_stop.png" />
 			</group>
 			<group folder="connect" desc="">
-				<icon file="Actions/connect/network_connect.png" />
-				<icon file="Actions/connect/network_disconnect.png" />
+				<icon file="actions/connect/network_connect.png" />
+				<icon file="actions/connect/network_disconnect.png" />
 			</group>
 			<group folder="cut" desc="">
-				<icon file="Actions/cut/cut.png" />
-				<icon file="Actions/cut/cut_red.png" />
+				<icon file="actions/cut/cut.png" />
+				<icon file="actions/cut/cut_red.png" />
 			</group>
 			<group folder="disk" desc="">
-				<icon file="Actions/disk/disk.png" />
-				<icon file="Actions/disk/disk_multiple.png" />
+				<icon file="actions/disk/disk.png" />
+				<icon file="actions/disk/disk_multiple.png" />
 			</group>
 			<group folder="door" desc="">
-				<icon file="Actions/door/door.png" />
-				<icon file="Actions/door/door_in.png" />
-				<icon file="Actions/door/door_open.png" />
-				<icon file="Actions/door/door_out.png" />
+				<icon file="actions/door/door.png" />
+				<icon file="actions/door/door_in.png" />
+				<icon file="actions/door/door_open.png" />
+				<icon file="actions/door/door_out.png" />
 			</group>
 			<group folder="find" desc="">
-				<icon file="Actions/find/find.png" />
+				<icon file="actions/find/find.png" />
 			</group>
 			<group folder="heart" desc="">
-				<icon file="Actions/heart/heart.png" />
-				<icon file="Actions/heart/heart_add.png" />
-				<icon file="Actions/heart/heart_delete.png" />
+				<icon file="actions/heart/heart.png" />
+				<icon file="actions/heart/heart_add.png" />
+				<icon file="actions/heart/heart_delete.png" />
 			</group>
 			<group folder="house" desc="">
-				<icon file="Actions/house/house.png" />
-				<icon file="Actions/house/house_go.png" />
-				<icon file="Actions/house/house_link.png" />
+				<icon file="actions/house/house.png" />
+				<icon file="actions/house/house_go.png" />
+				<icon file="actions/house/house_link.png" />
 			</group>
 			<group folder="key" desc="">
-				<icon file="Actions/key/key.png" />
-				<icon file="Actions/key/key_add.png" />
-				<icon file="Actions/key/key_delete.png" />
-				<icon file="Actions/key/key_go.png" />
+				<icon file="actions/key/key.png" />
+				<icon file="actions/key/key_add.png" />
+				<icon file="actions/key/key_delete.png" />
+				<icon file="actions/key/key_go.png" />
 			</group>
 			<group folder="lightning" desc="">
-				<icon file="Actions/lightning/lightning.png" />
-				<icon file="Actions/lightning/lightning_add.png" />
-				<icon file="Actions/lightning/lightning_delete.png" />
-				<icon file="Actions/lightning/lightning_go.png" />
+				<icon file="actions/lightning/lightning.png" />
+				<icon file="actions/lightning/lightning_add.png" />
+				<icon file="actions/lightning/lightning_delete.png" />
+				<icon file="actions/lightning/lightning_go.png" />
 			</group>
 			<group folder="link" desc="">
-				<icon file="Actions/link/link.png" />
-				<icon file="Actions/link/link_add.png" />
-				<icon file="Actions/link/link_break.png" />
-				<icon file="Actions/link/link_delete.png" />
-				<icon file="Actions/link/link_edit.png" />
-				<icon file="Actions/link/link_go.png" />
+				<icon file="actions/link/link.png" />
+				<icon file="actions/link/link_add.png" />
+				<icon file="actions/link/link_break.png" />
+				<icon file="actions/link/link_delete.png" />
+				<icon file="actions/link/link_edit.png" />
+				<icon file="actions/link/link_go.png" />
 			</group>
 			<group folder="lock" desc="">
-				<icon file="Actions/lock/lock.png" />
-				<icon file="Actions/lock/lock_add.png" />
-				<icon file="Actions/lock/lock_break.png" />
-				<icon file="Actions/lock/lock_delete.png" />
-				<icon file="Actions/lock/lock_edit.png" />
-				<icon file="Actions/lock/lock_go.png" />
-				<icon file="Actions/lock/lock_open.png" />
+				<icon file="actions/lock/lock.png" />
+				<icon file="actions/lock/lock_add.png" />
+				<icon file="actions/lock/lock_break.png" />
+				<icon file="actions/lock/lock_delete.png" />
+				<icon file="actions/lock/lock_edit.png" />
+				<icon file="actions/lock/lock_go.png" />
+				<icon file="actions/lock/lock_open.png" />
 			</group>
 			<group folder="paste" desc="">
-				<icon file="Actions/paste/paste_plain.png" />
-				<icon file="Actions/paste/paste_word.png" />
+				<icon file="actions/paste/paste_plain.png" />
+				<icon file="actions/paste/paste_word.png" />
 			</group>
 			<group folder="pencil" desc="">
-				<icon file="Actions/pencil/pencil.png" />
-				<icon file="Actions/pencil/pencil_add.png" />
-				<icon file="Actions/pencil/pencil_delete.png" />
-				<icon file="Actions/pencil/pencil_go.png" />
+				<icon file="actions/pencil/pencil.png" />
+				<icon file="actions/pencil/pencil_add.png" />
+				<icon file="actions/pencil/pencil_delete.png" />
+				<icon file="actions/pencil/pencil_go.png" />
 			</group>
 			<group folder="shield" desc="">
-				<icon file="Actions/shield/shield.png" />
-				<icon file="Actions/shield/shield_add.png" />
-				<icon file="Actions/shield/shield_delete.png" />
-				<icon file="Actions/shield/shield_go.png" />
+				<icon file="actions/shield/shield.png" />
+				<icon file="actions/shield/shield_add.png" />
+				<icon file="actions/shield/shield_delete.png" />
+				<icon file="actions/shield/shield_go.png" />
 			</group>
 			<group folder="stopwatch" desc="">
-				<icon file="Actions/stopwatch/stopwatch_finish.png" />
-				<icon file="Actions/stopwatch/stopwatch_pause.png" />
-				<icon file="Actions/stopwatch/stopwatch_start.png" />
+				<icon file="actions/stopwatch/stopwatch_finish.png" />
+				<icon file="actions/stopwatch/stopwatch_pause.png" />
+				<icon file="actions/stopwatch/stopwatch_start.png" />
 			</group>
 			<group folder="time" desc="">
-				<icon file="Actions/time/time.png" />
-				<icon file="Actions/time/time_add.png" />
-				<icon file="Actions/time/time_delete.png" />
-				<icon file="Actions/time/time_go.png" />
+				<icon file="actions/time/time.png" />
+				<icon file="actions/time/time_add.png" />
+				<icon file="actions/time/time_delete.png" />
+				<icon file="actions/time/time_go.png" />
 			</group>
 			<group folder="transmit" desc="">
-				<icon file="Actions/transmit/transmit.png" />
-				<icon file="Actions/transmit/transmit_add.png" />
-				<icon file="Actions/transmit/transmit_blue.png" />
-				<icon file="Actions/transmit/transmit_delete.png" />
-				<icon file="Actions/transmit/transmit_edit.png" />
-				<icon file="Actions/transmit/transmit_error.png" />
-				<icon file="Actions/transmit/transmit_go.png" />
+				<icon file="actions/transmit/transmit.png" />
+				<icon file="actions/transmit/transmit_add.png" />
+				<icon file="actions/transmit/transmit_blue.png" />
+				<icon file="actions/transmit/transmit_delete.png" />
+				<icon file="actions/transmit/transmit_edit.png" />
+				<icon file="actions/transmit/transmit_error.png" />
+				<icon file="actions/transmit/transmit_go.png" />
 			</group>
 			<group folder="winrar" desc="">
-				<icon file="Actions/winrar/winrar_add.png" />
-				<icon file="Actions/winrar/winrar_extract.png" />
-				<icon file="Actions/winrar/winrar_view.png" />
+				<icon file="actions/winrar/winrar_add.png" />
+				<icon file="actions/winrar/winrar_extract.png" />
+				<icon file="actions/winrar/winrar_view.png" />
 			</group>
 			<group folder="world" desc="">
-				<icon file="Actions/world/world.png" />
-				<icon file="Actions/world/world_add.png" />
-				<icon file="Actions/world/world_delete.png" />
-				<icon file="Actions/world/world_edit.png" />
-				<icon file="Actions/world/world_go.png" />
-				<icon file="Actions/world/world_link.png" />
+				<icon file="actions/world/world.png" />
+				<icon file="actions/world/world_add.png" />
+				<icon file="actions/world/world_delete.png" />
+				<icon file="actions/world/world_edit.png" />
+				<icon file="actions/world/world_go.png" />
+				<icon file="actions/world/world_link.png" />
 			</group>
 			<group folder="wrench" desc="">
-				<icon file="Actions/wrench/wrench.png" />
-				<icon file="Actions/wrench/wrench_orange.png" />
+				<icon file="actions/wrench/wrench.png" />
+				<icon file="actions/wrench/wrench_orange.png" />
 			</group>
 		</category>
-		<category folder="Design" desc="">
+		<category folder="design" desc="">
 			<group folder="color" desc="">
-				<icon file="Design/color/color_gradient.png" />
-				<icon file="Design/color/color_management.png" />
-				<icon file="Design/color/color_palette.png" />
-				<icon file="Design/color/color_picker.png" />
-				<icon file="Design/color/color_rainbow.png" />
-				<icon file="Design/color/color_swatch.png" />
-				<icon file="Design/color/color_wheel.png" />
+				<icon file="design/color/color_gradient.png" />
+				<icon file="design/color/color_management.png" />
+				<icon file="design/color/color_palette.png" />
+				<icon file="design/color/color_picker.png" />
+				<icon file="design/color/color_rainbow.png" />
+				<icon file="design/color/color_swatch.png" />
+				<icon file="design/color/color_wheel.png" />
 			</group>
 			<group folder="contrast" desc="">
-				<icon file="Design/contrast/contrast.png" />
-				<icon file="Design/contrast/contrast_decrease.png" />
-				<icon file="Design/contrast/contrast_high.png" />
-				<icon file="Design/contrast/contrast_increase.png" />
-				<icon file="Design/contrast/contrast_low.png" />
+				<icon file="design/contrast/contrast.png" />
+				<icon file="design/contrast/contrast_decrease.png" />
+				<icon file="design/contrast/contrast_high.png" />
+				<icon file="design/contrast/contrast_increase.png" />
+				<icon file="design/contrast/contrast_low.png" />
 			</group>
 			<group folder="draw" desc="">
-				<icon file="Design/draw/draw_edit_path.png" />
-				<icon file="Design/draw/draw_line.png" />
-				<icon file="Design/draw/draw_line_split.png" />
-				<icon file="Design/draw/draw_points.png" />
-				<icon file="Design/draw/draw_shape_centroid.png" />
-				<icon file="Design/draw/draw_shape_ellipse.png" />
-				<icon file="Design/draw/draw_shape_island.png" />
-				<icon file="Design/draw/draw_shape_polygon.png" />
-				<icon file="Design/draw/draw_shape_polygon_curves.png" />
-				<icon file="Design/draw/draw_shape_polyline.png" />
-				<icon file="Design/draw/draw_shape_ring.png" />
-				<icon file="Design/draw/draw_shape_star.png" />
-				<icon file="Design/draw/draw_spiral.png" />
-				<icon file="Design/draw/draw_vector.png" />
-				<icon file="Design/draw/draw_vector_add.png" />
-				<icon file="Design/draw/draw_vector_delete.png" />
-				<icon file="Design/draw/draw_vertex.png" />
-				<icon file="Design/draw/draw_wave.png" />
+				<icon file="design/draw/draw_edit_path.png" />
+				<icon file="design/draw/draw_line.png" />
+				<icon file="design/draw/draw_line_split.png" />
+				<icon file="design/draw/draw_points.png" />
+				<icon file="design/draw/draw_shape_centroid.png" />
+				<icon file="design/draw/draw_shape_ellipse.png" />
+				<icon file="design/draw/draw_shape_island.png" />
+				<icon file="design/draw/draw_shape_polygon.png" />
+				<icon file="design/draw/draw_shape_polygon_curves.png" />
+				<icon file="design/draw/draw_shape_polyline.png" />
+				<icon file="design/draw/draw_shape_ring.png" />
+				<icon file="design/draw/draw_shape_star.png" />
+				<icon file="design/draw/draw_spiral.png" />
+				<icon file="design/draw/draw_vector.png" />
+				<icon file="design/draw/draw_vector_add.png" />
+				<icon file="design/draw/draw_vector_delete.png" />
+				<icon file="design/draw/draw_vertex.png" />
+				<icon file="design/draw/draw_wave.png" />
 			</group>
 			<group folder="font" desc="">
-				<icon file="Design/font/font.png" />
-				<icon file="Design/font/font_add.png" />
-				<icon file="Design/font/font_delete.png" />
-				<icon file="Design/font/font_go.png" />
+				<icon file="design/font/font.png" />
+				<icon file="design/font/font_add.png" />
+				<icon file="design/font/font_delete.png" />
+				<icon file="design/font/font_go.png" />
 			</group>
 			<group folder="image" desc="">
-				<icon file="Design/image/image.png" />
-				<icon file="Design/image/image_add.png" />
-				<icon file="Design/image/image_delete.png" />
-				<icon file="Design/image/image_edit.png" />
-				<icon file="Design/image/image_link.png" />
-				<icon file="Design/image/image_multiple.png" />
+				<icon file="design/image/image.png" />
+				<icon file="design/image/image_add.png" />
+				<icon file="design/image/image_delete.png" />
+				<icon file="design/image/image_edit.png" />
+				<icon file="design/image/image_link.png" />
+				<icon file="design/image/image_multiple.png" />
 			</group>
 			<group folder="imaging" desc="">
-				<icon file="Design/imaging/imaging_canvas_size.png" />
-				<icon file="Design/imaging/imaging_convert_color_to_gray.png" />
-				<icon file="Design/imaging/imaging_convert_gray_to_color.png" />
-				<icon file="Design/imaging/imaging_extract_foreground_objects.png" />
-				<icon file="Design/imaging/imaging_large_tiles.png" />
-				<icon file="Design/imaging/imaging_layers_map.png" />
-				<icon file="Design/imaging/imaging_no_image.png" />
-				<icon file="Design/imaging/imaging_print_size.png" />
-				<icon file="Design/imaging/imaging_resize_picture.png" />
-				<icon file="Design/imaging/imaging_scale_image.png" />
-				<icon file="Design/imaging/imaging_slideshow.png" />
-				<icon file="Design/imaging/imaging_small_tiles.png" />
-				<icon file="Design/imaging/imaging_workspace.png" />
+				<icon file="design/imaging/imaging_canvas_size.png" />
+				<icon file="design/imaging/imaging_convert_color_to_gray.png" />
+				<icon file="design/imaging/imaging_convert_gray_to_color.png" />
+				<icon file="design/imaging/imaging_extract_foreground_objects.png" />
+				<icon file="design/imaging/imaging_large_tiles.png" />
+				<icon file="design/imaging/imaging_layers_map.png" />
+				<icon file="design/imaging/imaging_no_image.png" />
+				<icon file="design/imaging/imaging_print_size.png" />
+				<icon file="design/imaging/imaging_resize_picture.png" />
+				<icon file="design/imaging/imaging_scale_image.png" />
+				<icon file="design/imaging/imaging_slideshow.png" />
+				<icon file="design/imaging/imaging_small_tiles.png" />
+				<icon file="design/imaging/imaging_workspace.png" />
 			</group>
 			<group folder="layer" desc="">
-				<icon file="Design/layer/layer.png" />
-				<icon file="Design/layer/layer_add.png" />
-				<icon file="Design/layer/layer_aspect_arrow.png" />
-				<icon file="Design/layer/layer_cell_cats.png" />
-				<icon file="Design/layer/layer_chart.png" />
-				<icon file="Design/layer/layer_command.png" />
-				<icon file="Design/layer/layer_create.png" />
-				<icon file="Design/layer/layer_database.png" />
-				<icon file="Design/layer/layer_delete.png" />
-				<icon file="Design/layer/layer_edit.png" />
-				<icon file="Design/layer/layer_export.png" />
-				<icon file="Design/layer/layer_gps.png" />
-				<icon file="Design/layer/layer_grid.png" />
-				<icon file="Design/layer/layer_group.png" />
-				<icon file="Design/layer/layer_his.png" />
-				<icon file="Design/layer/layer_histogram.png" />
-				<icon file="Design/layer/layer_import.png" />
-				<icon file="Design/layer/layer_label.png" />
-				<icon file="Design/layer/layer_open.png" />
-				<icon file="Design/layer/layer_raster.png" />
-				<icon file="Design/layer/layer_raster_3d.png" />
-				<icon file="Design/layer/layer_redraw.png" />
-				<icon file="Design/layer/layer_remove.png" />
-				<icon file="Design/layer/layer_rgb.png" />
-				<icon file="Design/layer/layer_save.png" />
-				<icon file="Design/layer/layer_shaded_relief.png" />
-				<icon file="Design/layer/layer_to_image_size.png" />
-				<icon file="Design/layer/layer_vector.png" />
-				<icon file="Design/layer/layer_wms.png" />
+				<icon file="design/layer/layer.png" />
+				<icon file="design/layer/layer_add.png" />
+				<icon file="design/layer/layer_aspect_arrow.png" />
+				<icon file="design/layer/layer_cell_cats.png" />
+				<icon file="design/layer/layer_chart.png" />
+				<icon file="design/layer/layer_command.png" />
+				<icon file="design/layer/layer_create.png" />
+				<icon file="design/layer/layer_database.png" />
+				<icon file="design/layer/layer_delete.png" />
+				<icon file="design/layer/layer_edit.png" />
+				<icon file="design/layer/layer_export.png" />
+				<icon file="design/layer/layer_gps.png" />
+				<icon file="design/layer/layer_grid.png" />
+				<icon file="design/layer/layer_group.png" />
+				<icon file="design/layer/layer_his.png" />
+				<icon file="design/layer/layer_histogram.png" />
+				<icon file="design/layer/layer_import.png" />
+				<icon file="design/layer/layer_label.png" />
+				<icon file="design/layer/layer_open.png" />
+				<icon file="design/layer/layer_raster.png" />
+				<icon file="design/layer/layer_raster_3d.png" />
+				<icon file="design/layer/layer_redraw.png" />
+				<icon file="design/layer/layer_remove.png" />
+				<icon file="design/layer/layer_rgb.png" />
+				<icon file="design/layer/layer_save.png" />
+				<icon file="design/layer/layer_shaded_relief.png" />
+				<icon file="design/layer/layer_to_image_size.png" />
+				<icon file="design/layer/layer_vector.png" />
+				<icon file="design/layer/layer_wms.png" />
 			</group>
 			<group folder="layout" desc="">
-				<icon file="Design/layout/layout.png" />
-				<icon file="Design/layout/layout_add.png" />
-				<icon file="Design/layout/layout_content.png" />
-				<icon file="Design/layout/layout_delete.png" />
-				<icon file="Design/layout/layout_edit.png" />
-				<icon file="Design/layout/layout_error.png" />
-				<icon file="Design/layout/layout_header.png" />
-				<icon file="Design/layout/layout_link.png" />
-				<icon file="Design/layout/layout_sidebar.png" />
+				<icon file="design/layout/layout.png" />
+				<icon file="design/layout/layout_add.png" />
+				<icon file="design/layout/layout_content.png" />
+				<icon file="design/layout/layout_delete.png" />
+				<icon file="design/layout/layout_edit.png" />
+				<icon file="design/layout/layout_error.png" />
+				<icon file="design/layout/layout_header.png" />
+				<icon file="design/layout/layout_link.png" />
+				<icon file="design/layout/layout_sidebar.png" />
 			</group>
 			<group folder="photo" desc="">
-				<icon file="Design/photo/photo.png" />
-				<icon file="Design/photo/photo_add.png" />
-				<icon file="Design/photo/photo_delete.png" />
-				<icon file="Design/photo/photo_link.png" />
-				<icon file="Design/photo/photo_multiple.png" />
+				<icon file="design/photo/photo.png" />
+				<icon file="design/photo/photo_add.png" />
+				<icon file="design/photo/photo_delete.png" />
+				<icon file="design/photo/photo_link.png" />
+				<icon file="design/photo/photo_multiple.png" />
 			</group>
 			<group folder="picture" desc="">
-				<icon file="Design/picture/picture.png" />
-				<icon file="Design/picture/picture_add.png" />
-				<icon file="Design/picture/picture_delete.png" />
-				<icon file="Design/picture/picture_edit.png" />
-				<icon file="Design/picture/picture_empty.png" />
-				<icon file="Design/picture/picture_error.png" />
-				<icon file="Design/picture/picture_go.png" />
-				<icon file="Design/picture/picture_key.png" />
-				<icon file="Design/picture/picture_link.png" />
-				<icon file="Design/picture/picture_multiple.png" />
-				<icon file="Design/picture/picture_save.png" />
+				<icon file="design/picture/picture.png" />
+				<icon file="design/picture/picture_add.png" />
+				<icon file="design/picture/picture_delete.png" />
+				<icon file="design/picture/picture_edit.png" />
+				<icon file="design/picture/picture_empty.png" />
+				<icon file="design/picture/picture_error.png" />
+				<icon file="design/picture/picture_go.png" />
+				<icon file="design/picture/picture_key.png" />
+				<icon file="design/picture/picture_link.png" />
+				<icon file="design/picture/picture_multiple.png" />
+				<icon file="design/picture/picture_save.png" />
 			</group>
 			<group folder="select" desc="">
-				<icon file="Design/select/select.png" />
-				<icon file="Design/select/select_by_adding_to_selection.png" />
-				<icon file="Design/select/select_by_color.png" />
-				<icon file="Design/select/select_by_difference.png" />
-				<icon file="Design/select/select_by_intersection.png" />
-				<icon file="Design/select/select_continuous_area.png" />
-				<icon file="Design/select/select_ellipse.png" />
-				<icon file="Design/select/select_invert.png" />
-				<icon file="Design/select/select_lasso.png" />
-				<icon file="Design/select/select_restangular.png" />
+				<icon file="design/select/select.png" />
+				<icon file="design/select/select_by_adding_to_selection.png" />
+				<icon file="design/select/select_by_color.png" />
+				<icon file="design/select/select_by_difference.png" />
+				<icon file="design/select/select_by_intersection.png" />
+				<icon file="design/select/select_continuous_area.png" />
+				<icon file="design/select/select_ellipse.png" />
+				<icon file="design/select/select_invert.png" />
+				<icon file="design/select/select_lasso.png" />
+				<icon file="design/select/select_restangular.png" />
 			</group>
 			<group folder="shape" desc="">
-				<icon file="Design/shape/shape_align_bottom.png" />
-				<icon file="Design/shape/shape_align_center.png" />
-				<icon file="Design/shape/shape_align_left.png" />
-				<icon file="Design/shape/shape_align_middle.png" />
-				<icon file="Design/shape/shape_align_right.png" />
-				<icon file="Design/shape/shape_align_top.png" />
-				<icon file="Design/shape/shape_flip_horizontal.png" />
-				<icon file="Design/shape/shape_flip_vertical.png" />
-				<icon file="Design/shape/shape_group.png" />
-				<icon file="Design/shape/shape_handles.png" />
-				<icon file="Design/shape/shape_move_back.png" />
-				<icon file="Design/shape/shape_move_backwards.png" />
-				<icon file="Design/shape/shape_move_forwards.png" />
-				<icon file="Design/shape/shape_move_front.png" />
-				<icon file="Design/shape/shape_rotate_anticlockwise.png" />
-				<icon file="Design/shape/shape_rotate_clockwise.png" />
-				<icon file="Design/shape/shape_square.png" />
-				<icon file="Design/shape/shape_square_add.png" />
-				<icon file="Design/shape/shape_square_delete.png" />
-				<icon file="Design/shape/shape_square_edit.png" />
-				<icon file="Design/shape/shape_square_error.png" />
-				<icon file="Design/shape/shape_square_go.png" />
-				<icon file="Design/shape/shape_square_key.png" />
-				<icon file="Design/shape/shape_square_link.png" />
-				<icon file="Design/shape/shape_ungroup.png" />
+				<icon file="design/shape/shape_align_bottom.png" />
+				<icon file="design/shape/shape_align_center.png" />
+				<icon file="design/shape/shape_align_left.png" />
+				<icon file="design/shape/shape_align_middle.png" />
+				<icon file="design/shape/shape_align_right.png" />
+				<icon file="design/shape/shape_align_top.png" />
+				<icon file="design/shape/shape_flip_horizontal.png" />
+				<icon file="design/shape/shape_flip_vertical.png" />
+				<icon file="design/shape/shape_group.png" />
+				<icon file="design/shape/shape_handles.png" />
+				<icon file="design/shape/shape_move_back.png" />
+				<icon file="design/shape/shape_move_backwards.png" />
+				<icon file="design/shape/shape_move_forwards.png" />
+				<icon file="design/shape/shape_move_front.png" />
+				<icon file="design/shape/shape_rotate_anticlockwise.png" />
+				<icon file="design/shape/shape_rotate_clockwise.png" />
+				<icon file="design/shape/shape_square.png" />
+				<icon file="design/shape/shape_square_add.png" />
+				<icon file="design/shape/shape_square_delete.png" />
+				<icon file="design/shape/shape_square_edit.png" />
+				<icon file="design/shape/shape_square_error.png" />
+				<icon file="design/shape/shape_square_go.png" />
+				<icon file="design/shape/shape_square_key.png" />
+				<icon file="design/shape/shape_square_link.png" />
+				<icon file="design/shape/shape_ungroup.png" />
 			</group>
 			<group folder="style" desc="">
-				<icon file="Design/style/style.png" />
-				<icon file="Design/style/style_add.png" />
-				<icon file="Design/style/style_delete.png" />
-				<icon file="Design/style/style_edit.png" />
-				<icon file="Design/style/style_go.png" />
+				<icon file="design/style/style.png" />
+				<icon file="design/style/style_add.png" />
+				<icon file="design/style/style_delete.png" />
+				<icon file="design/style/style_edit.png" />
+				<icon file="design/style/style_go.png" />
 			</group>
 			<group folder="text" desc="">
-				<icon file="Design/text/text_align_center.png" />
-				<icon file="Design/text/text_align_justity.png" />
-				<icon file="Design/text/text_align_left.png" />
-				<icon file="Design/text/text_align_right.png" />
-				<icon file="Design/text/text_allcaps.png" />
-				<icon file="Design/text/text_bold.png" />
-				<icon file="Design/text/text_columns.png" />
-				<icon file="Design/text/text_dropcaps.png" />
-				<icon file="Design/text/text_heading_1.png" />
-				<icon file="Design/text/text_heading_2.png" />
-				<icon file="Design/text/text_heading_3.png" />
-				<icon file="Design/text/text_heading_4.png" />
-				<icon file="Design/text/text_heading_5.png" />
-				<icon file="Design/text/text_heading_6.png" />
-				<icon file="Design/text/text_horizontalrule.png" />
-				<icon file="Design/text/text_indent.png" />
-				<icon file="Design/text/text_indent_remove.png" />
-				<icon file="Design/text/text_italic.png" />
-				<icon file="Design/text/text_kerning.png" />
-				<icon file="Design/text/text_letter_omega.png" />
-				<icon file="Design/text/text_letterspacing.png" />
-				<icon file="Design/text/text_linespacing.png" />
-				<icon file="Design/text/text_list_bullets.png" />
-				<icon file="Design/text/text_list_numbers.png" />
-				<icon file="Design/text/text_lowercase.png" />
-				<icon file="Design/text/text_padding_bottom.png" />
-				<icon file="Design/text/text_padding_left.png" />
-				<icon file="Design/text/text_padding_right.png" />
-				<icon file="Design/text/text_padding_top.png" />
-				<icon file="Design/text/text_pilcrow.png" />
-				<icon file="Design/text/text_replace.png" />
-				<icon file="Design/text/text_signature.png" />
-				<icon file="Design/text/text_smallcaps.png" />
-				<icon file="Design/text/text_spellcheck.png" />
-				<icon file="Design/text/text_strikethroungh.png" />
-				<icon file="Design/text/text_subscript.png" />
-				<icon file="Design/text/text_superscript.png" />
-				<icon file="Design/text/text_underline.png" />
-				<icon file="Design/text/text_uppercase.png" />
+				<icon file="design/text/text_align_center.png" />
+				<icon file="design/text/text_align_justity.png" />
+				<icon file="design/text/text_align_left.png" />
+				<icon file="design/text/text_align_right.png" />
+				<icon file="design/text/text_allcaps.png" />
+				<icon file="design/text/text_bold.png" />
+				<icon file="design/text/text_columns.png" />
+				<icon file="design/text/text_dropcaps.png" />
+				<icon file="design/text/text_heading_1.png" />
+				<icon file="design/text/text_heading_2.png" />
+				<icon file="design/text/text_heading_3.png" />
+				<icon file="design/text/text_heading_4.png" />
+				<icon file="design/text/text_heading_5.png" />
+				<icon file="design/text/text_heading_6.png" />
+				<icon file="design/text/text_horizontalrule.png" />
+				<icon file="design/text/text_indent.png" />
+				<icon file="design/text/text_indent_remove.png" />
+				<icon file="design/text/text_italic.png" />
+				<icon file="design/text/text_kerning.png" />
+				<icon file="design/text/text_letter_omega.png" />
+				<icon file="design/text/text_letterspacing.png" />
+				<icon file="design/text/text_linespacing.png" />
+				<icon file="design/text/text_list_bullets.png" />
+				<icon file="design/text/text_list_numbers.png" />
+				<icon file="design/text/text_lowercase.png" />
+				<icon file="design/text/text_padding_bottom.png" />
+				<icon file="design/text/text_padding_left.png" />
+				<icon file="design/text/text_padding_right.png" />
+				<icon file="design/text/text_padding_top.png" />
+				<icon file="design/text/text_pilcrow.png" />
+				<icon file="design/text/text_replace.png" />
+				<icon file="design/text/text_signature.png" />
+				<icon file="design/text/text_smallcaps.png" />
+				<icon file="design/text/text_spellcheck.png" />
+				<icon file="design/text/text_strikethroungh.png" />
+				<icon file="design/text/text_subscript.png" />
+				<icon file="design/text/text_superscript.png" />
+				<icon file="design/text/text_underline.png" />
+				<icon file="design/text/text_uppercase.png" />
 			</group>
 			<group folder="toolbox" desc="">
-				<icon file="Design/toolbox/toolbox_airbrush.png" />
-				<icon file="Design/toolbox/toolbox_calligraphic.png" />
-				<icon file="Design/toolbox/toolbox_clone.png" />
-				<icon file="Design/toolbox/toolbox_convolve.png" />
-				<icon file="Design/toolbox/toolbox_cursor.png" />
-				<icon file="Design/toolbox/toolbox_dodge_burn.png" />
-				<icon file="Design/toolbox/toolbox_eraser.png" />
-				<icon file="Design/toolbox/toolbox_ink.png" />
-				<icon file="Design/toolbox/toolbox_layers.png" />
-				<icon file="Design/toolbox/toolbox_measure.png" />
-				<icon file="Design/toolbox/toolbox_paintbrush.png" />
-				<icon file="Design/toolbox/toolbox_paintcan.png" />
-				<icon file="Design/toolbox/toolbox_path.png" />
-				<icon file="Design/toolbox/toolbox_smudge.png" />
+				<icon file="design/toolbox/toolbox_airbrush.png" />
+				<icon file="design/toolbox/toolbox_calligraphic.png" />
+				<icon file="design/toolbox/toolbox_clone.png" />
+				<icon file="design/toolbox/toolbox_convolve.png" />
+				<icon file="design/toolbox/toolbox_cursor.png" />
+				<icon file="design/toolbox/toolbox_dodge_burn.png" />
+				<icon file="design/toolbox/toolbox_eraser.png" />
+				<icon file="design/toolbox/toolbox_ink.png" />
+				<icon file="design/toolbox/toolbox_layers.png" />
+				<icon file="design/toolbox/toolbox_measure.png" />
+				<icon file="design/toolbox/toolbox_paintbrush.png" />
+				<icon file="design/toolbox/toolbox_paintcan.png" />
+				<icon file="design/toolbox/toolbox_path.png" />
+				<icon file="design/toolbox/toolbox_smudge.png" />
 			</group>
 			<group folder="transform" desc="">
-				<icon file="Design/transform/transform_crop.png" />
-				<icon file="Design/transform/transform_crop_resize.png" />
-				<icon file="Design/transform/transform_flip.png" />
-				<icon file="Design/transform/transform_layer.png" />
-				<icon file="Design/transform/transform_move.png" />
-				<icon file="Design/transform/transform_path.png" />
-				<icon file="Design/transform/transform_perspective.png" />
-				<icon file="Design/transform/transform_rotate.png" />
-				<icon file="Design/transform/transform_rotate_90.png" />
-				<icon file="Design/transform/transform_rotate_180.png" />
-				<icon file="Design/transform/transform_rotate_270.png" />
-				<icon file="Design/transform/transform_scale.png" />
-				<icon file="Design/transform/transform_selection.png" />
-				<icon file="Design/transform/transform_shear.png" />
-				<icon file="Design/transform/transform_straighten.png" />
+				<icon file="design/transform/transform_crop.png" />
+				<icon file="design/transform/transform_crop_resize.png" />
+				<icon file="design/transform/transform_flip.png" />
+				<icon file="design/transform/transform_layer.png" />
+				<icon file="design/transform/transform_move.png" />
+				<icon file="design/transform/transform_path.png" />
+				<icon file="design/transform/transform_perspective.png" />
+				<icon file="design/transform/transform_rotate.png" />
+				<icon file="design/transform/transform_rotate_90.png" />
+				<icon file="design/transform/transform_rotate_180.png" />
+				<icon file="design/transform/transform_rotate_270.png" />
+				<icon file="design/transform/transform_scale.png" />
+				<icon file="design/transform/transform_selection.png" />
+				<icon file="design/transform/transform_shear.png" />
+				<icon file="design/transform/transform_straighten.png" />
 			</group>
 			<group folder="zoom" desc="">
-				<icon file="Design/zoom/zoom.png" />
-				<icon file="Design/zoom/zoom_extend.png" />
-				<icon file="Design/zoom/zoom_in.png" />
-				<icon file="Design/zoom/zoom_last.png" />
-				<icon file="Design/zoom/zoom_layer.png" />
-				<icon file="Design/zoom/zoom_out.png" />
-				<icon file="Design/zoom/zoom_refresh.png" />
-				<icon file="Design/zoom/zoom_selection.png" />
+				<icon file="design/zoom/zoom.png" />
+				<icon file="design/zoom/zoom_extend.png" />
+				<icon file="design/zoom/zoom_in.png" />
+				<icon file="design/zoom/zoom_last.png" />
+				<icon file="design/zoom/zoom_layer.png" />
+				<icon file="design/zoom/zoom_out.png" />
+				<icon file="design/zoom/zoom_refresh.png" />
+				<icon file="design/zoom/zoom_selection.png" />
 			</group>
 		</category>
-		<category folder="Development" desc="">
+		<category folder="development" desc="">
 			<group folder="brick" desc="">
-				<icon file="Development/brick/brick.png" />
-				<icon file="Development/brick/brick_add.png" />
-				<icon file="Development/brick/brick_delete.png" />
-				<icon file="Development/brick/brick_edit.png" />
-				<icon file="Development/brick/brick_error.png" />
-				<icon file="Development/brick/brick_go.png" />
-				<icon file="Development/brick/brick_link.png" />
-				<icon file="Development/brick/brick_multiple.png" />
+				<icon file="development/brick/brick.png" />
+				<icon file="development/brick/brick_add.png" />
+				<icon file="development/brick/brick_delete.png" />
+				<icon file="development/brick/brick_edit.png" />
+				<icon file="development/brick/brick_error.png" />
+				<icon file="development/brick/brick_go.png" />
+				<icon file="development/brick/brick_link.png" />
+				<icon file="development/brick/brick_multiple.png" />
 			</group>
 			<group folder="bug" desc="">
-				<icon file="Development/bug/bug.png" />
-				<icon file="Development/bug/bug_add.png" />
-				<icon file="Development/bug/bug_delete.png" />
-				<icon file="Development/bug/bug_edit.png" />
-				<icon file="Development/bug/bug_error.png" />
-				<icon file="Development/bug/bug_go.png" />
-				<icon file="Development/bug/bug_link.png" />
+				<icon file="development/bug/bug.png" />
+				<icon file="development/bug/bug_add.png" />
+				<icon file="development/bug/bug_delete.png" />
+				<icon file="development/bug/bug_edit.png" />
+				<icon file="development/bug/bug_error.png" />
+				<icon file="development/bug/bug_go.png" />
+				<icon file="development/bug/bug_link.png" />
 			</group>
 			<group folder="cog" desc="">
-				<icon file="Development/cog/cog.png" />
-				<icon file="Development/cog/cog_add.png" />
-				<icon file="Development/cog/cog_delete.png" />
-				<icon file="Development/cog/cog_edit.png" />
-				<icon file="Development/cog/cog_error.png" />
-				<icon file="Development/cog/cog_go.png" />
+				<icon file="development/cog/cog.png" />
+				<icon file="development/cog/cog_add.png" />
+				<icon file="development/cog/cog_delete.png" />
+				<icon file="development/cog/cog_edit.png" />
+				<icon file="development/cog/cog_error.png" />
+				<icon file="development/cog/cog_go.png" />
 			</group>
 			<group folder="database" desc="">
-				<icon file="Development/database/database.png" />
-				<icon file="Development/database/database_add.png" />
-				<icon file="Development/database/database_connect.png" />
-				<icon file="Development/database/database_delete.png" />
-				<icon file="Development/database/database_edit.png" />
-				<icon file="Development/database/database_error.png" />
-				<icon file="Development/database/database_gear.png" />
-				<icon file="Development/database/database_go.png" />
-				<icon file="Development/database/database_key.png" />
-				<icon file="Development/database/database_lightning.png" />
-				<icon file="Development/database/database_link.png" />
-				<icon file="Development/database/database_refresh.png" />
-				<icon file="Development/database/database_save.png" />
-				<icon file="Development/database/database_table.png" />
-				<icon file="Development/database/database_multiple.png" />
+				<icon file="development/database/database.png" />
+				<icon file="development/database/database_add.png" />
+				<icon file="development/database/database_connect.png" />
+				<icon file="development/database/database_delete.png" />
+				<icon file="development/database/database_edit.png" />
+				<icon file="development/database/database_error.png" />
+				<icon file="development/database/database_gear.png" />
+				<icon file="development/database/database_go.png" />
+				<icon file="development/database/database_key.png" />
+				<icon file="development/database/database_lightning.png" />
+				<icon file="development/database/database_link.png" />
+				<icon file="development/database/database_refresh.png" />
+				<icon file="development/database/database_save.png" />
+				<icon file="development/database/database_table.png" />
+				<icon file="development/database/database_multiple.png" />
 			</group>
 			<group folder="filter" desc="">
-				<icon file="Development/filter/filter.png" />
-				<icon file="Development/filter/filter_add.png" />
-				<icon file="Development/filter/filter_delete.png" />
+				<icon file="development/filter/filter.png" />
+				<icon file="development/filter/filter_add.png" />
+				<icon file="development/filter/filter_delete.png" />
 			</group>
 			<group folder="plugin" desc="">
-				<icon file="Development/plugin/plugin.png" />
-				<icon file="Development/plugin/plugin_add.png" />
-				<icon file="Development/plugin/plugin_delete.png" />
-				<icon file="Development/plugin/plugin_disabled.png" />
-				<icon file="Development/plugin/plugin_edit.png" />
-				<icon file="Development/plugin/plugin_error.png" />
-				<icon file="Development/plugin/plugin_go.png" />
-				<icon file="Development/plugin/plugin_link.png" />
+				<icon file="development/plugin/plugin.png" />
+				<icon file="development/plugin/plugin_add.png" />
+				<icon file="development/plugin/plugin_delete.png" />
+				<icon file="development/plugin/plugin_disabled.png" />
+				<icon file="development/plugin/plugin_edit.png" />
+				<icon file="development/plugin/plugin_error.png" />
+				<icon file="development/plugin/plugin_go.png" />
+				<icon file="development/plugin/plugin_link.png" />
 			</group>
 			<group folder="resultset" desc="">
-				<icon file="Development/resultset/resultset_first.png" />
-				<icon file="Development/resultset/resultset_last.png" />
-				<icon file="Development/resultset/resultset_next.png" />
-				<icon file="Development/resultset/resultset_previous.png" />
+				<icon file="development/resultset/resultset_first.png" />
+				<icon file="development/resultset/resultset_last.png" />
+				<icon file="development/resultset/resultset_next.png" />
+				<icon file="development/resultset/resultset_previous.png" />
 			</group>
 			<group folder="script" desc="">
-				<icon file="Development/script/script.png" />
-				<icon file="Development/script/script_add.png" />
-				<icon file="Development/script/script_code.png" />
-				<icon file="Development/script/script_code_red.png" />
-				<icon file="Development/script/script_delete.png" />
-				<icon file="Development/script/script_edit.png" />
-				<icon file="Development/script/script_error.png" />
-				<icon file="Development/script/script_gear.png" />
-				<icon file="Development/script/script_go.png" />
-				<icon file="Development/script/script_key.png" />
-				<icon file="Development/script/script_lightning.png" />
-				<icon file="Development/script/script_link.png" />
-				<icon file="Development/script/script_palette.png" />
-				<icon file="Development/script/script_save.png" />
+				<icon file="development/script/script.png" />
+				<icon file="development/script/script_add.png" />
+				<icon file="development/script/script_code.png" />
+				<icon file="development/script/script_code_red.png" />
+				<icon file="development/script/script_delete.png" />
+				<icon file="development/script/script_edit.png" />
+				<icon file="development/script/script_error.png" />
+				<icon file="development/script/script_gear.png" />
+				<icon file="development/script/script_go.png" />
+				<icon file="development/script/script_key.png" />
+				<icon file="development/script/script_lightning.png" />
+				<icon file="development/script/script_link.png" />
+				<icon file="development/script/script_palette.png" />
+				<icon file="development/script/script_save.png" />
 			</group>
 			<group folder="sitemap" desc="">
-				<icon file="Development/sitemap/sitemap.png" />
-				<icon file="Development/sitemap/sitemap_color.png" />
+				<icon file="development/sitemap/sitemap.png" />
+				<icon file="development/sitemap/sitemap_color.png" />
 			</group>
 		</category>
-		<category folder="Feedback" desc="">
+		<category folder="feedback" desc="">
 			<group folder="action" desc="">
-				<icon file="Feedback/action/action_accept.png" />
-				<icon file="Feedback/action/action_add.png" />
-				<icon file="Feedback/action/action_cancel.png" />
-				<icon file="Feedback/action/action_cross.png" />
-				<icon file="Feedback/action/action_delete.png" />
-				<icon file="Feedback/action/action_exclamation.png" />
-				<icon file="Feedback/action/action_help.png" />
-				<icon file="Feedback/action/action_information.png" />
-				<icon file="Feedback/action/action_star.png" />
-				<icon file="Feedback/action/action_stop.png" />
-				<icon file="Feedback/action/action_tick.png" />
+				<icon file="feedback/action/action_accept.png" />
+				<icon file="feedback/action/action_add.png" />
+				<icon file="feedback/action/action_cancel.png" />
+				<icon file="feedback/action/action_cross.png" />
+				<icon file="feedback/action/action_delete.png" />
+				<icon file="feedback/action/action_exclamation.png" />
+				<icon file="feedback/action/action_help.png" />
+				<icon file="feedback/action/action_information.png" />
+				<icon file="feedback/action/action_star.png" />
+				<icon file="feedback/action/action_stop.png" />
+				<icon file="feedback/action/action_tick.png" />
 			</group>
 			<group folder="arrow" desc="">
-				<icon file="Feedback/arrow/arrow_branch.png" />
-				<icon file="Feedback/arrow/arrow_divide.png" />
-				<icon file="Feedback/arrow/arrow_down.png" />
-				<icon file="Feedback/arrow/arrow_in.png" />
-				<icon file="Feedback/arrow/arrow_inout.png" />
-				<icon file="Feedback/arrow/arrow_join.png" />
-				<icon file="Feedback/arrow/arrow_left.png" />
-				<icon file="Feedback/arrow/arrow_merge.png" />
-				<icon file="Feedback/arrow/arrow_out.png" />
-				<icon file="Feedback/arrow/arrow_redo.png" />
-				<icon file="Feedback/arrow/arrow_refresh.png" />
-				<icon file="Feedback/arrow/arrow_refresh_small.png" />
-				<icon file="Feedback/arrow/arrow_right.png" />
-				<icon file="Feedback/arrow/arrow_rotate_anticlockwise.png" />
-				<icon file="Feedback/arrow/arrow_rotate_clockwise.png" />
-				<icon file="Feedback/arrow/arrow_switch.png" />
-				<icon file="Feedback/arrow/arrow_turn_left.png" />
-				<icon file="Feedback/arrow/arrow_turn_right.png" />
-				<icon file="Feedback/arrow/arrow_undo.png" />
-				<icon file="Feedback/arrow/arrow_up.png" />
+				<icon file="feedback/arrow/arrow_branch.png" />
+				<icon file="feedback/arrow/arrow_divide.png" />
+				<icon file="feedback/arrow/arrow_down.png" />
+				<icon file="feedback/arrow/arrow_in.png" />
+				<icon file="feedback/arrow/arrow_inout.png" />
+				<icon file="feedback/arrow/arrow_join.png" />
+				<icon file="feedback/arrow/arrow_left.png" />
+				<icon file="feedback/arrow/arrow_merge.png" />
+				<icon file="feedback/arrow/arrow_out.png" />
+				<icon file="feedback/arrow/arrow_redo.png" />
+				<icon file="feedback/arrow/arrow_refresh.png" />
+				<icon file="feedback/arrow/arrow_refresh_small.png" />
+				<icon file="feedback/arrow/arrow_right.png" />
+				<icon file="feedback/arrow/arrow_rotate_anticlockwise.png" />
+				<icon file="feedback/arrow/arrow_rotate_clockwise.png" />
+				<icon file="feedback/arrow/arrow_switch.png" />
+				<icon file="feedback/arrow/arrow_turn_left.png" />
+				<icon file="feedback/arrow/arrow_turn_right.png" />
+				<icon file="feedback/arrow/arrow_undo.png" />
+				<icon file="feedback/arrow/arrow_up.png" />
 			</group>
 			<group folder="asterisk" desc="">
-				<icon file="Feedback/asterisk/asterisk_orange.png" />
-				<icon file="Feedback/asterisk/asterisk_yellow.png" />
+				<icon file="feedback/asterisk/asterisk_orange.png" />
+				<icon file="feedback/asterisk/asterisk_yellow.png" />
 			</group>
 			<group folder="award" desc="">
-				<icon file="Feedback/award/award_star_add.png" />
-				<icon file="Feedback/award/award_star_bronze_1.png" />
-				<icon file="Feedback/award/award_star_bronze_2.png" />
-				<icon file="Feedback/award/award_star_bronze_3.png" />
-				<icon file="Feedback/award/award_star_delete.png" />
-				<icon file="Feedback/award/award_star_gold_1.png" />
-				<icon file="Feedback/award/award_star_gold_2.png" />
-				<icon file="Feedback/award/award_star_gold_3.png" />
-				<icon file="Feedback/award/award_star_silver_1.png" />
-				<icon file="Feedback/award/award_star_silver_2.png" />
-				<icon file="Feedback/award/award_star_silver_3.png" />
+				<icon file="feedback/award/award_star_add.png" />
+				<icon file="feedback/award/award_star_bronze_1.png" />
+				<icon file="feedback/award/award_star_bronze_2.png" />
+				<icon file="feedback/award/award_star_bronze_3.png" />
+				<icon file="feedback/award/award_star_delete.png" />
+				<icon file="feedback/award/award_star_gold_1.png" />
+				<icon file="feedback/award/award_star_gold_2.png" />
+				<icon file="feedback/award/award_star_gold_3.png" />
+				<icon file="feedback/award/award_star_silver_1.png" />
+				<icon file="feedback/award/award_star_silver_2.png" />
+				<icon file="feedback/award/award_star_silver_3.png" />
 			</group>
 			<group folder="bell" desc="">
-				<icon file="Feedback/bell/bell.png" />
-				<icon file="Feedback/bell/bell_add.png" />
-				<icon file="Feedback/bell/bell_delete.png" />
-				<icon file="Feedback/bell/bell_error.png" />
-				<icon file="Feedback/bell/bell_go.png" />
-				<icon file="Feedback/bell/bell_link.png" />
+				<icon file="feedback/bell/bell.png" />
+				<icon file="feedback/bell/bell_add.png" />
+				<icon file="feedback/bell/bell_delete.png" />
+				<icon file="feedback/bell/bell_error.png" />
+				<icon file="feedback/bell/bell_go.png" />
+				<icon file="feedback/bell/bell_link.png" />
 			</group>
 			<group folder="bin" desc="">
-				<icon file="Feedback/bin/bin.png" />
-				<icon file="Feedback/bin/bin_closed.png" />
-				<icon file="Feedback/bin/bin_empty.png" />
+				<icon file="feedback/bin/bin.png" />
+				<icon file="feedback/bin/bin_closed.png" />
+				<icon file="feedback/bin/bin_empty.png" />
 			</group>
 			<group folder="bullet" desc="">
-				<icon file="Feedback/bullet/bullet_add.png" />
-				<icon file="Feedback/bullet/bullet_arrow_bottom.png" />
-				<icon file="Feedback/bullet/bullet_arrow_down.png" />
-				<icon file="Feedback/bullet/bullet_arrow_top.png" />
-				<icon file="Feedback/bullet/bullet_arrow_up.png" />
-				<icon file="Feedback/bullet/bullet_black.png" />
-				<icon file="Feedback/bullet/bullet_blue.png" />
-				<icon file="Feedback/bullet/bullet_delete.png" />
-				<icon file="Feedback/bullet/bullet_disk.png" />
-				<icon file="Feedback/bullet/bullet_error.png" />
-				<icon file="Feedback/bullet/bullet_feed.png" />
-				<icon file="Feedback/bullet/bullet_go.png" />
-				<icon file="Feedback/bullet/bullet_green.png" />
-				<icon file="Feedback/bullet/bullet_key.png" />
-				<icon file="Feedback/bullet/bullet_orange.png" />
-				<icon file="Feedback/bullet/bullet_picture.png" />
-				<icon file="Feedback/bullet/bullet_pink.png" />
-				<icon file="Feedback/bullet/bullet_purple.png" />
-				<icon file="Feedback/bullet/bullet_red.png" />
-				<icon file="Feedback/bullet/bullet_star.png" />
-				<icon file="Feedback/bullet/bullet_toggle_minus.png" />
-				<icon file="Feedback/bullet/bullet_toggle_plus.png" />
-				<icon file="Feedback/bullet/bullet_white.png" />
-				<icon file="Feedback/bullet/bullet_wrench.png" />
-				<icon file="Feedback/bullet/bullet_yellow.png" />
+				<icon file="feedback/bullet/bullet_add.png" />
+				<icon file="feedback/bullet/bullet_arrow_bottom.png" />
+				<icon file="feedback/bullet/bullet_arrow_down.png" />
+				<icon file="feedback/bullet/bullet_arrow_top.png" />
+				<icon file="feedback/bullet/bullet_arrow_up.png" />
+				<icon file="feedback/bullet/bullet_black.png" />
+				<icon file="feedback/bullet/bullet_blue.png" />
+				<icon file="feedback/bullet/bullet_delete.png" />
+				<icon file="feedback/bullet/bullet_disk.png" />
+				<icon file="feedback/bullet/bullet_error.png" />
+				<icon file="feedback/bullet/bullet_feed.png" />
+				<icon file="feedback/bullet/bullet_go.png" />
+				<icon file="feedback/bullet/bullet_green.png" />
+				<icon file="feedback/bullet/bullet_key.png" />
+				<icon file="feedback/bullet/bullet_orange.png" />
+				<icon file="feedback/bullet/bullet_picture.png" />
+				<icon file="feedback/bullet/bullet_pink.png" />
+				<icon file="feedback/bullet/bullet_purple.png" />
+				<icon file="feedback/bullet/bullet_red.png" />
+				<icon file="feedback/bullet/bullet_star.png" />
+				<icon file="feedback/bullet/bullet_toggle_minus.png" />
+				<icon file="feedback/bullet/bullet_toggle_plus.png" />
+				<icon file="feedback/bullet/bullet_white.png" />
+				<icon file="feedback/bullet/bullet_wrench.png" />
+				<icon file="feedback/bullet/bullet_yellow.png" />
 			</group>
 			<group folder="emotion" desc="">
-				<icon file="Feedback/emotion/emotion_evilgrin.png" />
-				<icon file="Feedback/emotion/emotion_grin.png" />
-				<icon file="Feedback/emotion/emotion_happy.png" />
-				<icon file="Feedback/emotion/emotion_smile.png" />
-				<icon file="Feedback/emotion/emotion_suprised.png" />
-				<icon file="Feedback/emotion/emotion_tongue.png" />
-				<icon file="Feedback/emotion/emotion_unhappy.png" />
-				<icon file="Feedback/emotion/emotion_waii.png" />
-				<icon file="Feedback/emotion/emotion_wink.png" />
+				<icon file="feedback/emotion/emotion_evilgrin.png" />
+				<icon file="feedback/emotion/emotion_grin.png" />
+				<icon file="feedback/emotion/emotion_happy.png" />
+				<icon file="feedback/emotion/emotion_smile.png" />
+				<icon file="feedback/emotion/emotion_suprised.png" />
+				<icon file="feedback/emotion/emotion_tongue.png" />
+				<icon file="feedback/emotion/emotion_unhappy.png" />
+				<icon file="feedback/emotion/emotion_waii.png" />
+				<icon file="feedback/emotion/emotion_wink.png" />
 			</group>
 			<group folder="error" desc="">
-				<icon file="Feedback/error/error.png" />
-				<icon file="Feedback/error/error_add.png" />
-				<icon file="Feedback/error/error_delete.png" />
-				<icon file="Feedback/error/error_go.png" />
+				<icon file="feedback/error/error.png" />
+				<icon file="feedback/error/error_add.png" />
+				<icon file="feedback/error/error_delete.png" />
+				<icon file="feedback/error/error_go.png" />
 			</group>
 			<group folder="flag" desc="">
-				<icon file="Feedback/flag/flag_1.png" />
-				<icon file="Feedback/flag/flag_2.png" />
-				<icon file="Feedback/flag/flag_3.png" />
-				<icon file="Feedback/flag/flag_finish.png" />
-				<icon file="Feedback/flag/flag_square_blue.png" />
-				<icon file="Feedback/flag/flag_square_green.png" />
-				<icon file="Feedback/flag/flag_square_orange.png" />
-				<icon file="Feedback/flag/flag_square_pink.png" />
-				<icon file="Feedback/flag/flag_square_purple.png" />
-				<icon file="Feedback/flag/flag_square_red.png" />
-				<icon file="Feedback/flag/flag_square_yellow.png" />
+				<icon file="feedback/flag/flag_1.png" />
+				<icon file="feedback/flag/flag_2.png" />
+				<icon file="feedback/flag/flag_3.png" />
+				<icon file="feedback/flag/flag_finish.png" />
+				<icon file="feedback/flag/flag_square_blue.png" />
+				<icon file="feedback/flag/flag_square_green.png" />
+				<icon file="feedback/flag/flag_square_orange.png" />
+				<icon file="feedback/flag/flag_square_pink.png" />
+				<icon file="feedback/flag/flag_square_purple.png" />
+				<icon file="feedback/flag/flag_square_red.png" />
+				<icon file="feedback/flag/flag_square_yellow.png" />
 			</group>
 			<group folder="hourglass" desc="">
-				<icon file="Feedback/hourglass/hourglass.png" />
-				<icon file="Feedback/hourglass/hourglass_add.png" />
-				<icon file="Feedback/hourglass/hourglass_delete.png" />
-				<icon file="Feedback/hourglass/hourglass_go.png" />
-				<icon file="Feedback/hourglass/hourglass_link.png" />
+				<icon file="feedback/hourglass/hourglass.png" />
+				<icon file="feedback/hourglass/hourglass_add.png" />
+				<icon file="feedback/hourglass/hourglass_delete.png" />
+				<icon file="feedback/hourglass/hourglass_go.png" />
+				<icon file="feedback/hourglass/hourglass_link.png" />
 			</group>
 			<group folder="lightbulb" desc="">
-				<icon file="Feedback/lightbulb/lightbulb.png" />
-				<icon file="Feedback/lightbulb/lightbulb_add.png" />
-				<icon file="Feedback/lightbulb/lightbulb_delete.png" />
-				<icon file="Feedback/lightbulb/lightbulb_off.png" />
+				<icon file="feedback/lightbulb/lightbulb.png" />
+				<icon file="feedback/lightbulb/lightbulb_add.png" />
+				<icon file="feedback/lightbulb/lightbulb_delete.png" />
+				<icon file="feedback/lightbulb/lightbulb_off.png" />
 			</group>
 			<group folder="medal" desc="">
-				<icon file="Feedback/medal/medal_bronze_1.png" />
-				<icon file="Feedback/medal/medal_bronze_2.png" />
-				<icon file="Feedback/medal/medal_bronze_3.png" />
-				<icon file="Feedback/medal/medal_bronze_add.png" />
-				<icon file="Feedback/medal/medal_bronze_delete.png" />
-				<icon file="Feedback/medal/medal_gold_1.png" />
-				<icon file="Feedback/medal/medal_gold_2.png" />
-				<icon file="Feedback/medal/medal_gold_3.png" />
-				<icon file="Feedback/medal/medal_gold_add.png" />
-				<icon file="Feedback/medal/medal_gold_delete.png" />
-				<icon file="Feedback/medal/medal_silver_1.png" />
-				<icon file="Feedback/medal/medal_silver_2.png" />
-				<icon file="Feedback/medal/medal_silver_3.png" />
-				<icon file="Feedback/medal/medal_silver_add.png" />
-				<icon file="Feedback/medal/medal_silver_delete.png" />
+				<icon file="feedback/medal/medal_bronze_1.png" />
+				<icon file="feedback/medal/medal_bronze_2.png" />
+				<icon file="feedback/medal/medal_bronze_3.png" />
+				<icon file="feedback/medal/medal_bronze_add.png" />
+				<icon file="feedback/medal/medal_bronze_delete.png" />
+				<icon file="feedback/medal/medal_gold_1.png" />
+				<icon file="feedback/medal/medal_gold_2.png" />
+				<icon file="feedback/medal/medal_gold_3.png" />
+				<icon file="feedback/medal/medal_gold_add.png" />
+				<icon file="feedback/medal/medal_gold_delete.png" />
+				<icon file="feedback/medal/medal_silver_1.png" />
+				<icon file="feedback/medal/medal_silver_2.png" />
+				<icon file="feedback/medal/medal_silver_3.png" />
+				<icon file="feedback/medal/medal_silver_add.png" />
+				<icon file="feedback/medal/medal_silver_delete.png" />
 			</group>
 			<group folder="tag" desc="">
-				<icon file="Feedback/tag/tag.png" />
-				<icon file="Feedback/tag/tag_blue.png" />
-				<icon file="Feedback/tag/tag_blue_add.png" />
-				<icon file="Feedback/tag/tag_blue_delete.png" />
-				<icon file="Feedback/tag/tag_blue_edit.png" />
-				<icon file="Feedback/tag/tag_green.png" />
-				<icon file="Feedback/tag/tag_multiple.png" />
-				<icon file="Feedback/tag/tag_orange.png" />
-				<icon file="Feedback/tag/tag_pink.png" />
-				<icon file="Feedback/tag/tag_purple.png" />
-				<icon file="Feedback/tag/tag_red.png" />
-				<icon file="Feedback/tag/tag_yellow.png" />
+				<icon file="feedback/tag/tag.png" />
+				<icon file="feedback/tag/tag_blue.png" />
+				<icon file="feedback/tag/tag_blue_add.png" />
+				<icon file="feedback/tag/tag_blue_delete.png" />
+				<icon file="feedback/tag/tag_blue_edit.png" />
+				<icon file="feedback/tag/tag_green.png" />
+				<icon file="feedback/tag/tag_multiple.png" />
+				<icon file="feedback/tag/tag_orange.png" />
+				<icon file="feedback/tag/tag_pink.png" />
+				<icon file="feedback/tag/tag_purple.png" />
+				<icon file="feedback/tag/tag_red.png" />
+				<icon file="feedback/tag/tag_yellow.png" />
 			</group>
 			<group folder="temperature" desc="">
-				<icon file="Feedback/temperature/temperature_1.png" />
-				<icon file="Feedback/temperature/temperature_2.png" />
-				<icon file="Feedback/temperature/temperature_3.png" />
-				<icon file="Feedback/temperature/temperature_4.png" />
-				<icon file="Feedback/temperature/temperature_5.png" />
+				<icon file="feedback/temperature/temperature_1.png" />
+				<icon file="feedback/temperature/temperature_2.png" />
+				<icon file="feedback/temperature/temperature_3.png" />
+				<icon file="feedback/temperature/temperature_4.png" />
+				<icon file="feedback/temperature/temperature_5.png" />
 			</group>
 			<group folder="thumb" desc="">
-				<icon file="Feedback/thumb/thumb_down.png" />
-				<icon file="Feedback/thumb/thumb_up.png" />
+				<icon file="feedback/thumb/thumb_down.png" />
+				<icon file="feedback/thumb/thumb_up.png" />
 			</group>
 		</category>
-		<category folder="Filesystem" desc="">
+		<category folder="filesystem" desc="">
 			<group folder="drive" desc="">
-				<icon file="Filesystem/drive/drive.png" />
-				<icon file="Filesystem/drive/drive_add.png" />
-				<icon file="Filesystem/drive/drive_burn.png" />
-				<icon file="Filesystem/drive/drive_cd.png" />
-				<icon file="Filesystem/drive/drive_cd_empty.png" />
-				<icon file="Filesystem/drive/drive_delete.png" />
-				<icon file="Filesystem/drive/drive_disk.png" />
-				<icon file="Filesystem/drive/drive_edit.png" />
-				<icon file="Filesystem/drive/drive_error.png" />
-				<icon file="Filesystem/drive/drive_go.png" />
-				<icon file="Filesystem/drive/drive_key.png" />
-				<icon file="Filesystem/drive/drive_link.png" />
-				<icon file="Filesystem/drive/drive_magnify.png" />
-				<icon file="Filesystem/drive/drive_network.png" />
-				<icon file="Filesystem/drive/drive_rename.png" />
-				<icon file="Filesystem/drive/drive_user.png" />
-				<icon file="Filesystem/drive/drive_web.png" />
+				<icon file="filesystem/drive/drive.png" />
+				<icon file="filesystem/drive/drive_add.png" />
+				<icon file="filesystem/drive/drive_burn.png" />
+				<icon file="filesystem/drive/drive_cd.png" />
+				<icon file="filesystem/drive/drive_cd_empty.png" />
+				<icon file="filesystem/drive/drive_delete.png" />
+				<icon file="filesystem/drive/drive_disk.png" />
+				<icon file="filesystem/drive/drive_edit.png" />
+				<icon file="filesystem/drive/drive_error.png" />
+				<icon file="filesystem/drive/drive_go.png" />
+				<icon file="filesystem/drive/drive_key.png" />
+				<icon file="filesystem/drive/drive_link.png" />
+				<icon file="filesystem/drive/drive_magnify.png" />
+				<icon file="filesystem/drive/drive_network.png" />
+				<icon file="filesystem/drive/drive_rename.png" />
+				<icon file="filesystem/drive/drive_user.png" />
+				<icon file="filesystem/drive/drive_web.png" />
 			</group>
 			<group folder="file" desc="">
-				<icon file="Filesystem/file/file_acrobat.png" />
-				<icon file="Filesystem/file/file_actionscript.png" />
-				<icon file="Filesystem/file/file_c.png" />
-				<icon file="Filesystem/file/file_code.png" />
-				<icon file="Filesystem/file/file_code_red.png" />
-				<icon file="Filesystem/file/file_compress.png" />
-				<icon file="Filesystem/file/file_cplusplus.png" />
-				<icon file="Filesystem/file/file_csharp.png" />
-				<icon file="Filesystem/file/file_excel.png" />
-				<icon file="Filesystem/file/file_flash.png" />
-				<icon file="Filesystem/file/file_h.png" />
-				<icon file="Filesystem/file/file_office.png" />
-				<icon file="Filesystem/file/file_php.png" />
-				<icon file="Filesystem/file/file_picture.png" />
-				<icon file="Filesystem/file/file_powerpoint.png" />
-				<icon file="Filesystem/file/file_ruby.png" />
-				<icon file="Filesystem/file/file_tux.png" />
-				<icon file="Filesystem/file/file_visualstudio.png" />
-				<icon file="Filesystem/file/file_word.png" />
+				<icon file="filesystem/file/file_acrobat.png" />
+				<icon file="filesystem/file/file_actionscript.png" />
+				<icon file="filesystem/file/file_c.png" />
+				<icon file="filesystem/file/file_code.png" />
+				<icon file="filesystem/file/file_code_red.png" />
+				<icon file="filesystem/file/file_compress.png" />
+				<icon file="filesystem/file/file_cplusplus.png" />
+				<icon file="filesystem/file/file_csharp.png" />
+				<icon file="filesystem/file/file_excel.png" />
+				<icon file="filesystem/file/file_flash.png" />
+				<icon file="filesystem/file/file_h.png" />
+				<icon file="filesystem/file/file_office.png" />
+				<icon file="filesystem/file/file_php.png" />
+				<icon file="filesystem/file/file_picture.png" />
+				<icon file="filesystem/file/file_powerpoint.png" />
+				<icon file="filesystem/file/file_ruby.png" />
+				<icon file="filesystem/file/file_tux.png" />
+				<icon file="filesystem/file/file_visualstudio.png" />
+				<icon file="filesystem/file/file_word.png" />
 			</group>
 			<group folder="folder" desc="">
-				<icon file="Filesystem/folder/folder.png" />
-				<icon file="Filesystem/folder/folder_add.png" />
-				<icon file="Filesystem/folder/folder_bell.png" />
-				<icon file="Filesystem/folder/folder_brick.png" />
-				<icon file="Filesystem/folder/folder_bug.png" />
-				<icon file="Filesystem/folder/folder_camera.png" />
-				<icon file="Filesystem/folder/folder_database.png" />
-				<icon file="Filesystem/folder/folder_delete.png" />
-				<icon file="Filesystem/folder/folder_edit.png" />
-				<icon file="Filesystem/folder/folder_error.png" />
-				<icon file="Filesystem/folder/folder_explore.png" />
-				<icon file="Filesystem/folder/folder_explorer.png" />
-				<icon file="Filesystem/folder/folder_feed.png" />
-				<icon file="Filesystem/folder/folder_find.png" />
-				<icon file="Filesystem/folder/folder_ftp.png" />
-				<icon file="Filesystem/folder/folder_go.png" />
-				<icon file="Filesystem/folder/folder_heart.png" />
-				<icon file="Filesystem/folder/folder_image.png" />
-				<icon file="Filesystem/folder/folder_key.png" />
-				<icon file="Filesystem/folder/folder_lightbulb.png" />
-				<icon file="Filesystem/folder/folder_link.png" />
-				<icon file="Filesystem/folder/folder_move_file.png" />
-				<icon file="Filesystem/folder/folder_multiple.png" />
-				<icon file="Filesystem/folder/folder_network.png" />
-				<icon file="Filesystem/folder/folder_page.png" />
-				<icon file="Filesystem/folder/folder_page_white.png" />
-				<icon file="Filesystem/folder/folder_palette.png" />
-				<icon file="Filesystem/folder/folder_picture.png" />
-				<icon file="Filesystem/folder/folder_star.png" />
-				<icon file="Filesystem/folder/folder_table.png" />
-				<icon file="Filesystem/folder/folder_user.png" />
-				<icon file="Filesystem/folder/folder_wrench.png" />
+				<icon file="filesystem/folder/folder.png" />
+				<icon file="filesystem/folder/folder_add.png" />
+				<icon file="filesystem/folder/folder_bell.png" />
+				<icon file="filesystem/folder/folder_brick.png" />
+				<icon file="filesystem/folder/folder_bug.png" />
+				<icon file="filesystem/folder/folder_camera.png" />
+				<icon file="filesystem/folder/folder_database.png" />
+				<icon file="filesystem/folder/folder_delete.png" />
+				<icon file="filesystem/folder/folder_edit.png" />
+				<icon file="filesystem/folder/folder_error.png" />
+				<icon file="filesystem/folder/folder_explore.png" />
+				<icon file="filesystem/folder/folder_explorer.png" />
+				<icon file="filesystem/folder/folder_feed.png" />
+				<icon file="filesystem/folder/folder_find.png" />
+				<icon file="filesystem/folder/folder_ftp.png" />
+				<icon file="filesystem/folder/folder_go.png" />
+				<icon file="filesystem/folder/folder_heart.png" />
+				<icon file="filesystem/folder/folder_image.png" />
+				<icon file="filesystem/folder/folder_key.png" />
+				<icon file="filesystem/folder/folder_lightbulb.png" />
+				<icon file="filesystem/folder/folder_link.png" />
+				<icon file="filesystem/folder/folder_move_file.png" />
+				<icon file="filesystem/folder/folder_multiple.png" />
+				<icon file="filesystem/folder/folder_network.png" />
+				<icon file="filesystem/folder/folder_page.png" />
+				<icon file="filesystem/folder/folder_page_white.png" />
+				<icon file="filesystem/folder/folder_palette.png" />
+				<icon file="filesystem/folder/folder_picture.png" />
+				<icon file="filesystem/folder/folder_star.png" />
+				<icon file="filesystem/folder/folder_table.png" />
+				<icon file="filesystem/folder/folder_user.png" />
+				<icon file="filesystem/folder/folder_wrench.png" />
 			</group>
 			<group folder="page" desc="">
-				<icon file="Filesystem/page/page.png" />
-				<icon file="Filesystem/page/page_add.png" />
-				<icon file="Filesystem/page/page_attach.png" />
-				<icon file="Filesystem/page/page_code.png" />
-				<icon file="Filesystem/page/page_copy.png" />
-				<icon file="Filesystem/page/page_delete.png" />
-				<icon file="Filesystem/page/page_edit.png" />
-				<icon file="Filesystem/page/page_error.png" />
-				<icon file="Filesystem/page/page_excel.png" />
-				<icon file="Filesystem/page/page_find.png" />
-				<icon file="Filesystem/page/page_gear.png" />
-				<icon file="Filesystem/page/page_go.png" />
-				<icon file="Filesystem/page/page_green.png" />
-				<icon file="Filesystem/page/page_key.png" />
-				<icon file="Filesystem/page/page_lightning.png" />
-				<icon file="Filesystem/page/page_link.png" />
-				<icon file="Filesystem/page/page_paintbrush.png" />
-				<icon file="Filesystem/page/page_paste.png" />
-				<icon file="Filesystem/page/page_red.png" />
-				<icon file="Filesystem/page/page_refresh.png" />
-				<icon file="Filesystem/page/page_save.png" />
-				<icon file="Filesystem/page/page_white.png" />
-				<icon file="Filesystem/page/page_white_add.png" />
-				<icon file="Filesystem/page/page_white_camera.png" />
-				<icon file="Filesystem/page/page_white_cd.png" />
-				<icon file="Filesystem/page/page_white_copy.png" />
-				<icon file="Filesystem/page/page_white_cup.png" />
-				<icon file="Filesystem/page/page_white_database.png" />
-				<icon file="Filesystem/page/page_white_delete.png" />
-				<icon file="Filesystem/page/page_white_dvd.png" />
-				<icon file="Filesystem/page/page_white_edit.png" />
-				<icon file="Filesystem/page/page_white_error.png" />
-				<icon file="Filesystem/page/page_white_find.png" />
-				<icon file="Filesystem/page/page_white_gear.png" />
-				<icon file="Filesystem/page/page_white_get.png" />
-				<icon file="Filesystem/page/page_white_go.png" />
-				<icon file="Filesystem/page/page_white_horizontal.png" />
-				<icon file="Filesystem/page/page_white_key.png" />
-				<icon file="Filesystem/page/page_white_lightning.png" />
-				<icon file="Filesystem/page/page_white_link.png" />
-				<icon file="Filesystem/page/page_white_magnify.png" />
-				<icon file="Filesystem/page/page_white_medal.png" />
-				<icon file="Filesystem/page/page_white_paint.png" />
-				<icon file="Filesystem/page/page_white_paintbrush.png" />
-				<icon file="Filesystem/page/page_white_paste.png" />
-				<icon file="Filesystem/page/page_white_put.png" />
-				<icon file="Filesystem/page/page_white_stack.png" />
-				<icon file="Filesystem/page/page_white_star.png" />
-				<icon file="Filesystem/page/page_white_text.png" />
-				<icon file="Filesystem/page/page_white_text_width.png" />
-				<icon file="Filesystem/page/page_white_vector.png" />
-				<icon file="Filesystem/page/page_white_width.png" />
-				<icon file="Filesystem/page/page_white_world.png" />
-				<icon file="Filesystem/page/page_white_wrench.png" />
-				<icon file="Filesystem/page/page_white_zip.png" />
-				<icon file="Filesystem/page/page_word.png" />
-				<icon file="Filesystem/page/page_world.png" />
+				<icon file="filesystem/page/page.png" />
+				<icon file="filesystem/page/page_add.png" />
+				<icon file="filesystem/page/page_attach.png" />
+				<icon file="filesystem/page/page_code.png" />
+				<icon file="filesystem/page/page_copy.png" />
+				<icon file="filesystem/page/page_delete.png" />
+				<icon file="filesystem/page/page_edit.png" />
+				<icon file="filesystem/page/page_error.png" />
+				<icon file="filesystem/page/page_excel.png" />
+				<icon file="filesystem/page/page_find.png" />
+				<icon file="filesystem/page/page_gear.png" />
+				<icon file="filesystem/page/page_go.png" />
+				<icon file="filesystem/page/page_green.png" />
+				<icon file="filesystem/page/page_key.png" />
+				<icon file="filesystem/page/page_lightning.png" />
+				<icon file="filesystem/page/page_link.png" />
+				<icon file="filesystem/page/page_paintbrush.png" />
+				<icon file="filesystem/page/page_paste.png" />
+				<icon file="filesystem/page/page_red.png" />
+				<icon file="filesystem/page/page_refresh.png" />
+				<icon file="filesystem/page/page_save.png" />
+				<icon file="filesystem/page/page_white.png" />
+				<icon file="filesystem/page/page_white_add.png" />
+				<icon file="filesystem/page/page_white_camera.png" />
+				<icon file="filesystem/page/page_white_cd.png" />
+				<icon file="filesystem/page/page_white_copy.png" />
+				<icon file="filesystem/page/page_white_cup.png" />
+				<icon file="filesystem/page/page_white_database.png" />
+				<icon file="filesystem/page/page_white_delete.png" />
+				<icon file="filesystem/page/page_white_dvd.png" />
+				<icon file="filesystem/page/page_white_edit.png" />
+				<icon file="filesystem/page/page_white_error.png" />
+				<icon file="filesystem/page/page_white_find.png" />
+				<icon file="filesystem/page/page_white_gear.png" />
+				<icon file="filesystem/page/page_white_get.png" />
+				<icon file="filesystem/page/page_white_go.png" />
+				<icon file="filesystem/page/page_white_horizontal.png" />
+				<icon file="filesystem/page/page_white_key.png" />
+				<icon file="filesystem/page/page_white_lightning.png" />
+				<icon file="filesystem/page/page_white_link.png" />
+				<icon file="filesystem/page/page_white_magnify.png" />
+				<icon file="filesystem/page/page_white_medal.png" />
+				<icon file="filesystem/page/page_white_paint.png" />
+				<icon file="filesystem/page/page_white_paintbrush.png" />
+				<icon file="filesystem/page/page_white_paste.png" />
+				<icon file="filesystem/page/page_white_put.png" />
+				<icon file="filesystem/page/page_white_stack.png" />
+				<icon file="filesystem/page/page_white_star.png" />
+				<icon file="filesystem/page/page_white_text.png" />
+				<icon file="filesystem/page/page_white_text_width.png" />
+				<icon file="filesystem/page/page_white_vector.png" />
+				<icon file="filesystem/page/page_white_width.png" />
+				<icon file="filesystem/page/page_white_world.png" />
+				<icon file="filesystem/page/page_white_wrench.png" />
+				<icon file="filesystem/page/page_white_zip.png" />
+				<icon file="filesystem/page/page_word.png" />
+				<icon file="filesystem/page/page_world.png" />
 			</group>
 			<group folder="server" desc="">
-				<icon file="Filesystem/server/server.png" />
-				<icon file="Filesystem/server/server_add.png" />
-				<icon file="Filesystem/server/server_chart.png" />
-				<icon file="Filesystem/server/server_compress.png" />
-				<icon file="Filesystem/server/server_connect.png" />
-				<icon file="Filesystem/server/server_database.png" />
-				<icon file="Filesystem/server/server_delete.png" />
-				<icon file="Filesystem/server/server_edit.png" />
-				<icon file="Filesystem/server/server_error.png" />
-				<icon file="Filesystem/server/server_go.png" />
-				<icon file="Filesystem/server/server_key.png" />
-				<icon file="Filesystem/server/server_lightning.png" />
-				<icon file="Filesystem/server/server_link.png" />
-				<icon file="Filesystem/server/server_uncompress.png" />
+				<icon file="filesystem/server/server.png" />
+				<icon file="filesystem/server/server_add.png" />
+				<icon file="filesystem/server/server_chart.png" />
+				<icon file="filesystem/server/server_compress.png" />
+				<icon file="filesystem/server/server_connect.png" />
+				<icon file="filesystem/server/server_database.png" />
+				<icon file="filesystem/server/server_delete.png" />
+				<icon file="filesystem/server/server_edit.png" />
+				<icon file="filesystem/server/server_error.png" />
+				<icon file="filesystem/server/server_go.png" />
+				<icon file="filesystem/server/server_key.png" />
+				<icon file="filesystem/server/server_lightning.png" />
+				<icon file="filesystem/server/server_link.png" />
+				<icon file="filesystem/server/server_uncompress.png" />
 			</group>
 		</category>
-		<category folder="Hardware" desc="">
+		<category folder="hardware" desc="">
 			<group folder="calculator" desc="">
-				<icon file="Hardware/calculator/calculator.png" />
-				<icon file="Hardware/calculator/calculator_add.png" />
-				<icon file="Hardware/calculator/calculator_delete.png" />
-				<icon file="Hardware/calculator/calculator_edit.png" />
-				<icon file="Hardware/calculator/calculator_error.png" />
-				<icon file="Hardware/calculator/calculator_link.png" />
+				<icon file="hardware/calculator/calculator.png" />
+				<icon file="hardware/calculator/calculator_add.png" />
+				<icon file="hardware/calculator/calculator_delete.png" />
+				<icon file="hardware/calculator/calculator_edit.png" />
+				<icon file="hardware/calculator/calculator_error.png" />
+				<icon file="hardware/calculator/calculator_link.png" />
 			</group>
 			<group folder="component" desc="">
-				<icon file="Hardware/component/component_agp.png" />
-				<icon file="Hardware/component/component_battery_full.png" />
-				<icon file="Hardware/component/component_battery_half.png" />
-				<icon file="Hardware/component/component_battery_low.png" />
-				<icon file="Hardware/component/component_bios.png" />
-				<icon file="Hardware/component/component_ddr_memory.png" />
-				<icon file="Hardware/component/component_flashdisk.png" />
-				<icon file="Hardware/component/component_laptop.png" />
-				<icon file="Hardware/component/component_micro_sd.png" />
-				<icon file="Hardware/component/component_micro_sd_blue.png" />
-				<icon file="Hardware/component/component_motherboard.png" />
-				<icon file="Hardware/component/component_network_adapter.png" />
-				<icon file="Hardware/component/component_pci.png" />
-				<icon file="Hardware/component/component_port.png" />
-				<icon file="Hardware/component/component_processor.png" />
-				<icon file="Hardware/component/component_server_information.png" />
-				<icon file="Hardware/component/component_server_stanchion.png" />
-				<icon file="Hardware/component/component_storage.png" />
-				<icon file="Hardware/component/component_terminal.png" />
-				<icon file="Hardware/component/component_video_mode.png" />
-				<icon file="Hardware/component/component_widescreen.png" />
+				<icon file="hardware/component/component_agp.png" />
+				<icon file="hardware/component/component_battery_full.png" />
+				<icon file="hardware/component/component_battery_half.png" />
+				<icon file="hardware/component/component_battery_low.png" />
+				<icon file="hardware/component/component_bios.png" />
+				<icon file="hardware/component/component_ddr_memory.png" />
+				<icon file="hardware/component/component_flashdisk.png" />
+				<icon file="hardware/component/component_laptop.png" />
+				<icon file="hardware/component/component_micro_sd.png" />
+				<icon file="hardware/component/component_micro_sd_blue.png" />
+				<icon file="hardware/component/component_motherboard.png" />
+				<icon file="hardware/component/component_network_adapter.png" />
+				<icon file="hardware/component/component_pci.png" />
+				<icon file="hardware/component/component_port.png" />
+				<icon file="hardware/component/component_processor.png" />
+				<icon file="hardware/component/component_server_information.png" />
+				<icon file="hardware/component/component_server_stanchion.png" />
+				<icon file="hardware/component/component_storage.png" />
+				<icon file="hardware/component/component_terminal.png" />
+				<icon file="hardware/component/component_video_mode.png" />
+				<icon file="hardware/component/component_widescreen.png" />
 			</group>
 			<group folder="computer" desc="">
-				<icon file="Hardware/computer/computer.png" />
-				<icon file="Hardware/computer/computer_add.png" />
-				<icon file="Hardware/computer/computer_delete.png" />
-				<icon file="Hardware/computer/computer_edit.png" />
-				<icon file="Hardware/computer/computer_error.png" />
-				<icon file="Hardware/computer/computer_go.png" />
-				<icon file="Hardware/computer/computer_key.png" />
-				<icon file="Hardware/computer/computer_link.png" />
+				<icon file="hardware/computer/computer.png" />
+				<icon file="hardware/computer/computer_add.png" />
+				<icon file="hardware/computer/computer_delete.png" />
+				<icon file="hardware/computer/computer_edit.png" />
+				<icon file="hardware/computer/computer_error.png" />
+				<icon file="hardware/computer/computer_go.png" />
+				<icon file="hardware/computer/computer_key.png" />
+				<icon file="hardware/computer/computer_link.png" />
 			</group>
 			<group folder="controller" desc="">
-				<icon file="Hardware/controller/controller.png" />
-				<icon file="Hardware/controller/controller_add.png" />
-				<icon file="Hardware/controller/controller_delete.png" />
-				<icon file="Hardware/controller/controller_error.png" />
+				<icon file="hardware/controller/controller.png" />
+				<icon file="hardware/controller/controller_add.png" />
+				<icon file="hardware/controller/controller_delete.png" />
+				<icon file="hardware/controller/controller_error.png" />
 			</group>
 			<group folder="devices" desc="">
-				<icon file="Hardware/devices/devices_calculator_black.png" />
-				<icon file="Hardware/devices/devices_cash_register.png" />
-				<icon file="Hardware/devices/devices_fax.png" />
-				<icon file="Hardware/devices/devices_headphone.png" />
-				<icon file="Hardware/devices/devices_headphone_mic.png" />
-				<icon file="Hardware/devices/devices_microphone.png" />
-				<icon file="Hardware/devices/devices_radio_1.png" />
-				<icon file="Hardware/devices/devices_radio_2.png" />
-				<icon file="Hardware/devices/devices_radiolocator.png" />
-				<icon file="Hardware/devices/devices_solar.png" />
-				<icon file="Hardware/devices/devices_speakers.png" />
-				<icon file="Hardware/devices/devices_subwoofer.png" />
-				<icon file="Hardware/devices/devices_video.png" />
+				<icon file="hardware/devices/devices_calculator_black.png" />
+				<icon file="hardware/devices/devices_cash_register.png" />
+				<icon file="hardware/devices/devices_fax.png" />
+				<icon file="hardware/devices/devices_headphone.png" />
+				<icon file="hardware/devices/devices_headphone_mic.png" />
+				<icon file="hardware/devices/devices_microphone.png" />
+				<icon file="hardware/devices/devices_radio_1.png" />
+				<icon file="hardware/devices/devices_radio_2.png" />
+				<icon file="hardware/devices/devices_radiolocator.png" />
+				<icon file="hardware/devices/devices_solar.png" />
+				<icon file="hardware/devices/devices_speakers.png" />
+				<icon file="hardware/devices/devices_subwoofer.png" />
+				<icon file="hardware/devices/devices_video.png" />
 			</group>
 			<group folder="ipod" desc="">
-				<icon file="Hardware/ipod/ipod.png" />
-				<icon file="Hardware/ipod/ipod_cast.png" />
-				<icon file="Hardware/ipod/ipod_cast_add.png" />
-				<icon file="Hardware/ipod/ipod_cast_delete.png" />
-				<icon file="Hardware/ipod/ipod_sound.png" />
+				<icon file="hardware/ipod/ipod.png" />
+				<icon file="hardware/ipod/ipod_cast.png" />
+				<icon file="hardware/ipod/ipod_cast_add.png" />
+				<icon file="hardware/ipod/ipod_cast_delete.png" />
+				<icon file="hardware/ipod/ipod_sound.png" />
 			</group>
 			<group folder="joystick" desc="">
-				<icon file="Hardware/joystick/joystick.png" />
-				<icon file="Hardware/joystick/joystick_add.png" />
-				<icon file="Hardware/joystick/joystick_delete.png" />
-				<icon file="Hardware/joystick/joystick_error.png" />
+				<icon file="hardware/joystick/joystick.png" />
+				<icon file="hardware/joystick/joystick_add.png" />
+				<icon file="hardware/joystick/joystick_delete.png" />
+				<icon file="hardware/joystick/joystick_error.png" />
 			</group>
 			<group folder="keyboard" desc="">
-				<icon file="Hardware/keyboard/keyboard.png" />
-				<icon file="Hardware/keyboard/keyboard_add.png" />
-				<icon file="Hardware/keyboard/keyboard_delete.png" />
-				<icon file="Hardware/keyboard/keyboard_magnify.png" />
+				<icon file="hardware/keyboard/keyboard.png" />
+				<icon file="hardware/keyboard/keyboard_add.png" />
+				<icon file="hardware/keyboard/keyboard_delete.png" />
+				<icon file="hardware/keyboard/keyboard_magnify.png" />
 			</group>
 			<group folder="mobile" desc="">
-				<icon file="Hardware/mobile/mobile_android.png" />
-				<icon file="Hardware/mobile/mobile_blackberry.png" />
-				<icon file="Hardware/mobile/mobile_blackberry_white.png" />
-				<icon file="Hardware/mobile/mobile_iphone.png" />
-				<icon file="Hardware/mobile/mobile_nokia_s60.png" />
-				<icon file="Hardware/mobile/mobile_other_phone.png" />
+				<icon file="hardware/mobile/mobile_android.png" />
+				<icon file="hardware/mobile/mobile_blackberry.png" />
+				<icon file="hardware/mobile/mobile_blackberry_white.png" />
+				<icon file="hardware/mobile/mobile_iphone.png" />
+				<icon file="hardware/mobile/mobile_nokia_s60.png" />
+				<icon file="hardware/mobile/mobile_other_phone.png" />
 			</group>
 			<group folder="monitor" desc="">
-				<icon file="Hardware/monitor/monitor.png" />
-				<icon file="Hardware/monitor/monitor_add.png" />
-				<icon file="Hardware/monitor/monitor_delete.png" />
-				<icon file="Hardware/monitor/monitor_edit.png" />
-				<icon file="Hardware/monitor/monitor_error.png" />
-				<icon file="Hardware/monitor/monitor_go.png" />
-				<icon file="Hardware/monitor/monitor_lightning.png" />
-				<icon file="Hardware/monitor/monitor_link.png" />
+				<icon file="hardware/monitor/monitor.png" />
+				<icon file="hardware/monitor/monitor_add.png" />
+				<icon file="hardware/monitor/monitor_delete.png" />
+				<icon file="hardware/monitor/monitor_edit.png" />
+				<icon file="hardware/monitor/monitor_error.png" />
+				<icon file="hardware/monitor/monitor_go.png" />
+				<icon file="hardware/monitor/monitor_lightning.png" />
+				<icon file="hardware/monitor/monitor_link.png" />
 			</group>
 			<group folder="mouse" desc="">
-				<icon file="Hardware/mouse/mouse.png" />
-				<icon file="Hardware/mouse/mouse_add.png" />
-				<icon file="Hardware/mouse/mouse_delete.png" />
-				<icon file="Hardware/mouse/mouse_error.png" />
+				<icon file="hardware/mouse/mouse.png" />
+				<icon file="hardware/mouse/mouse_add.png" />
+				<icon file="hardware/mouse/mouse_delete.png" />
+				<icon file="hardware/mouse/mouse_error.png" />
 			</group>
 			<group folder="phone" desc="">
-				<icon file="Hardware/phone/phone.png" />
-				<icon file="Hardware/phone/phone_add.png" />
-				<icon file="Hardware/phone/phone_delete.png" />
-				<icon file="Hardware/phone/phone_sound.png" />
+				<icon file="hardware/phone/phone.png" />
+				<icon file="hardware/phone/phone_add.png" />
+				<icon file="hardware/phone/phone_delete.png" />
+				<icon file="hardware/phone/phone_sound.png" />
 			</group>
 			<group folder="printer" desc="">
-				<icon file="Hardware/printer/printer.png" />
-				<icon file="Hardware/printer/printer_add.png" />
-				<icon file="Hardware/printer/printer_delete.png" />
-				<icon file="Hardware/printer/printer_empty.png" />
-				<icon file="Hardware/printer/printer_error.png" />
+				<icon file="hardware/printer/printer.png" />
+				<icon file="hardware/printer/printer_add.png" />
+				<icon file="hardware/printer/printer_delete.png" />
+				<icon file="hardware/printer/printer_empty.png" />
+				<icon file="hardware/printer/printer_error.png" />
 			</group>
 			<group folder="telephone" desc="">
-				<icon file="Hardware/telephone/telephone.png" />
-				<icon file="Hardware/telephone/telephone_add.png" />
-				<icon file="Hardware/telephone/telephone_delete.png" />
-				<icon file="Hardware/telephone/telephone_edit.png" />
-				<icon file="Hardware/telephone/telephone_error.png" />
-				<icon file="Hardware/telephone/telephone_go.png" />
-				<icon file="Hardware/telephone/telephone_key.png" />
-				<icon file="Hardware/telephone/telephone_link.png" />
+				<icon file="hardware/telephone/telephone.png" />
+				<icon file="hardware/telephone/telephone_add.png" />
+				<icon file="hardware/telephone/telephone_delete.png" />
+				<icon file="hardware/telephone/telephone_edit.png" />
+				<icon file="hardware/telephone/telephone_error.png" />
+				<icon file="hardware/telephone/telephone_go.png" />
+				<icon file="hardware/telephone/telephone_key.png" />
+				<icon file="hardware/telephone/telephone_link.png" />
 			</group>
 			<group folder="television" desc="">
-				<icon file="Hardware/television/television.png" />
-				<icon file="Hardware/television/television_add.png" />
-				<icon file="Hardware/television/television_delete.png" />
+				<icon file="hardware/television/television.png" />
+				<icon file="hardware/television/television_add.png" />
+				<icon file="hardware/television/television_delete.png" />
 			</group>
 			<group folder="webcam" desc="">
-				<icon file="Hardware/webcam/webcam.png" />
-				<icon file="Hardware/webcam/webcam_add.png" />
-				<icon file="Hardware/webcam/webcam_delete.png" />
-				<icon file="Hardware/webcam/webcam_error.png" />
+				<icon file="hardware/webcam/webcam.png" />
+				<icon file="hardware/webcam/webcam_add.png" />
+				<icon file="hardware/webcam/webcam_delete.png" />
+				<icon file="hardware/webcam/webcam_error.png" />
 			</group>
 		</category>
-		<category folder="Media" desc="">
+		<category folder="media" desc="">
 			<group folder="camera" desc="">
-				<icon file="Media/camera/camera.png" />
-				<icon file="Media/camera/camera_add.png" />
-				<icon file="Media/camera/camera_delete.png" />
-				<icon file="Media/camera/camera_edit.png" />
-				<icon file="Media/camera/camera_error.png" />
-				<icon file="Media/camera/camera_go.png" />
-				<icon file="Media/camera/camera_link.png" />
-				<icon file="Media/camera/camera_small.png" />
+				<icon file="media/camera/camera.png" />
+				<icon file="media/camera/camera_add.png" />
+				<icon file="media/camera/camera_delete.png" />
+				<icon file="media/camera/camera_edit.png" />
+				<icon file="media/camera/camera_error.png" />
+				<icon file="media/camera/camera_go.png" />
+				<icon file="media/camera/camera_link.png" />
+				<icon file="media/camera/camera_small.png" />
 			</group>
 			<group folder="cd" desc="">
-				<icon file="Media/cd/cd.png" />
-				<icon file="Media/cd/cd_add.png" />
-				<icon file="Media/cd/cd_burn.png" />
-				<icon file="Media/cd/cd_delete.png" />
-				<icon file="Media/cd/cd_edit.png" />
-				<icon file="Media/cd/cd_eject.png" />
-				<icon file="Media/cd/cd_go.png" />
+				<icon file="media/cd/cd.png" />
+				<icon file="media/cd/cd_add.png" />
+				<icon file="media/cd/cd_burn.png" />
+				<icon file="media/cd/cd_delete.png" />
+				<icon file="media/cd/cd_edit.png" />
+				<icon file="media/cd/cd_eject.png" />
+				<icon file="media/cd/cd_go.png" />
 			</group>
 			<group folder="control" desc="">
-				<icon file="Media/control/control_eject.png" />
-				<icon file="Media/control/control_eject_blue.png" />
-				<icon file="Media/control/control_end.png" />
-				<icon file="Media/control/control_end_blue.png" />
-				<icon file="Media/control/control_equalizer.png" />
-				<icon file="Media/control/control_equalizer_blue.png" />
-				<icon file="Media/control/control_fastforward.png" />
-				<icon file="Media/control/control_fastforward_blue.png" />
-				<icon file="Media/control/control_pause.png" />
-				<icon file="Media/control/control_pause_blue.png" />
-				<icon file="Media/control/control_play.png" />
-				<icon file="Media/control/control_play_blue.png" />
-				<icon file="Media/control/control_repeat.png" />
-				<icon file="Media/control/control_repeat_blue.png" />
-				<icon file="Media/control/control_rewind.png" />
-				<icon file="Media/control/control_rewind_blue.png" />
-				<icon file="Media/control/control_start.png" />
-				<icon file="Media/control/control_start_blue.png" />
-				<icon file="Media/control/control_stop.png" />
-				<icon file="Media/control/control_stop_blue.png" />
+				<icon file="media/control/control_eject.png" />
+				<icon file="media/control/control_eject_blue.png" />
+				<icon file="media/control/control_end.png" />
+				<icon file="media/control/control_end_blue.png" />
+				<icon file="media/control/control_equalizer.png" />
+				<icon file="media/control/control_equalizer_blue.png" />
+				<icon file="media/control/control_fastforward.png" />
+				<icon file="media/control/control_fastforward_blue.png" />
+				<icon file="media/control/control_pause.png" />
+				<icon file="media/control/control_pause_blue.png" />
+				<icon file="media/control/control_play.png" />
+				<icon file="media/control/control_play_blue.png" />
+				<icon file="media/control/control_repeat.png" />
+				<icon file="media/control/control_repeat_blue.png" />
+				<icon file="media/control/control_rewind.png" />
+				<icon file="media/control/control_rewind_blue.png" />
+				<icon file="media/control/control_start.png" />
+				<icon file="media/control/control_start_blue.png" />
+				<icon file="media/control/control_stop.png" />
+				<icon file="media/control/control_stop_blue.png" />
 			</group>
 			<group folder="dvd" desc="">
-				<icon file="Media/dvd/dvd.png" />
-				<icon file="Media/dvd/dvd_add.png" />
-				<icon file="Media/dvd/dvd_delete.png" />
-				<icon file="Media/dvd/dvd_edit.png" />
-				<icon file="Media/dvd/dvd_error.png" />
-				<icon file="Media/dvd/dvd_go.png" />
-				<icon file="Media/dvd/dvd_key.png" />
-				<icon file="Media/dvd/dvd_link.png" />
+				<icon file="media/dvd/dvd.png" />
+				<icon file="media/dvd/dvd_add.png" />
+				<icon file="media/dvd/dvd_delete.png" />
+				<icon file="media/dvd/dvd_edit.png" />
+				<icon file="media/dvd/dvd_error.png" />
+				<icon file="media/dvd/dvd_go.png" />
+				<icon file="media/dvd/dvd_key.png" />
+				<icon file="media/dvd/dvd_link.png" />
 			</group>
 			<group folder="film" desc="">
-				<icon file="Media/film/film.png" />
-				<icon file="Media/film/film_add.png" />
-				<icon file="Media/film/film_delete.png" />
-				<icon file="Media/film/film_edit.png" />
-				<icon file="Media/film/film_error.png" />
-				<icon file="Media/film/film_free_edit.png" />
-				<icon file="Media/film/film_go.png" />
-				<icon file="Media/film/film_join.png" />
-				<icon file="Media/film/film_key.png" />
-				<icon file="Media/film/film_link.png" />
-				<icon file="Media/film/film_save.png" />
-				<icon file="Media/film/film_split.png" />
+				<icon file="media/film/film.png" />
+				<icon file="media/film/film_add.png" />
+				<icon file="media/film/film_delete.png" />
+				<icon file="media/film/film_edit.png" />
+				<icon file="media/film/film_error.png" />
+				<icon file="media/film/film_free_edit.png" />
+				<icon file="media/film/film_go.png" />
+				<icon file="media/film/film_join.png" />
+				<icon file="media/film/film_key.png" />
+				<icon file="media/film/film_link.png" />
+				<icon file="media/film/film_save.png" />
+				<icon file="media/film/film_split.png" />
 			</group>
 			<group folder="hd" desc="">
-				<icon file="Media/hd/hd_720.png" />
-				<icon file="Media/hd/hd_1080.png" />
-				<icon file="Media/hd/hd_ready.png" />
+				<icon file="media/hd/hd_720.png" />
+				<icon file="media/hd/hd_1080.png" />
+				<icon file="media/hd/hd_ready.png" />
 			</group>
 			<group folder="volume" desc="">
-				<icon file="Media/volume/volume.png" />
-				<icon file="Media/volume/volume_add.png" />
-				<icon file="Media/volume/volume_delete.png" />
-				<icon file="Media/volume/volume_low.png" />
-				<icon file="Media/volume/volume_mute.png" />
-				<icon file="Media/volume/volume_none.png" />
+				<icon file="media/volume/volume.png" />
+				<icon file="media/volume/volume_add.png" />
+				<icon file="media/volume/volume_delete.png" />
+				<icon file="media/volume/volume_low.png" />
+				<icon file="media/volume/volume_mute.png" />
+				<icon file="media/volume/volume_none.png" />
 			</group>
 		</category>
-		<category folder="Objects" desc="">
+		<category folder="objects" desc="">
 			<group folder="animal" desc="">
-				<icon file="Objects/animal/animal_butterfly.png" />
-				<icon file="Objects/animal/animal_cat.png" />
-				<icon file="Objects/animal/animal_chameleon.png" />
-				<icon file="Objects/animal/animal_dog.png" />
-				<icon file="Objects/animal/animal_flamingo.png" />
-				<icon file="Objects/animal/animal_hummingbird.png" />
-				<icon file="Objects/animal/animal_parrot.png" />
-				<icon file="Objects/animal/animal_peacock.png" />
-				<icon file="Objects/animal/animal_toucan.png" />
+				<icon file="objects/animal/animal_butterfly.png" />
+				<icon file="objects/animal/animal_cat.png" />
+				<icon file="objects/animal/animal_chameleon.png" />
+				<icon file="objects/animal/animal_dog.png" />
+				<icon file="objects/animal/animal_flamingo.png" />
+				<icon file="objects/animal/animal_hummingbird.png" />
+				<icon file="objects/animal/animal_parrot.png" />
+				<icon file="objects/animal/animal_peacock.png" />
+				<icon file="objects/animal/animal_toucan.png" />
 			</group>
 			<group folder="blackboard" desc="">
-				<icon file="Objects/blackboard/blackboard_drawing.png" />
-				<icon file="Objects/blackboard/blackboard_empty.png" />
-				<icon file="Objects/blackboard/blackboard_steps.png" />
-				<icon file="Objects/blackboard/blackboard_sum.png" />
+				<icon file="objects/blackboard/blackboard_drawing.png" />
+				<icon file="objects/blackboard/blackboard_empty.png" />
+				<icon file="objects/blackboard/blackboard_steps.png" />
+				<icon file="objects/blackboard/blackboard_sum.png" />
 			</group>
 			<group folder="box" desc="">
-				<icon file="Objects/box/box.png" />
-				<icon file="Objects/box/box_down.png" />
+				<icon file="objects/box/box.png" />
+				<icon file="objects/box/box_down.png" />
 			</group>
 			<group folder="building" desc="">
-				<icon file="Objects/building/building.png" />
-				<icon file="Objects/building/building_add.png" />
-				<icon file="Objects/building/building_delete.png" />
-				<icon file="Objects/building/building_edit.png" />
-				<icon file="Objects/building/building_error.png" />
-				<icon file="Objects/building/building_go.png" />
-				<icon file="Objects/building/building_key.png" />
-				<icon file="Objects/building/building_link.png" />
+				<icon file="objects/building/building.png" />
+				<icon file="objects/building/building_add.png" />
+				<icon file="objects/building/building_delete.png" />
+				<icon file="objects/building/building_edit.png" />
+				<icon file="objects/building/building_error.png" />
+				<icon file="objects/building/building_go.png" />
+				<icon file="objects/building/building_key.png" />
+				<icon file="objects/building/building_link.png" />
 			</group>
 			<group folder="car" desc="">
-				<icon file="Objects/car/car.png" />
-				<icon file="Objects/car/car_add.png" />
-				<icon file="Objects/car/car_delete.png" />
+				<icon file="objects/car/car.png" />
+				<icon file="objects/car/car_add.png" />
+				<icon file="objects/car/car_delete.png" />
 			</group>
 			<group folder="cup" desc="">
-				<icon file="Objects/cup/cup.png" />
-				<icon file="Objects/cup/cup_add.png" />
-				<icon file="Objects/cup/cup_delete.png" />
-				<icon file="Objects/cup/cup_edit.png" />
-				<icon file="Objects/cup/cup_error.png" />
-				<icon file="Objects/cup/cup_go.png" />
-				<icon file="Objects/cup/cup_key.png" />
-				<icon file="Objects/cup/cup_link.png" />
+				<icon file="objects/cup/cup.png" />
+				<icon file="objects/cup/cup_add.png" />
+				<icon file="objects/cup/cup_delete.png" />
+				<icon file="objects/cup/cup_edit.png" />
+				<icon file="objects/cup/cup_error.png" />
+				<icon file="objects/cup/cup_go.png" />
+				<icon file="objects/cup/cup_key.png" />
+				<icon file="objects/cup/cup_link.png" />
 			</group>
 			<group folder="drink" desc="">
-				<icon file="Objects/drink/drink.png" />
-				<icon file="Objects/drink/drink_empty.png" />
+				<icon file="objects/drink/drink.png" />
+				<icon file="objects/drink/drink_empty.png" />
 			</group>
 			<group folder="lorry" desc="">
-				<icon file="Objects/lorry/lorry.png" />
-				<icon file="Objects/lorry/lorry_add.png" />
-				<icon file="Objects/lorry/lorry_delete.png" />
-				<icon file="Objects/lorry/lorry_error.png" />
-				<icon file="Objects/lorry/lorry_flatbed.png" />
-				<icon file="Objects/lorry/lorry_go.png" />
-				<icon file="Objects/lorry/lorry_link.png" />
+				<icon file="objects/lorry/lorry.png" />
+				<icon file="objects/lorry/lorry_add.png" />
+				<icon file="objects/lorry/lorry_delete.png" />
+				<icon file="objects/lorry/lorry_error.png" />
+				<icon file="objects/lorry/lorry_flatbed.png" />
+				<icon file="objects/lorry/lorry_go.png" />
+				<icon file="objects/lorry/lorry_link.png" />
 			</group>
 			<group folder="money" desc="">
-				<icon file="Objects/money/money.png" />
-				<icon file="Objects/money/money_add.png" />
-				<icon file="Objects/money/money_coins.png" />
-				<icon file="Objects/money/money_coins_add.png" />
-				<icon file="Objects/money/money_coins_delete.png" />
-				<icon file="Objects/money/money_delete.png" />
-				<icon file="Objects/money/money_dollar.png" />
-				<icon file="Objects/money/money_euro.png" />
-				<icon file="Objects/money/money_pound.png" />
-				<icon file="Objects/money/money_yen.png" />
+				<icon file="objects/money/money.png" />
+				<icon file="objects/money/money_add.png" />
+				<icon file="objects/money/money_coins.png" />
+				<icon file="objects/money/money_coins_add.png" />
+				<icon file="objects/money/money_coins_delete.png" />
+				<icon file="objects/money/money_delete.png" />
+				<icon file="objects/money/money_dollar.png" />
+				<icon file="objects/money/money_euro.png" />
+				<icon file="objects/money/money_pound.png" />
+				<icon file="objects/money/money_yen.png" />
 			</group>
 			<group folder="object" desc="">
-				<icon file="Objects/object/object_alarm_bell.png" />
-				<icon file="Objects/object/object_anchor.png" />
-				<icon file="Objects/object/object_battery.png" />
-				<icon file="Objects/object/object_billiard_marker.png" />
-				<icon file="Objects/object/object_bomb.png" />
-				<icon file="Objects/object/object_brain.png" />
-				<icon file="Objects/object/object_briefcase.png" />
-				<icon file="Objects/object/object_bulb.png" />
-				<icon file="Objects/object/object_cake.png" />
-				<icon file="Objects/object/object_candle.png" />
-				<icon file="Objects/object/object_cards.png" />
-				<icon file="Objects/object/object_chair.png" />
-				<icon file="Objects/object/object_chess_horse.png" />
-				<icon file="Objects/object/object_chess_tower.png" />
-				<icon file="Objects/object/object_co2.png" />
-				<icon file="Objects/object/object_compress.png" />
-				<icon file="Objects/object/object_creditcards.png" />
-				<icon file="Objects/object/object_dice.png" />
-				<icon file="Objects/object/object_drum.png" />
-				<icon file="Objects/object/object_dynamite.png" />
-				<icon file="Objects/object/object_eye.png" />
-				<icon file="Objects/object/object_fire_extinguisher.png" />
-				<icon file="Objects/object/object_flower.png" />
-				<icon file="Objects/object/object_gas.png" />
-				<icon file="Objects/object/object_green.png" />
-				<icon file="Objects/object/object_hammer.png" />
-				<icon file="Objects/object/object_handbag.png" />
-				<icon file="Objects/object/object_hat.png" />
-				<icon file="Objects/object/object_icecream.png" />
-				<icon file="Objects/object/object_light_circle_green.png" />
-				<icon file="Objects/object/object_lips.png" />
-				<icon file="Objects/object/object_lollipop.png" />
-				<icon file="Objects/object/object_money_bag.png" />
-				<icon file="Objects/object/object_multitool.png" />
-				<icon file="Objects/object/object_page_magnifier.png" />
-				<icon file="Objects/object/object_picture_frame.png" />
-				<icon file="Objects/object/object_Plant.png" />
-				<icon file="Objects/object/object_profiles.png" />
-				<icon file="Objects/object/object_ribbon.png" />
-				<icon file="Objects/object/object_rosette.png" />
-				<icon file="Objects/object/object_satellite.png" />
-				<icon file="Objects/object/object_screwdriver.png" />
-				<icon file="Objects/object/object_shading.png" />
-				<icon file="Objects/object/object_showel.png" />
-				<icon file="Objects/object/object_shuriken.png" />
-				<icon file="Objects/object/object_sign.png" />
-				<icon file="Objects/object/object_teddy_bear.png" />
-				<icon file="Objects/object/object_timeline.png" />
-				<icon file="Objects/object/object_timeline_marker.png" />
-				<icon file="Objects/object/object_toxic.png" />
-				<icon file="Objects/object/object_tree.png" />
-				<icon file="Objects/object/object_tux.png" />
-				<icon file="Objects/object/object_umbrella.png" />
-				<icon file="Objects/object/object_wand.png" />
+				<icon file="objects/object/object_alarm_bell.png" />
+				<icon file="objects/object/object_anchor.png" />
+				<icon file="objects/object/object_battery.png" />
+				<icon file="objects/object/object_billiard_marker.png" />
+				<icon file="objects/object/object_bomb.png" />
+				<icon file="objects/object/object_brain.png" />
+				<icon file="objects/object/object_briefcase.png" />
+				<icon file="objects/object/object_bulb.png" />
+				<icon file="objects/object/object_cake.png" />
+				<icon file="objects/object/object_candle.png" />
+				<icon file="objects/object/object_cards.png" />
+				<icon file="objects/object/object_chair.png" />
+				<icon file="objects/object/object_chess_horse.png" />
+				<icon file="objects/object/object_chess_tower.png" />
+				<icon file="objects/object/object_co2.png" />
+				<icon file="objects/object/object_compress.png" />
+				<icon file="objects/object/object_creditcards.png" />
+				<icon file="objects/object/object_dice.png" />
+				<icon file="objects/object/object_drum.png" />
+				<icon file="objects/object/object_dynamite.png" />
+				<icon file="objects/object/object_eye.png" />
+				<icon file="objects/object/object_fire_extinguisher.png" />
+				<icon file="objects/object/object_flower.png" />
+				<icon file="objects/object/object_gas.png" />
+				<icon file="objects/object/object_green.png" />
+				<icon file="objects/object/object_hammer.png" />
+				<icon file="objects/object/object_handbag.png" />
+				<icon file="objects/object/object_hat.png" />
+				<icon file="objects/object/object_icecream.png" />
+				<icon file="objects/object/object_light_circle_green.png" />
+				<icon file="objects/object/object_lips.png" />
+				<icon file="objects/object/object_lollipop.png" />
+				<icon file="objects/object/object_money_bag.png" />
+				<icon file="objects/object/object_multitool.png" />
+				<icon file="objects/object/object_page_magnifier.png" />
+				<icon file="objects/object/object_picture_frame.png" />
+				<icon file="objects/object/object_plant.png" />
+				<icon file="objects/object/object_profiles.png" />
+				<icon file="objects/object/object_ribbon.png" />
+				<icon file="objects/object/object_rosette.png" />
+				<icon file="objects/object/object_satellite.png" />
+				<icon file="objects/object/object_screwdriver.png" />
+				<icon file="objects/object/object_shading.png" />
+				<icon file="objects/object/object_showel.png" />
+				<icon file="objects/object/object_shuriken.png" />
+				<icon file="objects/object/object_sign.png" />
+				<icon file="objects/object/object_teddy_bear.png" />
+				<icon file="objects/object/object_timeline.png" />
+				<icon file="objects/object/object_timeline_marker.png" />
+				<icon file="objects/object/object_toxic.png" />
+				<icon file="objects/object/object_tree.png" />
+				<icon file="objects/object/object_tux.png" />
+				<icon file="objects/object/object_umbrella.png" />
+				<icon file="objects/object/object_wand.png" />
 			</group>
 			<group folder="package" desc="">
-				<icon file="Objects/package/package.png" />
-				<icon file="Objects/package/package_add.png" />
-				<icon file="Objects/package/package_delete.png" />
-				<icon file="Objects/package/package_go.png" />
-				<icon file="Objects/package/package_green.png" />
-				<icon file="Objects/package/package_link.png" />
+				<icon file="objects/package/package.png" />
+				<icon file="objects/package/package_add.png" />
+				<icon file="objects/package/package_delete.png" />
+				<icon file="objects/package/package_go.png" />
+				<icon file="objects/package/package_green.png" />
+				<icon file="objects/package/package_link.png" />
 			</group>
 			<group folder="pill" desc="">
-				<icon file="Objects/pill/pill.png" />
-				<icon file="Objects/pill/pill_add.png" />
-				<icon file="Objects/pill/pill_delete.png" />
-				<icon file="Objects/pill/pill_go.png" />
+				<icon file="objects/pill/pill.png" />
+				<icon file="objects/pill/pill_add.png" />
+				<icon file="objects/pill/pill_delete.png" />
+				<icon file="objects/pill/pill_go.png" />
 			</group>
 			<group folder="sport" desc="">
-				<icon file="Objects/sport/sport_8ball.png" />
-				<icon file="Objects/sport/sport_basketball.png" />
-				<icon file="Objects/sport/sport_cricket.png" />
-				<icon file="Objects/sport/sport_football.png" />
-				<icon file="Objects/sport/sport_golf.png" />
-				<icon file="Objects/sport/sport_raquet.png" />
-				<icon file="Objects/sport/sport_shuttlecock.png" />
-				<icon file="Objects/sport/sport_skate.png" />
-				<icon file="Objects/sport/sport_soccer.png" />
-				<icon file="Objects/sport/sport_sport.png" />
-				<icon file="Objects/sport/sport_tennis.png" />
-				<icon file="Objects/sport/sport_whistle.png" />
+				<icon file="objects/sport/sport_8ball.png" />
+				<icon file="objects/sport/sport_basketball.png" />
+				<icon file="objects/sport/sport_cricket.png" />
+				<icon file="objects/sport/sport_football.png" />
+				<icon file="objects/sport/sport_golf.png" />
+				<icon file="objects/sport/sport_raquet.png" />
+				<icon file="objects/sport/sport_shuttlecock.png" />
+				<icon file="objects/sport/sport_skate.png" />
+				<icon file="objects/sport/sport_soccer.png" />
+				<icon file="objects/sport/sport_sport.png" />
+				<icon file="objects/sport/sport_tennis.png" />
+				<icon file="objects/sport/sport_whistle.png" />
 			</group>
 			<group folder="weather" desc="">
-				<icon file="Objects/weather/weather_breeze.png" />
-				<icon file="Objects/weather/weather_clouds.png" />
-				<icon file="Objects/weather/weather_cloudy.png" />
-				<icon file="Objects/weather/weather_cold.png" />
-				<icon file="Objects/weather/weather_fog.png" />
-				<icon file="Objects/weather/weather_heavy_rain.png" />
-				<icon file="Objects/weather/weather_hot.png" />
-				<icon file="Objects/weather/weather_lightning.png" />
-				<icon file="Objects/weather/weather_rain.png" />
-				<icon file="Objects/weather/weather_rainbow_cloud.png" />
-				<icon file="Objects/weather/weather_snow.png" />
-				<icon file="Objects/weather/weather_snow_rain.png" />
-				<icon file="Objects/weather/weather_sun.png" />
-				<icon file="Objects/weather/weather_sun_cloudy.png" />
-				<icon file="Objects/weather/weather_sun_rain.png" />
-				<icon file="Objects/weather/weather_tornado.png" />
-				<icon file="Objects/weather/weather_windy.png" />
+				<icon file="objects/weather/weather_breeze.png" />
+				<icon file="objects/weather/weather_clouds.png" />
+				<icon file="objects/weather/weather_cloudy.png" />
+				<icon file="objects/weather/weather_cold.png" />
+				<icon file="objects/weather/weather_fog.png" />
+				<icon file="objects/weather/weather_heavy_rain.png" />
+				<icon file="objects/weather/weather_hot.png" />
+				<icon file="objects/weather/weather_lightning.png" />
+				<icon file="objects/weather/weather_rain.png" />
+				<icon file="objects/weather/weather_rainbow_cloud.png" />
+				<icon file="objects/weather/weather_snow.png" />
+				<icon file="objects/weather/weather_snow_rain.png" />
+				<icon file="objects/weather/weather_sun.png" />
+				<icon file="objects/weather/weather_sun_cloudy.png" />
+				<icon file="objects/weather/weather_sun_rain.png" />
+				<icon file="objects/weather/weather_tornado.png" />
+				<icon file="objects/weather/weather_windy.png" />
 			</group>
 		</category>
-		<category folder="Office" desc="">
+		<category folder="office" desc="">
 			<group folder="book" desc="">
-				<icon file="Office/book/book.png" />
-				<icon file="Office/book/book_add.png" />
-				<icon file="Office/book/book_addresses.png" />
-				<icon file="Office/book/book_bookmark.png" />
-				<icon file="Office/book/book_delete.png" />
-				<icon file="Office/book/book_edit.png" />
-				<icon file="Office/book/book_error.png" />
-				<icon file="Office/book/book_go.png" />
-				<icon file="Office/book/book_key.png" />
-				<icon file="Office/book/book_link.png" />
-				<icon file="Office/book/book_multiple.png" />
-				<icon file="Office/book/book_next.png" />
-				<icon file="Office/book/book_open.png" />
-				<icon file="Office/book/book_previous.png" />
-				<icon file="Office/book/book_stack.png" />
+				<icon file="office/book/book.png" />
+				<icon file="office/book/book_add.png" />
+				<icon file="office/book/book_addresses.png" />
+				<icon file="office/book/book_bookmark.png" />
+				<icon file="office/book/book_delete.png" />
+				<icon file="office/book/book_edit.png" />
+				<icon file="office/book/book_error.png" />
+				<icon file="office/book/book_go.png" />
+				<icon file="office/book/book_key.png" />
+				<icon file="office/book/book_link.png" />
+				<icon file="office/book/book_multiple.png" />
+				<icon file="office/book/book_next.png" />
+				<icon file="office/book/book_open.png" />
+				<icon file="office/book/book_previous.png" />
+				<icon file="office/book/book_stack.png" />
 			</group>
 			<group folder="document" desc="">
-				<icon file="Office/document/document_check_compatibility.png" />
-				<icon file="Office/document/document_info.png" />
-				<icon file="Office/document/document_inspector.png" />
-				<icon file="Office/document/document_mark_as_final.png" />
-				<icon file="Office/document/document_prepare.png" />
-				<icon file="Office/document/document_properties.png" />
-				<icon file="Office/document/document_quote.png" />
-				<icon file="Office/document/document_signature.png" />
+				<icon file="office/document/document_check_compatibility.png" />
+				<icon file="office/document/document_info.png" />
+				<icon file="office/document/document_inspector.png" />
+				<icon file="office/document/document_mark_as_final.png" />
+				<icon file="office/document/document_prepare.png" />
+				<icon file="office/document/document_properties.png" />
+				<icon file="office/document/document_quote.png" />
+				<icon file="office/document/document_signature.png" />
 			</group>
 			<group folder="email" desc="">
-				<icon file="Office/email/email.png" />
-				<icon file="Office/email/email_add.png" />
-				<icon file="Office/email/email_attach.png" />
-				<icon file="Office/email/email_delete.png" />
-				<icon file="Office/email/email_edit.png" />
-				<icon file="Office/email/email_error.png" />
-				<icon file="Office/email/email_go.png" />
-				<icon file="Office/email/email_link.png" />
-				<icon file="Office/email/email_open.png" />
-				<icon file="Office/email/email_open_image.png" />
-				<icon file="Office/email/email_pop_mail.png" />
-				<icon file="Office/email/email_spam_filter.png" />
-				<icon file="Office/email/email_to_friend.png" />
+				<icon file="office/email/email.png" />
+				<icon file="office/email/email_add.png" />
+				<icon file="office/email/email_attach.png" />
+				<icon file="office/email/email_delete.png" />
+				<icon file="office/email/email_edit.png" />
+				<icon file="office/email/email_error.png" />
+				<icon file="office/email/email_go.png" />
+				<icon file="office/email/email_link.png" />
+				<icon file="office/email/email_open.png" />
+				<icon file="office/email/email_open_image.png" />
+				<icon file="office/email/email_pop_mail.png" />
+				<icon file="office/email/email_spam_filter.png" />
+				<icon file="office/email/email_to_friend.png" />
 			</group>
 			<group folder="newspaper" desc="">
-				<icon file="Office/newspaper/newspaper.png" />
-				<icon file="Office/newspaper/newspaper_add.png" />
-				<icon file="Office/newspaper/newspaper_delete.png" />
-				<icon file="Office/newspaper/newspaper_go.png" />
-				<icon file="Office/newspaper/newspaper_link.png" />
+				<icon file="office/newspaper/newspaper.png" />
+				<icon file="office/newspaper/newspaper_add.png" />
+				<icon file="office/newspaper/newspaper_delete.png" />
+				<icon file="office/newspaper/newspaper_go.png" />
+				<icon file="office/newspaper/newspaper_link.png" />
 			</group>
 			<group folder="report" desc="">
-				<icon file="Office/report/report.png" />
-				<icon file="Office/report/report_add.png" />
-				<icon file="Office/report/report_delete.png" />
-				<icon file="Office/report/report_disk.png" />
-				<icon file="Office/report/report_edit.png" />
-				<icon file="Office/report/report_go.png" />
-				<icon file="Office/report/report_key.png" />
-				<icon file="Office/report/report_link.png" />
-				<icon file="Office/report/report_magnify.png" />
-				<icon file="Office/report/report_picture.png" />
-				<icon file="Office/report/report_user.png" />
-				<icon file="Office/report/report_word.png" />
+				<icon file="office/report/report.png" />
+				<icon file="office/report/report_add.png" />
+				<icon file="office/report/report_delete.png" />
+				<icon file="office/report/report_disk.png" />
+				<icon file="office/report/report_edit.png" />
+				<icon file="office/report/report_go.png" />
+				<icon file="office/report/report_key.png" />
+				<icon file="office/report/report_link.png" />
+				<icon file="office/report/report_magnify.png" />
+				<icon file="office/report/report_picture.png" />
+				<icon file="office/report/report_user.png" />
+				<icon file="office/report/report_word.png" />
 			</group>
 			<group folder="vcard" desc="">
-				<icon file="Office/vcard/vcard.png" />
-				<icon file="Office/vcard/vcard_add.png" />
-				<icon file="Office/vcard/vcard_delete.png" />
-				<icon file="Office/vcard/vcard_edit.png" />
+				<icon file="office/vcard/vcard.png" />
+				<icon file="office/vcard/vcard_add.png" />
+				<icon file="office/vcard/vcard_delete.png" />
+				<icon file="office/vcard/vcard_edit.png" />
 			</group>
 		</category>
-		<category folder="UI" desc="">
+		<category folder="ui" desc="">
 			<group folder="application" desc="">
-				<icon file="UI/application/application.png" />
-				<icon file="UI/application/application_add.png" />
-				<icon file="UI/application/application_cascade.png" />
-				<icon file="UI/application/application_delete.png" />
-				<icon file="UI/application/application_double.png" />
-				<icon file="UI/application/application_edit.png" />
-				<icon file="UI/application/application_error.png" />
-				<icon file="UI/application/application_form.png" />
-				<icon file="UI/application/application_form_add.png" />
-				<icon file="UI/application/application_form_delete.png" />
-				<icon file="UI/application/application_form_edit.png" />
-				<icon file="UI/application/application_form_magnify.png" />
-				<icon file="UI/application/application_get.png" />
-				<icon file="UI/application/application_go.png" />
-				<icon file="UI/application/application_home.png" />
-				<icon file="UI/application/application_key.png" />
-				<icon file="UI/application/application_lightning.png" />
-				<icon file="UI/application/application_link.png" />
-				<icon file="UI/application/application_osx.png" />
-				<icon file="UI/application/application_osx_terminal.png" />
-				<icon file="UI/application/application_put.png" />
-				<icon file="UI/application/application_side_boxes.png" />
-				<icon file="UI/application/application_side_contract.png" />
-				<icon file="UI/application/application_side_expand.png" />
-				<icon file="UI/application/application_side_list.png" />
-				<icon file="UI/application/application_side_tree.png" />
-				<icon file="UI/application/application_split.png" />
-				<icon file="UI/application/application_tile_horizontal.png" />
-				<icon file="UI/application/application_tile_vertical.png" />
-				<icon file="UI/application/application_view_columns.png" />
-				<icon file="UI/application/application_view_detail.png" />
-				<icon file="UI/application/application_view_gallery.png" />
-				<icon file="UI/application/application_view_icons.png" />
-				<icon file="UI/application/application_view_list.png" />
-				<icon file="UI/application/application_view_tile.png" />
-				<icon file="UI/application/application_xp.png" />
-				<icon file="UI/application/application_xp_terminal.png" />
+				<icon file="ui/application/application.png" />
+				<icon file="ui/application/application_add.png" />
+				<icon file="ui/application/application_cascade.png" />
+				<icon file="ui/application/application_delete.png" />
+				<icon file="ui/application/application_double.png" />
+				<icon file="ui/application/application_edit.png" />
+				<icon file="ui/application/application_error.png" />
+				<icon file="ui/application/application_form.png" />
+				<icon file="ui/application/application_form_add.png" />
+				<icon file="ui/application/application_form_delete.png" />
+				<icon file="ui/application/application_form_edit.png" />
+				<icon file="ui/application/application_form_magnify.png" />
+				<icon file="ui/application/application_get.png" />
+				<icon file="ui/application/application_go.png" />
+				<icon file="ui/application/application_home.png" />
+				<icon file="ui/application/application_key.png" />
+				<icon file="ui/application/application_lightning.png" />
+				<icon file="ui/application/application_link.png" />
+				<icon file="ui/application/application_osx.png" />
+				<icon file="ui/application/application_osx_terminal.png" />
+				<icon file="ui/application/application_put.png" />
+				<icon file="ui/application/application_side_boxes.png" />
+				<icon file="ui/application/application_side_contract.png" />
+				<icon file="ui/application/application_side_expand.png" />
+				<icon file="ui/application/application_side_list.png" />
+				<icon file="ui/application/application_side_tree.png" />
+				<icon file="ui/application/application_split.png" />
+				<icon file="ui/application/application_tile_horizontal.png" />
+				<icon file="ui/application/application_tile_vertical.png" />
+				<icon file="ui/application/application_view_columns.png" />
+				<icon file="ui/application/application_view_detail.png" />
+				<icon file="ui/application/application_view_gallery.png" />
+				<icon file="ui/application/application_view_icons.png" />
+				<icon file="ui/application/application_view_list.png" />
+				<icon file="ui/application/application_view_tile.png" />
+				<icon file="ui/application/application_xp.png" />
+				<icon file="ui/application/application_xp_terminal.png" />
 			</group>
 			<group folder="calendar" desc="">
-				<icon file="UI/calendar/calendar.png" />
-				<icon file="UI/calendar/calendar_add.png" />
-				<icon file="UI/calendar/calendar_delete.png" />
-				<icon file="UI/calendar/calendar_edit.png" />
-				<icon file="UI/calendar/calendar_link.png" />
-				<icon file="UI/calendar/calendar_view_day.png" />
-				<icon file="UI/calendar/calendar_view_month.png" />
-				<icon file="UI/calendar/calendar_view_week.png" />
+				<icon file="ui/calendar/calendar.png" />
+				<icon file="ui/calendar/calendar_add.png" />
+				<icon file="ui/calendar/calendar_delete.png" />
+				<icon file="ui/calendar/calendar_edit.png" />
+				<icon file="ui/calendar/calendar_link.png" />
+				<icon file="ui/calendar/calendar_view_day.png" />
+				<icon file="ui/calendar/calendar_view_month.png" />
+				<icon file="ui/calendar/calendar_view_week.png" />
 			</group>
 			<group folder="chart" desc="">
-				<icon file="UI/chart/chart_bar.png" />
-				<icon file="UI/chart/chart_bar_add.png" />
-				<icon file="UI/chart/chart_bar_delete.png" />
-				<icon file="UI/chart/chart_bar_edit.png" />
-				<icon file="UI/chart/chart_bar_error.png" />
-				<icon file="UI/chart/chart_bar_link.png" />
-				<icon file="UI/chart/chart_curve.png" />
-				<icon file="UI/chart/chart_curve_add.png" />
-				<icon file="UI/chart/chart_curve_delete.png" />
-				<icon file="UI/chart/chart_curve_edit.png" />
-				<icon file="UI/chart/chart_curve_error.png" />
-				<icon file="UI/chart/chart_curve_go.png" />
-				<icon file="UI/chart/chart_curve_link.png" />
-				<icon file="UI/chart/chart_line.png" />
-				<icon file="UI/chart/chart_line_add.png" />
-				<icon file="UI/chart/chart_line_delete.png" />
-				<icon file="UI/chart/chart_line_edit.png" />
-				<icon file="UI/chart/chart_line_error.png" />
-				<icon file="UI/chart/chart_line_link.png" />
-				<icon file="UI/chart/chart_organisation.png" />
-				<icon file="UI/chart/chart_organisation_add.png" />
-				<icon file="UI/chart/chart_organisation_delete.png" />
-				<icon file="UI/chart/chart_pie.png" />
-				<icon file="UI/chart/chart_pie_add.png" />
-				<icon file="UI/chart/chart_pie_delete.png" />
-				<icon file="UI/chart/chart_pie_edit.png" />
-				<icon file="UI/chart/chart_pie_error.png" />
-				<icon file="UI/chart/chart_pie_link.png" />
+				<icon file="ui/chart/chart_bar.png" />
+				<icon file="ui/chart/chart_bar_add.png" />
+				<icon file="ui/chart/chart_bar_delete.png" />
+				<icon file="ui/chart/chart_bar_edit.png" />
+				<icon file="ui/chart/chart_bar_error.png" />
+				<icon file="ui/chart/chart_bar_link.png" />
+				<icon file="ui/chart/chart_curve.png" />
+				<icon file="ui/chart/chart_curve_add.png" />
+				<icon file="ui/chart/chart_curve_delete.png" />
+				<icon file="ui/chart/chart_curve_edit.png" />
+				<icon file="ui/chart/chart_curve_error.png" />
+				<icon file="ui/chart/chart_curve_go.png" />
+				<icon file="ui/chart/chart_curve_link.png" />
+				<icon file="ui/chart/chart_line.png" />
+				<icon file="ui/chart/chart_line_add.png" />
+				<icon file="ui/chart/chart_line_delete.png" />
+				<icon file="ui/chart/chart_line_edit.png" />
+				<icon file="ui/chart/chart_line_error.png" />
+				<icon file="ui/chart/chart_line_link.png" />
+				<icon file="ui/chart/chart_organisation.png" />
+				<icon file="ui/chart/chart_organisation_add.png" />
+				<icon file="ui/chart/chart_organisation_delete.png" />
+				<icon file="ui/chart/chart_pie.png" />
+				<icon file="ui/chart/chart_pie_add.png" />
+				<icon file="ui/chart/chart_pie_delete.png" />
+				<icon file="ui/chart/chart_pie_edit.png" />
+				<icon file="ui/chart/chart_pie_error.png" />
+				<icon file="ui/chart/chart_pie_link.png" />
 			</group>
 			<group folder="comment" desc="">
-				<icon file="UI/comment/comment.png" />
-				<icon file="UI/comment/comment_add.png" />
-				<icon file="UI/comment/comment_delete.png" />
-				<icon file="UI/comment/comment_edit.png" />
-				<icon file="UI/comment/comment_multiple.png" />
-				<icon file="UI/comment/comment_multiple_add.png" />
-				<icon file="UI/comment/comment_multiple_delete.png" />
+				<icon file="ui/comment/comment.png" />
+				<icon file="ui/comment/comment_add.png" />
+				<icon file="ui/comment/comment_delete.png" />
+				<icon file="ui/comment/comment_edit.png" />
+				<icon file="ui/comment/comment_multiple.png" />
+				<icon file="ui/comment/comment_multiple_add.png" />
+				<icon file="ui/comment/comment_multiple_delete.png" />
 			</group>
 			<group folder="date" desc="">
-				<icon file="UI/date/date.png" />
-				<icon file="UI/date/date_add.png" />
-				<icon file="UI/date/date_delete.png" />
-				<icon file="UI/date/date_edit.png" />
-				<icon file="UI/date/date_error.png" />
-				<icon file="UI/date/date_go.png" />
-				<icon file="UI/date/date_link.png" />
-				<icon file="UI/date/date_magnify.png" />
-				<icon file="UI/date/date_next.png" />
-				<icon file="UI/date/date_previous.png" />
+				<icon file="ui/date/date.png" />
+				<icon file="ui/date/date_add.png" />
+				<icon file="ui/date/date_delete.png" />
+				<icon file="ui/date/date_edit.png" />
+				<icon file="ui/date/date_error.png" />
+				<icon file="ui/date/date_go.png" />
+				<icon file="ui/date/date_link.png" />
+				<icon file="ui/date/date_magnify.png" />
+				<icon file="ui/date/date_next.png" />
+				<icon file="ui/date/date_previous.png" />
 			</group>
 			<group folder="dialog" desc="">
-				<icon file="UI/dialog/dialog_attributes_display.png" />
-				<icon file="UI/dialog/dialog_cats_display.png" />
-				<icon file="UI/dialog/dialog_directory_listing.png" />
-				<icon file="UI/dialog/dialog_messenger.png" />
-				<icon file="UI/dialog/dialog_prompt.png" />
-				<icon file="UI/dialog/dialog_resources.png" />
-				<icon file="UI/dialog/dialog_save_as.png" />
-				<icon file="UI/dialog/dialog_snapshot.png" />
+				<icon file="ui/dialog/dialog_attributes_display.png" />
+				<icon file="ui/dialog/dialog_cats_display.png" />
+				<icon file="ui/dialog/dialog_directory_listing.png" />
+				<icon file="ui/dialog/dialog_messenger.png" />
+				<icon file="ui/dialog/dialog_prompt.png" />
+				<icon file="ui/dialog/dialog_resources.png" />
+				<icon file="ui/dialog/dialog_save_as.png" />
+				<icon file="ui/dialog/dialog_snapshot.png" />
 			</group>
 			<group folder="icon" desc="">
-				<icon file="UI/icon/icon_attach.png" />
-				<icon file="UI/icon/icon_female.png" />
-				<icon file="UI/icon/icon_location_pin.png" />
-				<icon file="UI/icon/icon_male.png" />
-				<icon file="UI/icon/icon_music.png" />
-				<icon file="UI/icon/icon_new.png" />
-				<icon file="UI/icon/icon_recycle.png" />
-				<icon file="UI/icon/icon_share.png" />
-				<icon file="UI/icon/icon_spider_web.png" />
-				<icon file="UI/icon/icon_sum.png" />
-				<icon file="UI/icon/icon_tags_cloud.png" />
-				<icon file="UI/icon/icon_update.png" />
-				<icon file="UI/icon/icon_widgets.png" />
+				<icon file="ui/icon/icon_attach.png" />
+				<icon file="ui/icon/icon_female.png" />
+				<icon file="ui/icon/icon_location_pin.png" />
+				<icon file="ui/icon/icon_male.png" />
+				<icon file="ui/icon/icon_music.png" />
+				<icon file="ui/icon/icon_new.png" />
+				<icon file="ui/icon/icon_recycle.png" />
+				<icon file="ui/icon/icon_share.png" />
+				<icon file="ui/icon/icon_spider_web.png" />
+				<icon file="ui/icon/icon_sum.png" />
+				<icon file="ui/icon/icon_tags_cloud.png" />
+				<icon file="ui/icon/icon_update.png" />
+				<icon file="ui/icon/icon_widgets.png" />
 			</group>
 			<group folder="map" desc="">
-				<icon file="UI/map/map.png" />
-				<icon file="UI/map/map_add.png" />
-				<icon file="UI/map/map_delete.png" />
-				<icon file="UI/map/map_edit.png" />
-				<icon file="UI/map/map_go.png" />
-				<icon file="UI/map/map_magnify.png" />
+				<icon file="ui/map/map.png" />
+				<icon file="ui/map/map_add.png" />
+				<icon file="ui/map/map_delete.png" />
+				<icon file="ui/map/map_edit.png" />
+				<icon file="ui/map/map_go.png" />
+				<icon file="ui/map/map_magnify.png" />
 			</group>
 			<group folder="note" desc="">
-				<icon file="UI/note/note.png" />
-				<icon file="UI/note/note_add.png" />
-				<icon file="UI/note/note_delete.png" />
-				<icon file="UI/note/note_edit.png" />
-				<icon file="UI/note/note_error.png" />
-				<icon file="UI/note/note_go.png" />
+				<icon file="ui/note/note.png" />
+				<icon file="ui/note/note_add.png" />
+				<icon file="ui/note/note_delete.png" />
+				<icon file="ui/note/note_edit.png" />
+				<icon file="ui/note/note_error.png" />
+				<icon file="ui/note/note_go.png" />
 			</group>
 			<group folder="status" desc="">
-				<icon file="UI/status/status_away.png" />
-				<icon file="UI/status/status_busy.png" />
-				<icon file="UI/status/status_offline.png" />
-				<icon file="UI/status/status_online.png" />
+				<icon file="ui/status/status_away.png" />
+				<icon file="ui/status/status_busy.png" />
+				<icon file="ui/status/status_offline.png" />
+				<icon file="ui/status/status_online.png" />
 			</group>
 			<group folder="tab" desc="">
-				<icon file="UI/tab/tab.png" />
-				<icon file="UI/tab/tab_add.png" />
-				<icon file="UI/tab/tab_delete.png" />
-				<icon file="UI/tab/tab_edit.png" />
-				<icon file="UI/tab/tab_go.png" />
+				<icon file="ui/tab/tab.png" />
+				<icon file="ui/tab/tab_add.png" />
+				<icon file="ui/tab/tab_delete.png" />
+				<icon file="ui/tab/tab_edit.png" />
+				<icon file="ui/tab/tab_go.png" />
 			</group>
 			<group folder="table" desc="">
-				<icon file="UI/table/table.png" />
-				<icon file="UI/table/table_add.png" />
-				<icon file="UI/table/table_delete.png" />
-				<icon file="UI/table/table_edit.png" />
-				<icon file="UI/table/table_error.png" />
-				<icon file="UI/table/table_gear.png" />
-				<icon file="UI/table/table_go.png" />
-				<icon file="UI/table/table_key.png" />
-				<icon file="UI/table/table_lightning.png" />
-				<icon file="UI/table/table_link.png" />
-				<icon file="UI/table/table_multiple.png" />
-				<icon file="UI/table/table_refresh.png" />
-				<icon file="UI/table/table_relationship.png" />
-				<icon file="UI/table/table_row_delete.png" />
-				<icon file="UI/table/table_row_insert.png" />
-				<icon file="UI/table/table_save.png" />
-				<icon file="UI/table/table_sort.png" />
+				<icon file="ui/table/table.png" />
+				<icon file="ui/table/table_add.png" />
+				<icon file="ui/table/table_delete.png" />
+				<icon file="ui/table/table_edit.png" />
+				<icon file="ui/table/table_error.png" />
+				<icon file="ui/table/table_gear.png" />
+				<icon file="ui/table/table_go.png" />
+				<icon file="ui/table/table_key.png" />
+				<icon file="ui/table/table_lightning.png" />
+				<icon file="ui/table/table_link.png" />
+				<icon file="ui/table/table_multiple.png" />
+				<icon file="ui/table/table_refresh.png" />
+				<icon file="ui/table/table_relationship.png" />
+				<icon file="ui/table/table_row_delete.png" />
+				<icon file="ui/table/table_row_insert.png" />
+				<icon file="ui/table/table_save.png" />
+				<icon file="ui/table/table_sort.png" />
 			</group>
 			<group folder="textfield" desc="">
-				<icon file="UI/textfield/textfield.png" />
-				<icon file="UI/textfield/textfield_add.png" />
-				<icon file="UI/textfield/textfield_delete.png" />
-				<icon file="UI/textfield/textfield_key.png" />
-				<icon file="UI/textfield/textfield_rename.png" />
+				<icon file="ui/textfield/textfield.png" />
+				<icon file="ui/textfield/textfield_add.png" />
+				<icon file="ui/textfield/textfield_delete.png" />
+				<icon file="ui/textfield/textfield_key.png" />
+				<icon file="ui/textfield/textfield_rename.png" />
 			</group>
 			<group folder="user" desc="">
-				<icon file="UI/user/user_multiple.png" />
-				<icon file="UI/user/user_multiple_add.png" />
-				<icon file="UI/user/user_multiple_delete.png" />
-				<icon file="UI/user/user_multiple_edit.png" />
-				<icon file="UI/user/user_multiple_error.png" />
-				<icon file="UI/user/user_multiple_gear.png" />
-				<icon file="UI/user/user_multiple_go.png" />
-				<icon file="UI/user/user_multiple_key.png" />
-				<icon file="UI/user/user_multiple_link.png" />
-				<icon file="UI/user/user_single.png" />
-				<icon file="UI/user/user_single_add.png" />
-				<icon file="UI/user/user_single_comment.png" />
-				<icon file="UI/user/user_single_delete.png" />
-				<icon file="UI/user/user_single_edit.png" />
-				<icon file="UI/user/user_single_female.png" />
-				<icon file="UI/user/user_single_go.png" />
-				<icon file="UI/user/user_single_gray.png" />
-				<icon file="UI/user/user_single_green.png" />
-				<icon file="UI/user/user_single_orange.png" />
-				<icon file="UI/user/user_single_red.png" />
-				<icon file="UI/user/user_single_suit.png" />
-				<icon file="UI/user/user_special_angel.png" />
+				<icon file="ui/user/user_multiple.png" />
+				<icon file="ui/user/user_multiple_add.png" />
+				<icon file="ui/user/user_multiple_delete.png" />
+				<icon file="ui/user/user_multiple_edit.png" />
+				<icon file="ui/user/user_multiple_error.png" />
+				<icon file="ui/user/user_multiple_gear.png" />
+				<icon file="ui/user/user_multiple_go.png" />
+				<icon file="ui/user/user_multiple_key.png" />
+				<icon file="ui/user/user_multiple_link.png" />
+				<icon file="ui/user/user_single.png" />
+				<icon file="ui/user/user_single_add.png" />
+				<icon file="ui/user/user_single_comment.png" />
+				<icon file="ui/user/user_single_delete.png" />
+				<icon file="ui/user/user_single_edit.png" />
+				<icon file="ui/user/user_single_female.png" />
+				<icon file="ui/user/user_single_go.png" />
+				<icon file="ui/user/user_single_gray.png" />
+				<icon file="ui/user/user_single_green.png" />
+				<icon file="ui/user/user_single_orange.png" />
+				<icon file="ui/user/user_single_red.png" />
+				<icon file="ui/user/user_single_suit.png" />
+				<icon file="ui/user/user_special_angel.png" />
 			</group>
 		</category>
-		<category folder="Web" desc="">
+		<category folder="web" desc="">
 			<group folder="css" desc="">
-				<icon file="Web/css/css.png" />
-				<icon file="Web/css/css_add.png" />
-				<icon file="Web/css/css_delete.png" />
-				<icon file="Web/css/css_go.png" />
-				<icon file="Web/css/css_valid.png" />
+				<icon file="web/css/css.png" />
+				<icon file="web/css/css_add.png" />
+				<icon file="web/css/css_delete.png" />
+				<icon file="web/css/css_go.png" />
+				<icon file="web/css/css_valid.png" />
 			</group>
 			<group folder="feed" desc="">
-				<icon file="Web/feed/feed.png" />
-				<icon file="Web/feed/feed_add.png" />
-				<icon file="Web/feed/feed_delete.png" />
-				<icon file="Web/feed/feed_disk.png" />
-				<icon file="Web/feed/feed_edit.png" />
-				<icon file="Web/feed/feed_error.png" />
-				<icon file="Web/feed/feed_go.png" />
-				<icon file="Web/feed/feed_key.png" />
-				<icon file="Web/feed/feed_magnify.png" />
+				<icon file="web/feed/feed.png" />
+				<icon file="web/feed/feed_add.png" />
+				<icon file="web/feed/feed_delete.png" />
+				<icon file="web/feed/feed_disk.png" />
+				<icon file="web/feed/feed_edit.png" />
+				<icon file="web/feed/feed_error.png" />
+				<icon file="web/feed/feed_go.png" />
+				<icon file="web/feed/feed_key.png" />
+				<icon file="web/feed/feed_magnify.png" />
 			</group>
 			<group folder="html" desc="">
-				<icon file="Web/html/html.png" />
-				<icon file="Web/html/html_add.png" />
-				<icon file="Web/html/html_delete.png" />
-				<icon file="Web/html/html_go.png" />
-				<icon file="Web/html/html_valid.png" />
+				<icon file="web/html/html.png" />
+				<icon file="web/html/html_add.png" />
+				<icon file="web/html/html_delete.png" />
+				<icon file="web/html/html_go.png" />
+				<icon file="web/html/html_valid.png" />
 			</group>
 			<group folder="qip" desc="">
-				<icon file="Web/qip/qip_angry.png" />
-				<icon file="Web/qip/qip_at_home.png" />
-				<icon file="Web/qip/qip_at_work.png" />
-				<icon file="Web/qip/qip_away.png" />
-				<icon file="Web/qip/qip_bad_mood.png" />
-				<icon file="Web/qip/qip_dnd.png" />
-				<icon file="Web/qip/qip_eating.png" />
-				<icon file="Web/qip/qip_free_for_chat.png" />
-				<icon file="Web/qip/qip_invisible.png" />
-				<icon file="Web/qip/qip_invisible_for_all.png" />
-				<icon file="Web/qip/qip_not_available.png" />
-				<icon file="Web/qip/qip_occupied.png" />
-				<icon file="Web/qip/qip_offline.png" />
-				<icon file="Web/qip/qip_online.png" />
+				<icon file="web/qip/qip_angry.png" />
+				<icon file="web/qip/qip_at_home.png" />
+				<icon file="web/qip/qip_at_work.png" />
+				<icon file="web/qip/qip_away.png" />
+				<icon file="web/qip/qip_bad_mood.png" />
+				<icon file="web/qip/qip_dnd.png" />
+				<icon file="web/qip/qip_eating.png" />
+				<icon file="web/qip/qip_free_for_chat.png" />
+				<icon file="web/qip/qip_invisible.png" />
+				<icon file="web/qip/qip_invisible_for_all.png" />
+				<icon file="web/qip/qip_not_available.png" />
+				<icon file="web/qip/qip_occupied.png" />
+				<icon file="web/qip/qip_offline.png" />
+				<icon file="web/qip/qip_online.png" />
 			</group>
 			<group folder="rss" desc="">
-				<icon file="Web/rss/rss.png" />
-				<icon file="Web/rss/rss_add.png" />
-				<icon file="Web/rss/rss_delete.png" />
-				<icon file="Web/rss/rss_go.png" />
-				<icon file="Web/rss/rss_valid.png" />
+				<icon file="web/rss/rss.png" />
+				<icon file="web/rss/rss_add.png" />
+				<icon file="web/rss/rss_delete.png" />
+				<icon file="web/rss/rss_go.png" />
+				<icon file="web/rss/rss_valid.png" />
 			</group>
 			<group folder="software" desc="">
-				<icon file="Web/software/software_android.png" />
-				<icon file="Web/software/software_aol_mail.png" />
-				<icon file="Web/software/software_brain_trainer.png" />
-				<icon file="Web/software/software_buzz.png" />
-				<icon file="Web/software/software_drugs_com.png" />
-				<icon file="Web/software/software_ebay.png" />
-				<icon file="Web/software/software_ehow.png" />
-				<icon file="Web/software/software_firefox.png" />
-				<icon file="Web/software/software_flickr.png" />
-				<icon file="Web/software/software_flood_it.png" />
-				<icon file="Web/software/software_global_telecom.png" />
-				<icon file="Web/software/software_google.png" />
-				<icon file="Web/software/software_google_new.png" />
-				<icon file="Web/software/software_internet_explorer.png" />
-				<icon file="Web/software/software_metro.png" />
-				<icon file="Web/software/software_opera.png" />
-				<icon file="Web/software/software_paypal.png" />
-				<icon file="Web/software/software_safari_browser.png" />
-				<icon file="Web/software/software_wordpress.png" />
-				<icon file="Web/software/software_www_page.png" />
+				<icon file="web/software/software_android.png" />
+				<icon file="web/software/software_aol_mail.png" />
+				<icon file="web/software/software_brain_trainer.png" />
+				<icon file="web/software/software_buzz.png" />
+				<icon file="web/software/software_drugs_com.png" />
+				<icon file="web/software/software_ebay.png" />
+				<icon file="web/software/software_ehow.png" />
+				<icon file="web/software/software_firefox.png" />
+				<icon file="web/software/software_flickr.png" />
+				<icon file="web/software/software_flood_it.png" />
+				<icon file="web/software/software_global_telecom.png" />
+				<icon file="web/software/software_google.png" />
+				<icon file="web/software/software_google_new.png" />
+				<icon file="web/software/software_internet_explorer.png" />
+				<icon file="web/software/software_metro.png" />
+				<icon file="web/software/software_opera.png" />
+				<icon file="web/software/software_paypal.png" />
+				<icon file="web/software/software_safari_browser.png" />
+				<icon file="web/software/software_wordpress.png" />
+				<icon file="web/software/software_www_page.png" />
 			</group>
 			<group folder="twitter" desc="">
-				<icon file="Web/twitter/twitter_1.png" />
-				<icon file="Web/twitter/twitter_2.png" />
+				<icon file="web/twitter/twitter_1.png" />
+				<icon file="web/twitter/twitter_2.png" />
 			</group>
 			<group folder="web icon" desc="">
-				<icon file="Web/web icon/webicon_advertising.png" />
-				<icon file="Web/web icon/webicon_anti_xss.png" />
-				<icon file="Web/web icon/webicon_ask_and_answer.png" />
-				<icon file="Web/web icon/webicon_autos.png" />
-				<icon file="Web/web icon/webicon_compass.png" />
-				<icon file="Web/web icon/webicon_construction.png" />
-				<icon file="Web/web icon/webicon_contact_email.png" />
-				<icon file="Web/web icon/webicon_cross_promotion_selling.png" />
-				<icon file="Web/web icon/webicon_distribution_partnerships.png" />
-				<icon file="Web/web icon/webicon_events.png" />
-				<icon file="Web/web icon/webicon_file_manager.png" />
-				<icon file="Web/web icon/webicon_finance.png" />
-				<icon file="Web/web icon/webicon_firewall_burn.png" />
-				<icon file="Web/web icon/webicon_gift_add.png" />
-				<icon file="Web/web icon/webicon_google_map.png" />
-				<icon file="Web/web icon/webicon_hardware_building_oem.png" />
-				<icon file="Web/web icon/webicon_health.png" />
-				<icon file="Web/web icon/webicon_horoscopes.png" />
-				<icon file="Web/web icon/webicon_hotjobs.png" />
-				<icon file="Web/web icon/webicon_installer_box.png" />
-				<icon file="Web/web icon/webicon_ip_block.png" />
-				<icon file="Web/web icon/webicon_kids.png" />
-				<icon file="Web/web icon/webicon_landmarks.png" />
-				<icon file="Web/web icon/webicon_mail_box.png" />
-				<icon file="Web/web icon/webicon_marketwatch.png" />
-				<icon file="Web/web icon/webicon_movies.png" />
-				<icon file="Web/web icon/webicon_ms_frontpage.png" />
-				<icon file="Web/web icon/webicon_nameboard_open.png" />
-				<icon file="Web/web icon/webicon_orbit.png" />
-				<icon file="Web/web icon/webicon_personal_finance.png" />
-				<icon file="Web/web icon/webicon_personals.png" />
-				<icon file="Web/web icon/webicon_poker.png" />
-				<icon file="Web/web icon/webicon_premium_support.png" />
-				<icon file="Web/web icon/webicon_price_alert.png" />
-				<icon file="Web/web icon/webicon_price_comparison.png" />
-				<icon file="Web/web icon/webicon_price_watch.png" />
-				<icon file="Web/web icon/webicon_real_estate.png" />
-				<icon file="Web/web icon/webicon_reseller_programm.png" />
-				<icon file="Web/web icon/webicon_roadworks.png" />
-				<icon file="Web/web icon/webicon_safe.png" />
-				<icon file="Web/web icon/webicon_scripts.png" />
-				<icon file="Web/web icon/webicon_set_security_question.png" />
-				<icon file="Web/web icon/webicon_setting_tools.png" />
-				<icon file="Web/web icon/webicon_shopping.png" />
-				<icon file="Web/web icon/webicon_site_backup_and_restore.png" />
-				<icon file="Web/web icon/webicon_site_enhancer.png" />
-				<icon file="Web/web icon/webicon_small_business.png" />
-				<icon file="Web/web icon/webicon_small_car.png" />
-				<icon file="Web/web icon/webicon_speedometer.png" />
-				<icon file="Web/web icon/webicon_support.png" />
-				<icon file="Web/web icon/webicon_toolbox.png" />
-				<icon file="Web/web icon/webicon_travel.png" />
-				<icon file="Web/web icon/webicon_walk.png" />
-				<icon file="Web/web icon/webicon_web_concierge.png" />
-				<icon file="Web/web icon/webicon_wine_pairings.png" />
-				<icon file="Web/web icon/webicon_wishlist_add.png" />
+				<icon file="web/web icon/webicon_advertising.png" />
+				<icon file="web/web icon/webicon_anti_xss.png" />
+				<icon file="web/web icon/webicon_ask_and_answer.png" />
+				<icon file="web/web icon/webicon_autos.png" />
+				<icon file="web/web icon/webicon_compass.png" />
+				<icon file="web/web icon/webicon_construction.png" />
+				<icon file="web/web icon/webicon_contact_email.png" />
+				<icon file="web/web icon/webicon_cross_promotion_selling.png" />
+				<icon file="web/web icon/webicon_distribution_partnerships.png" />
+				<icon file="web/web icon/webicon_events.png" />
+				<icon file="web/web icon/webicon_file_manager.png" />
+				<icon file="web/web icon/webicon_finance.png" />
+				<icon file="web/web icon/webicon_firewall_burn.png" />
+				<icon file="web/web icon/webicon_gift_add.png" />
+				<icon file="web/web icon/webicon_google_map.png" />
+				<icon file="web/web icon/webicon_hardware_building_oem.png" />
+				<icon file="web/web icon/webicon_health.png" />
+				<icon file="web/web icon/webicon_horoscopes.png" />
+				<icon file="web/web icon/webicon_hotjobs.png" />
+				<icon file="web/web icon/webicon_installer_box.png" />
+				<icon file="web/web icon/webicon_ip_block.png" />
+				<icon file="web/web icon/webicon_kids.png" />
+				<icon file="web/web icon/webicon_landmarks.png" />
+				<icon file="web/web icon/webicon_mail_box.png" />
+				<icon file="web/web icon/webicon_marketwatch.png" />
+				<icon file="web/web icon/webicon_movies.png" />
+				<icon file="web/web icon/webicon_ms_frontpage.png" />
+				<icon file="web/web icon/webicon_nameboard_open.png" />
+				<icon file="web/web icon/webicon_orbit.png" />
+				<icon file="web/web icon/webicon_personal_finance.png" />
+				<icon file="web/web icon/webicon_personals.png" />
+				<icon file="web/web icon/webicon_poker.png" />
+				<icon file="web/web icon/webicon_premium_support.png" />
+				<icon file="web/web icon/webicon_price_alert.png" />
+				<icon file="web/web icon/webicon_price_comparison.png" />
+				<icon file="web/web icon/webicon_price_watch.png" />
+				<icon file="web/web icon/webicon_real_estate.png" />
+				<icon file="web/web icon/webicon_reseller_programm.png" />
+				<icon file="web/web icon/webicon_roadworks.png" />
+				<icon file="web/web icon/webicon_safe.png" />
+				<icon file="web/web icon/webicon_scripts.png" />
+				<icon file="web/web icon/webicon_set_security_question.png" />
+				<icon file="web/web icon/webicon_setting_tools.png" />
+				<icon file="web/web icon/webicon_shopping.png" />
+				<icon file="web/web icon/webicon_site_backup_and_restore.png" />
+				<icon file="web/web icon/webicon_site_enhancer.png" />
+				<icon file="web/web icon/webicon_small_business.png" />
+				<icon file="web/web icon/webicon_small_car.png" />
+				<icon file="web/web icon/webicon_speedometer.png" />
+				<icon file="web/web icon/webicon_support.png" />
+				<icon file="web/web icon/webicon_toolbox.png" />
+				<icon file="web/web icon/webicon_travel.png" />
+				<icon file="web/web icon/webicon_walk.png" />
+				<icon file="web/web icon/webicon_web_concierge.png" />
+				<icon file="web/web icon/webicon_wine_pairings.png" />
+				<icon file="web/web icon/webicon_wishlist_add.png" />
 			</group>
 			<group folder="xhtml" desc="">
-				<icon file="Web/xhtml/xhtml.png" />
-				<icon file="Web/xhtml/xhtml_add.png" />
-				<icon file="Web/xhtml/xhtml_delete.png" />
-				<icon file="Web/xhtml/xhtml_go.png" />
-				<icon file="Web/xhtml/xhtml_valid.png" />
+				<icon file="web/xhtml/xhtml.png" />
+				<icon file="web/xhtml/xhtml_add.png" />
+				<icon file="web/xhtml/xhtml_delete.png" />
+				<icon file="web/xhtml/xhtml_go.png" />
+				<icon file="web/xhtml/xhtml_valid.png" />
 			</group>
 		</category>
 	</categories>
