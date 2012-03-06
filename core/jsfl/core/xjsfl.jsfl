@@ -1536,15 +1536,14 @@
 	(function()
 	{
 		// These properties are assigned using extend, to remain hidden from Komodo's code-intelligence
-			if(this['Utils'])
+			var props =
 			{
-				Utils.extend(xjsfl, { toString:function(){ return '[object xJSFL]'; } });
-			}
-
-		// add core and user URIs
-			xjsfl.settings.uris.add(xjsfl.uri + 'core/', 'core');
-			xjsfl.settings.uris.add(xjsfl.uri + 'user/', 'user');
-
+				toString:function(){ return '[object xJSFL]'; }
+			};
+			for(var prop in props)
+			{
+				xjsfl[prop] = props[prop];
+			};
 	})()
 
 	/**
@@ -1627,3 +1626,4 @@
 		}
 
 	}
+	
