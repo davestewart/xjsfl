@@ -144,7 +144,7 @@
 					this.running	= false;
 					if(print)
 					{
-						fl.trace('Timer "' +this.name+ '" took ' + this.time)
+						fl.trace('Task "' +this.name+ '" took ' + this.time)
 					}
 				}
 				return this;
