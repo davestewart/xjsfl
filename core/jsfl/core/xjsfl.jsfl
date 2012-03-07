@@ -1568,7 +1568,7 @@
 					scope.__defineGetter__( '$timeline', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.getTimeline() : null; } );
 					scope.__defineGetter__( '$library', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.library : null; } );
 					scope.__defineGetter__( '$selection', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.selection.reverse() : null; } );
-					scope.__defineSetter__( '$selection', function(elements){ var dom = fl.getDocumentDOM(); if(dom){dom.selectNone(); dom.selection = elements} } );
+					scope.__defineSetter__( '$selection', function(elements){ var dom = fl.getDocumentDOM(); if(dom){dom.selectNone(); dom.selection = elements instanceof Array ? elements : [elements]; } } );
 
 				// global functions
 					// output
