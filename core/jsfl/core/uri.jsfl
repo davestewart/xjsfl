@@ -765,12 +765,12 @@
 				// cast to string
 					pathOrURI = String(pathOrURI);
 
-				// remove file:///
+				// remove file:/// & convert spaces to %20
 					var protocol = '';
 					if(pathOrURI.indexOf('file:///') > -1)
 					{
 						protocol =  'file:///';
-						pathOrURI = pathOrURI.substr(8);
+						pathOrURI = pathOrURI.substr(8).replace(/ /g, '%20');
 					}
 
 				// replace backslashes
@@ -792,7 +792,7 @@
 							pathOrURI = pathOrURI.replace(/^([a-z ]+[:|])\/[.\/]+/img, '$1/');
 							//path = path.replace(/^\/\.\.\//img, '');
 					}
-
+					
 				// return
 					return protocol + pathOrURI;
 			}
