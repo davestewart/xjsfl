@@ -59,17 +59,24 @@
 		
 			/**
 			 * camelCase a string or variable name, separating on alpha-numeric characters
+			 * @param	{Boolean}	capitalise	Capitalise the camelCased string
 			 */
-			toCamelCase:function()
+			toCamelCase:function(capitalise)
 			{
 				var part;
 				var parts	= this.replace(/(^\W*|\W*$)/g, '').split(/[^0-9a-z]/i);
-				var str		= parts.shift().toLowerCase();
+				var str		= '';
 				
 				while(parts.length)
 				{
-					part = parts.shift();
-					str += part[0].toUpperCase() + part.substr(1);
+					if(str === '')
+					{
+						str += capitalise ? parts.shift().toSentenceCase() : parts.shift().toLowerCase();
+					}
+					else
+					{
+						str += parts.shift().toSentenceCase();
+					}
 				}
 				return str;
 			},
