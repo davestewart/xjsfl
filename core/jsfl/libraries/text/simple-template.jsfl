@@ -71,44 +71,51 @@
 				// variables
 					var rx, prop, value, placeholder;
 					var output			= this.input;
-					var placeholders	= Utils.toUniqueArray(this.input.match(/{([^}]+)}/g))
-
-				// loop over placeholders and populate
-					for each(placeholder in placeholders)
+					var matches			= this.input.match(/{([^}]+)}/g);
+					
+				// if matches, populate
+					if(matches)
 					{
-						// current prop name
-							prop		= placeholder.substring(1, placeholder.length - 1);
-
-						// skip numeric properties (i.e. {1}) as it breaks the RegExp
-							if( ! isNaN(parseInt(prop)) )
+						// get placeholders
+							var placeholders	= Utils.toUniqueArray(matches);
+		
+						// loop over placeholders and populate
+							for each(placeholder in placeholders)
 							{
-								continue;
+								// current prop name
+									prop		= placeholder.substring(1, placeholder.length - 1);
+		
+								// skip numeric properties (i.e. {1}) as it breaks the RegExp
+									if( ! isNaN(parseInt(prop)) )
+									{
+										continue;
+									}
+		
+								// current value
+									if(prop.indexOf('.') != -1)
+									{
+										value = Utils.getDeepValue(data, prop) || placeholder;
+									}
+									else
+									{
+										value = prop in data ? data[prop] : placeholder;
+									}
+		
+								// convert any nested SimpleTemplates
+									if(value instanceof SimpleTemplate)
+									{
+										value = value.output;
+									}
+		
+								// populate
+									rx			= new RegExp(placeholder, 'g');
+									output		= output.replace(rx, value);
 							}
-
-						// current value
-							if(prop.indexOf('.') != -1)
-							{
-								value = Utils.getDeepValue(data, prop) || placeholder;
-							}
-							else
-							{
-								value = prop in data ? data[prop] : placeholder;
-							}
-
-						// convert any nested SimpleTemplates
-							if(value instanceof SimpleTemplate)
-							{
-								value = value.output;
-							}
-
-						// populate
-							rx			= new RegExp(placeholder, 'g');
-							output		= output.replace(rx, value);
 					}
 
 				// update
 					this.output = output;
-
+					
 				// return
 					return this;
 			},
