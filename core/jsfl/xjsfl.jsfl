@@ -193,11 +193,10 @@
 				{
 					// grab the path
 						var path = URI.toPath(uri, true);
-						xjsfl.output.log('Adding search paths for "' +path+ '"');
 
 					// get all searchable paths
 						var paths = Utils.getSearchableURIs(uri, 'folders', true);
-						xjsfl.output.log(paths.length+ ' search paths added');
+						xjsfl.output.log('Added ' +paths.length+ ' search paths for "' +path+ '"');
 						if(paths.length > 50)
 						{
 							xjsfl.output.log('WARNING! Adding this many search paths can slow down file searching. Consider using manifest.xml files to exlude sub folders');

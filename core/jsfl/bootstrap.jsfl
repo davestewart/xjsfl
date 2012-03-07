@@ -137,10 +137,10 @@
 						xjsfl.output.log('running core bootstrap...', true, true, true)
 	
 					// utility function
-						function loadClass(token)
+						function load(path)
 						{
-							xjsfl.output.log('loading "{core}jsfl/core/' +token+ '.jsfl"');
-							fl.runScript(xjsfl.uri + 'core/jsfl/core/' +token+ '.jsfl');
+							xjsfl.output.log('loading "{core}jsfl/' +path+ '.jsfl"');
+							fl.runScript(xjsfl.uri + 'core/jsfl/' +path+ '.jsfl');
 						}
 	
 					// flags
@@ -156,21 +156,30 @@
 
 				// --------------------------------------------------------------------------------
 				// load files
+				
 					// need to load Utils & URI libraries first as core methods rely on them
 						xjsfl.output.log('loading core...', true);
-						loadClass('utils');
-						loadClass('uri');
-						loadClass('uri-list');
-						loadClass('xjsfl');
+						load('libraries/utils/utils');
+						load('libraries/file/uri');
+						load('libraries/file/uri-list');
+						load('xjsfl');
+						
+					// add core and user URIs
+						if(FLfile.exists(fl.configURI + 'xJSFL/'))
+						{
+							xjsfl.settings.uris.add(fl.configURI + 'xJSFL/', 'core');
+						}
+						xjsfl.settings.uris.add(xjsfl.uri + 'core/', 'core');
+						xjsfl.settings.uris.add(xjsfl.uri + 'user/', 'user');
 	
 					// initialize
 						xjsfl.initVars(this, 'window');
-						delete loadClass;
+						delete load;
 	
 					// now, once xjsfl has loaded, register core libraries
-						xjsfl.classes.register('Utils', Utils, '{core}jsfl/core/utils.jsfl');
-						xjsfl.classes.register('URI', URI, '{core}jsfl/core/uri.jsfl');
-						xjsfl.classes.register('URIList', URIList, '{core}jsfl/core/uri.jsfl');
+						xjsfl.classes.register('Utils', Utils, '{core}jsfl/libraries/utils/utils.jsfl');
+						xjsfl.classes.register('URI', URI, '{core}jsfl/libraries/file/uri.jsfl');
+						xjsfl.classes.register('URIList', URIList, '{core}jsfl/libraries/file/uri.jsfl');
 			}
 			catch(error)
 			{

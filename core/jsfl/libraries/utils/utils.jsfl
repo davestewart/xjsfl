@@ -361,6 +361,11 @@
 				 */
 				toUniqueArray:function(arr, prop)
 				{
+					trace(arr)
+					if( ! (arr instanceof Array) )
+					{
+						throw new TypeError('Utils.toUniqueArray expects an Array as its first parameter');
+					}
 					var arrOut	= [];
 					var i = -1;
 					if(prop)
