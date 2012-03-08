@@ -22,6 +22,7 @@
 		{
 			// NOTE: Scope is no longer passed in, as we don't want it to be inspected when we debug
 			this.pattern	= pattern;
+			this.object		= '';
 			this.type		= '';
 			this.name		= '';
 		}
@@ -34,6 +35,9 @@
 		{
 			/** @type {String}		The original pattern for the Selector */
 			pattern		:'',
+
+			/** @type {String}		The object, i.e. core, element, item, etc 	*/
+			object		:'',
 
 			/** @type {String}		The type, i.e. combo, filter, etc 	*/
 			type		:'',
@@ -59,14 +63,11 @@
 			 * @param	{Object}	scope	An object scope
 			 * @returns	{Array}				A filtered list of Items or Elements
 			 */
-			find:function(items, scope)
+			filter:function(items, scope)
 			{
-				var params	= [items].concat(this.params);
-				var results	= this.method.apply(scope, params);
-
-				//TODO Decide where in the process toUniqueArray() should be called
-				results		= Utils.toUniqueArray(results);
-
+				this.params[0]		= items
+				var results			= this.method.apply(scope, this.params);
+				results				= Utils.toUniqueArray(results);
 				return results;
 			},
 

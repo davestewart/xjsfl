@@ -301,7 +301,7 @@
 				},
 
 				/**
-				 * Turns a single value into an array
+				 * Turns a single string of tokens into an array of trimmed tokens, by splitting at non-word characters, or a supplied delimited
 				 * It either returns an existing array, splits a string at delimiters, or wraps the single value in an array
 				 *
 				 * @param	{String}	value		A string
@@ -361,39 +361,47 @@
 				 */
 				toUniqueArray:function(arr, prop)
 				{
-					trace(arr)
-					if( ! (arr instanceof Array) )
-					{
-						throw new TypeError('Utils.toUniqueArray expects an Array as its first parameter');
-					}
-					var arrOut	= [];
-					var i = -1;
-					if(prop)
-					{
-						var props = [];
-						var value;
-						while(i++ < arr.length - 1)
+					// throw an arror if an array is not passed
+						if( ! (arr instanceof Array) )
 						{
-							value = arr[i][prop];
-							if(props.indexOf(value) === -1)
-							{
-								props.push(value);
-								arrOut.push(arr[i]);
-							}
+							throw new TypeError('Utils.toUniqueArray expects an Array as its first parameter');
 						}
-					}
-					else
-					{
+						
+					// variables
+						var arrOut	= [];
 						var i = -1;
-						while(i++ < arr.length - 1)
+						
+					// extract values from Objects
+						if(prop)
 						{
-							if(arrOut.indexOf(arr[i]) === -1)
+							var props = [];
+							var value;
+							while(i++ < arr.length - 1)
 							{
-								arrOut.push(arr[i]);
+								value = arr[i][prop];
+								if(props.indexOf(value) === -1)
+								{
+									props.push(value);
+									arrOut.push(arr[i]);
+								}
 							}
 						}
-					}
-					return arrOut;
+						
+					// extract values from Array
+						else
+						{
+							var i = -1;
+							while(i++ < arr.length - 1)
+							{
+								if(arrOut.indexOf(arr[i]) === -1)
+								{
+									arrOut.push(arr[i]);
+								}
+							}
+						}
+						
+					// return
+						return arrOut;
 				},
 
 				/**
@@ -1188,6 +1196,55 @@
 					}
 					var value = a + (b - a) * Math.random();
 					return round ? Math.round(value) : value;
+				},
+				
+				/**
+				 * Parses a compound CSS expression, into single selctors, respecting :nested(:tokens, :like(these, ones))
+				 * @param	{String}	expression	A CSS string
+				 * @returns	{Array}					An Array of String selectors
+				 */
+				parseCSS:function(expression)
+				{
+					// variables
+						var selectors	= [];
+						var selector	= '';
+						var nesting		= 0;
+						
+					// parse string
+						for (var i = 0; i < expression.length; i++)
+						{
+							var char = expression[i];
+							if(char === ',')
+							{
+								if(nesting == 0)
+								{
+									selectors.push(selector.trim());
+									selector = '';
+								}
+								else
+								{
+									selector += char;
+								}
+							}
+							else
+							{
+								selector += char;
+								if(char == '(')
+								{
+									nesting++;
+								}
+								else if(char == ')')
+								{
+									nesting--;
+								}
+							}
+						}
+						
+					// push last remaining selector
+						selectors.push(selector.trim());
+						
+					// return
+						return selectors;	
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------

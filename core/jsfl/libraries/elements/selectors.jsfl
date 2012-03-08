@@ -11,391 +11,418 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Selectors - static repository of tests used by the Selector class
 
-	var Selectors =
-	{
-		/**
-		 *
-		 * @param	expression	{String}		A CSS expression
-		 * @param	items		{Array}			An array of items to filter
-		 * @param	scope		{Object}		A valid scope reference. Valid types are Library, Document, Timeline, Layer, Frame
-		 * @param	debug		{Boolean}		An optional flag to print Selector information to the Output panel
-		 * @returns				{Array}			An array of elements, items, etc
-		 */
-		select:function(expression, items, scope, debug)
-		{
-			// --------------------------------------------------------------------------------
-			// setup
+	// ----------------------------------------------------------------------------------------------------
+	// MAIN SELECTORS CLASS
 
-				// define selection type from scope
-					var matches = String(scope).match(/(Library|Document|Timeline|Layer|Frame)/);
+		var Selectors =
+		{
+			/**
+			 *
+			 * @param	expression	{String}		A CSS expression
+			 * @param	items		{Array}			An array of items to filter
+			 * @param	scope		{Object}		A valid scope reference. Valid types are Library, Document, Timeline, Layer, Frame
+			 * @param	debug		{Boolean}		An optional flag to print Selector information to the Output panel
+			 * @returns				{Array}			An array of elements, items, etc
+			 */
+			select:function(expression, items, scope, debug)
+			{
+				// --------------------------------------------------------------------------------
+				// setup
+				
+					// define selection type from scope
+						var matches = String(scope).match(/(Library|Document|Timeline|Layer|Frame)/);
+						if(matches)
+						{
+							var types =
+							{
+								'Library':		'Item',
+								'Document':		'Element',
+								'Timeline':		'Layer',
+								'Layer':		'Frame'
+							}
+							var type = types[matches[1]];
+						}
+						else
+						{
+							throw new TypeError('TypeError: Invalid scope "' +scope+ '" supplied to Selector.select()');
+						}
+	
+				// --------------------------------------------------------------------------------
+				// process expression
+	
+					// exit early if universal selector is supplied
+						if(expression === '*')
+						{
+							return items;
+						}
+
+					// sort items if type is Item and expression contains an oreder-relevent selector type
+						if(type === 'Item' && /:(first|last|even|odd|nth)\b/.test(expression))
+						{
+							items = Utils.sortOn(items, 'name', true);
+						}
+	
+					// break up any comma-delimited expressions into an array of discrete expressions
+						var expressions	= Utils.parseCSS(expression);
+	
+					// get items
+						var results		= [];
+						for each (var expression in expressions)
+						{
+							// parse rule into selector array
+								var selectors = this.parse(expression, type);
+								
+							// set up debug
+								Selectors.debug = debug;
+	
+							// get items
+								var _results = Selectors.test(selectors, items, scope)
+	
+							// append to existing results array
+								results = results.concat(_results);
+						}
+	
+					// ensure items are unique
+						results = Utils.toUniqueArray(results);
+	
+					// return
+						return results;
+			},
+	
+	
+			/**
+			 * parse a selector expression into selectors - also called from :not()
+			 * @param	expression	{String}	A CSS expression
+			 * @param	type		{String}	The type of parse, e.g. Item, Element, etc
+			 * @returns
+			 */
+			parse:function(expression, type)
+			{
+	
+				// --------------------------------------------------------------------------------
+				// setup
+	
+					// chunker
+						/*
+							#  type             example
+							-------------------------------------------------
+							1: combo			:not(selector)
+							   2: type			:not
+							   3: selector		:bitmap
+							4: name				this is a name
+							5: path				/this is/a path
+							6: Class			.Class
+							7: package			.com.domain.package.Class
+							8: pseudo			:type
+							9: attribute		[attribute=value]
+							   10: name			attribute
+							   11: operand		=
+							   12: value		value
+						*/
+						//var chunker = /(:([\-\w]+)\((.+)\))|([\*\d\w][\-\w\d\s_*{|}]+)|\/([\-\w\s\/_*{|}]+)|\.([*A-Z][\w*]+)|\.([a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
+						var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]*)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[\w.*]+)|:([a-z]\w+)|\[(([\w\.]+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
+	
+					// variables
+						var exec,
+							selector,
+							selectors	= [],
+							object		= Selectors[type.toLowerCase()],
+							core		= Selectors.core;
+							
+	
+					// debug
+						//trace('\n\n\n\n--------------------------------------------------------------------------------\n' + expression + '\n--------------------------------------------------------------------------------')
+	
+				// --------------------------------------------------------------------------------
+				// parse
+	
+					while(exec = chunker.exec(expression))
+					{
+						// --------------------------------------------------------------------------------
+						// setup
+	
+							// debug
+								//inspect(exec);
+								//trace(limit++);
+	
+							// create
+								selector = new Selector(exec[0]);
+	
+						// --------------------------------------------------------------------------------
+						// create selector
+						
+							// note - selector params[0] is always null, as the Selector will populate it with the relevent values itself
+	
+							// 1: combo ":not(:bitmap)"
+								if(exec[1])
+								{
+									selector.type	= 'combo';
+									selector.name	= exec[2];
+									selector.method	= core.combo[selector.name];
+									selector.params	= [null, Selector.makeRX(exec[3], selector)];
+									selector.params	= [null, exec[3], type];
+								}
+	
+							// 4: name "this is a name"
+								else if(exec[4])
+								{
+									selector.type	= 'filter';
+									selector.type	= 'name';
+									selector.method	= object.filter.name;
+									selector.params	= [null, Selector.makeRX(exec[4], selector), selector.range];
+								}
+	
+							// 5: path "/path/to/item" (can only be Library)
+								else if(exec[5])
+								{
+									selector.type	= 'filter';
+									selector.name	= 'path';
+									selector.method	= object.filter.path;
+									selector.params	= [null, Selector.makeRX(exec[5], selector), selector.range];
+								}
+	
+							// 6: Class ":Class"
+								else if(exec[6])
+								{
+									selector.type	= 'filter';
+									selector.name	= 'Class';
+									selector.method	= object.filter.Class;
+									selector.params	= [null, Selector.makeRX(exec[6], selector)];
+								}
+	
+							// 7: package ":com.domain.package.Class"
+								else if(exec[7])
+								{
+									selector.type	= 'filter';
+									selector.name	= 'Package';
+									selector.method	= object.filter.Package;
+									selector.params	= [null, Selector.makeRX(exec[7], selector)];
+								}
+	
+							// 8: pseudo ":type"
+								else if(exec[8])
+								{
+									// variables
+										var method;
+										var name = exec[8];
+										
+									// type
+										if(/instance|symbol|bitmap|embeddedvideo|linkedvideo|video|compiledclip|text|folder|static|dynamic|input|primitive|group|shape|movieclip|graphic|button/.test(name))
+										{
+											selector.type	= 'type';
+											selector.params	= [null, name];
+											method			= object.filter.type;
+										}
+	
+									// find
+										else if(/selected|children|descendants|parent|first|last|even|odd|random/.test(name))
+										{
+											selector.type	= 'find';
+											selector.params	= [null];
+											method			= object.find[name] || core.find[name];
+										}
+	
+									// pseudo, i.e. /exported|empty|animated|keyframed|scripted|audible|filtered|tinted|component/
+									// custom, i.e. /any|custom|values|which|need|to|have|been|registered/
+										else
+										{
+											selector.type	= 'pseudo';
+											selector.params	= [null, name];
+											method			= object.pseudo[name] || core.pseudo[name];
+										}
+	
+									// assign
+										selector.name	= name;
+										selector.method	= method;
+								}
+	
+							// 9: attribute "[attribute=value]"
+								else if(exec[9])
+								{
+									// selector properties
+										selector.type	= 'filter';
+										selector.name	= 'attribute';
+										selector.method	= core.filter.attribute;
+	
+									// attribute components
+										var attName		= exec[10];
+										var attOperand	= exec[11];
+										var attValue	= exec[12];
+										var val			= parseFloat(attValue);
+	
+									// parse numeric values
+										if( ! isNaN(val) )// /<>/.test(attOperand)
+										{
+											attValue = val;
+										}
+										else
+										{
+											attValue = Selector.makeRX(exec[12], selector);
+										}
+	
+									// assign
+										selector.params	= [null, attName, attOperand, attValue, selector.range, object.custom];
+								}
+								else
+								{
+									throw new TypeError('TypeError in Selectors.parse(): Unrecognised pattern "' +selector.pattern+ '"');
+								}
+	
+						// --------------------------------------------------------------------------------
+						// assign selector, or throw error
+	
+								//trace('TYPE:' + selector);
+	
+							// finally, add selector
+								if(selector.method)
+								{
+									selectors.push(selector);
+								}
+								else
+								{
+									throw new TypeError('TypeError: Unrecognised selector "' +selector.pattern+ '" in ' +type+ 'Selector function');
+								}
+	
+					}
+	
+				// debug
+					//inspect(selectors, 'SELECTORS');
+	
+				// return
+					return selectors;
+			},
+	
+			/**
+			 * Tests the selectors against the supplied items and returns matches
+			 * @param	selectors	{Array}			An array of Selector instances
+			 * @param	items		{Array}			An array of items to filter
+			 * @param	scope		{Object}		A valid scope reference. Valid types are Library, Document, Timeline, Layer, Frame
+			 * @returns				{Array}			An array of elements, items, etc
+			 */
+			test:function(selectors, items, scope)
+			{
+				// exit early if no valid selectors
+					if(selectors.length === 0)
+					{
+						return [];
+					}
+	
+				// debug
+					if(Selectors.debug)
+					{
+						inspect(selectors, 'Selectors');
+					}
+
+				// loop over all selectors
+					for each(var selector in selectors)
+					{
+						// store temporary items as we find and filter
+							var temp	= [];
+	
+						// if the task is find or combo:  filter items as a group, with any extra processing taking place in the testing function
+							if(selector.type === 'find' || selector.type === 'combo')
+							{
+								temp = selector.filter(items, scope);
+							}
+	
+						// otherwise: filter items by testing each item individually
+							else
+							{
+								var state;
+								for each(var item in items)
+								{
+									state = selector.test(item, scope);
+									if(state)
+									{
+										temp.push(item);
+									}
+								}
+							}
+	
+						// update items with temp items
+							items = temp;
+	
+						// exit early if 0 items
+							if(items.length == 0)
+							{
+								break;
+							}
+					}
+	
+				// return
+					return items;
+			},
+	
+			/**
+			 * Registers a custom selector
+			 * @param	{String}	pattern		The pattern of the selector. Valid values are ":type" or "[attribute]"
+			 * @param	{Function}	callback	A pseudo callback of the format function(item){ return state }
+			 * @param	{Function}	callback	An attribute callback of the format function(item){ return value }
+			 * @param	{String}	type		The type of selector. Valid values are Library|Document|Timeline|Layer|Frame
+			 */
+			register:function(pattern, callback, type)
+			{
+				// variables
+					pattern			= String(pattern);
+					var matches		= pattern.match(/([:\[])(\w+)/);
+					var group;
+	
+				// test for valid selector
 					if(matches)
 					{
-						var types =
-						{
-							'Library':		'Item',
-							'Document':		'Element',
-							'Timeline':		'Layer',
-							'Layer':		'Frame'
-						}
-						var type = types[matches[1]];
+						// error if wrong type
+							if( ! /^(item|element)$/.test(type) )
+							{
+								throw new Error('Error in Selectors.register(): Invalid type "' +type+ '" supplied');
+							}
+	
+						// OK, extract the selector
+							var selector	= matches[2];
+	
+						// :pseudo selector
+							if(matches[1] == ':')
+							{
+								group = 'pseudo';
+							}
+	
+						// [attribute] selector
+							else if(matches[1] == '[')
+							{
+								group = 'custom';
+							}
+	
+						// assign
+							Selectors[type][group][selector] = callback;
+							
+						// return
+							return Selectors;
 					}
 					else
 					{
-						throw new TypeError('TypeError: Invalid scope ' +scope+ ' supplied to Selector.select()');
+						throw new Error('Error in Selectors.register(): Invalid pattern "' +pattern+ '" supplied');
 					}
-
-			// --------------------------------------------------------------------------------
-			// process expression
-
-				// exit early if universal selector is supplied
-					if(expression === '*')
-					{
-						return items;
-					}
-
-				// break up any comma-delimited expressions into an array of discrete expressions
-					var expressions	= Utils.toArray(expression);
-
-				// get items
-					var results		= [];
-					for each (var expression in expressions)
-					{
-						// parse rule into selector array
-							var selectors = this.parse(expression, type);
-
-						// debug
-							if(debug)
-							{
-								inspect(selectors, 'Selectors for "' + expression + '"');
-							}
-
-						// get items
-							var _results = Selectors.test(selectors, items, scope)
-
-						// append to existing results array
-							results = results.concat(_results);
-					}
-
-				// ensure items are unique
-					results = Utils.toUniqueArray(results);
-
-				// return
-					return results;
-		},
-
-
-		/**
-		 * parse a selector expression into selectors - also called from :not()
-		 * @param	expression	{String}	A CSS expression
-		 * @param	type		{String}	The type of parse, e.g. Item, Element, etc
-		 * @returns
-		 */
-		parse:function(expression, type)
-		{
-
-			// --------------------------------------------------------------------------------
-			// setup
-
-				// chunker
-					/*
-						#  type             example
-						-------------------------------------------------
-						1: combo			:not(selector)
-						   2: type			:not
-						   3: selector		:bitmap
-						4: name				this is a name
-						5: path				/this is/a path
-						6: Class			.Class
-						7: package			.com.domain.package.Class
-						8: pseudo			:type
-						9: attribute		[attribute=value]
-						   10: name			attribute
-						   11: operand		=
-						   12: value		value
-					*/
-					//var chunker = /(:([\-\w]+)\((.+)\))|([\*\d\w][\-\w\d\s_*{|}]+)|\/([\-\w\s\/_*{|}]+)|\.([*A-Z][\w*]+)|\.([a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
-					var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]*)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[a-z][\w.*]+)|:([a-z]\w+)|\[(([\w\.]+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
-
-				// variables
-					var exec,
-						selector,
-						selectors = [],
-						object = Selectors[type.toLowerCase()];
-
-				// debug
-					//trace('\n\n\n\n--------------------------------------------------------------------------------\n' + expression + '\n--------------------------------------------------------------------------------')
-
-			// --------------------------------------------------------------------------------
-			// parse
-
-				while(exec = chunker.exec(expression))
-				{
-					// --------------------------------------------------------------------------------
-					// setup
-
-						// debug
-							//inspect(exec);
-							//trace(limit++);
-
-						// create
-							selector = new Selector(exec[0]);
-
-					// --------------------------------------------------------------------------------
-					// create selector
-
-						// 1: combo ":not(:bitmap)"
-							if(exec[1])
-							{
-								selector.type	= 'combo';
-								selector.name	= exec[2];
-								selector.method	= Selectors.core.combo[selector.name];
-								selector.params	= [null, Selector.makeRX(exec[3], selector)];
-							}
-
-						// 4: name "this is a name"
-							else if(exec[4])
-							{
-								selector.type	= 'filter';
-								selector.type	= 'name';
-								selector.method	= object.filter.name;
-								selector.params	= [null, Selector.makeRX(exec[4], selector), selector.range];
-							}
-
-						// 5: path "/path/to/item"
-							else if(exec[5])
-							{
-								selector.type	= 'filter';
-								selector.name	= 'path';
-								selector.method	= object.filter.path;
-								selector.params	= [null, Selector.makeRX(exec[5], selector), selector.range];
-							}
-
-						// 6: Class ".Class"
-							else if(exec[6])
-							{
-								selector.type	= 'filter';
-								selector.name	= 'class';
-								selector.method	= object.filter.Class;
-								selector.params	= [null, Selector.makeRX(exec[6], selector)];
-							}
-
-						// 7: package ".com.domain.package.Class"
-							else if(exec[7])
-							{
-								selector.type	= 'filter';
-								selector.name	= 'package';
-								selector.method	= object.filter.Package;
-								selector.params	= [null, Selector.makeRX(exec[7], selector)];
-							}
-
-						// 8: pseudo ":type"
-							else if(exec[8])
-							{
-								// variables
-									var name = exec[8];
-									var method;
-
-								// type
-									if(/instance|symbol|bitmap|embeddedvideo|linkedvideo|video|compiledclip|text|folder|static|dynamic|input|primitive|group|shape|movieclip|graphic|button/.test(exec[8]))
-									{
-										selector.type	= 'type';
-										method			= object.filter.type;
-									}
-
-								// find
-									else if(/selected|children|descendants|parent|first|last/.test(exec[8]))
-									{
-										selector.type	= 'find';
-										method			= object.find[exec[8]];
-									}
-
-								// pseudo
-									else if(/exported|empty|animated|keyframed|scripted|audible/.test(exec[8]))
-									{
-										selector.type	= 'pseudo';
-										method			= object.pseudo[exec[8]];
-									}
-
-								// custom
-									else
-									{
-										selector.type	= 'pseudo';
-										method			= object.pseudo[exec[8]];
-									}
-
-								// assign
-									selector.name	= name;
-									selector.method	= method;
-									selector.params	= [null, exec[8]];
-							}
-
-						// 9: attribute "[attribute=value]"
-							else if(exec[9])
-							{
-								// selector properties
-									selector.type	= 'filter';
-									selector.name	= 'attribute';
-									selector.method	= Selectors.core.filter.attribute;
-
-								// attribute components
-									var attName		= exec[10];
-									var attOperand	= exec[11];
-									var attValue	= exec[12];
-									var val			= parseFloat(attValue);
-
-								// parse numeric values
-									if( ! isNaN(val) )// /<>/.test(attOperand)
-									{
-										attValue = val;
-									}
-									else
-									{
-										attValue = Selector.makeRX(exec[12], selector);
-									}
-
-								// assign
-									selector.params	= [null, attName, attOperand, attValue, selector.range, object.custom];
-							}
-							else
-							{
-								throw new TypeError('TypeError in Selectors.parse(): Unrecognised pattern "' +selector.pattern+ '"');
-							}
-
-					// --------------------------------------------------------------------------------
-					// assign selector, or throw error
-
-							//trace('TYPE:' + selector);
-
-						// finally, add selector
-							if(selector.method)
-							{
-								selectors.push(selector);
-							}
-							else
-							{
-								throw new TypeError('TypeError: Unrecognised selector "' +selector.pattern+ '" in ' +type+ 'Selector function');
-							}
-
-				}
-
-			// debug
-				//inspect(selectors, 'SELECTORS');
-
-			// return
-				return selectors;
-		},
-
-		/**
-		 * Tests the selectors against the supplied items and returns matches
-		 * @param	selectors	{Array}			An array of Selector instances
-		 * @param	items		{Array}			An array of items to filter
-		 * @param	scope		{Object}		A valid scope reference. Valid types are Library, Document, Timeline, Layer, Frame
-		 * @returns				{Array}			An array of elements, items, etc
-		 */
-		test:function(selectors, items, scope)
-		{
-			// exit early if no valid selectors
-				if(selectors.length === 0)
-				{
-					return [];
-				}
-
-			// loop over all selectors
-				for each(var selector in selectors)
-				{
-					// debug
-						//trace(selector);
-
-					// store temporary items as we find and filter
-						var temp	= [];
-
-					// if the task is to find, filter items as a group, with any extra processing taking place in the testing function
-						if(selector.type === 'find')
-						{
-							temp = selector.find(items, scope);
-						}
-
-					// otherwise, filter items by testing each item individually
-						else
-						{
-							var state;
-							for each(var item in items)
-							{
-								state = selector.test(item, scope);
-								if(state)
-								{
-									temp.push(item);
-								}
-							}
-						}
-
-					// update items with temp items
-						items = temp;
-
-					// exit early if 0 items
-						if(items.length == 0)
-						{
-							break;
-						}
-				}
-
-			// return
-				return items;
-		},
-
-		/**
-		 * Registers a custom selector
-		 * @param	{String}	pattern		The pattern of the selector. Valid values are ":type" or "[attribute]"
-		 * @param	{Function}	callback	A pseudo callback of the format function(item){ return state }
-		 * @param	{Function}	callback	An attribute callback of the format function(item){ return value }
-		 * @param	{String}	type		The type of selector. Valid values are Library|Document|Timeline|Layer|Frame
-		 */
-		register:function(pattern, callback, type)
-		{
-			// variables
-				pattern			= String(pattern);
-				var matches		= pattern.match(/([:\[])(\w+)/);
-				var group;
-
-			// test for valid selector
-				if(matches)
-				{
-					// error if wrong type
-						if( ! /^(item|element)$/.test(type) )
-						{
-							throw new Error('Error in Selectors.register(): Invalid type "' +type+ '" supplied');
-						}
-
-					// OK, extract the selector
-						var selector	= matches[2];
-
-					// :pseudo selector
-						if(matches[1] == ':')
-						{
-							group = 'pseudo';
-						}
-
-					// [attribute] selector
-						else if(matches[1] == '[')
-						{
-							group = 'custom';
-						}
-
-					// assign
-						Selectors[type][group][selector] = callback;
-				}
-				else
-				{
-					throw new Error('Error in Selectors.register(): Invalid pattern "' +pattern+ '" supplied');
-				}
-		},
-
-		toString:function()
-		{
-			return '[class Selectors]';
+			},
+	
+			toString:function()
+			{
+				return '[class Selectors]';
+			}
+	
 		}
 
-	}
+
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██████                       ██████              ██         
+//  ██                             ██                ██         
+//  ██     █████ ████ █████        ██   █████ █████ █████ █████ 
+//  ██     ██ ██ ██   ██ ██        ██   ██ ██ ██     ██   ██    
+//  ██     ██ ██ ██   █████        ██   █████ █████  ██   █████ 
+//  ██     ██ ██ ██   ██           ██   ██       ██  ██      ██ 
+//  ██████ █████ ██   █████        ██   █████ █████  ████ █████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Core Tests
 
 	Selectors.core =
 	{
@@ -519,7 +546,66 @@
 
 		find:
 		{
+			/**
+			 * Returns the first item of the supplied items
+			 * @param	{Array}	items		An Array of Items
+			 * @returns	{Item}				A single Item
+			 */
+			first:function(items)
+			{
+				return [items.shift()];
+			},
 
+			/**
+			 * Returns the last item of the supplied items
+			 * @param	{Array}	items		An Array of Items
+			 * @returns	{Item}				A single Item
+			 */
+			last:function(items)
+			{
+				return [items.pop()];
+			},
+
+			/**
+			 * Finds every even index of the supplied items
+			 * @param	{Item}		parents		An Array of folder parent items
+			 * @returns	{Array}					An Array of items
+			 */
+			even:function(items)
+			{
+				return Selectors.core.combo.nth(items, 'even');
+			},
+
+			/**
+			 * Finds every odd index of the supplied items
+			 * @param	{Item}		parents		An Array of folder parent items
+			 * @returns	{Array}					An Array of items
+			 */
+			odd:function(items)
+			{
+				return Selectors.core.combo.nth(items, 'odd');
+			},
+			
+			/**
+			 * Finds a random selection of items from the supplied items
+			 * @param	{Item}		parents		An Array of folder parent items
+			 * @param	{Number}	amount		An amount from 0-1 which indicates the probability of a match
+			 * @returns	{Array}					An Array of items
+			 */
+			random:function(items, amount)
+			{
+				amount = amount || 0.5;
+				var arr = [];
+				for each(var item in items)
+				{
+					if(Math.random() < amount)
+					{
+						arr.push(item);
+					}
+				}
+				return arr;
+			},
+			
 		},
 
 		pseudo:
@@ -529,38 +615,26 @@
 
 		combo:
 		{
-			//TODO filter() functionality
-			/**
-			 *
-			 * @param	selector
-			 * @returns
-			 */
-			filter:function(callback)
-			{
-				// filter keeps
-				return callback();
-			},
-
-			not:function(callback)
-			{
-				// not discards
-				return ! callback();
-			},
-
-			//TODO not() functionality
 			/**
 			 *
 			 * @param	selector
 			 * @param	test
 			 * @returns
 			 */
-			not:function(items, selector)
+			not:function(items, expression, type)
 			{
-				trace('NOT ' + selector)
+				// create new selector(s) with supplied :not(expr) expression
+					var selectors = Selectors.parse(expression, type);
+					
+				// negate all selectors
+					var selector;
+					for each(selector in selectors)
+					{
+						selector.keep = false;
+					}
+				
 				// get the items with the new selecor
-					var newItems = Selectors.select(selector, items, this);
-
-					//inspect(newItems)
+					var newItems = Selectors.test(selectors, items, this);
 
 				// compare to items in
 					return newItems
@@ -573,38 +647,138 @@
 			 * @param	selector
 			 * @returns
 			 */
-			contains:function(selector)
+			contains:function(items, expression, type)
 			{
-
+				return items;
+			},
+			
+			has:function(items, expression, type)
+			{
+				return items;
+			},
+			
+			random:function(items, expression, type)
+			{
+				var amount = parseFloat(expression);
+				return Selectors.core.find.random(items, amount);
 			},
 
-			//TODO nth()
 			/**
-			 *
-			 * @param	selector
-			 * @returns
+			 * Finds every n-th child of the supplied items
+			 * @param	{Item}		items		An Array of items
+			 * @param	{String}	expression	An expression of the format (event|odd|random), 3, 3n, 3n+3, 3n-3
+			 * @returns	{Array}					An Array of items
 			 */
-			nth:function(selector)
+			nth:function(items, expression, type)
 			{
+				// variables
+					var fn;
+				
+				// parse expression
+					var matches = String(expression).match(/(odd|even|random)|(\d+)n?([\-+])?(\d+)?/);
+					if (matches != null)
+					{
+						// debug
+							//inspect(matches)
+						
+						// matches
+							/*
+								0		1		2	3	4
+								odd		odd			
+								even	even			
+								3				3		
+								3n				3		
+								3n+1			3	+	1
+								3n-1			3	-	1
+							*/
+							
+						// even / odd / random
+							if(matches[1])
+							{
+								var fns =
+								{
+									odd:	function(i){ return i % 2 == 0},
+									even:	function(i){ return i % 2 == 1},
+									random:	function(){ return Math.random() < 0.5 }
+								}
+								fn = fns[matches[1]];
+							}
+							
+						// nth, nth repeated, nth repeated and offset
+							else if(matches[2])
+							{
+								// variables
+									var index		= parseInt(matches[2]);
+									var operator	= matches[3] == '-' ? -1 : 1;
+									var offset		= matches[4] ? parseInt(matches[4]) * operator : 0;
+									
+								// a single numeric match only
+									if(matches[0].indexOf('n') === -1)
+									{
+										var item = items[index - 1];
+										return [item];
+									}
+									
+								// a multiple match plus modifiers
+									else
+									{
+										fn = function(i){ return (i + 1 - offset) % index === 0; }
+									}
+							}
+					}
 
-			}
+				// start matching
+					var arr = [];
+					for (var i = 0; i < items.length; i++)
+					{
+						if(fn(i))
+						{
+							var item = items[i];
+							if(item !== undefined)
+							{
+								arr.push(items[i]);
+							}
+						}
+					}
+					
+					return arr;
+			},
 
 		}
 
 	}
 
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██████ ██                             ██        ██████              ██         
+//  ██     ██                             ██          ██                ██         
+//  ██     ██ █████ ████████ █████ █████ █████        ██   █████ █████ █████ █████ 
+//  █████  ██ ██ ██ ██ ██ ██ ██ ██ ██ ██  ██          ██   ██ ██ ██     ██   ██    
+//  ██     ██ █████ ██ ██ ██ █████ ██ ██  ██          ██   █████ █████  ██   █████ 
+//  ██     ██ ██    ██ ██ ██ ██    ██ ██  ██          ██   ██       ██  ██      ██ 
+//  ██████ ██ █████ ██ ██ ██ █████ ██ ██  ████        ██   █████ █████  ████ █████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Element Tests
+
 	Selectors.element =
 	{
+		/**
+		 * Registers a custom selector with the Selectors.element object
+		 * @param	{String}	pattern		The selector expression
+		 * @param	{Function}	callback	A custom funtion to test elements with
+		 * @returns	{Selectors}				The original Selectors Object
+		 */
 		register:function(pattern, callback)
 		{
-			Selectors.register(pattern, callback, 'element');
+			return Selectors.register(pattern, callback, 'element');
 		},
 
 		filter:
 		{
 			/**
 			 *
-			 * @param	item	{Item}		An Element
+			 * @param	item	{Element}	An Element
 			 * @param	rx		{RegExp}	A regular expression to match against the item name
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
@@ -615,7 +789,7 @@
 
 			/**
 			 *
-			 * @param	item	{Item}		An Element
+			 * @param	item	{Element}	An Element
 			 * @param	rx		{RegExp}	A regular expression to match against the item path
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
@@ -633,7 +807,7 @@
 
 			/**
 			 *
-			 * @param	item	{Item}		An Element
+			 * @param	item	{Element}	An Element
 			 * @param	type	{String}	A valid Item itemType
 			 * @returns			{Boolean}	True if matched, false if failed
 			 */
@@ -655,11 +829,11 @@
 									{
 										return true;
 									}
-									return item.symbolType.replace(/ /g, '') === type;
+									return type === 'instance' || item.symbolType.replace(/ /g, '') === type;
 								}
 
 							// instance
-								return item.instanceType.replace(/ /g, '') === type;
+								return type === 'instance' || item.instanceType.replace(/ /g, '') === type;
 
 						break;
 
@@ -694,7 +868,29 @@
 
 				return false;
 
-			}
+			},
+			
+			/**
+			 *
+			 * @param	item	{Element}	A library Item instance
+			 * @param	rx		{RegExp}	A regular expression to match against the item's full linkageClassName
+			 * @returns			{Boolean}	True if matched, false if failed
+			 */
+			Package:function(item, rx)
+			{
+				return item.libraryItem && Selectors.item.filter.Package(item.libraryItem, rx);
+			},
+
+			/**
+			 *
+			 * @param	item	{Element}	A library Item instance
+			 * @param	rx		{RegExp}	A regular expression to match against the Class component of the item'slinkageClassName
+			 * @returns			{Boolean}	True if matched, false if failed
+			 */
+			Class:function(item, rx)
+			{
+				return item.libraryItem && Selectors.item.filter.Class(item.libraryItem, rx);
+			},
 
 		},
 
@@ -702,7 +898,7 @@
 		{
 			selected:function(items)
 			{
-				var selection = this.selection;
+				var selection = this.selection; // this refers to $dom
 				return items.filter(function(element) { return selection.indexOf(element) !== -1 } );
 			}
 		},
@@ -777,6 +973,26 @@
 					return Selectors.timeline.pseudo.audible(element.libraryItem.timeline);
 				}
 				return false;
+			},
+			
+			filtered:function(element)
+			{
+				return element.filters && element.filters.length > 0;
+			},
+			
+			tinted:function(element)
+			{
+				return element.colorMode && element.colorMode === 'tint';
+			},
+			
+			transparent:function(element)
+			{
+				return element.colorMode && element.colorMode === 'alpha';
+			},
+			
+			component:function(element)
+			{
+				return element.instanceType === 'compiled clip';
 			}
 		},
 
@@ -787,7 +1003,20 @@
 
 	}
 
-	Selectors.item  =
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██                       ██████              ██         
+//  ██  ██                         ██                ██         
+//  ██ █████ █████ ████████        ██   █████ █████ █████ █████ 
+//  ██  ██   ██ ██ ██ ██ ██        ██   ██ ██ ██     ██   ██    
+//  ██  ██   █████ ██ ██ ██        ██   █████ █████  ██   █████ 
+//  ██  ██   ██    ██ ██ ██        ██   ██       ██  ██      ██ 
+//  ██  ████ █████ ██ ██ ██        ██   █████ █████  ████ █████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Item Tests
+
+	Selectors.item =
 	{
 		register:function(pattern, callback)
 		{
@@ -861,8 +1090,9 @@
 			Class:function(item, rxClass)
 			{
 				if(item['linkageClassName'])
+				
 				{
-					return rxClass.test(item.linkageClassName);
+					return rxClass.test(item.linkageClassName.split('.').pop());
 				}
 				return false;
 			},
@@ -902,29 +1132,9 @@
 		find:
 		{
 			/**
-			 *
-			 * @param	items
-			 * @returns
-			 */
-			first:function(items)
-			{
-				return [items.shift()];
-			},
-
-			/**
-			 *
-			 * @param	items
-			 * @returns
-			 */
-			last:function(items)
-			{
-				return [items.pop()];
-			},
-
-			/**
-			 *
-			 * @param	items
-			 * @returns
+			 * Find the parent items of the suppleied items
+			 * @param	{Array}	items		An Array of Items
+			 * @returns	{Array}				An Array of Items
 			 */
 			parent:function(items)
 			{
@@ -960,17 +1170,16 @@
 			},
 
 			/**
-			 *
-			 * @param	items
-			 * @param	parent
-			 * @returns
+			 * Find the immediate children of supplied items
+			 * @param	{Item}	parents		An Array of folder parent items
+			 * @returns	{Array}				An Array of items
 			 */
 			children:function(parents)
 			{
 				var items = [];
 				for each(var parent in parents)
 				{
-					// skip non- folder items (as they won't have children)
+					// skip non-folder items (as they won't have children)
 						if(parent.itemType !== 'folder')
 						{
 							continue;
@@ -994,10 +1203,9 @@
 			},
 
 			/**
-			 *
-			 * @param	items
-			 * @param	parent
-			 * @returns
+			 * Finds all desendents of the supplied items
+			 * @param	{Item}	parents		An Array of folder parent items
+			 * @returns	{Array}				An Array of items
 			 */
 			descendants:function(parents)
 			{
@@ -1022,18 +1230,16 @@
 				}
 				return items;
 			},
-
+			
 			/**
-			 *
-			 * @param	item
-			 * @returns
+			 * Finds all desendents of the supplied items
+			 * @param	{Item}	parents		An Array of folder parent items
+			 * @returns	{Array}				An Array of items
 			 */
 			selected:function(items)
 			{
 				return this.getSelectedItems();
 			}
-
-			//TODO add even, odd, nth, etc
 
 		},
 
@@ -1130,13 +1336,26 @@
 			}
 
 		},
-
+		
 		custom:
 		{
 
 		}
 
 	}
+
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██████ ██                ██ ██                  ██████              ██         
+//    ██                     ██                       ██                ██         
+//    ██   ██ ████████ █████ ██ ██ █████ █████        ██   █████ █████ █████ █████ 
+//    ██   ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██        ██   ██ ██ ██     ██   ██    
+//    ██   ██ ██ ██ ██ █████ ██ ██ ██ ██ █████        ██   █████ █████  ██   █████ 
+//    ██   ██ ██ ██ ██ ██    ██ ██ ██ ██ ██           ██   ██       ██  ██      ██ 
+//    ██   ██ ██ ██ ██ █████ ██ ██ ██ ██ █████        ██   █████ █████  ████ █████ 
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Timeline Tests
 
 	Selectors.timeline =
 	{
@@ -1198,6 +1417,9 @@
 
 		}
 	}
+	
+	// --------------------------------------------------------------------------------------------------------------------
+	// Register class
+	
+		xjsfl.classes.register('Selectors', Selectors);
 
-
-	xjsfl.classes.register('Selectors', Selectors);

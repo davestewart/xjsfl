@@ -18,8 +18,8 @@
 	 *
 	 * @param	{String}				selector	A selector expression
 	 * @param	{Array}					context		An optional Array of Elements
-	 * @param	{Context}				context		An optional Context instance
 	 * @param	{ElementCollection}		context		An optional ElementCollection instance
+	 * @param	{Context}				context		An optional Context instance
 	 * @returns	{ElementCollection}					An Element Collection
 	 */
 	$ = function(expression, context, debug)
@@ -84,17 +84,24 @@
 
 			if(dom)
 			{
-				// grab elements
+				// grab all elements from all layers at current time
 					if( ! elements)
 					{
 						var elements = [];
 						for each(var layer in context.timeline.layers)
 						{
-							context.setLayer(layer).setFrame(true)
-							elements = elements.concat(context.frame.elements);
+							if(layer.layerType == 'folder')
+							{
+								continue;
+							}
+							if( ! layer.locked )
+							{
+								context.setLayer(layer).setFrame(true)
+								elements = elements.concat(context.frame.elements);
+							}
 						}
 					}
-
+					
 				// filter items
 					if(typeof expression === 'string')
 					{
