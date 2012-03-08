@@ -227,6 +227,11 @@
 
 			// rename elements
 
+				// variables
+					var name	= '';
+					var num		= 0;
+					var pad		= 0;
+
 				// function
 					function parseNames(element)
 					{
@@ -246,10 +251,6 @@
 					}
 
 				// generate data for new names
-					var name	= '';
-					var num		= 0;
-					var pad		= 0;
-
 					this.elements.forEach(parseNames);
 					name	= name || 'Item';
 					num		= num == 0 ? 1 : num + 1;
@@ -388,6 +389,9 @@
 		 */
 		rename:function (baseName, padding, startIndex, separator)
 		{
+			// variables
+				var callback;
+				
 			// function supplied as naseName argument
 				if(typeof baseName === 'function')
 				{
@@ -625,14 +629,14 @@
 					if(typeof type === 'number')
 					{
 						// variables
-							var x, y, element, offset;
-							gutter	= type || 0;
+							var i, x, y, element, offset;
+							var gutter = type || 0;
 
 						// reorder
 							this.orderBy(direction == 'horizontal' ? 'left' : 'top');
 
 						// align
-							for(var i = 0; i < this.elements.length; i++)
+							for(i = 0; i < this.elements.length; i++)
 							{
 								// element
 									element	= this.elements[i];
@@ -811,6 +815,7 @@
 				var element	= this.elements[0];
 				var x		= element.x;
 				var y		= element.y;
+				var px, py;
 
 				for(var i = 0; i < this.elements.length; i++)
 				{
