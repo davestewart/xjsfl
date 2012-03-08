@@ -321,7 +321,7 @@
 													var root	= URI.getFolder(source);
 
 												// grab root folder by comparing against registered URIs
-													var folders	= xjsfl.settings.folders.all;
+													var folders	= xjsfl.settings.folders.get();
 													for each(var folder in folders)
 													{
 														if(source.indexOf(folder) === 0)

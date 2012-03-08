@@ -1,20 +1,21 @@
 <manifest>
 	<module>
-		<info>
+		<meta>
 			<name>Snippets</name>
 			<description>The Snippets panel makes it easy to manage and launch your day-to-day scripts, categorised by folder, and customised with icons and tooltips.</description>
 			<version>1.0</version>
-			<url>www.xjsfl.com/feature/snippets-panel</url>
-		</info>
-		<jsfl>
+			<url>http://www.xjsfl.com/feature/snippets-panel</url>
+			<author>
+				<name>Dave Stewart</name>
+				<company>xJSFL</company>
+				<email>dave@xjsfl.com</email>
+			</author>
+		</meta>
+		<data>
 			<namespace>Snippets</namespace>
 			<panel>xJSFL Snippets</panel>
 			<preload>false</preload>
-		</jsfl>
-		<author>
-			<name>Dave Stewart</name>
-			<company>xJSFL</company>
-			<email>dave@xjsfl.com</email>
-		</author>
+			<uri token="snippets" />
+		</data>
 	</module>
 </manifest>

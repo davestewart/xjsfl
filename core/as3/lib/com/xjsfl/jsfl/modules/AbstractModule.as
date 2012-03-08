@@ -25,18 +25,21 @@
 		
 			// static module store, prevents modules being instantiated twice
 				public static var modules		:Array			= [];
+				
+			// current enabled state of xJSFL
+				public var enabled				:Boolean;
 		
+			// logging	
+				public var allowLogging			:Boolean;					// Boolean to allow logging, defaults to true
+				
+			// xjsfl properties	
+				private var _xjsflURI			:String;					// JSFL URI to xJSFL, i.e. "file:///C|/scripting/flash/xJSFL/"
+					
 			// module properties
 				private var _name				:String;					// Name of the module, i.e. "Keyframer" (will use the manifest at runtime, otherwise, the namespace)
 				private var _namespace			:String						// JSFL namespace of the module, i.e. "xjsfl.modules.tools.keyframer"
 				private var _moduleURI			:String;					// JSFL URI to the module, i.e. "file:///C|/scripting/flash/xJSFL/modules/Tools/Keyframer/"
 					
-			// xjsfl properties	
-				private var _xjsflURI			:String;					// JSFL URI to xJSFL, i.e. "file:///C|/scripting/flash/xJSFL/"
-					
-			// logging	
-				public var allowLogging			:Boolean;					// Boolean to allow logging, defaults to true
-				
 			// root
 				protected var _root				:DisplayObjectContainer;	// A reference to the swf root
 				protected var _showContextMenu	:Boolean;
@@ -101,23 +104,30 @@
 							this._namespace		= _namespace;
 							_moduleURI			= moduleURI.replace(/\/+$/, '/');
 							_xjsflURI			= xjsflURI.replace(/\/+$/, '/');
+						
+						// test that xJSFL is installed
+							enabled				= JSFL.isPanel ? MMExecute('xjsfl && xjsfl.modules') : true;
 							
-						// Grab correct data when running in a panel
-							_xjsflURI			= JSFL.isPanel ? MMExecute('xjsfl.uri') : _xjsflURI;
-							_moduleURI			= JSFL.isPanel ? MMExecute('xjsfl.modules.getManifest("' +_namespace+ '").jsfl.uri') : _moduleURI;
-							_name				= JSFL.isPanel ? MMExecute('xjsfl.modules.getManifest("' +_namespace+ '").info.name') : _namespace;
-							
-						// add I/O
-							io					= new JSFLIO(_namespace);
-							
-						// properties
-							this.allowLogging	= true;
-							
-						// register module so it can't be setup twice
-							AbstractModule.modules[_namespace] = this;
-							
-						// set up externally-callable methods
-							ExternalInterface.addCallback('reload', reload);
+						// continue if installed
+							if(enabled)
+							{
+								// Grab correct data when running in a panel
+									_xjsflURI			= JSFL.isPanel ? MMExecute('xjsfl.uri') : _xjsflURI;
+									_moduleURI			= JSFL.isPanel ? MMExecute('xjsfl && xjsfl.modules ? xjsfl.modules.getManifest("' +_namespace+ '").data.uri : null') : _moduleURI;
+									_name				= JSFL.isPanel ? MMExecute('xjsfl && xjsfl.modules ? xjsfl.modules.getManifest("' +_namespace+ '").meta.name : null') : _namespace;
+										                
+								// add I/O	            
+									io					= new JSFLIO(_namespace);
+										                
+								// properties	        
+									this.allowLogging	= true;
+									
+								// register module so it can't be setup twice
+									AbstractModule.modules[_namespace] = this;
+									
+								// set up externally-callable methods
+									ExternalInterface.addCallback('reload', reload);
+							}
 							
 						// initialize
 							initialize();
@@ -135,9 +145,16 @@
 			 */
 			protected function initialize():void 
 			{
-				log('Initializing', true);
-				MMExecute('xjsfl.init(this, "' + _name + '")');
-				MMExecute('xjsfl.modules.load("' + _namespace + '")');
+				if(enabled)
+				{
+					log('Initializing', true);
+					MMExecute('xjsfl.init(this, "' + _name + '")');
+					MMExecute('xjsfl.modules.load("' + _namespace + '")');
+				}
+				else
+				{
+					//TDOD set up public methods so that we can activate or deactive the panel from JSFL
+				}
 			}
 			
 			

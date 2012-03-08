@@ -28,7 +28,7 @@
 				
 		
 		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Instatiation
+		// { region: Instantiation
 		
 			public function SnippetsModule()
 			{
@@ -66,20 +66,31 @@
 					loadSet(String(set.@name))
 			}
 			
-
 			
 		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Public methods
+		// { region: Set management
 		
 			public function loadSet(name:String):void 
 			{
 				currentSet		= name;
-				var uri:String	= this.uri + 'config/data/' + name + '.xml';
+				var uri:String	= this.uri + 'config/snippets/' + name + '.xml';
 				Loader.create(this, {data:uri}, null, onDataLoaded);
 			}
 	
+			public function manageSets():void 
+			{
+				call('manageSets');
+			}
+
+			public function rebuildSet():* 
+			{
+				call('rebuildSet');
+				loadSet(currentSet);
+			}
+			
+			
 		// ---------------------------------------------------------------------------------------------------------------------
-		// { region: Module methods
+		// { region: File management
 		
 			/**
 			 * 
@@ -131,7 +142,7 @@
 				var result:Boolean = call('deleteFile', path);
 				if (result)
 				{
-					reloadData();
+					rebuildSet();
 				}
 			}
 			
@@ -161,9 +172,9 @@
 			 * @param	path
 			 * @return
 			 */
-			public function makeFolder(path:String):*
+			public function createFolder(path:String):*
 			{
-				return call('makeFolder', path);
+				return call('createFolder', path);
 			}
 			
 			/**
@@ -176,22 +187,11 @@
 			 * @param	author
 			 * @return
 			 */
-			public function makeFile(path:String, contents:String, desc:String, icon:String, version:String, author:String):*
+			public function createFile(path:String, contents:String, desc:String, icon:String, version:String, author:String):*
 			{
-				return call('makeFile', path, contents, desc, icon, version, author);
+				return call('createFile', path, contents, desc, icon, version, author);
 			}
 			
-			public function reloadData():* 
-			{
-				call('rebuild');
-				loadSet(currentSet);
-			}
-			
-			public function manageSets():void 
-			{
-				call('manageSets');
-			}
-
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Event handlers
 		

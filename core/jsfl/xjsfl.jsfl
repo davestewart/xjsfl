@@ -99,16 +99,8 @@
 		 */
 		folders:
 		{
-			// properties
-				xjsfl:		xjsfl.uri,
-				core:		xjsfl.uri + 'core/',
-				modules:	xjsfl.uri + 'modules/',
-				user:		xjsfl.uri + 'user/',
-				flash:		fl.configURI,
-				swf:		fl.configURI + 'WindowSWF/',
-
-				/** @type {Array}	An Array of all registered placeholder URIs in reverse-order (for searching) */
-				get all()
+			// methods
+				get:function()
 				{
 					var uris = [];
 					for(var name in this)
@@ -121,14 +113,21 @@
 					return uris.sort().reverse();
 				},
 
-			// methods
-				add:function(name, uri)
+				set:function(name, uri)
 				{
-					if( ! /^(all|add)$/.test(this.name) )
+					if( ! /^(set|get)$/.test(this.name) )
 					{
 						this[name] = URI.toURI(uri);
 					}
 				},
+
+			// properties
+				xjsfl:		xjsfl.uri,
+				core:		xjsfl.uri + 'core/',
+				modules:	xjsfl.uri + 'modules/',
+				user:		xjsfl.uri + 'user/',
+				flash:		fl.configURI,
+				swf:		fl.configURI + 'WindowSWF/',
 
 		},
 
@@ -196,7 +195,7 @@
 
 					// get all searchable paths
 						var paths = Utils.getSearchableURIs(uri, 'folders', true);
-						xjsfl.output.log('Added ' +paths.length+ ' search paths for "' +path+ '"');
+						xjsfl.output.log('added ' +paths.length+ ' search paths for "' +path+ '"');
 						if(paths.length > 50)
 						{
 							xjsfl.output.log('WARNING! Adding this many search paths can slow down file searching. Consider using manifest.xml files to exlude sub folders');
@@ -1259,38 +1258,52 @@
 						folderNameOrURI = folderNameOrURI.replace(/\/*$/, '/');
 
 					// if path is not a URI, it will probably be a path fragment, so default to the modules folder
-						if( ! URI.isURI(folderNameOrURI))
-						{
-							var uri	 = xjsfl.settings.folders.modules + folderNameOrURI;
-						}
-						else
-						{
-							var uri = folderNameOrURI;
-						}
+						var uri = URI.isURI(folderNameOrURI) ? folderNameOrURI : xjsfl.settings.folders.modules + folderNameOrURI;
 
 					// attempt to load the module's manifest
 						var manifest = xjsfl.file.load(uri + 'manifest.xml');
 						if(manifest)
 						{
 							manifest = manifest.module;
+							function log(message)
+							{
+								xjsfl.output.log('WARNING! ' + message + ' in "' +URI.asPath(uri)+ 'manifest.xml"');
+							}	
 						}
+						
+					// if no module manifest, assume the module is code-only, and return
 						else
 						{
 							return this;
 						}
 
-					// debug
-						xjsfl.output.trace('registering module "' +String(manifest.info.name)+ '"');
+					// feedback
+						var name = String(manifest.meta.name);
+						if( ! name )
+						{
+							log('Manifest <meta.name> not declared');
+							return false;
+						}
+						xjsfl.output.trace('registering module "' +name+ '"');
 
 					// update manifest with the *actual* URI, and store on main xjsfl object
-						manifest.jsfl.uri		= uri;
-						var namespace			= String(manifest.jsfl.namespace);
+						manifest.data.uri		= uri;
+						var namespace			= String(manifest.data.namespace);
+						if( ! namespace )
+						{
+							log('Manifest <data.namespace> not declared');
+							return false;
+						}
 						manifests[namespace]	= manifest;
 
-					// add the URI to the xjsfl.settings.uris.modules and xjsfl.settings.folders objects
-						xjsfl.settings.uris.add(uri, 'module');
-						xjsfl.settings.folders[namespace] = uri;
+					// add the URI to xjsfl.settings.folders
+						var token			= String(manifest.data.uri.@token) || namespace;
+						var token			= String(namespace);
+						xjsfl.settings.folders[token] = uri;
 
+					// add the URI to xjsfl.settings.uris.modules
+						xjsfl.settings.uris.add(uri, 'module');
+						
 					// copy any flash assets
 						var assetsURI = uri + 'flash/';
 						if(FLfile.exists(assetsURI))
@@ -1331,9 +1344,9 @@
 
 
 					// preload any modules which asked to load immediately
-						if(String(manifest.jsfl.preload) == 'true')
+						if(String(manifest.data.preload) == 'true')
 						{
-							this.load(manifest.jsfl.namespace);
+							this.load(manifest.data.namespace);
 						}
 
 					// return
@@ -1349,7 +1362,7 @@
 					var manifest = manifests[namespace];
 					if(manifest)
 					{
-						xjsfl.file.load(String(manifest.jsfl.uri) + 'jsfl/bootstrap.jsfl');
+						xjsfl.file.load(String(manifest.data.uri) + 'jsfl/bootstrap.jsfl');
 					}
 					else
 					{

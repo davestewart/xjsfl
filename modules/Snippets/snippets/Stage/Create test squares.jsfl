@@ -4,6 +4,9 @@
  */
 function makeSquares(num, cols, gutter, style, setStage, clearStage)
 {
+	// benchmark
+		var timer		= new Timer('Create squares').start();
+	
 	// variables
 		num				= num || 9;
 		cols			= cols || 3;
@@ -93,10 +96,13 @@ function makeSquares(num, cols, gutter, style, setStage, clearStage)
 
 	// debug
 		fl.enableImmediateUpdates(true);
+		
+	// benchmark
+		timer.stop(true);
 
 }
 xjsfl.init(this);
 if(Get.dom())
 {
-	XUL.create('title:Create squares,numeric:Total=[10,0,100],numeric:Columns=[5,1,100],numeric:Gutter=[5,0,100],dropdown:Style={Transparent Red:red,Grey:grey,Black:black},checkbox:Set stage size=true,checkbox:Clear stage=true', makeSquares);
+	XUL.create('title:Create squares,numeric:Total=[10,0,100],numeric:Columns=[10,1,100],numeric:Gutter=[5,0,100],dropdown:Style={Transparent Red:red,Grey:grey,Black:black},checkbox:Set stage size=true,checkbox:Clear stage=true', makeSquares);
 }

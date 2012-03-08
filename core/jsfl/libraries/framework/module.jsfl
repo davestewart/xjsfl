@@ -39,16 +39,16 @@
 				this.namespace	= namespace;
 
 			// name
-				this.name		= String(this.manifest.info.name);
+				this.name		= String(this.manifest.meta.name);
 
 			// uri
-				this.uri		= String(this.manifest.jsfl.uri);
+				this.uri		= String(this.manifest.data.uri);
 
 			// add module path to xjsfl list of search paths
 				xjsfl.settings.uris.add(this.uri, 'module');
 
 			// panel
-				var panel		= Utils.getPanel(String(this.manifest.jsfl.panel));
+				var panel		= Utils.getPanel(String(this.manifest.data.panel));
 				if(panel)
 				{
 					this.panel = panel;
@@ -98,14 +98,6 @@
 				uri:		'',
 
 				/**
-				 * @type {SWFPanel} A reference to the panel, if it exists
-				 */
-				panel:		null,
-
-			// ----------------------------------------------------------------------------------------
-			// accessors
-
-				/**
 				 * @type {String} The shortened path to the module's folder
 				 */
 				get path()
@@ -113,6 +105,11 @@
 					return URI.asPath(this.uri, true);
 				},
 
+				/**
+				 * @type {SWFPanel} A reference to the panel, if it exists
+				 */
+				panel:		null,
+				
 
 			// ----------------------------------------------------------------------------------------
 			// methods

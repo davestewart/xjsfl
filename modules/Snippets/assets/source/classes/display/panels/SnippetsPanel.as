@@ -226,7 +226,7 @@
 					break;
 					
 					case TreeEvent.RELOAD:
-						module.reloadData();
+						module.rebuildSet();
 					break;
 				}
 			}

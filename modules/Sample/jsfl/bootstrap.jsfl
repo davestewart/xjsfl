@@ -1,2 +1,4 @@
-xjsfl.file.load($dir + 'libraries/sample lib.jsfl');
-xjsfl.file.load($dir + 'sample.jsfl');
+xjsfl.init(this);
+
+load('libraries/sample lib.jsfl');
+load('sample.jsfl');

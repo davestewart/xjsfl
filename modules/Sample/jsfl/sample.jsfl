@@ -6,18 +6,18 @@ var Sample =
 
 		init:function()
 		{
+			// load the default config object
+				this.config		= this.loadConfig();
+				
 			// set a value, using a library function
 				this.date		= getDate();
-
-			// load the default config object
-				this.settings	= this.loadConfig();
 		},
 
 	// ------------------------------------------------------------------------------------------------
 	// properties
 
-		// settings config
-			settings:null,
+		// config
+			config:null,
 
 		// arbitrary value
 			date:null,

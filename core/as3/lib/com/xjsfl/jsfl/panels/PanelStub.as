@@ -29,8 +29,8 @@ package com.xjsfl.jsfl.panels
 					var manifest:XML =  JSFL.call('xjsfl.modules.getManifest', [_namespace]);
 					if (manifest)
 					{
-						var moduleURI	:String		= manifest.jsfl.uri;
-						var panel		:String		= manifest.jsfl.panel;
+						var moduleURI	:String		= manifest.data.uri;
+						var panel		:String		= manifest.data.panel;
 						uri							= moduleURI + 'ui/' + panel + '.swf';
 					}
 				}

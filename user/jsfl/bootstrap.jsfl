@@ -16,7 +16,7 @@
 	try
 	{
 		// register any placeholder paths
-			//xjsfl.settings.folders.add('temp', 'c:/temp/')
+			//xjsfl.settings.folders.set('temp', 'c:/temp/')
 
 		// load user libraries
 			xjsfl.output.log('loading user libraries...', true);
