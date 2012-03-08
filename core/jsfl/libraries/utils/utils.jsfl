@@ -1210,15 +1210,26 @@
 						var selector	= '';
 						var nesting		= 0;
 						
+					// utility function
+						function addSelector(selector)
+						{
+							selector = selector.trim();
+							if(selector !== '')
+							{
+								selectors.push(selector);
+							}
+						}
+						
 					// parse string
+						expression = String(expression);
 						for (var i = 0; i < expression.length; i++)
 						{
-							var char = expression[i];
+							var char = expression.charAt(i);
 							if(char === ',')
 							{
 								if(nesting == 0)
 								{
-									selectors.push(selector.trim());
+									addSelector(selector);
 									selector = '';
 								}
 								else
@@ -1241,7 +1252,7 @@
 						}
 						
 					// push last remaining selector
-						selectors.push(selector.trim());
+						addSelector(selector);
 						
 					// return
 						return selectors;	
