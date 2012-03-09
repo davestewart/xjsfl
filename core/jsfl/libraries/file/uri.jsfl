@@ -665,50 +665,85 @@
 
 			/**
 			 * Resolves a path from the Source URI to a target URI, returning a relative path-formatted path
-			 * @param	{String}	srcURI		The source path or URI
-			 * @param	{String}	trgURI		The target path or URI
+			 * @param	{String}	src			The source path or URI
+			 * @param	{String}	trg			The target path or URI
 			 * @returns	{String}				The new relative path between the two, or the absolute URI if there's no relationship
 			 */
-			URI.pathTo = function(srcURI, trgURI)
+			URI.pathTo = function(src, trg)
 			{
-				// variables
-					var trgPath;
-					var srcPart, trgPart;
-					var srcParts	= URI.asURI(srcURI).replace('file:///', '').split('/');
-					var trgParts	= URI.asURI(trgURI).replace('file:///', '').split('/');
-
-				// loop over folders and remove common ancestors
-					while(srcParts.length > 1 && srcParts[0] == trgParts[0])
+				// throw error if src and trg are not both the same format
+					if(URI.isURI(src) && ! URI.isURI(trg))
 					{
-						srcPart 	= srcParts.shift();
-						trgPart 	= trgParts.shift();
+						throw new URIError('URIError in URI.pathTo(): both src and trg parameters must be either paths or URIs');
 					}
 
-				// determine relationship between srcURI and trgURI
+				// variables
+					var trgPath;
+					var branch = URI.getBranch(src, trg);
 
-					// no relationship, so just return the trgURI
-						if(srcPart === undefined)
-						{
-							trgPath = trgURI;
-						}
-					// src is same level, so path will be 'trg.txt'
-						else if(srcParts.length == 1 && trgParts.length == 1)
-						{
-							trgPath = trgParts.pop();
-						}
-					// src is below, so path will be '../../trg.txt'
-						else if(srcParts.length > 1)
-						{
-							trgPath = '../'.repeat(srcParts.length - 1) + trgParts.join('/');
-						}
-					// src is above, so path will be 'path/to/trg.txt'
-						else if(srcParts.length < trgParts.length)
-						{
-							trgPath = trgParts.join('/');
-						}
+				// no relationship, so just return the trgURI
+					if(branch === '')
+					{
+						trgPath = trg;
+					}
+					
+				// otherwise, determine relationship between srcURI and trgURI
+					else
+					{
+						// grab the remaining segments
+							var srcParts	= src.substr(branch.length).split('/');
+							var trgParts	= trg.substr(branch.length).split('/');
+							
+						// src is same level, so path will be 'trg.txt'
+							if(srcParts.length == 1 && trgParts.length == 1)
+							{
+								trgPath = trgParts.pop();
+							}
+						// src is below, so path will be '../../trg.txt'
+							else if(srcParts.length > 1)
+							{
+								trgPath = '../'.repeat(srcParts.length - 1) + trgParts.join('/');
+							}
+						// src is above, so path will be 'path/to/trg.txt'
+							else if(srcParts.length < trgParts.length)
+							{
+								trgPath = trgParts.join('/');
+							}
+						
+					}
 
 				// return
 					return URI.asPath(trgPath);
+			}
+			
+			/**
+			 * Resolves the common (branch) path between 2 paths or URIs
+			 * @param	{String}	src		A source path or URI
+			 * @param	{String}	trg		A target path or URI
+			 * @returns	{String}			The common ancestor path or URI
+			 */
+			URI.getBranch = function(src, trg)
+			{
+				// throw error if src and trg are not both the same format
+					if(URI.isURI(src) && ! URI.isURI(trg))
+					{
+						throw new URIError('URIError in URI.common(): both src and trg parameters must be either paths or URIs');
+					}
+				
+				// variables
+					var branch		= '';
+					var srcParts	= src.split('/');
+					var trgParts	= trg.split('/');
+
+				// loop over folders and grab common ancestors
+					while(srcParts.length > 1 && srcParts[0] == trgParts[0])
+					{
+						srcParts.shift();
+						branch += trgParts.shift() + '/';
+					}
+					
+				// return
+					return branch;
 			}
 
 			/**
@@ -736,25 +771,31 @@
 			/**
 			 * Re-targets a specified portion of a URI (or URIs) to point at a new folder
 			 * @param	{String}	src			The source path or URI
-			 * @param	{Array}		src			An Array of source paths or URI
-			 * @param	{String}	base		The name or partial name of a folder in the src path or URI you want to branch from
 			 * @param	{String}	trg			A folder you want to retarget to, from the source base and downwards
+			 * @param	{String}	base		The name or partial name of a folder in the src path or URI you want to branch from
 			 * @returns	{String}				The new path or URI
 			 * @returns	{Array}					An Array of new paths or URIs
 			 */
-			URI.reTarget = function(src, base, trg)
+			URI.reTarget = function(src, trg, base)
 			{
-				//TODO - relook at this function - is it too confusing!?
-				// perhaps have src, trg, base
-				src = String(src);
-				if(base.indexOf('..') !== -1)
-				{
-					var folder = URI.getFolder(src);
-					base = URI.tidy(folder + base);
-				}
-				base	= URI.findFolder(src, base);
-				trg		= URI.getFolder(trg);
-				return trg + src.substr(base.length);
+				// convert everything to strings
+					src		= String(src);
+					trg		= String(trg);
+					base	= String(base);
+					
+				// if base is relative, 
+					if(base.indexOf('..') !== -1)
+					{
+						var folder = URI.getFolder(src);
+						base = URI.tidy(folder + base);
+					}
+					
+				// work out the 
+					base	= URI.findFolder(src, base);
+					trg		= URI.getFolder(trg);
+					
+				// return
+					return trg + src.substr(base.length);
 			}
 
 		// ---------------------------------------------------------------------------------------------------------------
