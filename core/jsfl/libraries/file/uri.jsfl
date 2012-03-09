@@ -622,16 +622,6 @@
 		// /* Extraction functions */
 
 			/**
-			 * Returns the current folder path of the item referenced by the path or URI
-			 * @param	{String}	pathOrURI	A valid path or URI
-			 * @returns	{String}				The folder of the path or URI
-			 */
-			URI.getFolder = function(pathOrURI)
-			{
-				return String(pathOrURI).replace(/([^\/\\]+)$/, '');
-			}
-
-			/**
 			 * Returns the file or folder name of the item referenced by the path or URI (note names are unescaped)
 			 * @param	{String}	pathOrURI		A vald path or URI
 			 * @param	{Boolean}	removeExtension	An optional Boolean to remove the extension
@@ -641,6 +631,16 @@
 			{
 				var name = (String(pathOrURI).replace(/\/$/, '')).split(/[\/\\]/).pop().replace(/%20/, ' ');
 				return removeExtension ? name.replace(/\.\w+$/, '') : name;
+			}
+
+			/**
+			 * Returns the current folder path of the item referenced by the path or URI
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @returns	{String}				The folder of the path or URI
+			 */
+			URI.getFolder = function(pathOrURI)
+			{
+				return String(pathOrURI).replace(/([^\/\\]+)$/, '');
 			}
 
 			/**
@@ -661,6 +661,36 @@
 				// remove final segment
 					var rx		= /[^\/\\]+[\/\\]?$/;
 					return drive + path.replace(rx, '');
+			}
+
+			/**
+			 * Resolves the common (branch) path between 2 paths or URIs
+			 * @param	{String}	src		A source path or URI
+			 * @param	{String}	trg		A target path or URI
+			 * @returns	{String}			The common ancestor path or URI
+			 */
+			URI.getBranch = function(src, trg)
+			{
+				// throw error if src and trg are not both the same format
+					if(URI.isURI(src) && ! URI.isURI(trg))
+					{
+						throw new URIError('URIError in URI.common(): both src and trg parameters must be either paths or URIs');
+					}
+				
+				// variables
+					var branch		= '';
+					var srcParts	= src.split('/');
+					var trgParts	= trg.split('/');
+
+				// loop over folders and grab common ancestors
+					while(srcParts.length > 1 && srcParts[0] == trgParts[0])
+					{
+						srcParts.shift();
+						branch += trgParts.shift() + '/';
+					}
+					
+				// return
+					return branch;
 			}
 
 			/**
@@ -716,36 +746,6 @@
 					return URI.asPath(trgPath);
 			}
 			
-			/**
-			 * Resolves the common (branch) path between 2 paths or URIs
-			 * @param	{String}	src		A source path or URI
-			 * @param	{String}	trg		A target path or URI
-			 * @returns	{String}			The common ancestor path or URI
-			 */
-			URI.getBranch = function(src, trg)
-			{
-				// throw error if src and trg are not both the same format
-					if(URI.isURI(src) && ! URI.isURI(trg))
-					{
-						throw new URIError('URIError in URI.common(): both src and trg parameters must be either paths or URIs');
-					}
-				
-				// variables
-					var branch		= '';
-					var srcParts	= src.split('/');
-					var trgParts	= trg.split('/');
-
-				// loop over folders and grab common ancestors
-					while(srcParts.length > 1 && srcParts[0] == trgParts[0])
-					{
-						srcParts.shift();
-						branch += trgParts.shift() + '/';
-					}
-					
-				// return
-					return branch;
-			}
-
 			/**
 			 * Returns the path or URI truncated to the supplied folder name or path
 			 * @param	{String}	pathOrURI	A path or URI string
