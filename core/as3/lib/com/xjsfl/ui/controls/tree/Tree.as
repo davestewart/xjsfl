@@ -412,7 +412,7 @@ package com.xjsfl.ui.controls.tree
 								var attributes	:XMLList	= node.attributes();
 								for each(var attribute:XML in attributes)
 								{
-									data[attribute.name().toString()] = attribute;
+									data[String(attribute.name())] = attribute;
 								}
 								
 							// append

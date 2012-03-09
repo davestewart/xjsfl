@@ -39,7 +39,7 @@
 			public function TreeFolderItem(data:Object)
 			{
 				// super
-					_type = TreeItem.FOLDER;
+					_type		= TreeItem.FOLDER;
 					super(data);
 					
 				// create
@@ -60,7 +60,7 @@
 				// icon
 					icon.y				= 1;
 					folderIcon			= icon.addChild(new TreeFolderItemIcon()) as TreeFolderItemIcon;
-					updateFolderIcon();
+					updateIcon();
 					
 				// interaction
 					button.addEventListener(MouseEvent.CLICK, onButtonClick);
@@ -74,30 +74,53 @@
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Public Methods
 		
-		
+			public function open():void
+			{
+				if (!_filtered && ! state)
+				{
+					toggle();
+				}
+			}
+			
+			public function close():void 
+			{
+				if (!_filtered && state)
+				{
+					toggle();
+				}
+			}
+			
+			public function toggle():void 
+			{
+				if (!_filtered)
+				{
+					state = ! state;
+					dispatchEvent(new TreeItemEvent(TreeItemEvent.FOLDER_TOGGLE));
+				}
+			}
 		
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Accessors
 
 			override public function set data(data:Object):void
 			{
-				_length	= data.length || 0;
-				_state	= data.state || true;
-				super.data = data;
+				_length			= data.length || 0;
+				super.data		= data;
+				state			= data.state == 'true';
 			}
 		
 			public function get state():Boolean { return _state; }
-			public function set state(state:Boolean):void
+			public function set state(value:Boolean):void
 			{
-				_state = state;
-				updateFolderIcon();
+				_state = value;
+				updateIcon();
 			}
 			
 			public function get length():int { return _length; }
 			public function set length(value:int):void
 			{
 				_length = value;
-				updateFolderIcon();
+				updateIcon();
 			}
 			
 			override public function set filtered(value:Boolean):void
@@ -109,15 +132,19 @@
 				}
 			}
 			
-			protected function updateFolderIcon():void
+			protected function updateIcon():void
 			{
-				if (length == 0)
+				if (button)
 				{
-					folderIcon.gotoAndStop(1);
-				}
-				else
-				{
-					folderIcon.gotoAndStop(state ? 3 : 2);
+					button.rotation = state ? 0 : -90;
+					if (length == 0)
+					{
+						folderIcon.gotoAndStop(1);
+					}
+					else
+					{
+						folderIcon.gotoAndStop(_state ? 3 : 2);
+					}
 				}
 			}
 			
@@ -132,18 +159,14 @@
 		
 			override protected function onDoubleClick(event:MouseEvent):void
 			{
-				onButtonClick(event);
+				event.stopImmediatePropagation();
+				toggle();
 			}
 		
 			protected function onButtonClick(event:MouseEvent):void
 			{
-				if (!_filtered)
-				{
-					state = ! state;
-					button.rotation = state ? 0 : -90;
-					event.stopImmediatePropagation();
-					dispatchEvent(new TreeItemEvent(TreeItemEvent.FOLDER_TOGGLE));
-				}
+				event.stopImmediatePropagation();
+				toggle()
 			}
 
 		// ---------------------------------------------------------------------------------------------------------------------
