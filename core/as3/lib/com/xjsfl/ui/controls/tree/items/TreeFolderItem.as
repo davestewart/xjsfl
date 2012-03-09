@@ -29,7 +29,7 @@
 				protected var folderIcon	:TreeFolderItemIcon;
 				
 			// protected
-				protected var _state		:Boolean;
+				protected var _isOpen		:Boolean;
 				protected var _length		:int;
 				
 						
@@ -76,7 +76,7 @@
 		
 			public function open():void
 			{
-				if (!_filtered && ! state)
+				if (!_filtered && ! isOpen)
 				{
 					toggle();
 				}
@@ -84,7 +84,7 @@
 			
 			public function close():void 
 			{
-				if (!_filtered && state)
+				if (!_filtered && isOpen)
 				{
 					toggle();
 				}
@@ -94,7 +94,7 @@
 			{
 				if (!_filtered)
 				{
-					state = ! state;
+					isOpen = ! isOpen;
 					dispatchEvent(new TreeItemEvent(TreeItemEvent.FOLDER_TOGGLE));
 				}
 			}
@@ -104,15 +104,15 @@
 
 			override public function set data(data:Object):void
 			{
-				_length			= data.length || 0;
 				super.data		= data;
-				state			= data.state == 'true';
+				isOpen			=  ! data.closed;
+				_length			= data.length || 0;
 			}
 		
-			public function get state():Boolean { return _state; }
-			public function set state(value:Boolean):void
+			public function get isOpen():Boolean { return _isOpen; }
+			public function set isOpen(value:Boolean):void
 			{
-				_state = value;
+				_isOpen = value;
 				updateIcon();
 			}
 			
@@ -136,14 +136,14 @@
 			{
 				if (button)
 				{
-					button.rotation = state ? 0 : -90;
+					button.rotation = isOpen ? 0 : -90;
 					if (length == 0)
 					{
 						folderIcon.gotoAndStop(1);
 					}
 					else
 					{
-						folderIcon.gotoAndStop(_state ? 3 : 2);
+						folderIcon.gotoAndStop(_isOpen ? 3 : 2);
 					}
 				}
 			}

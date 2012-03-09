@@ -2,6 +2,7 @@
 {
 	import com.xjsfl.ui.controls.tooltip.ITooltippable;
 	import com.xjsfl.ui.controls.tooltip.Tooltip;
+	import com.xjsfl.utils.StringUtils;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -67,7 +68,7 @@
 				// super
 					super();
 					
-				// data
+				// data (the data setter sets all properties)
 					this.data	= data;
 					
 				// elements
@@ -85,7 +86,6 @@
 					addEventListener(MouseEvent.CLICK, onClick);
 					addEventListener(MouseEvent.MOUSE_OVER, onRollOver);
 					addEventListener(MouseEvent.MOUSE_OUT, onRollOut);
-						
 			}
 			
 			override protected function initialize():void
@@ -164,9 +164,7 @@
 						_label = value;
 						
 					// update path
-						_path = _path.replace(/([^\/]+?)(\/?)(.jsfl)?$/i, _label + "$2$3");
-						/*
-						*/
+						_path = _path.replace(/(.*?)([^\/]+)(\/?)$/g, '$1' +value+ '$3')
 						
 					// update sortPath
 						updateSortPath();
@@ -178,12 +176,20 @@
 				{
 					// data
 						_data	= data;
-
-					// properties
-						_level	= parseInt(data.level) || 0;
-						_path	= data.path || '';
-						label	= data.label || '';
 						
+					// properties
+						_path	= data.path || '';
+						_label	= _path.replace(/\/$/, '').split('/').pop();
+						
+					// level
+						_level	= data.path.split('/').length - 1;
+						if (this is TreeFolderItem)
+						{
+							_level --;
+						}
+						
+					// sort path
+						updateSortPath()
 				}
 				
 			// interaction
@@ -269,7 +275,7 @@
 				
 				public function get tooltip():String
 				{
-					return data.desc;
+					return data.tooltip;
 				}
 				
 		// ---------------------------------------------------------------------------------------------------------------------
@@ -281,7 +287,7 @@
 			 */
 			protected function checkLabel():Boolean
 			{
-				var state:Boolean =  tf.text.replace(/(^\s+|\s+$)/g, '').length > 0 && tf.text.match(/[\/\\:*?"<>|]/ig) != null;
+				var state:Boolean =  StringUtils.trim(tf.text).length > 0 && tf.text.match(/[\/\\:*?"<>|]/ig) != null;
 				return state;
 			}
 		
@@ -398,14 +404,11 @@
 		
 			/**
 			 * SortPath is an internal variable by which to sort the tree items so that folders always
-			 * sort before files. This is done by perpending a * to all folder names in the item's path
+			 * sort before files. This is done by prepending a * to all folder segments in the item's path
 			 */
 			protected function updateSortPath():void
 			{
-				if (_data['__root__'] == null)
-				{
-					_sortPath = _path.replace(/([^\/]+?\/)/g, "*$1");
-				}
+				_sortPath = _path.replace(/([^\/]+?\/)/g, "*$1");
 			}
 		
 	}

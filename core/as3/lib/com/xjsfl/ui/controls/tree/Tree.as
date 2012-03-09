@@ -1,5 +1,6 @@
 package com.xjsfl.ui.controls.tree
 {
+	import com.xjsfl.utils.StringUtils;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -46,7 +47,6 @@ package com.xjsfl.ui.controls.tree
 			
 			// path
 				protected var _rootItem			:TreeFolderItem;
-				protected var _rootLevel		:int			= 0;
 				
 			// size
 				protected var _lastSize			:Rectangle		= new Rectangle();
@@ -67,13 +67,13 @@ package com.xjsfl.ui.controls.tree
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Instatiation
 		
-			public function Tree(data:* = null)
+			public function Tree(xml:* = null)
 			{
 				super();
 				initialize();
-				if (data)
+				if (xml)
 				{
-					this.data = data;
+					this.xml = xml;
 				}
 			}
 			
@@ -144,7 +144,7 @@ package com.xjsfl.ui.controls.tree
 							item.visible	= false;
 							
 						// skip items which are within a closed folder
-							if (!drawState)
+							if ( ! drawState )
 							{
 								if(item.level > level)
 								{
@@ -160,7 +160,7 @@ package com.xjsfl.ui.controls.tree
 							if (item is TreeFolderItem)
 							{
 								folderItem = item as TreeFolderItem;
-								if(folderItem.state == false)
+								if( ! folderItem.isOpen )
 								{
 									level = folderItem.level;
 									drawState = false;
@@ -218,7 +218,7 @@ package com.xjsfl.ui.controls.tree
 			 * @param	data
 			 * @return
 			 */
-			public function newItem(type:String, label:String, path:String = null):TreeItem 
+			public function newItem(data:Object):TreeItem 
 			{
 				// create item
 					var item:TreeItem = createItem(data);
@@ -387,8 +387,8 @@ package com.xjsfl.ui.controls.tree
 		// { region: Accessors
 		
 			// data
-				public function get data():XML { return <xml /> };
-				public function set data(xml:XML):void
+				public function get xml():XML { return <xml /> };
+				public function set xml(xml:XML):void
 				{
 					// reset stuff
 						reset();
@@ -397,26 +397,13 @@ package com.xjsfl.ui.controls.tree
 						var _data:Array = [];
 						
 					// root item
-						var path		= xml.hasOwnProperty('@path') ? xml.@path : '/';
-						_rootLevel		= getPathLevel(path) + 1;
-						_rootItem		= new TreeFolderItem( { type:'folder', label:'scripts', path:path, __root__:true } );
+						var data		= nodeToObj(xml);
+						_rootItem		= new TreeFolderItem( { type:'folder', path:'', __root__:true } );
 						
 					// convert xml to objects
 						for each(var node:XML in xml.item)
 						{
-							// convert any \ to /
-								node.@path					= String(node.@path).replace(/\\/g, '/');
-								
-							// grab the data
-								var data		:Object		= { };
-								var attributes	:XMLList	= node.attributes();
-								for each(var attribute:XML in attributes)
-								{
-									data[String(attribute.name())] = attribute;
-								}
-								
-							// append
-								_data.push(data);
+							_data.push(nodeToObj(node));
 						}
 							
 					// create items
@@ -619,38 +606,6 @@ package com.xjsfl.ui.controls.tree
 		// { region: Protected Methods
 		
 			/**
-			 * Creates a single item
-			 * @param	data
-			 * @return
-			 */
-			protected function createItem(data:Object, sort:Boolean = true):TreeItem 
-			{
-				// variable
-					var item		:TreeItem;
-					var classDef	:Class;
-					
-				// create item
-					classDef		= data.type == TreeItem.FOLDER ? TreeFolderItem : TreeFileItem;
-					item			= new classDef(data) as TreeItem;
-					
-				// item level
-					item.level		= getPathLevel(item.path) + (item is TreeFileItem ? 1 : 0);
-					
-				// add item
-					_items.push(item);
-					container.addChild(item);
-					
-				// update items
-					if (sort)
-					{
-						sortItems();
-					}
-					
-				// return item
-					return item as TreeItem;
-			}
-			
-			/**
 			 * Creates a series of items for the first time
 			 * @param	data
 			 */
@@ -699,6 +654,34 @@ package com.xjsfl.ui.controls.tree
 			}
 			
 			/**
+			 * Creates a single item
+			 * @param	data
+			 * @return
+			 */
+			protected function createItem(data:Object, sort:Boolean = true):TreeItem 
+			{
+				// variable
+					var item		:TreeItem;
+					
+				// create item
+					if (/\/$/.test(data.path))
+					{
+						item = new TreeFolderItem(data) as TreeItem;
+					}
+					else
+					{
+						item = new TreeFileItem(data) as TreeItem;
+					}
+					
+				// add item
+					_items.push(item);
+					container.addChild(item);
+					
+				// return item
+					return item as TreeItem;
+			}
+			
+			/**
 			 * Updates a folder item properties when its contents have changed.
 			 * @param	item
 			 */
@@ -738,19 +721,8 @@ package com.xjsfl.ui.controls.tree
 			{
 				_selectedItem	= null;
 				_rootItem		= null;
-				_rootLevel		= 0;
 				_items			= [];
 				_filteredItems	= [];
-			}
-			
-			/**
-			 * Utility function to get the depth of an item by its path
-			 * @param	path
-			 * @return
-			 */
-			protected function getPathLevel(path:String):int
-			{
-				return path.replace(/\\/g, '/').split('/').length - _rootLevel;
 			}
 			
 			/**
@@ -817,6 +789,19 @@ package com.xjsfl.ui.controls.tree
 					copy[i] = obj[i];
 				}
 				return copy;
+			}
+			
+			protected function nodeToObj(node:XML):Object 
+			{
+				var data		:Object		= { };
+				var attributes	:XMLList	= node.attributes();
+				for each(var attribute:XML in attributes)
+				{
+					var name	:String		= String(attribute.name());
+					var value	:*			= StringUtils.parseValue(attribute);
+					data[name]				= value;
+				}
+				return data;
 			}
 
 	}

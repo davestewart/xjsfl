@@ -83,16 +83,9 @@ package com.xjsfl.ui.controls.tree.items
 
 			override public function set data(data:Object):void
 			{
-				_desc	= data.desc || '';
 				super.data = data;
 			}
 			
-			public function get desc():String { return _desc; }
-			public function set desc(value:String):void
-			{
-				_desc = value;
-			}
-		
 
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Protected Methods
