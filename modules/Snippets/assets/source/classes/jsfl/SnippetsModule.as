@@ -192,6 +192,16 @@
 				return call('createFile', path, contents, desc, icon, version, author);
 			}
 			
+			/**
+			 * 
+			 * @param	uri
+			 * @param	state
+			 */
+			public function setFolderState(uri:String, state:Boolean):Boolean 
+			{
+				return call('setFolderState', uri, state);
+			}
+			
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Event handlers
 		

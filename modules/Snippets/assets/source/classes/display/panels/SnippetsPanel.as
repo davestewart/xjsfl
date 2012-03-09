@@ -141,6 +141,7 @@
 						
 					// tray
 						treePanel.addEventListener(TreeItemEvent.SELECT, onItemSelect);
+						treePanel.addEventListener(TreeItemEvent.FOLDER_TOGGLE, onFolderToggle);
 						
 					// filter
 						searchBox.addEventListener(Event.CHANGE, onSearchBoxChange);
@@ -156,7 +157,7 @@
 						treeMenu				= new RightClickMenu(treePanel.tree, treeMenuData, onTreeMenuItemSelect, onTreeMenuInit);
 
 					// set data on tree
-						treePanel.tree.data		= SnippetsModule.instance.data;
+						treePanel.tree.xml		= SnippetsModule.instance.data;
 						
 			}
 
@@ -192,12 +193,12 @@
 				switch(event.type)
 				{
 					case TreeEvent.ITEM_RUN:
-						module.runFile(item.path);
+						module.runFile(item.data.uri);
 					break;
 					
 					case TreeEvent.ITEM_BROWSE:
-						if (item is TreeFileItem) module.browseFile(item.path);
-						else if (item is TreeFolderItem) module.browseFolder(item.path);
+						if (item is TreeFileItem) module.browseFile(item.data.uri);
+						else if (item is TreeFolderItem) module.browseFolder(item.data.uri);
 					break;
 					
 					case TreeEvent.ITEM_INFO:
@@ -209,20 +210,20 @@
 					break;
 					
 					case TreeEvent.ITEM_DELETE:
-						if (item is TreeFileItem) module.deleteFile(item.path);
-						else if (item is TreeFolderItem) module.deleteFolder(item.path);
+						if (item is TreeFileItem) module.deleteFile(item.data.uri);
+						else if (item is TreeFolderItem) module.deleteFolder(item.data.uri);
 					break;
 					
 					case TreeEvent.ITEM_EDIT:
-						module.openFile(item.path);
+						module.openFile(item.data.uri);
 					break;
 					
 					case TreeEvent.ITEM_PATH:
-						System.setClipboard(event.item.path);
+						System.setClipboard(event.item.data.uri);
 					break;
 					
 					case TreeEvent.ITEM_COMMAND:
-						module.createCommand(item.label, item.path);
+						module.createCommand(item.label, item.data.uri);
 					break;
 					
 					case TreeEvent.RELOAD:
@@ -308,7 +309,12 @@
 			
 				protected function onModuleComplete(event:Event):void 
 				{
-					treePanel.tree.data	= SnippetsModule.instance.data;
+					treePanel.tree.xml	= SnippetsModule.instance.data;
+				}
+				
+				protected function onFolderToggle(event:TreeItemEvent):void 
+				{
+					module.setFolderState(event.target.path, event.target.isOpen);
 				}
 				
 

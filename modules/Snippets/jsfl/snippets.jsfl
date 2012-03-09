@@ -36,6 +36,11 @@ var Snippets =
 			this.sets.rebuild();
 			this.panel.call('update');
 		},
+		
+		setFolderState:function(path, state)
+		{
+			this.sets.setFolderState(path, state);
+		},
 
 	// ------------------------------------------------------------------------------------------------
 	// public functions for Flash Panel
@@ -111,3 +116,4 @@ var Snippets =
 	 * @type {Module}
 	 */
 	Snippets = xjsfl.modules.create('Snippets', Snippets, this);
+	

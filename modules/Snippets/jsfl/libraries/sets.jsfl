@@ -6,6 +6,9 @@ function SetManager(module)
 		this.config		= this.module.loadConfig('snippets');
 		
 	// load sets
+		/**
+		 * @type {Config}	The current set
+		 */
 		this.set		= this.getCurrent();
 		this.change(this.set.@name);
 }
@@ -16,16 +19,17 @@ SetManager.prototype =
 	// ------------------------------------------------------------------------------------------------
 	// variables
 	
+		/** @type {Module}	A reference to the main module instance */
 		module:null,
 		
+		/** @type {Config}	The Snippets config file */
 		config:null,
 	
+		/** @type {Config}	The current set */
 		set:null,
 	
-		sets:[],
-		
 	// ------------------------------------------------------------------------------------------------
-	// methods
+	// set methods
 	
 		/**
 		 * Change the current snippets set
@@ -43,12 +47,14 @@ SetManager.prototype =
 				if( ! file.exists || force)
 				{
 					var folderURI = sets.find(function(node){ return node.@name == name; }).@uri;
-					trace('>' + folderURI)
 					this.build(folderURI, dataURI);
 				}
 	
 			// update and save settings
 				this.config.set('sets.@current', name);
+				
+			// set variable for new set
+				this.set		= new Config(dataURI);
 	
 			// return
 				return true;
@@ -150,7 +156,7 @@ SetManager.prototype =
 		},
 	
 	// ------------------------------------------------------------------------------------------------
-	// Flash methods
+	// UI methods
 	
 		/**
 		 *
@@ -177,7 +183,7 @@ SetManager.prototype =
 					.show();
 	
 			// take action
-				if(xul.values.accept)
+				if(xul.accepted)
 				{
 					switch(xul.values.action)
 					{
@@ -209,8 +215,18 @@ SetManager.prototype =
 		
 	
 	// ------------------------------------------------------------------------------------------------
-	// methods
+	// data methods
 	
+		setFolderState:function(path, state)
+		{
+			var node = this.set.xml.find('@path=' + path);
+			if(node)
+			{
+				node.@closed = ! state;
+				this.set.save();
+			}
+		},
+
 		rebuild:function()
 		{
 			var set = this.getCurrent();
@@ -233,12 +249,13 @@ SetManager.prototype =
 			
 				folderURI			= URI.toURI(folderURI);
 				var uris			= Utils.getSearchableURIs(folderURI);
+				uris.shift();
 					
 			// --------------------------------------------------------------------------------
 			// create data
 			
 				// generate xml
-					var xml				= <items type="folder" label="Snippets" path={folderURI} />;
+					var xml				= <items uri={folderURI} />;
 	
 				// create data
 					var iconsURI		= this.module.uri + 'assets/icons/16x16/';
@@ -253,10 +270,8 @@ SetManager.prototype =
 							var item		= <item />
 	
 						// set basic properties
-							//item.@level	= level - 1;
-							item.@type		= uri.type;
-							item.@label		= uri.name.replace(/\.jsfl$/, '');
-							item.@path		= uri.uri;
+							item.@path		= uri.uri.replace(/\.jsfl$/, '').substr(folderURI.length);
+							item.@uri		= uri.uri;
 	
 						// file properties
 							if(uri.type == 'file')
@@ -265,8 +280,8 @@ SetManager.prototype =
 									var comment = Source.parseDocComment(uri);
 									if(comment)
 									{
-										item.@desc	= comment.intro;
-										var icon	= comment.getTag('icon');
+										item.@tooltip	= comment.intro;
+										var icon		= comment.getTag('icon');
 										if(icon)
 										{
 											item.@icon	= icon.comment.replace(/{iconsURI}/g, iconsURI);
@@ -277,7 +292,7 @@ SetManager.prototype =
 						// folder properties
 							else
 							{
-								item.@items = new Folder(uri).length;
+								item.@closed = false;
 							}
 	
 						// add child
