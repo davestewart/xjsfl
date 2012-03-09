@@ -1077,57 +1077,13 @@
 // /* Modules - Core methods to handle the initialization and loading of modules */
 
 	/**
-	 * Dummy properties for Komodo code inteligence
-	 */
-	xjsfl.modules =
-	{
-		/**
-		 * Gets the manifest for a particular module namespace
-		 * @param	{String}	namespace	The namespace of the manifest to get
-		 * @returns	{XML}					The manifest XML
-		 */
-		getManifest:function(namespace){ },
-
-
-		/**
-		 * Gets the Module instance for a particular module namespace
-		 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
-		 * @returns	{Module}				An xJSFL Module instance
-		 */
-		getModule:function(namespace){ },
-
-
-		/**
-		 * Finds and stores information about all module manifests in the xJSFL/modules (or supplied) folder.
-		 * Called in the main bootstrap, and can be called manually in the user bootstrap to add other folders.
-		 * @param	{String}	uri			An optional folder URI to search in, defaults to xJSFL/modules/
-		 * @returns	{xjsfl}					The main xJSFL object
-		 */
-		find:function(uri){ },
-
-
-		/**
-		 * Runs the module bootstrap to load code locally into the host panel
-		 * @param	{String}	namespace	The namespace of the module to initialize
-		 */
-		load:function(namespace){ },
-
-
-		/**
-		 * Factory method to create an xJSFL module instance
-		 * @param	{String}	namespace	The namespace of the module (should match the AS3 and manifest values)
-		 * @param	{Object}	properties	The properties of the module
-		 * @param	{Window}	window		A reference to the window the function was called from
-		 * @returns	{Module}				An xJSFL Module instance
-		 */
-		create:function(namespace, properties, window){ }
-	}
-
-	/**
 	 * A namespace in which to store module code to prevent pollution of global
 	 * scope as well as a couple of methods to add and load module code
 	 *
 	 * Needs to be created in a closure to keep the modules and manifests private
+	 *
+	 * The syntax below is somewhat convoluted, in order to trick Komodo into
+	 * displaying the members correctly in autocomplete. Nothing else :)
 	 */
 	xjsfl.modules =
 	(
@@ -1152,7 +1108,7 @@
 		 * 4 -	When any panels are opened, xjsfl.modules.load(namespace) is called via MMExecute()
 		 * 		from the AbtractModule.initialize() function. This loads the module's bootstrap.jsfl
 		 *		file, which should in turn load the module's main JSFL file which contains the module's
-		 *		JSFL properties and method. This file then calls...
+		 *		JSFL properties and methods. This file then calls...
 		 *
 		 * 5 -	...xjsfl.modules.create(), which creates and registers the module internally, so it
 		 *		can be retrieved if necessary via xjsfl.modules.getModule(namespace)
@@ -1174,7 +1130,7 @@
 			/**
 			 * The property object that will be returned as xjsfl.modules
 			 */
-			var obj =
+			xjsfl.modules =
 			{
 				/**
 				 * Gets the manifest for a particular module namespace
@@ -1402,7 +1358,7 @@
 				}
 			}
 
-			return obj;
+			return xjsfl.modules;
 		}
 	)();
 
