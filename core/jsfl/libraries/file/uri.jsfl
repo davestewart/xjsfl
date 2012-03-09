@@ -778,11 +778,11 @@
 			 */
 			URI.reTarget = function(src, trg, base)
 			{
-				// convert everything to strings
-					src		= String(src);
-					trg		= String(trg);
-					base	= String(base);
-					
+				// tidy variables so subsequent comparisons work
+					src		= URI.tidy(src);
+					trg		= URI.tidy(trg);
+					base	= URI.tidy(base);
+				
 				// if base is relative, 
 					if(base.indexOf('..') !== -1)
 					{
@@ -790,7 +790,7 @@
 						base = URI.tidy(folder + base);
 					}
 					
-				// work out the 
+				// retarget
 					base	= URI.findFolder(src, base);
 					trg		= URI.getFolder(trg);
 					
