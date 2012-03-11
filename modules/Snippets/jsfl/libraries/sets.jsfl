@@ -1,4 +1,6 @@
 
+xjsfl.classes.load('source', true);
+
 function SetManager(module)
 {
 	// objects
@@ -267,36 +269,80 @@ SetManager.prototype =
 							uri = new URI(uri);
 						
 						// create XML node
-							var item		= <item />
+							var itemPath	= uri.uri.replace(/\.jsfl$/, '').substr(folderURI.length);
+							var itemURI		= uri.uri;
+							var item		= <item path={itemPath} uri={itemURI} /> // sort="{itemPath}"
 	
-						// set basic properties
-							item.@path		= uri.uri.replace(/\.jsfl$/, '').substr(folderURI.length);
-							item.@uri		= uri.uri;
+						// folder properties
+							if(uri.type === 'folder')
+							{
+								item.@closed = false;
+								xml.appendChild(item);
+							}
 	
 						// file properties
-							if(uri.type == 'file')
+							else
 							{
-								// get comment
-									var comment = Source.parseDocComment(uri);
-									if(comment)
+								// get member
+									var source = Source.parseFile(uri);
+									
+								// filter private members
+									var members = [];
+									for each(var member in source.members)
 									{
-										item.@tooltip	= comment.intro;
-										var icon		= comment.getTag('icon');
+										if(member.getTag && (member.getTag('private') || member.getTag('inner')) )
+										{
+											continue;
+										}
+										members.push(member);
+									}
+									
+								// for single members, add as normal
+									if(members.length == 1)
+									{
+										var member		= members[0];
+										var comment 	= member.text;
+										var icon		= member.getTag ? member.getTag('icon') : null;
 										if(icon)
 										{
-											item.@icon	= icon.comment.replace(/{iconsURI}/g, iconsURI);
+											item.@icon	= icon.replace(/{iconsURI}/g, iconsURI);
 										}
+										item.@tooltip	= member.details;
+										xml.appendChild(item);
+									}
+									
+								// otherwise, add a group node
+									else
+									{
+										var head = false;
+										for (var i = 0; i < members.length; i++)
+										{
+											// variables
+												var member	= members[i];
+												var name	= String(member.text).toSentenceCase().replace(/\//g, 'or');
+												var node	= <item path={itemPath} uri={itemURI} />
+												
+											// add group head
+												if( ! head )
+												{
+													itemPath += '/';
+													node.@path	= itemPath;
+													head = true;
+												}
+											// add children
+												else
+												{
+													node.@path	= itemPath + name;
+													node.@func	= member.name;
+												}
+												
+											// append to list
+												xml.appendChild(node);
+										}
+										
 									}
 							}
 	
-						// folder properties
-							else
-							{
-								item.@closed = false;
-							}
-	
-						// add child
-							xml.appendChild(item);
 					}
 	
 			// --------------------------------------------------------------------------------
