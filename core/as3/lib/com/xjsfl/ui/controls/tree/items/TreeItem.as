@@ -2,6 +2,7 @@
 {
 	import com.xjsfl.ui.controls.tooltip.ITooltippable;
 	import com.xjsfl.ui.controls.tooltip.Tooltip;
+	import com.xjsfl.ui.controls.tree.icons.TreeFileItemIcon;
 	import com.xjsfl.utils.StringUtils;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
@@ -405,10 +406,23 @@
 			/**
 			 * SortPath is an internal variable by which to sort the tree items so that folders always
 			 * sort before files. This is done by prepending a * to all folder segments in the item's path
+			 * 
+			 * Files are additionally prepended with a 4-digit index (0001) so that they remain unsorted
+			 * within their individual folders
 			 */
 			protected function updateSortPath():void
 			{
-				_sortPath = _path.replace(/([^\/]+?\/)/g, "*$1");
+				if (this is TreeFileItem)
+				{
+					_sortPath = _path
+						.replace(/([^\/]+\/?)$/g, StringUtils.pad(data.index, 4) + '_$1')
+						.replace(/([^\/]+?\/)/g, '*$1');
+				}
+				else
+				{
+					_sortPath = _path
+						.replace(/([^\/]+?\/)/g, '*$1');
+				}
 			}
 		
 	}

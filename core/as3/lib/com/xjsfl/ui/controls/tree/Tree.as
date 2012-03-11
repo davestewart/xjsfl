@@ -401,9 +401,12 @@ package com.xjsfl.ui.controls.tree
 						_rootItem		= new TreeFolderItem( { type:'folder', path:'', __root__:true } );
 						
 					// convert xml to objects
+						var index:int = 0;
 						for each(var node:XML in xml.item)
 						{
-							_data.push(nodeToObj(node));
+							var obj:Object = nodeToObj(node);
+							obj.index = index ++;
+							_data.push(obj);
 						}
 							
 					// create items
