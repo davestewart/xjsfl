@@ -404,7 +404,7 @@
 		func:function(fn, params, scope)
 		{
 			// feedback
-				xjsfl.output.trace('testing function: "' + Source.parseFunction(fn).signature + '"');
+				xjsfl.output.trace('testing function: "' + Utils.parseFunction(fn).signature + '"');
 
 			// test!
 				try
@@ -1270,7 +1270,7 @@
 								{
 									if(element instanceof File)
 									{
-										var targetURI	= URI.reTarget(element.uri, assetsURI, fl.configURI);
+										var targetURI	= URI.reTarget(element.uri, fl.configURI, assetsURI);
 										var targetFile	= new File(targetURI);
 										if( ! targetFile.exists || targetFile.modified < element.modified)
 										{
