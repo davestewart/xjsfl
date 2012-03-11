@@ -2,7 +2,7 @@
 // Demo code
 
 	// initialize
-		xjsfl.reload(this);
+		xjsfl.init(this);
 		clear();
 
 	// --------------------------------------------------------------------------------
@@ -116,6 +116,7 @@
 
 		/**
 		 * Test URI instances
+		 * @snippet Yes
 		 */
 		function uriTestInstances()
 		{

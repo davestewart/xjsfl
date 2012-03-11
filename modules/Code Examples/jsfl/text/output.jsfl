@@ -1,9 +1,9 @@
-// -----------------------------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------------------------------------------------------------------------
 // Demo code
 
 	// initialize
-		xjsfl.reload(this);
-		clear();
+		xjsfl.init(this);
+		//clear();
 		
 	// --------------------------------------------------------------------------------
 	// Properties
@@ -25,7 +25,7 @@
 		 */
 		function outputList()
 		{
-			Output.list(dom.selection);
+			Output.list($selection);
 		}
 		
 		/**
@@ -33,7 +33,7 @@
 		 */
 		function outputCustomList()
 		{
-			Output.list(dom.library.items, 'itemType');
+			Output.list($dom.library.items, 'itemType');
 		}
 		
 		/**
@@ -41,7 +41,7 @@
 		 */
 		function outputMultipleCustomList()
 		{
-			Output.list(dom.library.items, ['name', 'timeline', 'itemType']);
+			Output.list($library.items, ['name', 'timeline', 'itemType']);
 		}
 	
 		/**
@@ -49,7 +49,7 @@
 		 */
 		function outputSelection()
 		{
-			Output.list(dom.selection[0]);
+			Output.list($selection[0]);
 		}
 			
 	// --------------------------------------------------------------------------------
