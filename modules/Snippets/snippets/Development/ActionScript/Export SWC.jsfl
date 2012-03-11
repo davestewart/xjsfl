@@ -1,6 +1,6 @@
 ﻿/**
  * Export the SWC file from your publish profile, but immediately delete the SWF
- @icon {iconsURI}Filesystem/file/file_flash.png
+ * @icon {iconsURI}Filesystem/file/file_flash.png
  */
 (function()
 {

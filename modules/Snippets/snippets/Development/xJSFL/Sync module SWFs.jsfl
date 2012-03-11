@@ -35,6 +35,7 @@
 			 * Copy one file to another
 			 * @param	{File}	src		The source file
 			 * @param	{File}	trg		The target file
+			 * @private
 			 */
 			function copyFile(src, trg)
 			{

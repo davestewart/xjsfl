@@ -10,6 +10,7 @@
 	/**
 	 * Callback to process selected items
 	 * @param	{SymbolItem}	item	The symbol item
+	 * @private
 	 */
 	function ItemExporter(item)
 	{

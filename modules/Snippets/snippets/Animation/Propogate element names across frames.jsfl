@@ -10,6 +10,7 @@
 		/**
 		 * Frame callback
 		 * @param	{Layer}	frame	The frame
+		 * @private
 		 */
 		function processLayer(layer)
 		{
@@ -34,6 +35,7 @@
 		/**
 		 * Frame callback
 		 * @param	{Frame}	frame	The frame
+		 * @private
 		 */
 		function processFrame(frame)
 		{

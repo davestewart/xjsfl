@@ -1,9 +1,8 @@
 /**
- * Make animation
  * Imports a sequence of png files and exports an SWF
- * @icon {iconsURI}Design/picture/picture_go.png
- * @author Dave Stewart
- * @see www.xjsfl.com
+ * @icon		{iconsURI}Design/picture/picture_go.png
+ * @author		Dave Stewart
+ * @snippet
  */
 function makeAnimation(fileURI, exportSWF)
 {

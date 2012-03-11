@@ -1,11 +1,8 @@
-﻿/**
+﻿xjsfl.init(this);
+
+/**
  * Finds items in the current document according to criteria you set
  * @icon {iconsURI}Actions/find/find.png
- */
-xjsfl.init(this);
-/**
- * Find something in your document
- * @icon {iconsURI}Objects/weather/weather_breeze.png
  */
 (function(){
 

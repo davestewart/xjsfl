@@ -9,8 +9,9 @@
 	// classes
 	
 		/**
-		 * Class to save and restor selected objects' tints
+		 * Class to save and restore selected objects' tints
 		 * @param	{Element}	element		Any tintable elemnt
+		 * @private
 		 */
 		function ColorMemento(element)
 		{
@@ -71,6 +72,7 @@
 		 * @param	{Array}		elements	Description
 		 * @param	{Number}	color		Description
 		 * @param	{Number}	variation	Description
+		 * @private
 		 */
 		function tint(symbol, index, elements, percent, alpha)
 		{
@@ -116,6 +118,7 @@
 		/**
 		 * Summary
 		 * @param	{XULEvent}	event	Description
+		 * @private
 		 */
 		function onApplyClick(event)
 		{
@@ -189,6 +192,7 @@
 		/**
 		 * Summary
 		 * @param	{XULEvent}	event	Description
+		 * @private
 		 */
 		function onRandomiseClick(event)
 		{
