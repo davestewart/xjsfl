@@ -606,7 +606,7 @@
 								{
 									if(typeof props[f] === 'function')
 									{
-										functionNames[f] = Source.parseFunction(props[f]).name;
+										functionNames[f] = Utils.parseFunction(props[f]).name;
 									}
 								}
 
@@ -1256,6 +1256,22 @@
 						
 					// return
 						return selectors;	
+				},
+				
+				/**
+				 * Parses a function source into an object
+				 * @param	{Function}	fn		A reference to a function
+				 * @returns	{Object}			An Object with name and params properties
+				 */
+				parseFunction:function(fn)
+				{
+					var matches		= fn.toSource().match(/function\s*((\w*)\s*\(([^\)]*)\))/);
+					if(matches)
+					{
+						var params = matches[2].match(/(\w+)/g);
+						return {name:matches[1], params:params, signature:matches[0].replace(/function (\w+)/, '$1')};
+					}
+					return {name:null, params:[], signature:''};
 				},
 
 			// ---------------------------------------------------------------------------------------------------------------
