@@ -144,7 +144,7 @@
 
 				/**
 				 * Set the values for the placeholders in template
-				 * @param	{Object}	data		An object of key:value pairs
+				 * @param	{Object}	data		An Object of key:value pairs, or any instance with accessible properties
 				 * @param	{String}	data		A key name
 				 * @param	{mixed}		value		Any value that can be converted to a string, even another Template instance
 				 * @param	{Boolean}	append		Append the value, rather than replacing it
@@ -153,13 +153,13 @@
 				set:function(data, value, append)
 				{
 					// object
-						if(data.constructor === Object)
+						if(arguments.length == 1)
 						{
 							this.data = data;
 						}
 
 					// key + value
-						else if(typeof data != 'undefined' && typeof value != 'undefined')
+						else
 						{
 							if( ! this.data)
 							{
@@ -184,7 +184,7 @@
 				 * @param	{Number}	indent		The number of tabs to indent
 				 * @param	{String}	indent		A string that will be used as the indent
 				 * @returns	{Template}				Itself
-			 */
+				 */
 				indent:function(indent)
 				{
 					// indent
