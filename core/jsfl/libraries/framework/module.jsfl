@@ -55,10 +55,6 @@
 				}
 
 			// window
-				/**
-				 * Gets the Window object of the module
-				 * @returns	{Window}
-				 */
 				this.getWindow = function()
 				{
 					return window;
@@ -80,7 +76,7 @@
 				constructor:Module,
 
 			// ----------------------------------------------------------------------------------------
-			// core properties
+			// /* properties */
 
 				/**
 				 * @type {String} The namespace of the module
@@ -112,13 +108,13 @@
 				
 
 			// ----------------------------------------------------------------------------------------
-			// methods
+			// /* methods */
 
 				/**
-				 * Get a named module Config object, either a default, or a specific object
-				 * @param	{String}	configName	An optional name syntax i.e. "data" to default to "modules/Tools/config/tools data.xml"
-				 * @param	{String}	configName	An optional leading-slash syntax i.e. "/cache/data" to reference a specific file: "modules/Tools/config/cache/data.xml"
+				 * Load a named module Config file object, either a default, or a specific object
+				 * @param	{String}	pathOrURI	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to //user/config/ModuleName.xml
 				 * @returns	{Config}				A new Config instance
+				 * @see								Config
 				 */
 				loadConfig:function(path)
 				{
@@ -152,6 +148,15 @@
 					trace('> ' + this.name + ': ' + message);
 				},
 
+				/**
+				 * Gets the Window object of the module
+				 * @returns	{Window}
+				 */
+				getWindow:function()
+				{
+					// this method is overwritten in the constructor
+				},
+				
 				/**
 				 * Returns a string representation of the module
 				 * @returns	{String}
