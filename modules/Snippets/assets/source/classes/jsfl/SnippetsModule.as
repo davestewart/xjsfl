@@ -94,52 +94,62 @@
 		
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @return
 			 */
-			public function runFile(path:String):*
+			public function runFile(uri:String):*
 			{
-				return call('runFile', path);
+				return call('runFile', uri);
 			}
 			
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @return
 			 */
-			public function openFile(path:String):*
+			public function runFunction(uri:String, name:String):*
 			{
-				return call('openFile', path);
+				return call('runFunction', uri, name);
 			}
 			
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @return
 			 */
-			public function browseFile(path:String):*
+			public function openFile(uri:String):*
 			{
-				return call('browseFile', path);
+				return call('openFile', uri);
 			}
 			
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @return
 			 */
-			public function browseFolder(path:String):*
+			public function browseFile(uri:String):*
 			{
-				return call('browseFolder', path);
+				return call('browseFile', uri);
 			}
 			
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @return
 			 */
-			public function deleteFile(path:String):*
+			public function browseFolder(uri:String):*
 			{
-				var result:Boolean = call('deleteFile', path);
+				return call('browseFolder', uri);
+			}
+			
+			/**
+			 * 
+			 * @param	uri
+			 * @return
+			 */
+			public function deleteFile(uri:String):*
+			{
+				var result:Boolean = call('deleteFile', uri);
 				if (result)
 				{
 					rebuildSet();
@@ -148,12 +158,12 @@
 			
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @return
 			 */
-			public function deleteFolder(path:String):*
+			public function deleteFolder(uri:String):*
 			{
-				return call('deleteFolder', path);
+				return call('deleteFolder', uri);
 			}
 			
 			/**
@@ -162,24 +172,24 @@
 			 * @param	uri
 			 * @return
 			 */
-			public function createCommand(name:String, path:String):*
+			public function createCommand(name:String, uri:String):*
 			{
-				return call('createCommand', name, path);
+				return call('createCommand', name, uri);
 			}
 			
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @return
 			 */
-			public function createFolder(path:String):*
+			public function createFolder(uri:String):*
 			{
-				return call('createFolder', path);
+				return call('createFolder', uri);
 			}
 			
 			/**
 			 * 
-			 * @param	path
+			 * @param	uri
 			 * @param	contents
 			 * @param	desc
 			 * @param	icon
@@ -187,9 +197,9 @@
 			 * @param	author
 			 * @return
 			 */
-			public function createFile(path:String, contents:String, desc:String, icon:String, version:String, author:String):*
+			public function createFile(uri:String, contents:String, desc:String, icon:String, version:String, author:String):*
 			{
-				return call('createFile', path, contents, desc, icon, version, author);
+				return call('createFile', uri, contents, desc, icon, version, author);
 			}
 			
 			/**

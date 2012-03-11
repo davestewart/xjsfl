@@ -193,7 +193,7 @@
 				switch(event.type)
 				{
 					case TreeEvent.ITEM_RUN:
-						module.runFile(item.data.uri);
+						item.data.func ? module.runFunction(item.data.uri, item.data.func) : module.runFile(item.data.uri);
 					break;
 					
 					case TreeEvent.ITEM_BROWSE:
