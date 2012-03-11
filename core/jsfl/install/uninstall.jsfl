@@ -49,7 +49,7 @@
 					uris			= Utils.walkFolder(baseURI, true);
 					for each(uri in uris)
 					{
-						trgURI = URI.reTarget(uri, baseURI, fl.configURI);
+						trgURI = URI.reTarget(uri, fl.configURI, baseURI);
 						trgURIs.push(trgURI);
 					}
 				}

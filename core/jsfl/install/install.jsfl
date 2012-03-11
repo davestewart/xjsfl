@@ -82,7 +82,7 @@
 				{
 					// URIs
 						srcURI		= new URI(uri);
-						trgURI		= URI.reTarget(srcURI, installURI, fl.configURI);
+						trgURI		= URI.reTarget(srcURI, fl.configURI, installURI);
 						
 					// libs
 						if(srcURI.path.indexOf('External Libraries') !== -1)
