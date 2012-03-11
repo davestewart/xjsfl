@@ -19,8 +19,8 @@
 		/**
 		 * Config class, loads and saves XML from the config folders
 		 *
-		 * @param	pathOrURI	{String}	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
-		 * @param	xml			{XML}		An XML object with which to populate the Config instance
+		 * @param	{String}	pathOrURI	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
+		 * @param	{XML}		xml			An XML object with which to populate the Config instance
 		 */
 		Config = function(pathOrURI, xml)
 		{
@@ -115,9 +115,9 @@
 			/**
 			 * Sets data on the wrapped XML data
 			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
-			 * @param	path	{String}	A dot-notation path to a node or attribute
-			 * @param	value	{Value}		Any value that can be converted to a string
-			 * @returns			{Config}	The current Config node
+			 * @param	{String}		path	A dot-notation path to a node or attribute
+			 * @param	{Value}			value	Any value that can be converted to a string
+			 * @returns	{Config}				The current Config node
 			 */
 			set:function(path, value)
 			{
@@ -166,9 +166,9 @@
 
 			/**
 			 * Gets the value of the specified node path
-			 * @param	path		{Srting}	A dot-notation path to a node or attribute
-			 * @param	asXML		{Boolean}	A Boolean flag indicating that you want to return the actual XML, rather than return the XML, parse the value to the currect datatype
-			 * @returns				{value}		The value of the node / attribute, or null (===) if no value, or undefined (===) if missing. Test for XML with typeof value === 'xml'
+			 * @param	{String}		path		A dot-notation path to a node or attribute
+			 * @param	{Boolean}		asXML		A Boolean flag indicating that you want to return the actual XML, rather than return the XML, parse the value to the currect datatype
+			 * @returns	{value}						The value of the node / attribute, or null (===) if no value, or undefined (===) if missing. Test for XML with typeof value === 'xml'
 			 */
 			get:function(path, asXML)
 			{
@@ -196,7 +196,7 @@
 
 			/**
 			 * Clears all nodes inside the internal XML
-			 * @returns			{Config}	The current Config node
+			 * @returns	{Config}		The current Config node
 			 */
 			clear:function()
 			{
@@ -206,7 +206,7 @@
 
 			/**
 			 * Loads the XML config from disk
-			 * @returns			{Config}	The current Config node
+			 * @returns	{Config}		The current Config node
 			 */
 			load:function()
 			{
@@ -216,7 +216,7 @@
 
 			/**
 			 * Saves the pretty-printed XML to disk
-			 * @returns			{Config}	The current Config node
+			 * @returns	{Config}		The current Config node
 			 */
 			save:function()
 			{
@@ -226,7 +226,7 @@
 
 			/**
 			 * Removes the config file from disk
-			 * @returns			{Config}	The current Config node
+			 * @returns	{Config}		The current Config node
 			 */
 			remove:function()
 			{
@@ -241,7 +241,7 @@
 
 			/**
 			 * Returns a String representation of the Config instance
-			 * @returns			{String}		The String summary of the Config instance
+			 * @returns	{String}			The String summary of the Config instance
 			 */
 			toString:function()
 			{
@@ -259,7 +259,7 @@
 
 			/**
 			 * Returns the pretty-printed XML contents
-			 * @returns			{String}		The pretty-printed XML contents
+			 * @returns	{String}			The pretty-printed XML contents
 			 */
 			toXMLString:function()
 			{
