@@ -230,7 +230,10 @@
 							}
 							else
 							{
-								output(' ' + key + ": [ SKIPPING! ]");
+								if(key !== 'constructor')
+								{
+									output(' ' + key + ": [ SKIPPING! ]");
+								}
 							}
 						}
 						up();
