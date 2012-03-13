@@ -12,11 +12,12 @@
 // xJSFL - Rapid development framework for extending Adobe Flash
 
 	/**
-	 * http://www.xjsfl.com
+	 * xJSFL Framework for Adobe Flash
 	 *
-	 * Copyright 2012, Dave Stewart
-	 * @see Licence at http://www.xjsfl.com/license
-	 *
+	 * @author	Dave Stewart:	dave@xjsfl.com
+	 * @see		Main website:	http://www.xjsfl.com
+	 * @see		Support:		http://www.xjsfl.com/support
+	 * @see		License:		http://www.xjsfl.com/license
 	 */
 
 	// --------------------------------------------------------------------------------
@@ -1022,11 +1023,10 @@
 					xjsfl.output.log('registering class "' + name + '"', false, false);
 
 				// store class
-					xjsfl.classes[name]	= obj;
+					xjsfl.classes[name] = obj;
 
 				// store URI
-					var stack			= Utils.getStack();
-					this.uris[name]		= uri ? URI.toURI(uri) : stack.pop().uri;
+					xjsfl.classes.uris[name] = uri ? URI.toURI(uri) : Utils.getStack().pop().uri;
 			}
 			return this;
 		},
