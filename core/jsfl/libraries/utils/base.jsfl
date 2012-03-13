@@ -106,3 +106,6 @@
 			if (_interface instanceof Function) _interface = _interface.prototype;
 			this.prototype.extend(_interface);
 		};
+
+
+xjsfl.classes.register('Base', Base, this);
