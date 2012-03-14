@@ -871,6 +871,43 @@
 					// process
 						return process(rootElement, 0);
 				},
+				
+				/**
+				 * Makes a Hash object from a source value
+				 * @param	{String}	obj				An anything delimited string of words
+				 * @param	{Array}		obj				An array of words
+				 * @param	{Object}	obj				Any iterable object or instance
+				 * @param	{Value}		defaultValue	An optional default value for the hash's keys. Defaults to false
+				 * @returns	{Object}					An Object of name:true pairs
+				 */
+				makeHash:function(obj, defaultValue)
+				{
+					// variables
+						var keys;
+						var hash		= {};
+						defaultValue	= typeof defaultValue === 'undefined' ? false : defaultValue;
+						
+					// get keys
+						if(typeof obj === 'string')
+						{
+							keys = Utils.toArray(obj);
+						}
+						else if(obj instanceof Array)
+						{
+							keys = obj;
+						}
+						else
+						{
+							obj = Utils.getKeys(obj);
+						}
+						
+					// make hash
+						for each(var key in keys)
+						{
+							hash[key] = defaultValue;
+						}
+						return hash;
+				},
 
 			// ---------------------------------------------------------------------------------------------------------------
 			// /* Get methods */
