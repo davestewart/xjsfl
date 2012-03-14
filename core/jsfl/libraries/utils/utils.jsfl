@@ -537,6 +537,23 @@
 				},
 
 				/**
+				 * Gets the prototype chain of an object
+				 * @param	{Object}	obj				An instantiated object
+				 * @param	{Boolean}	includeSource	An optional Boolean to include the original object
+				 * @returns	{Array}						An Array of the original instantation object
+				 */
+				getPrototypeChain:function(obj, includeSource)
+				{
+					var chain = includeSource ? [obj] : [];
+					while(obj.__proto__)
+					{
+						obj = obj.__proto__;
+						chain.push(obj);
+					}
+					return chain;
+				},
+				
+				/**
 				 * Get an object's keys, or all the keys from an Array of Objects
 				 *
 				 * @param	{Object}	obj			Any object with iterable properties
@@ -1047,6 +1064,8 @@
 					// return
 						return stack;
 				},
+				
+				
 
 			// ---------------------------------------------------------------------------------------------------------------
 			// /* Value methods */
