@@ -116,19 +116,20 @@
 
 		/**
 		 * Output object to Output panel in hierarchical format (note that $ arguments are optional, and can be passed in any order)
-		 * @param	{Object}	obj			Any Object or value
-		 * @param	{Number}	$depth		An optional max depth to recurse to (defaults to 3)
-		 * @param	{String}	$label		An optional String label (defaults to "Inspect")
-		 * @param	{Boolean}	$debug		An optional boolean to indicate output type: true=debug, false=return, undefined=output
-		 * @param	{Object}	$options	An optional options object to tell the outputter what to print, ie {'function':false, 'xml':false}. Allowed types: ['object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null']
-		 * @param	{Function}	$callback	An optional output function in case you want to do any custom processing of the data
-		 * @returns	{String}				A String hierarchy of the object's properties
+		 * @param	{Object}	obj					Any Object or value
+		 * @param	{Number}	$depth				An optional max depth to recurse to (defaults to 3)
+		 * @param	{String}	$label				An optional String label (defaults to "Inspect")
+		 * @param	{Boolean}	$functions			An optional boolean to process functions. Defaults to false
+		 * @param	{Object}	$options			An optional options object. Keys may be:
+														ignore: A String or Array of object types to ignore. Valid values are 'object', 'string', 'array', 'number', 'xml', 'object', 'boolean', 'function', 'undefined', 'null'.
+														print:	A Boolean to instruct the outputter to print or not print the values to the Output panel. Defaults to true.
+														debug:	A Boolean indicating to trace the output as it happens. Defaults to false.
+														private: A Boolean indicating to process or skip private (_underscored) properties. Defaults to false.
+		 * @param	{Function}	$callback			An optional output function in case you want to do any custom processing of the data
+		 * @returns	{String}						A String hierarchy of the object's properties
 		 */
-		inspect:function(obj, $depth, $label, $debug, $options, $callback)
+		inspect:function(obj, $depth, $label, $functions, $options, $callback)
 		{
-			//TODO Add option to skip underscore properties. If signature gets complex, use an {options} object
-			//TODO Maybe just have an include object, which could be like {underscores:false, functions:false,strings:false}
-			//TODO Refactor all iteration to the Data class
 			//TODO For callback / debug, output to file in two separate passes - 1:key, 2:value, that way you get to see the actual key name who's value breaks the iteration
 
 			// ---------------------------------------------------------------------------------------------------------------------
@@ -180,9 +181,9 @@
 						// get type
 							var type		= getType(value[key]);
 
-						// skip if filter is set to false
+						// skip object if type is set to be ignored
 							//trace(value + ':' + type)
-							if(options[type] === false)
+							if(options.ignore[type])
 							{
 								return false;
 							}
@@ -266,7 +267,7 @@
 							}
 
 						// if debugging, output immediately
-							if(debug)
+							if(options.debug)
 							{
 								trace('	' + output);
 							}
@@ -456,32 +457,33 @@
 				// defaults
 					var label		= 'Inspect';
 					var depth		= 4;
-					var print		= null;
-					var debug		= false;
+					var functions	= false;
 					var print		= true;
 					var callback	= null;
 					var options		= {};
 
 				// parameter shifting
-					for each(var arg in [$depth, $label, $debug, $options, $callback])
+					for each(var arg in [$depth, $label, $functions, $options, $callback])
 					{
 						if(typeof arg === 'number')
 							depth = arg;
 						else if(typeof arg === 'string')
 							label = arg;
 						else if(typeof arg === 'boolean')
-						{
-							if(arg === true)
-								debug = true;
-							else
-								print = false;
-						}
+							functions = arg;
 						else if(typeof arg === 'object')
 							options = arg;
 						else if(typeof arg === 'function')
 							callback = arg;
 					}
-
+					
+				// options
+					options.ignore = options.ignore ? Utils.makeHash(options.ignore, true) : {};
+					if( ! functions )
+					{
+						options.ignore['function'] = true;
+					}
+					
 				// recursion detection
 					var stack			= [];
 
@@ -507,7 +509,7 @@
 			// output
 
 				// if debug, start tracing now, as subsequent output will be traced directly to the listener
-					if(debug === true)
+					if(options.debug)
 					{
 						if(label == 'Inspect')
 						{
@@ -530,11 +532,11 @@
 					stats				= ' (depth:' +depth+ ', objects:' +stats.objects+ ', values:' +stats.values+ ', time:' +stats.time+')';
 
 				// output
-					if(debug === true)
+					if(options.debug)
 					{
 						trace('\n' + stats + '\n');
 					}
-					else if(print === true)
+					else if(options.print !== false)
 					{
 						Output._print(strOutput, label + ': ' + className + stats);
 					}
