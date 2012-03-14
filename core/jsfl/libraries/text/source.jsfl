@@ -109,12 +109,14 @@
 					this.uri			= URI.toPath(uri, 1);
 					this.currentObj		= '';
 					this.debug			= debug;
+					this.members		= [];
 					
 				// variables
 					var rx				= /\/\*([^@{}\r\n]+?)\*\/|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
 					var file			= new File(this.uri);
 					var contents		= file.contents;
 					var matches;
+					var m;
 		
 				// debug
 					if(debug)
@@ -125,24 +127,59 @@
 				// match headings or comments
 					while( (matches = rx.exec(contents)) != null )
 					{
-						//inspect(matches)
-						var member = this.parseMatch(matches);
-						if(member)
-						{
-							// update member
-								member.line = contents.substr(0, rx.lastIndex).split('\n').length;
-
-							// update source properties
-								if(member instanceof Source.classes.Element)
-								{
-									//if(obj.get)
-									if(member.getFlag('class'))
+						// debug
+							//inspect(matches)
+							
+						// process member
+							var member = this.parseMatch(matches);
+							if(member)
+							{
+								// update member
+									member.line = contents.substr(0, rx.lastIndex).split('\n').length;
+	
+								// update source properties
+									if(member instanceof Source.classes.Element)
 									{
-										this.currentClass = member;
+										if(member.getFlag('class'))
+										{
+											this.currentClass = member;
+										}
 									}
-								}
-								this.members.push(member);
-						}
+									
+								// test if accessor has an existing pair, and if so, update the original
+									var accessorUpdated = false;
+									if(member.class === 'Accessor')
+									{
+										for each(var m in this.members)
+										{
+											if(member.name == m.name && member.object == m.object)
+											{
+												if(member.readable == true)
+												{
+													m.readable = true;
+													m.addText(member.getText());
+													accessorUpdated = true;
+													continue;
+												}
+												else if(member.writable == true)
+												{
+													m.writable = true;
+													m.addText(member.getText());
+													accessorUpdated = true;
+													continue;
+												}
+											}
+										}
+										
+										if(accessorUpdated)
+										{
+											continue;
+										}
+									}
+								
+								// add member
+									this.members.push(member);
+							}
 					}
 					
 				// return
@@ -193,7 +230,7 @@
 							var subMatches = code.match(rx);
 							if(subMatches)
 							{
-								// varibles
+								// variables
 									var isFunction	= code.indexOf('function') !== -1;
 									var isVariable	= subMatches[2] || subMatches[3] || subMatches[4];
 									var isProperty	= subMatches[5] || subMatches[6] || subMatches[4].indexOf('.') !== -1;
@@ -204,13 +241,13 @@
 									{
 										var obj = this.makeFunction(comment, code);
 									}
-									else if(isVariable || isProperty)
-									{
-										var obj = this.makeVariable(comment, code);
-									}
 									else if(isAccessor)
 									{
 										var obj = this.makeAccessor(comment, code);
+									}
+									else if(isVariable || isProperty)
+									{
+										var obj = this.makeVariable(comment, code);
 									}
 									
 								// update with object
@@ -219,6 +256,17 @@
 										obj.object = obj.getTag('extends') || obj.object ||  this.currentClass.name;
 									}
 									
+								// set class flag
+									if(obj.getTag('class'))
+									{
+										obj.addFlag('class');
+									}
+									
+								// set as private
+									if(obj.name.indexOf('_') == 0)
+									{
+										obj.addFlag('private');
+									}
 							}
 							
 						// comment
@@ -241,13 +289,17 @@
 					var rxParam2	= /^@param\s+\{([\w\.]+)\}\s+([\$\w]+)\s+(\w.*)/;	// @param {Type} name Comment
 					var rxReturns	= /^@returns?\s+\{([\w\.]+)\}\s+(.*)/				// @return(s) {Type} Comment
 					var rxVariable	= /^@(type)\s+\{([\w\.]+)\}[\t ]*([^\r\n]*)/;		// @type {Type} Comment
-		
+					
 				// split comment into trimmed lines
 					var lines		= comment
-										.replace(/^\s*\/\*\*\s*|\s*\*\/$/mg, '')
-										.replace(/^\s*\*\s+/mg, '')
-										.trim()
-										.split(/[\r\n]+/g);
+										.replace(/\r/g, '')
+										.replace(/^\s*\/\*\*\s*|\s*\*\/$/g, '')	// block-start /** and block-end */
+										.replace(/[\*\s]$/g, '')				// block-trailing *
+										.replace(/^[\t ]*\*[\t ]*/gm, '')				// line-leading *
+										.split(/\n/g);
+										
+				// store a current object, so multi-line text can be added to it
+					var textObject	= obj;
 										
 				// debug
 					//inspect(lines)
@@ -256,8 +308,15 @@
 					for each(var line in lines)
 					{
 						// match against @type
-							matches = line.match(rxType);
+							line		= line.trim();
+							matches		= line.match(rxType);
 		
+						// reset currentObject if there's a blank line
+							if(line === '')
+							{
+								textObject = obj;
+							}
+						
 						// type
 							if(matches)
 							{
@@ -278,14 +337,14 @@
 												var param = matches[0].match(rxParam1);
 												if(param)
 												{
-													obj.addParam(param[1], param[2], param[3]);
+													textObject = obj.addParam(param[1], param[2], param[3]);
 												}
 												else
 												{
 													var param = matches[0].match(rxParam2);
 													if(param)
 													{
-														obj.addParam(param[2], param[1], param[3]);
+														textObject = obj.addParam(param[2], param[1], param[3]);
 													}
 												}
 											}
@@ -298,7 +357,7 @@
 											var param = matches[0].match(rxReturns);
 											if(param)
 											{
-												obj.addReturn(param[1], param[2]);
+												textObject = obj.addReturn(param[1], param[2]);
 											}
 		
 										break;
@@ -318,7 +377,7 @@
 										default: 
 											if(obj.addTag)
 											{
-												matches[2] ? obj.addTag(matches[1], matches[2]) : obj.addFlag(matches[1]);
+												textObject = matches[2] ? obj.addTag(matches[1], matches[2]) : obj.addFlag(matches[1]);
 											}
 									}
 							}
@@ -326,7 +385,15 @@
 						// if no @type match found, we're just dealing with text
 							else
 							{
-								obj.addText(line);
+								if(textObject instanceof Source.classes.Tag)
+								{
+									textObject.text += '\n' + line;
+								}
+								else
+								{
+									textObject.addText(line);
+								}
+								
 							}
 					}
 					
@@ -419,19 +486,13 @@
 						// properties
 							obj			= new Source.classes.Variable(matches[2]);
 							
-						// skip if private
-							if(obj.name.indexOf('_') == 0)
+						// object
+							if(matches[2].indexOf('.') !== -1)
 							{
-								return null;
+								obj.object = matches[2].replace(/\.[^\.]+$/, '');
 							}
 					}
 					
-				// object
-					if(matches[2].indexOf('.') !== -1)
-					{
-						obj.object = matches[2].replace(/\.[^\.]+$/, '');
-					}
-		
 				// debug
 					if(this.debug)
 					{
@@ -449,22 +510,21 @@
 			{
 				// variables
 					var rx		= /\b(get\b|set\b)?\s*([\.\w]+)/;
-					var obj		= new Source.classes.Value();
-		
+					var obj		= new Source.classes.Accessor();
+					
 				// signature
 					var matches	= code.match(rx);
 					if(matches)
 					{
-						obj.name		= matches[2]
-											.replace('this.', '')
-											.replace(/var\s+/, '');
-						obj.accessor	= matches[1] == 'get' ? 'Read' : 'Write';
-					}
-		
-				// skip if private
-					if(obj.name && obj.name.indexOf('_') == 0)
-					{
-						return null;
+						obj.name = matches[2];
+						if(matches[1] === 'get')
+						{
+							obj.readable = true;
+						}
+						if(matches[1] === 'set')
+						{
+							obj.writable = true;
+						}
 					}
 		
 				// debug
@@ -530,11 +590,11 @@
 			+- Comment						class, text, line
 			|	+- Heading					class, text, line
 			|	+- DocComment				class, text, line, tags
-			|		+- Element				class, text, line, tags, object
+			|		+- Element				class, text, line, tags, object, name
 			|			+- Variable			class, text, line, tags, object, name, type, 
 			|			|	+- Accessor		class, text, line, tags, object, name, type, accessor
 			|			+- Function			class, text, line, tags, object, name, params, returns, signature
-			|			+- Class			class, text, line, tags, object, name, properties, functions, constructor
+			|			+- Class			class, text, line, tags, object, name, members, constructor
 			|
 			+- Tag							class, text
 				+- Value					class, text, type
@@ -644,7 +704,7 @@
 			/**
 			 * Adds a tag to the element
 			 * @param	{String}	name	The name of the tag
-			 * @param	{String}	value	The value of the tage
+			 * @param	{String}	value	The value of the tag
 			 * @returns	{Element}			The original Element object
 			 */
 			addTag:function(name, value)
@@ -653,8 +713,12 @@
 				{
 					this.tags[name] = [];
 				}
+				if(typeof value === 'string')
+				{
+					value = new Source.classes.Tag(value);
+				}
 				this.tags[name].push(value);
-				return this;
+				return value;
 			},
 
 			/**
@@ -742,12 +806,14 @@
 		 */
 		Source.classes.Element =
 		{
-			object:null,
+			object		:null,
+			name		:'',
 			
-			constructor:function(text, line)
+			constructor:function(name, text, line)
 			{
 				this.base(text, line);
 				this.class		= 'Element';
+				this.name		= name;
 				this.object		= null;
 			},
 			
@@ -768,9 +834,8 @@
 			
 			constructor:function(name, type, text, line)
 			{
-				this.base(text, line);
+				this.base(name, text, line);
 				this.class		= 'Variable';
-				this.name		= name;
 				this.type		= type;
 				this.reorderProps();
 			},
@@ -790,6 +855,7 @@
 		{
 			readable	:false,
 			writable	:false,
+			acesss		:'',
 			
 			constructor:function(name, type, text, accessor, line)
 			{
@@ -800,7 +866,7 @@
 				this.reorderProps();
 			},
 			
-			getAccessors:function()
+			getAccess:function()
 			{
 				var accessors = [];
 				if(this.readable)
@@ -816,7 +882,7 @@
 			
 			toString:function()
 			{
-				return '[object Accessor name="' +this.name+ '" type="' +this.type+ '" accessor="' +(this.class ? this.getAccessors() : '')+ '" text="' +this.text+ '"]';
+				return '[object Accessor name="' +this.name+ '" type="' +this.type+ '" access="' +(this.class ? this.getAccess() : '')+ '" text="' +this.text+ '"]';
 			}
 		}
 		
@@ -838,26 +904,21 @@
 				
 				constructor	:function(signature, text, params, returns, line)
 				{
-					// super
-						this.base(text, line);
-						this.tags = {};
-						
-					// variables
-						this.class		= 'Function';
+					// name
+						var name = ''
 						if(signature)
 						{
-							var matches		= String(signature).match(/(\w+)\s*\(/);
+							var matches = String(signature).match(/(\w+)\s*\(/);
 							if(matches)
 							{
-								this.name		= matches[1];
-								this.signature	= signature;
+								name = matches[1];
 							}
 						}
-						else
-						{
-							this.name		= 'null';
-							this.signature	= 'null';
-						}
+						
+					// super
+						this.base(name, text, line);
+						this.tags		= {};
+						this.class		= 'Function';
 						
 					// params
 						if(params)
@@ -898,14 +959,14 @@
 				{
 					var param = new Source.classes.Param(name, type.replace(/\W/g, ''), text);
 					this.addTag('param', param);
-					return this;
+					return param;
 				},
 
 				addReturn:function(type, text)
 				{
 					var param = new Source.classes.Value(type.replace(/\W/g, ''), text);
 					this.addTag('return', param);
-					return this;
+					return param;
 				},
 
 			// --------------------------------------------------------------------------------
@@ -927,6 +988,97 @@
 				toString:function()
 				{
 					return '[object Function signature="' +this.signature+ '" params="' +(this.class ? this.getTags('param').length : '')+ '" returns=' +(this.class ? this.getTags('returns').length : '')+ '"]';
+				}
+		}
+		
+	// --------------------------------------------------------------------------------
+	// Class
+
+		/**
+		 * Represents a Class in source code
+		 * @class
+		 * @extends		{Source.classes.Element}
+		 */
+		Source.classes.Class =
+		{
+			// --------------------------------------------------------------------------------
+			// properties
+			
+				members		:[],
+				
+				constructor	:function(name, text, members, line)
+				{
+					// super
+						this.base(name, text, line);
+						this.tags = {};
+						
+					// variables
+						this.class = 'Class';
+						if(members && members instanceof Array)
+						{
+							this.members = members;
+						}
+						
+					// update tags
+						this.reorderProps();
+		
+					// return
+						return this;
+				},
+			
+			// --------------------------------------------------------------------------------
+			// methods
+			
+				addMember:function(member)
+				{
+					this.members.push(member);
+				},
+			
+				getConstructor:function()
+				{
+					for each(var member in this.members)
+					{
+						if(member.getFlag('constructor'))
+						{
+							return member;
+						}
+					}
+				},
+				
+				getProperties:function()
+				{
+					var members = [];
+					for each(var member in this.members)
+					{
+						if( ! member instanceof Source.classes.Function )
+						{
+							members.push(member);
+						}
+					}
+					return members;
+				},
+				
+				getMethods:function()
+				{
+					var members = [];
+					for each(var member in this.members)
+					{
+						if(member instanceof Source.classes.Function)
+						{
+							members.push(member);
+						}
+					}
+					return members;
+				},
+				
+				getMembers:function()
+				{
+					return this.members;
+				},
+				
+				toString:function()
+				{
+					return '[object Class members="' +(this.class ? this.members.length : '')+ '"]';
 				}
 		}
 		
