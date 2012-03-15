@@ -256,6 +256,9 @@
 
 					function output(str)
 					{
+						// update str
+							str = String(str).replace(/\n/gm, '\n	' + indent);
+							
 						// get output
 							var output = indent.join('') + str
 							strOutput += output + '\n';
@@ -378,7 +381,9 @@
 							break;
 
 							case 'xml':
-								className = 'XML';
+								// If an XMLList has only one element, you can treat is as XML
+								// @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/XMLList.html
+								className = value.length() > 1 ? 'XMLList' : 'XML';
 							break;
 
 							case 'function': // loop through properties to see if it's a class
