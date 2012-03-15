@@ -38,6 +38,12 @@
 				{
 					// variables
 						var prop;
+						
+					// throw error if obj is null
+						if(obj == undefined)
+						{
+							throw new Error('Error in Utils.extend(): obj is undefined');
+						}
 
 					// extend array
 						if(Utils.isArray(obj) && Utils.isArray(props))
@@ -523,15 +529,23 @@
 				/**
 				 * Combines keys and values to make a new populated Object
 				 * @param	{Array}		keys		An array of key names
+				 * @param	{String}	keys		A string of key names
 				 * @param	{Array}		values		An array of values
 				 * @returns	{Object}				An Object containing the values assigned to keys
 				 */
 				combine:function(keys, values)
 				{
+					if(typeof keys === 'string')
+					{
+						keys = Utils.toArray(keys, /\s*,\s*/g);
+					}
 					var obj = {};
 					for (var i = 0; i < keys.length; i++)
 					{
-						obj[keys[i]] = values[i];
+						if(keys[i] !== '')
+						{
+							obj[keys[i]] = values[i];
+						}
 					}
 					return obj;
 				},
@@ -1020,23 +1034,22 @@
 				 */
 				getStack:function(error, shorten)
 				{
-					// variables
-						var rxParts		= /^(.*?)@(.*?):(\d+)$/mg;
-						var rxFile		= /(.+?)([^\\\/]*)$/;
-
 					// error
 						var strStack	= (error instanceof Error ? error : new Error('Stack trace')).stack;
 
 					// parse stack
+						var rxParts		= /^(.*)?@(.*?):(\d+)$/mg;
 						var matches		= strStack.match(rxParts);
+
+					// remove the fake error
 						if( ! error )
 						{
-							matches = matches.slice(2); // remove the fake error
+							matches = matches.slice(2); 
 						}
-
+						
 					// parse lines
 						var stack		= [];
-						var xjsflPath	= FLfile.uriToPlatformPath(xjsfl.uri);
+						var rxFile		= /(.+?)([^\\\/]*)$/;
 						var parts, fileParts, path, file;
 
 						for (var i = 0; i < matches.length; i++)
@@ -1044,7 +1057,7 @@
 							// error, file, line number
 								rxParts.lastIndex	= 0;
 								parts				= rxParts.exec(matches[i]);
-
+								
 							// file parts
 								fileParts			= (parts[2] || '').match(rxFile);
 								path				= fileParts ? fileParts[1] : '';
