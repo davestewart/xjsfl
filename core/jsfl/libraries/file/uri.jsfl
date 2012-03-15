@@ -487,6 +487,9 @@
 			 */
 			URI.asPath = function(pathOrURI, shorten)
 			{
+				// convert to string
+					pathOrURI = String(pathOrURI);
+				
 				// return existing paths early
 					if(URI.isPath(pathOrURI) && shorten !== true)
 					{
@@ -523,7 +526,7 @@
 					}
 
 				// convert to path format
-					var path = String(pathOrURI)
+					var path = pathOrURI
 						// remove file:///
 							.replace('file:///', '')
 
