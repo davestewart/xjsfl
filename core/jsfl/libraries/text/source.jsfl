@@ -49,7 +49,7 @@
 		
 			process:function(uri, debug)
 			{
-				return this.parseFile(URI.toPath(uri, 1), debug);
+				return this.parseFile(URI.toURI(uri, 1), debug);
 			},
 		
 			/**
@@ -106,23 +106,29 @@
 			parseFile:function(uri, debug)
 			{
 				// properties
-					this.uri			= URI.toPath(uri, 1);
+					this.uri			= URI.toURI(uri, 1);
 					this.currentObj		= '';
 					this.debug			= debug;
 					this.members		= [];
 					
 				// variables
+					var path			= URI.asPath(this.uri);
 					var rx				= /\/\*([^@{}\r\n]+?)\*\/|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
-					var file			= new File(this.uri);
-					var contents		= file.contents;
 					var matches;
 					var m;
 		
 				// debug
 					if(debug)
 					{
-						format('\n > Processing path "{path}"', URI.asPath(this.uri));
+						format('\n > Processing path "{path}"', path);
 					}
+
+				// process file
+					if( ! FLfile.exists(this.uri) )
+					{
+						throw new URIError('The path "' +path+ '" does not exist');
+					}
+					var contents		= FLfile.read(this.uri);
 					
 				// match headings or comments
 					while( (matches = rx.exec(contents)) != null )
@@ -202,8 +208,11 @@
 				// /** doc comment */code
 					else
 					{
+						//TODO Add proper support for __getters__
+						//TODO Add support for parsing comments before code, so that the object type can be overridden by comment tags
+						
 						// reg exp to match all member types
-							var rx = /^\s*((var\s+\w+\s+=)|(function\s+\w+\()|([\w.]+\s*=)|(\w+\s*:\s*)|([gs]et\s+\w+\())/;
+							var rx = /^\s*((var\s+[\$\w]+\s+=)|(function\s+[\$\w]+\()|([\$\w.]+\s*=)|([\$\w]+\s*:\s*)|([gs]et\s+[\$\w]+\()|(__define[GS]etter__))/;
 							
 						// examples
 							/*
@@ -234,7 +243,7 @@
 									var isFunction	= code.indexOf('function') !== -1;
 									var isVariable	= subMatches[2] || subMatches[3] || subMatches[4];
 									var isProperty	= subMatches[5] || subMatches[6] || subMatches[4].indexOf('.') !== -1;
-									var isAccessor	= subMatches[6];
+									var isAccessor	= subMatches[6]; //|| subMatches[7];
 									
 								// process
 									if(isFunction)
@@ -269,10 +278,10 @@
 									}
 							}
 							
-						// comment
+						// comment, or possibly a __defineGetter__
 							else
 							{
-								var obj = this.makeComment(comment);
+								var obj = this.makeDocComment(comment);
 							}
 					}
 					
@@ -355,8 +364,9 @@
 										case 'return':
 										case 'returns':
 											var param = matches[0].match(rxReturns);
-											if(param)
+											if(param && obj.addReturn)
 											{
+												//BUG This obj.addReturn check is only here so that __getter__s don't break the code
 												textObject = obj.addReturn(param[1], param[2]);
 											}
 		
@@ -367,7 +377,6 @@
 											var param = matches[0].match(rxVariable);
 											if(param)
 											{
-												//inspect(param);
 												obj.type = param[2];
 												obj.addText(param[3]);
 											}
@@ -427,7 +436,7 @@
 					return obj;
 			},
 		
-			makeComment:function(comment)
+			makeDocComment:function(comment)
 			{
 				var obj = new Source.classes.DocComment();
 				return this.parseComment(comment, obj);
@@ -650,7 +659,7 @@
 			
 			getExtraText:function()
 			{
-				return this.getAllText().slice(1);
+				return this.getAllText().slice(1).join('\n');
 			},
 			
 			getAllText:function()
