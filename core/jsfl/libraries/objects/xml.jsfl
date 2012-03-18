@@ -172,44 +172,67 @@
 		 * @param	{Object}	value	Description
 		 * @returns	{XML}				Description
 		 */
-		function set(path, value)
+		function set(path, value, debug)
 		{
+			//TODO add in support to create new nodes by adding an index a.b.c[1] = 'new node'
+			//TODO Add shorthand for a.b.c[] meaning 'append node'
+			//TODO move index after filter a.(@name=dave)[3], so filtered nodes can then be selected by index
+			//TODO move config.set() functionality here
+			
 			// setup
-				var rxPath		= /([\-*\w]+)\.?(?:\[(\d+)\])?(?:\((.+?)\)\.?)?(@[\-\w]+)?/g;
-				var rxFilter	= /([@#.])(\w+)([\^\$!=<>]+)?(.+)?/;
-				var pathMatches	= Utils.match(path, rxPath);
-				var parent		= this;
+				var rxPath			= /(?:(\.{0,2})([\-*\w]+))?(?:\[(\d+)\])?(?:\.\((.+?)\))?(?:\.(@[\-\w]+))?/g;
+				var rxFilter		= /([@#\.])([\w_-:]+)([\^\$!=<>]+)?(.+)?/;
+				var rxFilterOnly	= new RegExp('^' +rxFilter.source+ '$');
+				
+			// pre-process any single filters
+				if(rxFilterOnly.test(path))
+				{
+					path = '*.(' +path+ ')';
+				}
 				
 			// process
-				for each(var pathMatch in pathMatches)
+				var parent		= this;
+				var pathMatches	= Utils.match(path, rxPath, null, true);
+				while(pathMatches.length)
 				{
+					// current match segment
+						var pathMatch	= pathMatches.shift();
+						
 					// variables
-						var node		= pathMatch[1];
-						var index		= pathMatch[2];
-						var filter		= pathMatch[3];
-						var attribute	= pathMatch[4];
-		
-					// grab any children
-						var children	= parent[node];
-						var length		= children.length();
+						var operator	= pathMatch[1];
+						var node		= pathMatch[2];
+						var index		= pathMatch[3];
+						var filter		= pathMatch[4];
+						var attribute	= pathMatch[5];
+						
+					// debug
+						var currentPath	= path.substr(0, pathMatch.matchIndex + pathMatch[0].length);
+						if(debug)
+						{
+							inspect(Utils.combine('match,operator,node,index,filter,attribute', pathMatch), '\nXML > processing path "' + currentPath + '"');
+						}
+						
+					// grab elements
+						var elements	= operator == '..' ? parent.descendants(node) : parent.elements(node);
+						var length		= elements.length();
 						
 					// if there are children, attempt to walk down
 						if(length > 0)
 						{
 							if(filter !== '')
 							{
-								children	= parent.get(filter);
-								parent		= children[0];
+								elements	= parent.get(filter);
+								parent		= elements[0];
 							}
 							else
 							{
 								var index	= index && index < length ? parseInt(index) : length - 1;
-								parent		= children[index];
+								parent		= elements[index];
 							}
 						}
 						
 					// if no children were found, create the new node
-						if(children.length() == 0)
+						if(elements.length() == 0)
 						{
 							// create node
 								parent[node]	= '';
@@ -228,10 +251,11 @@
 											var val			= filterMatches[4];
 											
 										// resolve id and class shortcuts
-											if(/[#.]/.test(type))
+											var attrs = {'#':'id', '.':'class'};
+											if(type in attrs)
 											{
 												val			= attr;
-												attr		= {'#':'id', '.':'class'}[type];
+												attr		= attrs[type];
 												operator	= '=';
 											}
 										// assign
