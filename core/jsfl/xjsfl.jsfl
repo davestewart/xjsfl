@@ -463,7 +463,7 @@
 				if( ! xjsfl.classes.Template )
 				{
 					xjsfl.output.log('loading files needed for debugging...', false, false);
-					fl.runScript(xjsfl.uri + 'core/jsfl/core/URI.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/uri.jsfl');
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/filesystem.jsfl');
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/template.jsfl');
 				}
@@ -1544,57 +1544,6 @@
 	})()
 
 	/**
-	 * Create global variables and functions in supplied scope
-	 * @param	scope		{Object}	The scope into which the framework should be extracted
-	 * @param	scopeName	{String}	An optional scopeName, which when supplied, traces a short message to the Output panel
-	 * @returns
-	 */
-	xjsfl.initVars = function(scope, scopeName)
-	{
-		// initialize only if core $dom method is not yet defined
-			if(typeof scope.$dom === 'undefined')
-			{
-				// debug
-					if(scopeName)
-					{
-						xjsfl.output.log('initializing [' +scopeName+ ']');
-					}
-
-				// global variables
-					scope.__defineGetter__( '$dom', function(){ return fl.getDocumentDOM(); } );
-					scope.__defineGetter__( '$timeline', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.getTimeline() : null; } );
-					scope.__defineGetter__( '$library', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.library : null; } );
-					scope.__defineGetter__( '$selection', function(){ var dom = fl.getDocumentDOM(); return dom ? dom.selection.reverse() : null; } );
-					scope.__defineSetter__( '$selection', function(elements){ var dom = fl.getDocumentDOM(); if(dom){dom.selectNone(); dom.selection = elements instanceof Array ? elements : [elements]; } } );
-
-				// global functions
-					// output
-						scope.trace		= function(){ fl.outputPanel.trace(Array.slice.call(this, arguments).join(', ')) };
-						scope.clear		= fl.outputPanel.clear;
-
-					// string
-						scope.populate	= function(template, properties){ return Utils.populate.apply(this, arguments); };
-						scope.format	= Utils.format;
-
-					// file
-						scope.load		= function(pathOrURI, quiet){ return xjsfl.file.load(URI.toURI(pathOrURI, 1), null, quiet); }
-						scope.save		= function(pathOrURI, contents){ return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents); }
-						scope.require	= function(className)
-						{
-							for (var i = 0; i < arguments.length; i++)
-							{
-								xjsfl.classes.load(arguments[i], true);
-							}
-						}
-
-					// introspection
-						scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };
-						scope.list		= function(){ fl.trace('list() not yet initialized'); };
-						scope.debug		= Utils.debug;
-			}
-	}
-
-	/**
 	 * Initialize the environment by extracting variables / objects / functions to global scope
 	 * @param	{Object}	scope			The scope into which the framework should be extracted
 	 * @param	{String}	scopeName		An optional id, which when supplied, traces a short message to the Output panel
@@ -1608,7 +1557,7 @@
 				xjsfl.initializing = true;
 
 			// copy core variables and functions into scope
-				xjsfl.initVars(scope, scopeName);
+				xjsfl.initGlobals(scope, scopeName);
 
 			// debug
 				if(scopeName)
