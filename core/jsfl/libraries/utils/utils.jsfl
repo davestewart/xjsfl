@@ -208,13 +208,6 @@
 					}
 				},
 
-				format:function(value, params)
-				{
-					var str = Utils.populate.apply(this, arguments);
-					fl.outputPanel.trace(str);
-					return str;
-				},
-
 			// ---------------------------------------------------------------------------------------------------------------
 			// /* String methods */
 
