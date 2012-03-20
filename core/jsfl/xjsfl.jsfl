@@ -65,7 +65,8 @@
 // /* Settings - Core settings and cached variables */
 
 	/**
-	 *
+	 * Core settings and cached variables
+	 * @class	Settings
 	 */
 	xjsfl.settings =
 	{
@@ -136,6 +137,7 @@
 		 * URIs
 		 * An ordered list of base URIs which xJSFL uses when searching for files
 		 * module uris are updated automatically when new modules are added
+		 * @type {Object}
 		 */
 		uris:
 		{
@@ -146,6 +148,11 @@
 
 			// methods
 
+				/**
+				 * Adds URIs to the URIs list
+				 * @param	{String}	pathOrURI	A valid path or URI
+				 * @param	{String}	type		The type of URI to add. Valid types are user, module, or core
+				 */
 				add:function(pathOrURI, type)
 				{
 					// check uri is valid
@@ -269,6 +276,10 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // /* Debug - debugging methods for file, function and error */
 
+	/**
+	 * @type {Object}	The xJSFL Debug object
+	 * @class
+	 */
 	xjsfl.debug =
 	{
 		_error:false,
@@ -608,7 +619,8 @@
 // /* File - Methods to load framework assets, or handle common filesystem functionality */
 
 	/**
-	 * framework-specific file functionality
+	 * Methods to load framework assets, or handle common filesystem functionality
+	 * @class
 	 */
 	xjsfl.file =
 	{
@@ -738,8 +750,7 @@
 		 * Parameters and return type vary depending on file type!
 		 *
 		 * @param	{String}		path	The relative or absolute path, or uri to the file
-		 *
-		 * @param	{String}		name	The name or path fragment to a file, with or without the file extension
+		 * @param	{String}		path	The name or path fragment to a file, with or without the file extension
 		 * @param	{String}		type	The folder type in which to look (i.e. settings) for the file(s)
 		 * @param	{Boolean}		quiet	Loads the file quietly, without tracing to the Outupt panel
 		 *
@@ -909,8 +920,8 @@
 // /* Classes - Core methods to load and register framework libraries and classes */
 
 	/**
-	 * Mechanism to store and retrieve libraries into the global (or other)
-	 * namespace between external JSFL file executions
+	 * Core methods to load and register framework libraries and classes
+	 * @class
 	 */
 	xjsfl.classes =
 	{
@@ -922,7 +933,6 @@
 		/**
 		 * Load a class or array of classes from disk
 		 *
-		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
 		 * @param	{Array}		fileRef		An Array of class filepaths
@@ -1077,6 +1087,8 @@
 // /* Modules - Core methods to handle the initialization and loading of modules */
 
 	/**
+	 * Core methods to handle the initialization and loading of modules
+	 *
 	 * A namespace in which to store module code to prevent pollution of global
 	 * scope as well as a couple of methods to add and load module code
 	 *
@@ -1084,6 +1096,9 @@
 	 *
 	 * The syntax below is somewhat convoluted, in order to trick Komodo into
 	 * displaying the members correctly in autocomplete. Nothing else :)
+	 *
+	 * @ignore
+	 * @class
 	 */
 	xjsfl.modules =
 	(
@@ -1114,7 +1129,6 @@
 		 *		can be retrieved if necessary via xjsfl.modules.getModule(namespace)
 		 *
 		 */
-
 		function()
 		{
 			/**
@@ -1344,12 +1358,22 @@
 					// create module
 						try
 						{
-							var module = new xjsfl.classes.Module(namespace, properties, window);
-							if(module)
-							{
-								modules[namespace] = module;
-							}
-							return module;
+							// create module
+								var module = new xjsfl.classes.Module(namespace, properties, window);
+								
+							// register with module and window
+								if(module)
+								{
+									modules[namespace] = module;
+									window[namespace] = module;
+								}
+								
+							// call constructor
+								if(window)
+								{
+									module.init();
+								}
+								return module;
 						}
 						catch(err)
 						{
@@ -1376,6 +1400,11 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // /* UI - Global access to XUL UI dialogs */
 
+	/**
+	 * Global access to XUL UI dialogs
+	 * @type {Object}	Description
+	 * @class
+	 */
 	xjsfl.ui =
 	{
 		dialogs:[],
@@ -1550,6 +1579,13 @@
 					// file
 						scope.load		= function(pathOrURI, quiet){ return xjsfl.file.load(URI.toURI(pathOrURI, 1), null, quiet); }
 						scope.save		= function(pathOrURI, contents){ return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents); }
+						scope.require	= function(className)
+						{
+							for (var i = 0; i < arguments.length; i++)
+							{
+								xjsfl.classes.load(arguments[i], true);
+							}
+						}
 
 					// introspection
 						scope.inspect	= function(){ fl.trace('inspect() not yet initialized'); };

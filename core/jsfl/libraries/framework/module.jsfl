@@ -61,7 +61,7 @@
 				}
 
 			// call a constructor if provided
-				if(this.init)
+				if(this.init && ! window)
 				{
 					this.init();
 				}
@@ -150,7 +150,7 @@
 
 				/**
 				 * Gets the Window object of the module
-				 * @returns	{Window}
+				 * @returns	{Window}	The current window
 				 */
 				getWindow:function()
 				{
