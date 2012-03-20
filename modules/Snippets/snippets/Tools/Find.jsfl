@@ -1,14 +1,18 @@
-﻿xjsfl.init(this);
-
-/**
+﻿/**
  * Finds items in the current document according to criteria you set
  * @icon {iconsURI}Actions/find/find.png
  */
 (function(){
 
+	xjsfl.init(this);
+	
+	require('utils')
+	
 	function find(value, property, type, context)
 	{
-		inspect(Utils.getArguments(arguments));
+		trace('\nSorry! Find tool not yet implemented.');		
+		
+		inspect(Utils.getParams(find, arguments), 'Parameters');
 
 		switch(context)
 		{

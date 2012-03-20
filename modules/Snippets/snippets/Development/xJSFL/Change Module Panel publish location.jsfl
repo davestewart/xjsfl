@@ -15,6 +15,12 @@ clear();
 			
 		// get publish path
 			var publishURI	= getPublishURI();
+			
+			if(!publishURI)
+			{
+				alert('The publish location can\'t be set until the document has been saved');
+				return;
+			}
 
 	// --------------------------------------------------------------------------------
 	// UI
