@@ -1,0 +1,27 @@
+<dialog id="dialog" title=" Snippets" buttons="">
+	<content>
+		<grid>
+			<columns id="columns">
+				<column flex="1"/>
+				<column flex="3"/>
+			</columns>
+			<rows id="controls">
+				<row template="radiogroup">
+					<label value="Set:" width="80"/>
+					<radiogroup class="control" id="set" tabindex="" width="250">
+						<radio label="Sample snippets" value="Sample snippets" acceskey="" id="set[Sample snippets]"/>
+						<radio label="User snippets" value="User snippets" acceskey="" id="set[User snippets]"/>
+						<separator width="250" />
+						<radio label="Commands folder" value="Commands folder" acceskey="" id="set[Commands folder]"/>
+					</radiogroup>
+				</row>
+				<row>
+					<spacer />
+					<hbox>
+						<button label="Load" flex="1" width="150" /> <button label="Manage" flex="1" width="50" />
+					</hbox>
+				</row>
+			</rows>
+		</grid>
+	</content>
+</dialog>

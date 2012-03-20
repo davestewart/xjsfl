@@ -5,8 +5,8 @@ var Snippets =
 	
 		init:function()
 		{
-			this.sets		= new SetManager(this);
 			this.files		= new FileManager(this);
+			this.sets		= new SetManager(this);
 		},
 
 	// ------------------------------------------------------------------------------------------------
@@ -29,6 +29,7 @@ var Snippets =
 		manageSets:function()
 		{
 			this.sets.manage();
+			this.panel.call('update');
 		},
 		
 		rebuildSet:function()
@@ -41,6 +42,13 @@ var Snippets =
 		{
 			this.sets.setFolderState(path, state);
 		},
+		
+		setScrollPosition:function(position)
+		{
+			this.sets.setScrollPosition(position);
+		},
+
+
 
 	// ------------------------------------------------------------------------------------------------
 	// public functions for Flash Panel
@@ -116,4 +124,3 @@ var Snippets =
 	 * @type {Module}
 	 */
 	Snippets = xjsfl.modules.create('Snippets', Snippets, this);
-	

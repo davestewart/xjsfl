@@ -212,6 +212,11 @@
 				return call('setFolderState', uri, state);
 			}
 			
+			public function setScrollPosition(position:int):void 
+			{
+				call('setScrollPosition', position);
+			}
+			
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Event handlers
 		
@@ -236,7 +241,9 @@
 							}
 						}
 					
-						trace(items.toXMLString())
+				// debug
+					//trace(items.toXMLString())
+					
 				// complete
 					dispatchEvent(new Event(Event.COMPLETE));
 			}

@@ -64,6 +64,11 @@ FileManager.prototype =
 			// update template
 				var template = new Template(templateURI, data);
 				template.save(targetURI);
+		},
+		
+		createSet:function()
+		{
+			
 		}
 
 }

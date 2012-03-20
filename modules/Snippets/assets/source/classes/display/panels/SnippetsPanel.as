@@ -1,9 +1,11 @@
 ﻿package display.panels
 {
+	import fl.events.ScrollEvent;
 	import flash.display.Sprite;
 	import flash.system.System;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.utils.setTimeout;
 	
 	import com.xjsfl.ui.controls.tree.TreePanel;
 	import com.xjsfl.ui.controls.tree.items.TreeFileItem;
@@ -48,11 +50,11 @@
 				
 			}
 			
-			public function initialize(module:SnippetsModule)
+			public function initialize(snippetsModule:SnippetsModule)
 			{
 				// module
-					this.module = module;
-					this.module.addEventListener(Event.COMPLETE, onModuleComplete)
+					module = snippetsModule;
+					module.addEventListener(Event.COMPLETE, onDataLoaded)
 				
 				// treeMenu
 					treeMenuData = 
@@ -132,6 +134,7 @@
 						treePanel.addEventListener(TreeEvent.ITEM_COMMAND, onTreeEvent);
 						treePanel.addEventListener(TreeEvent.ITEM_PATH, onTreeEvent);
 						treePanel.addEventListener(TreeEvent.RELOAD, onTreeEvent);
+						treePanel.addEventListener(ScrollEvent.SCROLL, onTreePanelScroll);
 				
 					// new
 						//treePanel.addEventListener(TreeEvent.NEW_ITEM_COMPLETE, onItemCreateComplete);
@@ -157,8 +160,17 @@
 						treeMenu				= new RightClickMenu(treePanel.tree, treeMenuData, onTreeMenuItemSelect, onTreeMenuInit);
 
 					// set data on tree
-						treePanel.tree.xml		= SnippetsModule.instance.data;
+						treePanel.xml			= module.data;
 						
+					// update panel scroll position
+						var position:int		= module.data.@scrollPosition;
+						
+						// THIS IS A HACK - for some reason the tree won't update straight away - needs looking into
+						treePanel.scrollPane.scrollV =  position;
+						setTimeout(function ():void 
+						{
+							treePanel.scrollPane.scrollV =  position;
+						}, 50)
 			}
 
 
@@ -166,11 +178,16 @@
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Public Methods
 		
-			public function setSize(width:Number, height:Number):void
+			public function setSize(width:int, height:int):void
 			{
 				treePanel.setSize(width - 2, height - treePanel.y - 1);
 				searchBox.setSize(width - 1 - 25, searchBox.height);
 				editSetButton.x = searchBox.width + 3;
+			}
+			
+			public function invalidate():void 
+			{
+				setSize(stage.stageWidth, stage.stageHeight);
 			}
 			
 		
@@ -307,14 +324,20 @@
 
 			// module data
 			
-				protected function onModuleComplete(event:Event):void 
+				protected function onDataLoaded(event:Event):void 
 				{
-					treePanel.tree.xml	= SnippetsModule.instance.data;
+					treePanel.xml = module.data;
+					invalidate();
 				}
 				
 				protected function onFolderToggle(event:TreeItemEvent):void 
 				{
 					module.setFolderState(event.target.path, event.target.isOpen);
+				}
+				
+				protected function onTreePanelScroll(event:ScrollEvent):void 
+				{
+					module.setScrollPosition(event.position);
 				}
 				
 
