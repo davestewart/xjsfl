@@ -26,11 +26,17 @@
 		{
 			// ----------------------------------------------------------------------------------------------------
 			// resolve the URI
+			
+				// convert URIs to Strings
+					if(pathOrURI instanceof URI)
+					{
+						pathOrURI = pathOrURI.uri;
+					}
 
 				// throw error if no path passed
 					if(typeof pathOrURI !== 'string')
 					{
-						throw new TypeError('TypeError in Config: pathOrURI "' +pathOrURI+ '" must be a string')
+						throw new TypeError('TypeError in Config: pathOrURI "' +pathOrURI+ '" must be a String or URI instance')
 					}
 
 				// absolute uri
@@ -42,6 +48,12 @@
 				// relative uri - find in paths
 					else
 					{
+						// error on empty strings
+							if(pathOrURI.trim() == '')
+							{
+								throw new TypeError('TypeError in Config: pathOrURI "' +pathOrURI+ '" must be a valid path, URI, filename, or token');
+							}
+							
 						// find in paths
 							var uri	= xjsfl.file.find('config', pathOrURI);
 
@@ -98,6 +110,8 @@
 		Config.prototype =
 		{
 			xml:	null,
+			
+			autosave:true,
 
 			getFile:function()
 			{
@@ -113,64 +127,12 @@
 			constructor:Config,
 
 			/**
-			 * Sets data on the wrapped XML data
-			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
-			 * @param	{String}		path	A dot-notation path to a node or attribute
-			 * @param	{Value}			value	Any value that can be converted to a string
-			 * @returns	{Config}				The current Config node
-			 */
-			set:function(path, value)
-			{
-				// grab nodes
-					var parts		= path.split('.')
-					var nodeName	= parts.pop();
-					var parent		= parts.length ? eval('this.xml.' + parts.join('.')) : this.xml;
-					var node		= eval('this.xml.' + path);
-
-				// delete any existing childnodes
-					if(node.length())
-					{
-						node.setChildren(new XMLList());
-					}
-
-				// treat differently, depending on datatype
-					if(typeof value == 'undefined' || value === null)
-					{
-						parent[nodeName] = '';
-					}
-					else
-					{
-						switch(typeof value)
-						{
-							case 'boolean':
-							case 'number':
-							case 'string':
-								parent[nodeName] = value;
-							break;
-
-							case 'xml':
-								node[nodeName] += value
-							break;
-
-							default:
-								node[nodeName] += new XML('<![CDATA[' + String(value) + ']]>');
-						}
-					}
-
-				// save
-					this.save();
-
-				// return
-					return this
-			},
-
-			/**
 			 * Gets the value of the specified node path
 			 * @param	{String}		path		A dot-notation path to a node or attribute
 			 * @param	{Boolean}		asXML		A Boolean flag indicating that you want to return the actual XML, rather than return the XML, parse the value to the currect datatype
 			 * @returns	{value}						The value of the node / attribute, or null (===) if no value, or undefined (===) if missing. Test for XML with typeof value === 'xml'
 			 */
-			get:function(path, asXML)
+			get:function(path)
 			{
 				/**
 				 * nodes that exist, but with no value will return a null value (value === null)
@@ -179,8 +141,8 @@
 				 */
 
 				// get the value
-					var result = path ? eval('this.xml.' + path) : this.xml;
-					var length = result.length();
+					var value	= this.xml.get(path);
+					var length	= value.length();
 
 				// result will always be an XML node, now choose whether to convert it
 					if(length == 0)
@@ -189,9 +151,47 @@
 					}
 					else
 					{
-						return (length > 1 || asXML) ? result : Utils.parseValue(result);
+						return value.length() == 1 && value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
 					}
 
+			},
+			
+			/**
+			 * Sets data on the wrapped XML data
+			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
+			 * @param	{String}		path		An xJSFL XML notation path to a node or attribute
+			 * @param	{Value}			value		Any value that can be converted to a string
+			 * @param	{Boolean}		append		An optional Boolean that allows you to add the items to path, rather than replacing it
+			 * @returns	{Config}					The current Config node
+			 */
+			set:function(path, value, append)
+			{
+				// set value
+					this.xml.set(path, value, append);
+				
+				// save
+					if(this.autosave)
+					{
+						this.save();
+					}
+
+				// return
+					return this
+			},
+
+			remove:function(path)
+			{
+				// set value
+					this.xml.remove(path);
+				
+				// save
+					if(this.autosave)
+					{
+						this.save();
+					}
+
+				// return
+					return this
 			},
 
 			/**
@@ -228,7 +228,7 @@
 			 * Removes the config file from disk
 			 * @returns	{Config}		The current Config node
 			 */
-			remove:function()
+			removeFile:function()
 			{
 				this.clear();
 				var uri = this.getFile().uri;
@@ -264,6 +264,11 @@
 			toXMLString:function()
 			{
 				return this.xml.prettyPrint();
+			},
+			
+			debug:function()
+			{
+				trace(this.toXMLString());
 			}
 
 		}
