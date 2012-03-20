@@ -1,5 +1,6 @@
 package com.xjsfl.ui.controls.tree
 {
+	import fl.events.ScrollEvent;
 	import flash.events.ContextMenuEvent;
 	import flash.events.Event;
 	
@@ -79,6 +80,7 @@ package com.xjsfl.ui.controls.tree
 				
 					// elements
 						scrollPane			= new ScrollPane();
+						scrollPane.addEventListener(ScrollEvent.SCROLL, onScrollPaneScroll); 
 						addChild(scrollPane);
 						
 						tray				= new TreeTray();
@@ -129,16 +131,22 @@ package com.xjsfl.ui.controls.tree
 			
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Public Methods
-			
+		
 			override public function setSize(width:Number, height:Number):void 
 			{
-				super.setSize(width, height);
+				//super.setSize(width, height);
 				scrollPane.setSize(width, height);
 				tree.setSize(scrollPane.scrollarea.width, scrollPane.scrollarea.height);
 			}
 			
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Accessors
+			
+			public function set xml(xml:XML):void
+			{
+				tree.xml = xml;
+				//setSize(width, height);
+			}
 			
 			
 		// ---------------------------------------------------------------------------------------------------------------------
@@ -312,6 +320,11 @@ package com.xjsfl.ui.controls.tree
 							*/
 					}
 							
+				}
+				
+				protected function onScrollPaneScroll(event:ScrollEvent):void 
+				{
+					dispatchEvent(event);
 				}
 			
 

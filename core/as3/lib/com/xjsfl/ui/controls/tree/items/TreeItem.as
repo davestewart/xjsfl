@@ -132,7 +132,9 @@
 				drawBackground();
 				if (stage)
 				{
-					background.width = _width || stage.stageWidth;
+					//TODO This needs to be set from the containing tree / scrollpane
+					// If stageWidth is used, the horizontal parent scrollbar will always be too wide, because of the vertical scri
+					background.width = _width;// , parent.width, stage.stageWidth);
 				}
 			}
 			

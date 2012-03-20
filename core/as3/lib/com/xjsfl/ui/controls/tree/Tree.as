@@ -362,10 +362,10 @@ package com.xjsfl.ui.controls.tree
 							maxWidth = item.width;
 						}
 					}
-					
+
 				// set super
 					super.setSize(maxWidth, height);
-					
+
 				// redraw items at widest width
 					for (i = 0; i < _items.length; i++)
 					{
@@ -413,7 +413,7 @@ package com.xjsfl.ui.controls.tree
 						createItems(_data);
 						
 					// invalidate
-						invalidate()
+						invalidate();
 				}
 				
 				

@@ -36,11 +36,11 @@ package com.xjsfl.ui.containers
 		// { region: Variables
 		
 			// stage instances
-				public var scrollV			:UIScrollBar;
-				public var scrollH			:UIScrollBar;
-				public var scrollarea		:Sprite;
-				public var overlay			:Sprite;
-				public var background		:Sprite;
+				public var scrollbarV			:UIScrollBar;
+				public var scrollbarH			:UIScrollBar;
+				public var scrollarea			:Sprite;
+				public var overlay				:Sprite;
+				public var background			:Sprite;
 			
 			// added stage instances
 				protected var _source		:DisplayObject;
@@ -78,9 +78,9 @@ package com.xjsfl.ui.containers
 					addChildAt(background, 0)
 					
 				// scrolling
-					scrollV.addEventListener(ScrollEvent.SCROLL, onScrollV);
-					scrollH.addEventListener(ScrollEvent.SCROLL, onScrollH);
-					scrollV.lineScrollSize	= 19;
+					scrollbarV.addEventListener(ScrollEvent.SCROLL, onScrollV);
+					scrollbarH.addEventListener(ScrollEvent.SCROLL, onScrollH);
+					scrollbarV.lineScrollSize	= 19;
 					
 				// stage listeners
 					addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -98,10 +98,9 @@ package com.xjsfl.ui.containers
 				super.setSize(width, height);
 				if (source)
 				{
-					source.x		= - scrollH.scrollPosition + scrollarea.x + 1;
-					source.y		= - scrollV.scrollPosition + scrollarea.y + 1;
+					source.x		= - scrollbarH.scrollPosition + scrollarea.x + 1;
+					source.y		= - scrollbarV.scrollPosition + scrollarea.y + 1;
 				}
-				
 				draw();
 				invalidate();
 			}
@@ -118,18 +117,18 @@ package com.xjsfl.ui.containers
 					if (source != null)
 					{
 						
-						scrollV.visible		= scrollV.maxScrollPosition > 0;
-						scrollH.visible		= _tray != null || scrollH.maxScrollPosition > 0;
+						scrollbarV.visible		= scrollbarV.maxScrollPosition > 0;
+						scrollbarH.visible		= _tray != null || scrollbarH.maxScrollPosition > 0;
 					}
 					else
 					{
-						scrollV.visible		= true;
-						scrollH.visible		= true;
+						scrollbarV.visible		= true;
+						scrollbarH.visible		= true;
 					}
 
 				// acrollarea
-					scrollarea.width	= _width - (scrollV.visible ? SCROLLBAR_WIDTH : 0) - 2;
-					scrollarea.height	= _height - (scrollH.visible ? SCROLLBAR_WIDTH : 0) - 2;
+					scrollarea.width	= _width - (scrollbarV.visible ? SCROLLBAR_WIDTH : 0) - 2;
+					scrollarea.height	= _height - (scrollbarH.visible ? SCROLLBAR_WIDTH : 0) - 2;
 					
 				// tray
 					if (tray)
@@ -139,13 +138,13 @@ package com.xjsfl.ui.containers
 					}
 					
 				// horizontal scrollbar
-					scrollH.height		= _width - (tray ? tray.width : 0) - (scrollV.visible ? SCROLLBAR_WIDTH : 0);
-					scrollH.x			= tray ? tray.width : 0;
-					scrollH.y			= _height// + SCROLLBAR_WIDTH;
+					scrollbarH.height		= _width - (tray ? tray.width : 0) - (scrollbarV.visible ? SCROLLBAR_WIDTH : 0);
+					scrollbarH.x			= tray ? tray.width : 0;
+					scrollbarH.y			= _height// + SCROLLBAR_WIDTH;
 					
 				// vertical scrollbar
-					scrollV.height		= _height - (scrollH.visible ? SCROLLBAR_WIDTH : 0);
-					scrollV.x			= _width - SCROLLBAR_WIDTH;
+					scrollbarV.height		= _height - (scrollbarH.visible ? SCROLLBAR_WIDTH : 0);
+					scrollbarV.x			= _width - SCROLLBAR_WIDTH;
 					
 				// border
 					overlay.graphics.clear();
@@ -215,6 +214,12 @@ package com.xjsfl.ui.containers
 				invalidate();
 			}
 			
+			public function set scrollV(position:int):void 
+			{
+				source.y = - position + scrollarea.y + 1;
+				scrollbarV.scrollPosition = position;
+			}
+			
 
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Protected Methods
@@ -230,8 +235,8 @@ package com.xjsfl.ui.containers
 			{
 				if (source)
 				{
-					scrollH.setScrollProperties(scrollarea.width, 0, (source.width - scrollarea.width));
-					scrollV.setScrollProperties(scrollarea.height, 0, (source.height - scrollarea.height));
+					scrollbarH.setScrollProperties(scrollarea.width, 0, (source.width - scrollarea.width));
+					scrollbarV.setScrollProperties(scrollarea.height, 0, (source.height - scrollarea.height));
 				}
 			}
 
@@ -252,6 +257,7 @@ package com.xjsfl.ui.containers
 			
 			function onScrollV(event:ScrollEvent):void
 			{
+				dispatchEvent(event);
 				TweenLite.to(source, 0.3, { y: - event.position + scrollarea.y + 1, ease:Quint.easeOut } );
 			}
 
@@ -260,7 +266,7 @@ package com.xjsfl.ui.containers
 				if (background.getBounds(this).contains(mouseX, mouseY))
 				{
 					var dir:int = event.delta > 1 ? 1 : -1;
-					scrollV.scrollPosition -= event.delta * 19;
+					scrollbarV.scrollPosition -= event.delta * 19;
 				}
 			}
 			

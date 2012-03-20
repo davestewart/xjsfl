@@ -136,6 +136,7 @@
 			{
 				if (button)
 				{
+					button.visible = length > 0;
 					button.rotation = isOpen ? 0 : -90;
 					if (length == 0)
 					{
