@@ -1,5 +1,10 @@
-// -----------------------------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------------------------------------------------------------------------
 // Test code
+
+	/**
+	 * Filesystem examples
+	 * @snippets	all
+	 */
 
 	// initialize
 		xjsfl.init(this);
@@ -12,6 +17,9 @@
 
 		/**
 		 * create a new file and inspect its properties
+		 * which is ace
+		 * 
+		 * This should be useful
 		 * @param	{String}	filename	The filename
 		 * @param	{String}	folder		The folder
 		 * @returns	{String}				A new folder

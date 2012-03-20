@@ -1,5 +1,10 @@
-// -----------------------------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------------------------------------------------------------------------
 // Test code
+
+	/**
+	 * XUL
+	 * @snippets	all
+	 */
 	
 	// initialize
 	
@@ -129,6 +134,7 @@
 			/**
 			 * Click handler for button press
 			 * @param	event	{XULEvent}
+			 * @private
 			 */
 			function click(event)
 			{
@@ -313,7 +319,7 @@
 				/**
 				 * Event handler
 				 * @param	event	{XULEvent}
-				 * @returns		
+				 * @private
 				 */
 				function onControlEvent(event)
 				{

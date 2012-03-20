@@ -1,6 +1,11 @@
 // -----------------------------------------------------------------------------------------------------------------------------------------
 // Test code
 
+	/**
+	 * filename examples
+	 * @snippets	all
+	 */
+
 	// initialize
 		xjsfl.init(this);
 		clear();
@@ -56,7 +61,7 @@
 		}
 	
 		/**
-		 * Glob a variety of test patterns
+		 * Recursively-glob a variety of test patterns
 		 * @see http://www.codeproject.com/Articles/2809/Recursive-patterned-File-Globbing
 		 */
 		function globRecursive()
