@@ -262,9 +262,100 @@
 					}
 					return new SimpleTemplate(template, properties).output;
 				},
-
+				
 			// ---------------------------------------------------------------------------------------------------------------
 			// /* RegExp methods */
+
+				/**
+				 * Performs a global RegExp match but returns an Array of local match Arrays, or Objects if matchNames are supplied
+				 * @param	{String}	str				The string to be matched
+				 * @param	{RegExp}	rxGlobal		A global RegExp object or literal
+				 * @param	{String}	params			An optional comma-delimited string of local match names
+				 * @param	{Array}		params			An optional Array of local match names
+				 * @param	{Boolean}	captureIndex	An optional Boolean to store the index of the global matches
+				 * @returns	{Array}						An Array of local match Arrays or Objects
+				 */
+				match:function(str, rxGlobal, matchNames, captureIndex)
+				{
+					// variables
+						var matchesGlobal, matchesLocal, matchNames;
+						
+					// non-global regexp
+						var rxLocal			= new RegExp(rxGlobal.source);
+						rxLocal.multiline	= rxGlobal.multiline;
+						rxLocal.ignoreCase	= rxGlobal.ignoreCase;
+						
+					// exec
+						var n = 0;
+						if(captureIndex)
+						{
+							// variables
+								matchesGlobal		= [];
+								matchNames			= matchNames ? 'matchIndex,match,' + matchNames : null;
+								
+							// exec
+								var exec;
+								while(exec = rxGlobal.exec(str))
+								{
+									// stop processing if no matches (otherwise, exec() will loop forever)
+										if(exec[0] == '')break;
+										
+									// set up local matches array, with the match index if an object is being returned
+										matchesLocal	= matchNames ? [exec.index] : [];
+										
+									// add matches
+										for (var i = 0; i < exec.length; i++)
+										{
+											matchesLocal.push(exec[i]);
+										}
+										
+									// finalise matches
+										if(matchNames)
+										{
+											// create an object
+											matchesLocal = Utils.combine(matchNames, matchesLocal)
+										}
+										else
+										{
+											// add match index to array
+											matchesLocal.push(exec.index);
+										}
+										matchesGlobal.push(matchesLocal);
+										
+								}
+								
+							// reset lastIndex (this is important so subsequent matches don't fail!)
+								rxGlobal.lastIndex	= 0; 
+						}
+						
+					// match
+						else
+						{
+							// main match
+								matchesGlobal 	= str.match(rxGlobal);
+								matchNames		= matchNames ? 'match,' + matchNames : null;
+					
+							// sub matches
+								for (var i = 0; i < matchesGlobal.length; i++)
+								{
+									// variables
+										matchesLocal		= matchesGlobal[i].match(rxLocal);
+										
+									// stop processing if matches were empty
+										if(matchesLocal[0] == '')
+										{
+											matchesGlobal.pop();
+											break;
+										}
+										
+									// finalise matches
+										matchesGlobal[i]	= matchNames ? Utils.combine(matchNames, matchesLocal) : matchesLocal;
+								}
+						}
+						
+					// return
+						return matchesGlobal;
+				},
 
 				/**
 				 * Escapes a string for use in RegExp constructors
@@ -537,7 +628,7 @@
 				{
 					if(typeof keys === 'string')
 					{
-						keys = Utils.toArray(keys, /\s*,\s*/g);
+						keys = Utils.toArray(keys.trim(), /\s*,\s*/g);
 					}
 					var obj = {};
 					for (var i = 0; i < keys.length; i++)
@@ -954,6 +1045,20 @@
 				{
 					return params = Array.slice.apply(this, [args, startIndex || 0, endIndex || args.length]);
 				},
+				
+				
+				/**
+				 * Get the arguments of a function as an Object
+				 * @param	{Function}	fn		A function
+				 * @param	{Arguments}	args	The function instance's arguments
+				 * @returns	{Object}			An object containing the named function arguments
+				 */
+				getParams:function(fn, args)
+				{
+					var source		= Utils.parseFunction(fn);
+					var args		= Utils.getArguments(args);
+					return Utils.combine(source.params, args);
+				},
 
 				/**
 				 * Get the class of an object as a string
@@ -1337,8 +1442,8 @@
 					var matches		= fn.toSource().match(/function\s*((\w*)\s*\(([^\)]*)\))/);
 					if(matches)
 					{
-						var params = matches[2].match(/(\w+)/g);
-						return {name:matches[1], params:params, signature:matches[0].replace(/function (\w+)/, '$1')};
+						var params = matches[3].match(/(\w+)/g);
+						return {signature:matches[0].replace(/function (\w+)/, '$1'), name:matches[2], params:params};
 					}
 					return {name:null, params:[], signature:''};
 				},
