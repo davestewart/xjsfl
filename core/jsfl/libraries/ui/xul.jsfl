@@ -307,7 +307,7 @@
 									case 'radiogroup':
 									case 'menulist':
 									case 'listbox':
-										var selected		= xml.find(function(element){return element.@selected && element.@selected == 'true';}, true);
+										var selected		= xml..*.(function(element){return element.@selected && element.@selected == 'true';});
 										this.settings[id]	= selected.@value;
 										//trace('>>' + selected.toXMLString())
 									break;
@@ -466,7 +466,7 @@
 							var types	= 'textbox,popupslider,checkbox,colorchip,choosefile,button,listbox,menulist,radiogroup,targetlist,property'.split(',');
 							for each(var type in types)
 							{
-								var controls = xml.find(type, true);
+								var controls = xml.get('..' + type);
 
 								if(controls.length() > 0)
 								{
@@ -1185,10 +1185,11 @@
 					 * @param	{String}	src			Source path to the SWF, (important!) relative to the XML saved location
 					 * @param	{Number}	width		The width of the Flash window
 					 * @param	{Number}	height		The height of the Flash window
-					 * @param	{Array}		properties	An array of property names to be created
+					 * @param	{Array}		properties	An optional Array of property names to be created
+					 * @param	{Object}	data		An optional Object of name:value pairs to be set locally as a SharedObject (use AS3 to retrieve them)
 					 * @returns	{XUL}					The XUL dialog
 					 */
-					setFlash:function(src, width, height, properties)
+					setFlash:function(src, width, height, properties, data)
 					{
 						//TODO add functinality to save a string of variables to a hard-coded location, as you can't pass in query strings, which you then load in manually
 						//TODO Can the SWF determine its location using ExternalInterface, or do we need to use a hardcoded URL? Does MMExecute work in a XUL dialog?
@@ -1211,9 +1212,29 @@
 						// update size
 							this.xml.@width		= width;
 							this.xml.@height	= height;
+							
+						// set data
+							if(data)
+							{
+								//TODO Add in save to XML code here
+								//var uri = new URI()
+								//this.setFlashData(data, uri);
+							}
 
 						// return
 							return this;
+					},
+					
+					
+					/**
+					 * Stores data for any Flash elements as local SharedObject data
+					 * @param	{Object}	data		An Object of name:value pairs to be set locally as a SharedObject (use AS3 to retrieve them)
+					 * @param	{String}	uri			The URI to the XML file to save
+					 * @returns	{XUL}					The XUL dialog
+					 */
+					setFlashData:function(data, uri)
+					{
+						save(uri, JSFLInterface.serialize(data));
 					},
 
 					/**
@@ -1672,7 +1693,7 @@
 					// find #controls node and add content
 						if(true)
 						{
-							var controls	= this.xml.find('#controls', true);
+							var controls	= this.xml.get('..*.(#controls)');
 							var content		= new XMLList(this.content);
 							controls.row	+= content;
 						}
@@ -1707,7 +1728,7 @@
 							{
 								// variables
 									var events		= types[type].split(/ /g);
-									var nodes		= this.xml.find(type, true);
+									var nodes		= this.xml.get('..' + type);
 
 								// for each node
 									for each(var node in nodes)
