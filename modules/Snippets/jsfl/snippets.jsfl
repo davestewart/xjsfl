@@ -5,8 +5,8 @@ var Snippets =
 	
 		init:function()
 		{
-			this.files		= new FileManager(this);
-			this.sets		= new SetManager(this);
+			FileManager.init();
+			SetManager.init();
 		},
 
 	// ------------------------------------------------------------------------------------------------
@@ -28,24 +28,24 @@ var Snippets =
 
 		manageSets:function()
 		{
-			this.sets.manage();
+			SetManager.manage();
 			this.panel.call('update');
 		},
 		
 		rebuildSet:function()
 		{
-			this.sets.rebuild();
+			SetManager.rebuild();
 			this.panel.call('update');
 		},
 		
 		setFolderState:function(path, state)
 		{
-			this.sets.setFolderState(path, state);
+			SetManager.setFolderState(path, state);
 		},
 		
 		setScrollPosition:function(position)
 		{
-			this.sets.setScrollPosition(position);
+			SetManager.setScrollPosition(position);
 		},
 
 
@@ -106,12 +106,12 @@ var Snippets =
 
 		createCommand:function(name, uri)
 		{
-			return this.files.createCommand(name, uri);
+			return FileManager.createCommand(name, uri);
 		},
 
 		createFile:function(targetURI, contents, desc, icon, version)
 		{
-			return this.files.createFile(targetURI, contents, desc, icon, version);
+			return FileManager.createFile(targetURI, contents, desc, icon, version);
 		}
 
 
