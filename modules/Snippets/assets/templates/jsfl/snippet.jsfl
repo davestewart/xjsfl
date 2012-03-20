@@ -1,5 +1,5 @@
 /**
- * {desc}
+ * {description}
  *
  * @author		{author}
  * @version		{version}

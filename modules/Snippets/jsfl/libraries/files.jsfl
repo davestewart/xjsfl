@@ -36,14 +36,14 @@ FileManager =
 
 		/**
 		 * Creates a SNippet file on the hard disk
-		 * @param	{String}	targetURI	The URI to save the newly-created file to
-		 * @param	{String}	contents	The contents of the newly-created file
-		 * @param	{String}	desc		The description that will show as the Snippet panel entry
-		 * @param	{String}	icon		An optional icon URI or relative path to the icon file
-		 * @param	{String}	version		An optional version number
-		 * @returns	{Boolean}				True or false, depending on whether the file was saved
+		 * @param	{String}	targetURI		The URI to save the newly-created file to
+		 * @param	{String}	contents		The contents of the newly-created file
+		 * @param	{String}	description		An optional description that will show up as a tooltip
+		 * @param	{String}	icon			An optional icon URI or relative path to the icon file
+		 * @param	{String}	version			An optional version number
+		 * @returns	{Boolean}					True or false, depending on whether the file was saved
 		 */
-		createFile:function(targetURI, contents, desc, icon, version)
+		createFile:function(targetURI, contents, description, icon, version)
 		{
 			// values
 				targetURI			= URI.toURI(targetURI);
@@ -60,7 +60,7 @@ FileManager =
 				var data =
 				{
 					contents	:contents || '',
-					desc		:desc || name,
+					description	:description || name,
 					icon		:icon || 'Filesystem/page/page_white.png',
 					version		:version || '0.1',
 					name		:name,
