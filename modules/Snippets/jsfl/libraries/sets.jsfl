@@ -187,12 +187,10 @@ SetManager =
 					{
 						case 'Load':
 							var state = this.load(xul.values.set);
-							set = xul.values.set;
 						break;
 	
 						case 'Add':
 							var state = this.add(xul.controls.set.value);
-							set = xul.controls.set.value
 						break;
 	
 						case 'Remove':
@@ -207,12 +205,14 @@ SetManager =
 					a short while so the panel needs to be reminded to update manually.
 					Ordinarily, we should return true or false.
 				*/
-				//alert(state + ' > '  + xul.values.set)
 				if(state)
 				{
 					var name = this.config.get('sets.@current');
 					Snippets.panel.call('loadSet', name);
 				}
+				
+			// return
+				return state;
 		},
 		
 	
