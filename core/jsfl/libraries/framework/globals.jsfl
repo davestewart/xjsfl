@@ -123,7 +123,31 @@
 						 * A shortcut to the Utils debug() method
 						 * @see Utils.debug
 						 */
-						scope.debug = Utils.debug;
+						
+						/**
+						 * Catch-all wrapper for the xjsfl.debug object
+						 * @param	{Error}		obj			A javaScript Error object
+						 * @param	{Function}	obj			A function to test
+						 * @param	{String}	obj			A URI or path of the file to load and debug
+						 * @param	{Array}		params		An Array or arguments to pass to the function
+						 * @param	{Object}	scope		An alternative scope to run the function in
+						* @returns	{Value}					The result of the function if successful
+						 */
+						scope.debug = function(obj, params, scope)
+						{
+							if(obj instanceof Error)
+							{
+								xjsfl.debug.error(obj);
+							}
+							else if(typeof obj === 'function')
+							{
+								xjsfl.debug.func(obj, params, scope);
+							}
+							else if(typeof obj === 'string')
+							{
+								xjsfl.debug.file(obj);
+							}
+						},
 						
 						
 					// ------------------------------------------------------------------------------------------------
