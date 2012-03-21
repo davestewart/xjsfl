@@ -162,7 +162,7 @@
 						loadScript('libraries/utils/utils.jsfl');
 						loadScript('libraries/file/uri.jsfl');
 						loadScript('libraries/file/uri-list.jsfl');
-						loadScript('xjsfl.jsfl');
+						loadScript('libraries/xjsfl.jsfl');
 						loadScript('libraries/framework/globals.jsfl');
 						
 					// add core and user URIs
@@ -186,7 +186,7 @@
 			{
 				xjsfl.output.log('error running core bootstrap', true);
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/utils.jsfl');
-				fl.runScript(xjsfl.uri + 'core/jsfl/xjsfl.jsfl');
+				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/framework/globals.jsfl');
 				xjsfl.initGlobals(this, 'window');
 				xjsfl.debug.error(error, true);

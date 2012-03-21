@@ -29,6 +29,13 @@
 					return false;
 				}
 				
+			// Check user is not installing into particular Flash folders
+				if(fl.scriptURI.indexOf(fl.configURI) === 0)
+				{
+					alert('xJSFL cannot be installed in the Flash configuration folder, as this could create file-dependency loops.\n\nPlease move the xJSFL installation folder elsewhere and try again.');
+					return false;
+				}
+				
 			// load bootstrap
 				//TODO - Add in checks in case bootstrap fails
 				fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
