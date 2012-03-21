@@ -1,15 +1,15 @@
 // ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████        ██
-//  ██            ██
-//  ██     █████ █████
-//  ██ ███ ██ ██  ██
-//  ██  ██ █████  ██
-//  ██  ██ ██     ██
-//  ██████ █████  ████
+//  ██  ██ ██
+//  ██  ██ ██
+//  ██  ██ ██
+//  ██  ██ ██
+//  ██  ██ ██
+//  ██  ██ ██
+//  ██████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Get - Utility functions to ensure user has a document open, selection, etc, and alert if not
+// UI - Utility functions to ensure user has a document open, selection, etc, and alert if not
 
 
 	// --------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
 		/**
 		 * A set of functions to return objects or selections in the UI, or issue standard warnings if not available
 		 */
-		Get =
+		UI =
 		{
 			/**
 			 * Get the current Document DOM, or issue a standard warning if not available
@@ -43,7 +43,7 @@
 			 */
 			timeline:function()
 			{
-				if(Get.dom())
+				if(UI.dom)
 				{
 					return fl.getDocumentDOM().getTimeline();
 				}
@@ -58,7 +58,7 @@
 			 */
 			items:function()
 			{
-				if(Get.dom())
+				if(UI.dom)
 				{
 					var items = fl.getDocumentDOM().library.getSelectedItems();
 					if(items.length > 0)
@@ -78,7 +78,7 @@
 			 */
 			selection:function()
 			{
-				if(Get.dom())
+				if(UI.dom)
 				{
 					if($selection.length > 0)
 					{
@@ -88,11 +88,38 @@
 					return false;
 				}
 				return false;
-			}
+			},
+			
+			/**
+			 * Lightweight function to return the current UI state
+			 * @returns	{Object}
+			 */
+			state:function()
+			{
+				//TODO Add in boolean to also get the selected elements
+				var obj = {};
+				var dom = fl.getDocumentDOM();
+				if(dom)
+				{
+					//BUG CS5.5 won't allow you to get a timeline sometimes
+					var timeline = dom.getTimeline();
+					obj =
+					{
+						document:	dom.pathURI || dom.name,
+						timeline:	timeline.name,
+						layers:		String(timeline.getSelectedLayers()),
+						frames:		String(timeline.getSelectedFrames()),
+						numLayers:	timeline.layers.length,
+						numFrames:	timeline.frameCount,
+						selection:	null
+					}
+				}
+				return obj;
+			},
 
 		}
-
+		
 	// ---------------------------------------------------------------------------------------------------------------------
 	// register class with xjsfl
 
-		xjsfl.classes.register('Get', Get);
+		xjsfl.classes.register('UI', UI);
