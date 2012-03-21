@@ -63,7 +63,7 @@
 						}
 	
 					// break up any comma-delimited expressions into an array of discrete expressions
-						var expressions	= Utils.parseCSS(expression);
+						var expressions	= Selectors.parseCSS(expression);
 	
 					// get items
 						var results		= [];
@@ -89,6 +89,56 @@
 						return results;
 			},
 	
+	
+			/**
+			 * Registers a custom selector
+			 * @param	{String}	pattern		The pattern of the selector. Valid values are ":type" or "[attribute]"
+			 * @param	{Function}	callback	A pseudo callback of the format function(item){ return state }
+			 * @param	{Function}	callback	An attribute callback of the format function(item){ return value }
+			 * @param	{String}	type		The type of selector. Valid values are Library|Document|Timeline|Layer|Frame
+			 */
+			register:function(pattern, callback, type)
+			{
+				// variables
+					pattern			= String(pattern);
+					var matches		= pattern.match(/([:\[])(\w+)/);
+					var group;
+	
+				// test for valid selector
+					if(matches)
+					{
+						// error if wrong type
+							if( ! /^(item|element)$/.test(type) )
+							{
+								throw new Error('Error in Selectors.register(): Invalid type "' +type+ '" supplied');
+							}
+	
+						// OK, extract the selector
+							var selector	= matches[2];
+	
+						// :pseudo selector
+							if(matches[1] == ':')
+							{
+								group = 'pseudo';
+							}
+	
+						// [attribute] selector
+							else if(matches[1] == '[')
+							{
+								group = 'custom';
+							}
+	
+						// assign
+							Selectors[type][group][selector] = callback;
+							
+						// return
+							return Selectors;
+					}
+					else
+					{
+						throw new Error('Error in Selectors.register(): Invalid pattern "' +pattern+ '" supplied');
+					}
+			},
 	
 			/**
 			 * parse a selector expression into selectors - also called from :not()
@@ -291,6 +341,66 @@
 				// return
 					return selectors;
 			},
+			
+			/**
+			 * Parses a compound CSS expression, into single selctors, respecting :nested(:tokens, :like(these, ones))
+			 * @param	{String}	expression	A CSS string
+			 * @returns	{Array}					An Array of String selectors
+			 */
+			parseCSS:function(expression)
+			{
+				// variables
+					var selectors	= [];
+					var selector	= '';
+					var nesting		= 0;
+					
+				// utility function
+					function addSelector(selector)
+					{
+						selector = selector.trim();
+						if(selector !== '')
+						{
+							selectors.push(selector);
+						}
+					}
+					
+				// parse string
+					expression = String(expression);
+					for (var i = 0; i < expression.length; i++)
+					{
+						var char = expression.charAt(i);
+						if(char === ',')
+						{
+							if(nesting == 0)
+							{
+								addSelector(selector);
+								selector = '';
+							}
+							else
+							{
+								selector += char;
+							}
+						}
+						else
+						{
+							selector += char;
+							if(char == '(')
+							{
+								nesting++;
+							}
+							else if(char == ')')
+							{
+								nesting--;
+							}
+						}
+					}
+					
+				// push last remaining selector
+					addSelector(selector);
+					
+				// return
+					return selectors;	
+			},
 	
 			/**
 			 * Tests the selectors against the supplied items and returns matches
@@ -351,56 +461,6 @@
 	
 				// return
 					return items;
-			},
-	
-			/**
-			 * Registers a custom selector
-			 * @param	{String}	pattern		The pattern of the selector. Valid values are ":type" or "[attribute]"
-			 * @param	{Function}	callback	A pseudo callback of the format function(item){ return state }
-			 * @param	{Function}	callback	An attribute callback of the format function(item){ return value }
-			 * @param	{String}	type		The type of selector. Valid values are Library|Document|Timeline|Layer|Frame
-			 */
-			register:function(pattern, callback, type)
-			{
-				// variables
-					pattern			= String(pattern);
-					var matches		= pattern.match(/([:\[])(\w+)/);
-					var group;
-	
-				// test for valid selector
-					if(matches)
-					{
-						// error if wrong type
-							if( ! /^(item|element)$/.test(type) )
-							{
-								throw new Error('Error in Selectors.register(): Invalid type "' +type+ '" supplied');
-							}
-	
-						// OK, extract the selector
-							var selector	= matches[2];
-	
-						// :pseudo selector
-							if(matches[1] == ':')
-							{
-								group = 'pseudo';
-							}
-	
-						// [attribute] selector
-							else if(matches[1] == '[')
-							{
-								group = 'custom';
-							}
-	
-						// assign
-							Selectors[type][group][selector] = callback;
-							
-						// return
-							return Selectors;
-					}
-					else
-					{
-						throw new Error('Error in Selectors.register(): Invalid pattern "' +pattern+ '" supplied');
-					}
 			},
 	
 			toString:function()
@@ -1408,7 +1468,8 @@
 			 */
 			audible:function(timeline)
 			{
-				return Iterators.layers(timeline, null, function (frame){ return frame.soundLibraryItem != null; });
+				var context = Context.create();//new Context(this, timeline);
+				return Iterators.layers(context, null, function (frame){ return frame.soundLibraryItem != null; });
 			}
 		},
 
