@@ -1,11 +1,11 @@
-﻿xjsfl.init(this);
+xjsfl.init(this);
 /**
  * Randomize width, height and rotation of selected elements on the stage
  * @icon {iconsURI}Objects/weather/weather_breeze.png
  */
 (function(){
 
-	if(Get.selection())
+	if(UI.selection)
 	{
 		var collection = new ElementCollection($selection);
 

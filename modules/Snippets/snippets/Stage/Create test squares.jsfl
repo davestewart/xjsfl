@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Create a set of test elememts you can play with
  * @icon {iconsURI}Design/imaging/imaging_large_tiles.png
  */
@@ -102,7 +102,7 @@ function makeSquares(num, cols, gutter, style, setStage, clearStage)
 
 }
 xjsfl.init(this);
-if(Get.dom())
+if(UI.dom)
 {
 	XUL.create('title:Create squares,numeric:Total=[10,0,100],numeric:Columns=[10,1,100],numeric:Gutter=[5,0,100],dropdown:Style={Transparent Red:red,Grey:grey,Black:black},checkbox:Set stage size=true,checkbox:Clear stage=true', makeSquares);
 }

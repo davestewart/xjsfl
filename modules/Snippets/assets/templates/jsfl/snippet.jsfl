@@ -25,7 +25,7 @@
 	// code
 	
 		xjsfl.init(this);
-		if(Get.selection())
+		if(UI.selection)
 		{
 			trace('Snippet "' +name+ '" ran!');
 		}

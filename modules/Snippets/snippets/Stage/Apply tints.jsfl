@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Assign tints to selected objects
  * @icon {iconsURI}Design/color/color_wheel.png
  */
@@ -218,7 +218,7 @@
 	
 		xjsfl.init(this);
 		
-		if(selection = Get.selection())
+		if(selection = UI.selection)
 		{
 			// variables
 				var colors;

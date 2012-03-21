@@ -32,7 +32,7 @@ clear();
 							.show();
 
 			var values	= xul.values;
-			if( ! values || values.accept)
+			if( ! xul.accepted)
 			{
 				return;
 			}

@@ -49,7 +49,7 @@
 	// code
 	
 		xjsfl.init(this);
-		if(Get.selection())
+		if(UI.selection)
 		{
 			XUL
 				.factory('title:Make selected elements circular')

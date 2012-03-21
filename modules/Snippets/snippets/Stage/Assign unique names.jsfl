@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Change the selected item's names to match their library item's name
  * @icon {iconsURI}Design/text/text_replace.png
  */
@@ -97,7 +97,7 @@
 	// code
 	
 		xjsfl.init(this);
-		if(Get.selection())
+		if(UI.selection)
 		{
 			XUL.create('title:Assign unique names,radio:Name after={Class or item name:class,Item Name:item,Path:path},radio:Style={camelCase:toCamelCase,under_score:toUnderscore}', onAccept)
 		}

@@ -1,7 +1,7 @@
-﻿/**
+/**
  * @icon {iconsURI}UI/table/table.png
  */
-if(Get.items())
+if(UI.items)
 {
 	Table.print($$(':selected').elements);
 }

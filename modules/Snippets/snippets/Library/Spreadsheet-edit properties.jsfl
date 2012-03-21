@@ -138,7 +138,7 @@
 
 			open:function()
 			{
-				this.items = Get.items();
+				this.items = UI.items;
 				if(this.items)
 				{
 					// ui
