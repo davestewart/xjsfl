@@ -31,7 +31,7 @@
 			xjsfl = { };
 		}
 
-		(function()
+		(function flFile()
 		{
 			// if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
 			   if( ! FLfile['platformPathToURI'] )
@@ -47,6 +47,8 @@
 				{
 					FLfile.createFolder(uri);
 				}
+				
+				delete flFile;
 		})();
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -1129,7 +1131,7 @@
 		 *		can be retrieved if necessary via xjsfl.modules.getModule(namespace)
 		 *
 		 */
-		function()
+		function modules()
 		{
 			/**
 			 * A private reference to all found manifests
@@ -1462,34 +1464,7 @@
 			{
 				dialog.handleEvent(type, id);
 			}
-		},
-
-		/**
-		 * Lightweight function to return the current UI state
-		 * @returns	{Object}
-		 */
-		getState:function()
-		{
-			//TODO Add in boolean to also get the selected elements
-			var obj = {};
-			var dom = fl.getDocumentDOM();
-			if(dom)
-			{
-				//BUG CS5.5 won't allow you to get a timeline sometimes
-				var timeline = dom.getTimeline();
-				obj =
-				{
-					document:	dom.pathURI || dom.name,
-					timeline:	timeline.name,
-					layers:		String(timeline.getSelectedLayers()),
-					frames:		String(timeline.getSelectedFrames()),
-					numLayers:	timeline.layers.length,
-					numFrames:	timeline.frameCount,
-					selection:	null
-				}
-			}
-			return obj;
-		},
+		}
 
 	}
 
@@ -1530,7 +1505,7 @@
 	/**
 	 * Final setup
 	 */
-	(function()
+	(function toString()
 	{
 		// These properties are assigned using extend, to remain hidden from Komodo's code-intelligence
 			var props =
