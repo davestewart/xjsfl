@@ -22,7 +22,63 @@
 		Utils =
 		{
 			// ---------------------------------------------------------------------------------------------------------------
-			// /* OO methods */
+			// /* Object methods */
+
+				/**
+				 * Checks if the object is a true Object or not
+				 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
+				 * @returns	{Boolean}				True or false
+				 */
+				isObject:function(value)
+				{
+					return Object.prototype.toString.call(value) === '[object Object]';
+				},
+
+				/**
+				 * Get an object's keys, or all the keys from an Array of Objects
+				 *
+				 * @param	{Object}	obj			Any object with iterable properties
+				 * @param	{Array}		obj			An Array of objects with iterable properties
+				 * @returns	{Array}					An array of key names
+				 */
+				getKeys:function(obj)
+				{
+					var keys	= [];
+					var arr		= obj.constructor === Array ? obj : [obj];
+					for(var i = 0; i < arr.length; i++)
+					{
+						for(var key in arr[i])
+						{
+							if(keys.indexOf(key) == -1)
+							{
+								keys.push(key);
+							}
+						}
+					}
+					return keys;
+				},
+
+				/**
+				 * Clones and object
+				 * @param	{Object}	obj		The object reference
+				 * @returns	{Object}			The object cloned
+				 */
+				clone:function(obj)
+				{
+					if(obj == null || typeof(obj) != 'object')
+					{
+						return obj;
+					}
+
+					var temp = obj.constructor() || {}; // changed
+
+					for(var key in obj)
+					{
+						temp[key] = Utils.clone(obj[key]);
+					}
+
+					return temp;
+				},
 
 				/**
 				 * Extends an object or array with more properties or elements
@@ -80,21 +136,260 @@
 						return obj;
 				},
 
-				clone:function(obj)
+				/**
+				 * Combines keys and values to make a new populated Object
+				 * @param	{Array}		keys		An array of key names
+				 * @param	{String}	keys		A string of key names
+				 * @param	{Array}		values		An array of values
+				 * @returns	{Object}				An Object containing the values assigned to keys
+				 */
+				combine:function(keys, values)
 				{
-					if(obj == null || typeof(obj) != 'object')
+					if(typeof keys === 'string')
 					{
-						return obj;
+						keys = Utils.toArray(keys.trim(), /\s*,\s*/g);
+					}
+					var obj = {};
+					for (var i = 0; i < keys.length; i++)
+					{
+						if(keys[i] !== '')
+						{
+							obj[keys[i]] = values[i];
+						}
+					}
+					return obj;
+				},
+
+				/**
+				 * Makes a Hash object from a source value
+				 * @param	{String}	obj				An anything delimited string of words
+				 * @param	{Array}		obj				An array of words
+				 * @param	{Object}	obj				Any iterable object or instance
+				 * @param	{Value}		defaultValue	An optional default value for the hash's keys. Defaults to false
+				 * @returns	{Object}					An Object of name:true pairs
+				 */
+				makeHash:function(obj, defaultValue)
+				{
+					// variables
+						var keys;
+						var hash		= {};
+						defaultValue	= typeof defaultValue === 'undefined' ? false : defaultValue;
+						
+					// get keys
+						if(typeof obj === 'string')
+						{
+							keys = Utils.toArray(obj);
+						}
+						else if(obj instanceof Array)
+						{
+							keys = obj;
+						}
+						else
+						{
+							obj = Utils.getKeys(obj);
+						}
+						
+					// make hash
+						for each(var key in keys)
+						{
+							hash[key] = defaultValue;
+						}
+						return hash;
+				},
+
+				/**
+				 * Generic function to recurse a data structure, processing nodes and children with callbacks
+				 * @param	{Object}	rootElement		The root element to start processing on
+				 * @param	{Function}	fnChild			A callback function to call on child elements
+				 * @param	{Function}	fnContents		An optional callback function which should return an object which can be processed for its contents, i.e. folder.contents
+				 * @param	{Object}	scope			An optional Object on which to appy "this" scope to
+				 * @returns	{value}						The result of the passed fnChild function
+				 */
+				walk:function(rootElement, fnChild, fnContents, scope)
+				{
+					// processing function
+						function process(element, index)
+						{
+							// process the element with the callback
+								var result = fnChild.apply(scope, [element, index, depth]);
+
+							// Now, depending on the result, we do one of three things:
+								/*
+									- Boolean false		Skip processing of this element
+									- Boolean true		Stop processing and return this element
+									- no return value	Continue processing child elements
+								*/
+
+							// if the result is a Boolean true, consider this element found, and return it
+								if(result === true)
+								{
+									return element;
+								}
+
+							// if false was not returned, process the current element
+								else if(result !== false)
+								{
+									// get the custom contents, or just use the object itself if no callback supplied
+										var contents = fnContents ? fnContents.apply(scope, [element, index, depth]) : element;
+
+									// process contents
+										if( contents && ! ((typeof contents) in simpleTypes) )
+										{
+											depth ++;
+											if(contents instanceof Array)
+											{
+												for (var i = 0; i < contents.length; i++)
+												{
+													var result = process(contents[i], i);
+													if( result )
+													{
+														return result;
+													}
+												}
+											}
+											else
+											{
+												for(var name in contents)
+												{
+													var result = process(contents[name], name);
+													if( result )
+													{
+														return result;
+													}
+												}
+											}
+											depth--;
+										}
+
+								}
+
+							// return null if everything is normal
+								return null;
+						}
+
+					// variables
+						var simpleTypes =
+						{
+							'number'	:1,
+							'string'	:1,
+							'boolean'	:1,
+							'xml'		:1,
+							'function'	:1,
+							'undefined'	:1
+						}
+
+					// defaults
+						scope = scope || window;
+						var depth = 0;
+
+					// process
+						return process(rootElement, 0);
+				},
+				
+				
+			// ---------------------------------------------------------------------------------------------------------------
+			// /* Object-Oriened Coding methods */
+
+				/**
+				 * A better typeof function
+				 * @param	{Object}	obj		Any object or value
+				 * @returns	{String}			The type of the object
+				 * @see							http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
+				 */
+				getType:function(obj)
+				{
+					return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+				},
+
+				/**
+				 * Get the class of an object as a string
+				 *
+				 * @param	{value}		value		Any value
+				 * @returns	{String}				The class name of the value i.e. 'String', 'Date', 'CustomClass'
+				 */
+				getClass:function(obj)
+				{
+					if (obj != null && obj.constructor && obj.constructor.toSource !== undefined)
+					{
+						// match constructor function name
+							var matches = obj.constructor.toSource().match(/^function\s*(\w+)/);
+							if (matches && matches.length == 2)
+							{
+								// fail if the return value is an anonymous / wrapped Function
+									if(matches[1] != 'Function')
+									{
+										//trace('Constructor')
+										return matches[1];
+									}
+
+								// attempt to grab object toSource() result
+									else
+									{
+										matches = obj.toSource().match(/^function\s*(\w+)/);
+										if(matches && matches[1])
+										{
+											//trace('Source')
+											return matches[1];
+										}
+
+									// attempt to grab object toString() result
+										else
+										{
+											//matches = Object.prototype.toString.call(obj).match(/^\[\w+\s*(\w+)/);
+											matches = obj.toString().match(/^\[\w+\s*(\w+)/);
+											if(matches && matches[1])
+											{
+												//trace('String')
+												return matches[1];
+											}
+										}
+									}
+						}
 					}
 
-					var temp = obj.constructor() || {}; // changed
+					return undefined;
+				},
 
-					for(var key in obj)
+				/**
+				 * Gets the prototype chain of an object
+				 * @param	{Object}	obj				An instantiated object
+				 * @param	{Boolean}	includeSource	An optional Boolean to include the original object
+				 * @returns	{Array}						An Array of the original instantation object
+				 */
+				getPrototypeChain:function(obj, includeSource)
+				{
+					var chain = includeSource ? [obj] : [];
+					while(obj.__proto__)
 					{
-						temp[key] = Utils.clone(obj[key]);
+						obj = obj.__proto__;
+						chain.push(obj);
 					}
-
-					return temp;
+					return chain;
+				},
+				
+				/**
+				 * Get the arguments of a function as an Array
+				 * @param	{Arguments}	args		An arguments object
+				 * @param	{Number}	startIndex	Optional index of the argument from which to start from
+				 * @param	{Number}	endIndex	Optional index of the argument at which to end
+				 * @returns	{Array}					An Array of parameters
+				 */
+				getArguments:function(args, startIndex, endIndex)
+				{
+					return params = Array.slice.apply(this, [args, startIndex || 0, endIndex || args.length]);
+				},
+				
+				/**
+				 * Get the arguments of a function as an Object
+				 * @param	{Function}	fn		A function
+				 * @param	{Arguments}	args	The function instance's arguments
+				 * @returns	{Object}			An object containing the named function arguments
+				 */
+				getParams:function(fn, args)
+				{
+					var source		= Utils.parseFunction(fn);
+					var args		= Utils.getArguments(args);
+					return Utils.combine(source.params, args);
 				},
 
 				/**
@@ -171,188 +466,24 @@
 				},
 
 				/**
-				 * A better typeof function
-				 * @param	{Object}	obj		Any object or value
-				 * @returns	{String}			The type of the object
-				 * @see							http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
+				 * Parses a function source into an object
+				 * @param	{Function}	fn		A reference to a function
+				 * @returns	{Object}			An Object with name and params properties
 				 */
-				toType:function(obj)
+				parseFunction:function(fn)
 				{
-					return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
-				},
-
-
-			// ---------------------------------------------------------------------------------------------------------------
-			// /* String methods */
-
-				/**
-				 * Pads a value to a certain length with a specific character
-				 * @param	{Value}		value		Any value
-				 * @param	{Number}	length		An optional length, defaults to 6
-				 * @param	{String}	chr			An optional padding character, defaults to 0
-				 * @param	{Boolean}	right		An optional flag to pad to the right, rather than the left
-				 * @returns	{String}				The padded value
-				 */
-				pad:function(value, length, chr, right)
-				{
-					value	= String(value || '');
-					chr		= chr || '0';
-					length	= typeof length === 'undefined' ? 6 : length;
-					while(value.length < length)
+					var matches		= fn.toSource().match(/function\s*((\w*)\s*\(([^\)]*)\))/);
+					if(matches)
 					{
-						right ? value += chr : value = chr + value;
+						var params = matches[3].match(/(\w+)/g);
+						return {signature:matches[0].replace(/function (\w+)/, '$1'), name:matches[2], params:params};
 					}
-					return value;
-				},
-
-				/**
-				 * Populates a template string with values
-				 * @param	{String}	template	A template String containing {placeholder} variables
-				 * @param	{Object}	properties	Any Object or instance of Class that with named properties
-				 * @param	{Array}		properties	An Array of values, which replace named placeholders in the order they are found
-				 * @param	{Mixed}		...rest		Any values, passed in as parameters, which replace named placeholders in the order they are found
-				 * @returns	{String}				The populated String
-				 */
-				populate:function(template, properties)
-				{
-					/*
-						Conditions where we derive the properties:
-						- there are more than 2 arguments
-						- properties is an Array
-						- properties is a primitive datatype, string, number, boolean
-					*/
-					if( arguments.length > 2 || Utils.isArray(properties) || (typeof properties in {string:1, number:1, boolean:1, date:1}) )
-					{
-						var keys	= Utils.toUniqueArray(String(template.match(/{\w+}/g)).match(/\w+/g));
-						var values	= Utils.isArray(properties) ? properties : Utils.getArguments(arguments, 1);
-						properties	= Utils.combine(keys, values);
-					}
-					return new SimpleTemplate(template, properties).output;
-				},
-				
-			// ---------------------------------------------------------------------------------------------------------------
-			// /* RegExp methods */
-
-				/**
-				 * Performs a global RegExp match but returns an Array of local match Arrays, or Objects if matchNames are supplied
-				 * @param	{String}	str				The string to be matched
-				 * @param	{RegExp}	rxGlobal		A global RegExp object or literal
-				 * @param	{String}	params			An optional comma-delimited string of local match names
-				 * @param	{Array}		params			An optional Array of local match names
-				 * @param	{Boolean}	captureIndex	An optional Boolean to store the index of the global matches
-				 * @returns	{Array}						An Array of local match Arrays or Objects
-				 */
-				match:function(str, rxGlobal, matchNames, captureIndex)
-				{
-					// variables
-						var matchesGlobal, matchesLocal, matchNames;
-						
-					// non-global regexp
-						var rxLocal			= new RegExp(rxGlobal.source);
-						rxLocal.multiline	= rxGlobal.multiline;
-						rxLocal.ignoreCase	= rxGlobal.ignoreCase;
-						
-					// exec
-						var n = 0;
-						if(captureIndex)
-						{
-							// variables
-								matchesGlobal		= [];
-								matchNames			= matchNames ? 'matchIndex,match,' + matchNames : null;
-								
-							// exec
-								var exec;
-								while(exec = rxGlobal.exec(str))
-								{
-									// stop processing if no matches (otherwise, exec() will loop forever)
-										if(exec[0] == '')break;
-										
-									// set up local matches array, with the match index if an object is being returned
-										matchesLocal	= matchNames ? [exec.index] : [];
-										
-									// add matches
-										for (var i = 0; i < exec.length; i++)
-										{
-											matchesLocal.push(exec[i]);
-										}
-										
-									// finalise matches
-										if(matchNames)
-										{
-											// create an object
-											matchesLocal = Utils.combine(matchNames, matchesLocal)
-										}
-										else
-										{
-											// add match index to array
-											matchesLocal.push(exec.index);
-										}
-										matchesGlobal.push(matchesLocal);
-										
-								}
-								
-							// reset lastIndex (this is important so subsequent matches don't fail!)
-								rxGlobal.lastIndex	= 0; 
-						}
-						
-					// match
-						else
-						{
-							// main match
-								matchesGlobal 	= str.match(rxGlobal);
-								matchNames		= matchNames ? 'match,' + matchNames : null;
-					
-							// sub matches
-								for (var i = 0; i < matchesGlobal.length; i++)
-								{
-									// variables
-										matchesLocal		= matchesGlobal[i].match(rxLocal);
-										
-									// stop processing if matches were empty
-										if(matchesLocal[0] == '')
-										{
-											matchesGlobal.pop();
-											break;
-										}
-										
-									// finalise matches
-										matchesGlobal[i]	= matchNames ? Utils.combine(matchNames, matchesLocal) : matchesLocal;
-								}
-						}
-						
-					// return
-						return matchesGlobal;
-				},
-
-				/**
-				 * Escapes a string for use in RegExp constructors
-				 * @param	{String}	value	The string to be RegExp escaped
-				 * @returns	{String}			The escaped string
-				 */
-				rxEscape:function(value)
-				{
-				    return String(value).replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-				},
-				
-				rxUnescape:function(value)
-				{
-					 return String(value).replace(/\\\//g, '/');
-				},
-
-				/**
-				 * Converts a wildcard (*) string into a non-greedy RegExp
-				 * @param	{String}	value	The wildcard string to convert
-				 * @returns	{RegExp}			The new RegExp
-				 */
-				makeWildcard:function(value)
-				{
-					var rx = Utils.rxEscape(value).replace(/\\\*/g, '.*?');
-					return new RegExp(rx);
+					return {name:null, params:[], signature:''};
 				},
 
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// /* Array methods */
+			// /* Arry methods */
 
 				/**
 				 * Checks if the object is a true Array or not
@@ -363,6 +494,7 @@
 				{
 					return Object.prototype.toString.call(obj) === "[object Array]";
 				},
+
 
 				/**
 				 * Turns a single string of tokens into an array of trimmed tokens, by splitting at non-word characters, or a supplied delimited
@@ -571,83 +703,9 @@
 						return this;
 				},
 
+
 			// ---------------------------------------------------------------------------------------------------------------
-			// /* Object methods */
-
-				/**
-				 * Checks if the object is a true Object or not
-				 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
-				 * @returns	{Boolean}				True or false
-				 */
-				isObject:function(value)
-				{
-					return Object.prototype.toString.call(value) === '[object Object]';
-				},
-
-				/**
-				 * Combines keys and values to make a new populated Object
-				 * @param	{Array}		keys		An array of key names
-				 * @param	{String}	keys		A string of key names
-				 * @param	{Array}		values		An array of values
-				 * @returns	{Object}				An Object containing the values assigned to keys
-				 */
-				combine:function(keys, values)
-				{
-					if(typeof keys === 'string')
-					{
-						keys = Utils.toArray(keys.trim(), /\s*,\s*/g);
-					}
-					var obj = {};
-					for (var i = 0; i < keys.length; i++)
-					{
-						if(keys[i] !== '')
-						{
-							obj[keys[i]] = values[i];
-						}
-					}
-					return obj;
-				},
-
-				/**
-				 * Gets the prototype chain of an object
-				 * @param	{Object}	obj				An instantiated object
-				 * @param	{Boolean}	includeSource	An optional Boolean to include the original object
-				 * @returns	{Array}						An Array of the original instantation object
-				 */
-				getPrototypeChain:function(obj, includeSource)
-				{
-					var chain = includeSource ? [obj] : [];
-					while(obj.__proto__)
-					{
-						obj = obj.__proto__;
-						chain.push(obj);
-					}
-					return chain;
-				},
-				
-				/**
-				 * Get an object's keys, or all the keys from an Array of Objects
-				 *
-				 * @param	{Object}	obj			Any object with iterable properties
-				 * @param	{Array}		obj			An Array of objects with iterable properties
-				 * @returns	{Array}					An array of key names
-				 */
-				getKeys:function(obj)
-				{
-					var keys	= [];
-					var arr		= obj.constructor === Array ? obj : [obj];
-					for(var i = 0; i < arr.length; i++)
-					{
-						for(var key in arr[i])
-						{
-							if(keys.indexOf(key) == -1)
-							{
-								keys.push(key);
-							}
-						}
-					}
-					return keys;
-				},
+			// /* Value methods */
 
 				/**
 				 * Get an Array of values from an Object, or an Array of Arrays/Objects from an Array of Objects
@@ -873,352 +931,6 @@
 				},
 
 				/**
-				 * Generic function to recurse a data structure, processing nodes and children with callbacks
-				 * @param	{Object}	rootElement		The root element to start processing on
-				 * @param	{Function}	fnChild			A callback function to call on child elements
-				 * @param	{Function}	fnContents		An optional callback function which should return an object which can be processed for its contents, i.e. folder.contents
-				 * @param	{Object}	scope			An optional Object on which to appy "this" scope to
-				 * @returns	{value}						The result of the passed fnChild function
-				 */
-				walk:function(rootElement, fnChild, fnContents, scope)
-				{
-					// processing function
-						function process(element, index)
-						{
-							// process the element with the callback
-								var result = fnChild.apply(scope, [element, index, depth]);
-
-							// Now, depending on the result, we do one of three things:
-								/*
-									- Boolean false		Skip processing of this element
-									- Boolean true		Stop processing and return this element
-									- no return value	Continue processing child elements
-								*/
-
-							// if the result is a Boolean true, consider this element found, and return it
-								if(result === true)
-								{
-									return element;
-								}
-
-							// if false was not returned, process the current element
-								else if(result !== false)
-								{
-									// get the custom contents, or just use the object itself if no callback supplied
-										var contents = fnContents ? fnContents.apply(scope, [element, index, depth]) : element;
-
-									// process contents
-										if( contents && ! ((typeof contents) in simpleTypes) )
-										{
-											depth ++;
-											if(contents instanceof Array)
-											{
-												for (var i = 0; i < contents.length; i++)
-												{
-													var result = process(contents[i], i);
-													if( result )
-													{
-														return result;
-													}
-												}
-											}
-											else
-											{
-												for(var name in contents)
-												{
-													var result = process(contents[name], name);
-													if( result )
-													{
-														return result;
-													}
-												}
-											}
-											depth--;
-										}
-
-								}
-
-							// return null if everything is normal
-								return null;
-						}
-
-					// variables
-						var simpleTypes =
-						{
-							'number'	:1,
-							'string'	:1,
-							'boolean'	:1,
-							'xml'		:1,
-							'function'	:1,
-							'undefined'	:1
-						}
-
-					// defaults
-						scope = scope || window;
-						var depth = 0;
-
-					// process
-						return process(rootElement, 0);
-				},
-				
-				/**
-				 * Makes a Hash object from a source value
-				 * @param	{String}	obj				An anything delimited string of words
-				 * @param	{Array}		obj				An array of words
-				 * @param	{Object}	obj				Any iterable object or instance
-				 * @param	{Value}		defaultValue	An optional default value for the hash's keys. Defaults to false
-				 * @returns	{Object}					An Object of name:true pairs
-				 */
-				makeHash:function(obj, defaultValue)
-				{
-					// variables
-						var keys;
-						var hash		= {};
-						defaultValue	= typeof defaultValue === 'undefined' ? false : defaultValue;
-						
-					// get keys
-						if(typeof obj === 'string')
-						{
-							keys = Utils.toArray(obj);
-						}
-						else if(obj instanceof Array)
-						{
-							keys = obj;
-						}
-						else
-						{
-							obj = Utils.getKeys(obj);
-						}
-						
-					// make hash
-						for each(var key in keys)
-						{
-							hash[key] = defaultValue;
-						}
-						return hash;
-				},
-
-			// ---------------------------------------------------------------------------------------------------------------
-			// /* Get methods */
-
-				/**
-				 * Get the arguments of a function as an Array
-				 * @param	{Arguments}	args		An arguments object
-				 * @param	{Number}	startIndex	Optional index of the argument from which to start from
-				 * @param	{Number}	endIndex	Optional index of the argument at which to end
-				 * @returns	{Array}					An Array of parameters
-				 */
-				getArguments:function(args, startIndex, endIndex)
-				{
-					return params = Array.slice.apply(this, [args, startIndex || 0, endIndex || args.length]);
-				},
-				
-				
-				/**
-				 * Get the arguments of a function as an Object
-				 * @param	{Function}	fn		A function
-				 * @param	{Arguments}	args	The function instance's arguments
-				 * @returns	{Object}			An object containing the named function arguments
-				 */
-				getParams:function(fn, args)
-				{
-					var source		= Utils.parseFunction(fn);
-					var args		= Utils.getArguments(args);
-					return Utils.combine(source.params, args);
-				},
-
-				/**
-				 * Get the class of an object as a string
-				 *
-				 * @param	{value}		value		Any value
-				 * @returns	{String}				The class name of the value i.e. 'String', 'Date', 'CustomClass'
-				 */
-				getClass:function(obj)
-				{
-					if (obj != null && obj.constructor && obj.constructor.toSource !== undefined)
-					{
-						// match constructor function name
-							var matches = obj.constructor.toSource().match(/^function\s*(\w+)/);
-							if (matches && matches.length == 2)
-							{
-								// fail if the return value is an anonymous / wrapped Function
-									if(matches[1] != 'Function')
-									{
-										//trace('Constructor')
-										return matches[1];
-									}
-
-								// attempt to grab object toSource() result
-									else
-									{
-										matches = obj.toSource().match(/^function\s*(\w+)/);
-										if(matches && matches[1])
-										{
-											//trace('Source')
-											return matches[1];
-										}
-
-									// attempt to grab object toString() result
-										else
-										{
-											//matches = Object.prototype.toString.call(obj).match(/^\[\w+\s*(\w+)/);
-											matches = obj.toString().match(/^\[\w+\s*(\w+)/);
-											if(matches && matches[1])
-											{
-												//trace('String')
-												return matches[1];
-											}
-										}
-									}
-						}
-					}
-
-					return undefined;
-				},
-
-				/**
-				 * Returns the named SWF panel if it exists
-				 * @param	{String}	name		The panel name
-				 * @returns	{SWFPanel}				An SWFPanel object
-				 */
-				getPanel:function(name)
-				{
-					if(name)
-					{
-						name = String(name).toLowerCase();
-						for(var i = 0; i < fl.swfPanels.length; i++)
-						{
-							if(fl.swfPanels[i].name.toLowerCase() === name)
-							{
-								return fl.swfPanels[i];
-							}
-						}
-					}
-					return null;
-				},
-
-				/**
-				 * Returns an array of the the currently executing files, paths, lines, and code
-				 *
-				 * @param	{Error}		error		An optional error object
-				 * @param	{Boolean}	shorten		An optional Boolean to shorten any core paths with {xjsfl}
-				 * @returns	{Array}					An array of the executing files, paths, lines and code
-				 */
-				getStack:function(error, shorten)
-				{
-					// error
-						var strStack	= (error instanceof Error ? error : new Error('Stack trace')).stack;
-
-					// parse stack
-						var rxParts		= /^(.*)?@(.*?):(\d+)$/mg;
-						var matches		= strStack.match(rxParts);
-
-					// remove the fake error
-						if( ! error )
-						{
-							matches = matches.slice(2); 
-						}
-						
-					// parse lines
-						var stack		= [];
-						var rxFile		= /(.+?)([^\\\/]*)$/;
-						var parts, fileParts, path, file;
-
-						for (var i = 0; i < matches.length; i++)
-						{
-							// error, file, line number
-								rxParts.lastIndex	= 0;
-								parts				= rxParts.exec(matches[i]);
-								
-							// file parts
-								fileParts			= (parts[2] || '').match(rxFile);
-								path				= fileParts ? fileParts[1] : '';
-								file				= fileParts ? fileParts[2] : '';
-
-							// stack object
-								stack[i] =
-								{
-									line	:parseInt(parts[3]) || '',
-									code	:parts[1] || '',
-									file	:file,
-									path	:window.URI ? URI.asPath(path, shorten) : path,
-									uri		:FLfile.platformPathToURI(path + file)
-								};
-						}
-
-					// return
-						return stack;
-				},
-				
-				
-
-			// ---------------------------------------------------------------------------------------------------------------
-			// /* Value methods */
-
-				/**
-				 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
-				 * @param	{String}	value		An input string
-				 * @param	{Boolean}	trim		An optional flag to trim the string, on by default
-				 * @returns	{Mixed}					The parsed value of the original value
-				 */
-				parseValue:function(value, trim)
-				{
-					// trim
-						value = trim !== false ? String(value).trim() : String(value);
-
-					// undefined
-						if(value === 'undefined')
-							return undefined;
-
-					// null - note that empty strings will be returned as null
-						if(value === 'null' || value === '')
-							return null;
-
-					// Number
-						if(/^(\d+|\d+\.\d+|\.\d+)$/.test(value))
-							return parseFloat(value);
-
-					// Boolean
-						if(/^true|false$/i.test(value))
-							return value.toLowerCase() === 'true' ? true : false;
-
-					// Hexadecimal String / Number
-						if(/^(#|0x)[0-9A-F]{6}$/i.test(value))
-							return parseInt(value[0] === '#' ? value.substr(1) : value, 16);
-
-					// XML
-						if(/^<(\w+)\b[\s\S]*(<\/\1>|\/>)$/.test(value))
-						{
-							try { var xml = new XML(value); } // attempt to create XML
-							catch(err)
-							{
-								try { var xml = new XMLList(value); } // fall back to XMLList
-								catch(err) { var xml = value; } // fall back to text
-							};
-							return xml
-						}
-
-					// Array notation
-						if(/^\[.+\]$/.test(value))
-							return eval(value);
-
-					// Object notation
-						if(/^{[a-z]\w*:.+}$/i.test(value))
-							return eval('(' + value + ')');
-
-					// JSON
-						if(/^{"[a-z]\w*":.+}$/i.test(value))
-							return JSON.parse(value);
-
-					// Date
-						if( ! isNaN(Date.parse(value)))
-							return new Date(value);
-
-					// String
-						return value;
-				},
-
-				/**
 				 * Randomnly modify a seed value with a secondary modifier component
 				 * @param	{Number}	value		A value to modify
 				 * @param	{Number}	modifier	An optional modifier component with which to modify the original value
@@ -1340,24 +1052,246 @@
 				},
 				
 				
+			// ---------------------------------------------------------------------------------------------------------------
+			// /* String methods */
+
 				/**
-				 * Parses a function source into an object
-				 * @param	{Function}	fn		A reference to a function
-				 * @returns	{Object}			An Object with name and params properties
+				 * Pads a value to a certain length with a specific character
+				 * @param	{Value}		value		Any value
+				 * @param	{Number}	length		An optional length, defaults to 6
+				 * @param	{String}	chr			An optional padding character, defaults to 0
+				 * @param	{Boolean}	right		An optional flag to pad to the right, rather than the left
+				 * @returns	{String}				The padded value
 				 */
-				parseFunction:function(fn)
+				pad:function(value, length, chr, right)
 				{
-					var matches		= fn.toSource().match(/function\s*((\w*)\s*\(([^\)]*)\))/);
-					if(matches)
+					value	= String(value || '');
+					chr		= chr || '0';
+					length	= typeof length === 'undefined' ? 6 : length;
+					while(value.length < length)
 					{
-						var params = matches[3].match(/(\w+)/g);
-						return {signature:matches[0].replace(/function (\w+)/, '$1'), name:matches[2], params:params};
+						right ? value += chr : value = chr + value;
 					}
-					return {name:null, params:[], signature:''};
+					return value;
 				},
 
+				/**
+				 * Populates a template string with values
+				 * @param	{String}	template	A template String containing {placeholder} variables
+				 * @param	{Object}	properties	Any Object or instance of Class that with named properties
+				 * @param	{Array}		properties	An Array of values, which replace named placeholders in the order they are found
+				 * @param	{Mixed}		...rest		Any values, passed in as parameters, which replace named placeholders in the order they are found
+				 * @returns	{String}				The populated String
+				 */
+				populate:function(template, properties)
+				{
+					/*
+						Conditions where we derive the properties:
+						- there are more than 2 arguments
+						- properties is an Array
+						- properties is a primitive datatype, string, number, boolean
+					*/
+					if( arguments.length > 2 || Utils.isArray(properties) || (typeof properties in {string:1, number:1, boolean:1, date:1}) )
+					{
+						var keys	= Utils.toUniqueArray(String(template.match(/{\w+}/g)).match(/\w+/g));
+						var values	= Utils.isArray(properties) ? properties : Utils.getArguments(arguments, 1);
+						properties	= Utils.combine(keys, values);
+					}
+					return new SimpleTemplate(template, properties).output;
+				},
+				
+				/**
+				 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
+				 * @param	{String}	value		An input string
+				 * @param	{Boolean}	trim		An optional flag to trim the string, on by default
+				 * @returns	{Mixed}					The parsed value of the original value
+				 */
+				parseValue:function(value, trim)
+				{
+					// trim
+						value = trim !== false ? String(value).trim() : String(value);
+
+					// undefined
+						if(value === 'undefined')
+							return undefined;
+
+					// null - note that empty strings will be returned as null
+						if(value === 'null' || value === '')
+							return null;
+
+					// Number
+						if(/^(\d+|\d+\.\d+|\.\d+)$/.test(value))
+							return parseFloat(value);
+
+					// Boolean
+						if(/^true|false$/i.test(value))
+							return value.toLowerCase() === 'true' ? true : false;
+
+					// Hexadecimal String / Number
+						if(/^(#|0x)[0-9A-F]{6}$/i.test(value))
+							return parseInt(value[0] === '#' ? value.substr(1) : value, 16);
+
+					// XML
+						if(/^<(\w+)\b[\s\S]*(<\/\1>|\/>)$/.test(value))
+						{
+							try { var xml = new XML(value); } // attempt to create XML
+							catch(err)
+							{
+								try { var xml = new XMLList(value); } // fall back to XMLList
+								catch(err) { var xml = value; } // fall back to text
+							};
+							return xml
+						}
+
+					// Array notation
+						if(/^\[.+\]$/.test(value))
+							return eval(value);
+
+					// Object notation
+						if(/^{[a-z]\w*:.+}$/i.test(value))
+							return eval('(' + value + ')');
+
+					// JSON
+						if(/^{"[a-z]\w*":.+}$/i.test(value))
+							return JSON.parse(value);
+
+					// Date
+						if( ! isNaN(Date.parse(value)))
+							return new Date(value);
+
+					// String
+						return value;
+				},
+
+
 			// ---------------------------------------------------------------------------------------------------------------
-			// /* File methods */
+			// /* RegExp methods */
+
+				/**
+				 * Performs a global RegExp match but returns an Array of local match Arrays, or Objects if matchNames are supplied
+				 * @param	{String}	str				The string to be matched
+				 * @param	{RegExp}	rxGlobal		A global RegExp object or literal
+				 * @param	{String}	params			An optional comma-delimited string of local match names
+				 * @param	{Array}		params			An optional Array of local match names
+				 * @param	{Boolean}	captureIndex	An optional Boolean to store the index of the global matches
+				 * @returns	{Array}						An Array of local match Arrays or Objects
+				 */
+				match:function(str, rxGlobal, matchNames, captureIndex)
+				{
+					// variables
+						var matchesGlobal, matchesLocal, matchNames;
+						
+					// non-global regexp
+						var rxLocal			= new RegExp(rxGlobal.source);
+						rxLocal.multiline	= rxGlobal.multiline;
+						rxLocal.ignoreCase	= rxGlobal.ignoreCase;
+						
+					// exec
+						var n = 0;
+						if(captureIndex)
+						{
+							// variables
+								matchesGlobal		= [];
+								matchNames			= matchNames ? 'matchIndex,match,' + matchNames : null;
+								
+							// exec
+								var exec;
+								while(exec = rxGlobal.exec(str))
+								{
+									// stop processing if no matches (otherwise, exec() will loop forever)
+										if(exec[0] == '')break;
+										
+									// set up local matches array, with the match index if an object is being returned
+										matchesLocal	= matchNames ? [exec.index] : [];
+										
+									// add matches
+										for (var i = 0; i < exec.length; i++)
+										{
+											matchesLocal.push(exec[i]);
+										}
+										
+									// finalise matches
+										if(matchNames)
+										{
+											// create an object
+											matchesLocal = Utils.combine(matchNames, matchesLocal)
+										}
+										else
+										{
+											// add match index to array
+											matchesLocal.push(exec.index);
+										}
+										matchesGlobal.push(matchesLocal);
+										
+								}
+								
+							// reset lastIndex (this is important so subsequent matches don't fail!)
+								rxGlobal.lastIndex	= 0; 
+						}
+						
+					// match
+						else
+						{
+							// main match
+								matchesGlobal 	= str.match(rxGlobal);
+								matchNames		= matchNames ? 'match,' + matchNames : null;
+					
+							// sub matches
+								for (var i = 0; i < matchesGlobal.length; i++)
+								{
+									// variables
+										matchesLocal		= matchesGlobal[i].match(rxLocal);
+										
+									// stop processing if matches were empty
+										if(matchesLocal[0] == '')
+										{
+											matchesGlobal.pop();
+											break;
+										}
+										
+									// finalise matches
+										matchesGlobal[i]	= matchNames ? Utils.combine(matchNames, matchesLocal) : matchesLocal;
+								}
+						}
+						
+					// return
+						return matchesGlobal;
+				},
+
+				/**
+				 * Escapes a string for use in RegExp constructors
+				 * @param	{String}	value	The string to be RegExp escaped
+				 * @returns	{String}			The escaped string
+				 */
+				rxEscape:function(value)
+				{
+				    return String(value).replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+				},
+				
+				/**
+				 * Unescapes a string used in RegExp constructors
+				 * @param	{String}	value	The string to be RegExp escaped
+				 * @returns	{String}			The unescaped string
+				 */
+				rxUnescape:function(value)
+				{
+					 return String(value).replace(/\\\//g, '/');
+				},
+
+				/**
+				 * Converts a wildcard (*) string into a non-greedy RegExp
+				 * @param	{String}	value	The wildcard string to convert
+				 * @returns	{RegExp}			The new RegExp
+				 */
+				makeWildcard:function(value)
+				{
+					var rx = Utils.rxEscape(value).replace(/\\\*/g, '.*?');
+					return new RegExp(rx);
+				},
+
+
+			// ---------------------------------------------------------------------------------------------------------------
+			// /* File and URI methods */
 
 				/**
 				 * Returns a list of URIs for a glob string
@@ -1532,26 +1466,6 @@
 						// return
 							return uris;
 				},
-				
-				
-				/**
-				 * Returns the first valid path or URI from an Array of paths and/or URIs
-				 * @param	{Array}		pathsOrURIs		An array of paths or URIs
-				 * @returns	{String}					A URI-formatted String
-				 */
-				getFirstValidURI:function(uris)
-				{
-					var uri;
-					while(uris.length)
-					{
-						uri = URI.toURI(uris.shift());
-						if(FLfile.exists(uri))
-						{
-							return uri;
-						}
-					}
-					return null;
-				},
 
 				/**
 				 * Returns a list of URIs for a given folder reference and optional condition
@@ -1605,6 +1519,25 @@
 					// name: 'template', 'library'
 					// Array: ['template', 'filesystem'], 'library'
 
+				},
+
+				/**
+				 * Returns the first valid path or URI from an Array of paths and/or URIs
+				 * @param	{Array}		pathsOrURIs		An array of paths or URIs
+				 * @returns	{String}					A URI-formatted String
+				 */
+				getFirstValidURI:function(uris)
+				{
+					var uri;
+					while(uris.length)
+					{
+						uri = URI.toURI(uris.shift());
+						if(FLfile.exists(uri))
+						{
+							return uri;
+						}
+					}
+					return null;
 				},
 
 				/**
@@ -1818,7 +1751,6 @@
 
 				},
 
-
 				/**
 				 * Returns a multiline string, showing the file/folder hierarchy of an input array of paths or URIs
 				 * @param	{Array}			paths	An array of paths or URIs
@@ -1843,6 +1775,84 @@
 					return tree;
 				},
 
+
+			// ---------------------------------------------------------------------------------------------------------------
+			// /* Framework methods */
+
+				/**
+				 * Returns the named SWF panel if it exists
+				 * @param	{String}	name		The panel name
+				 * @returns	{SWFPanel}				An SWFPanel object
+				 */
+				getPanel:function(name)
+				{
+					if(name)
+					{
+						name = String(name).toLowerCase();
+						for(var i = 0; i < fl.swfPanels.length; i++)
+						{
+							if(fl.swfPanels[i].name.toLowerCase() === name)
+							{
+								return fl.swfPanels[i];
+							}
+						}
+					}
+					return null;
+				},
+
+				/**
+				 * Returns an array of the the currently executing files, paths, lines, and code
+				 *
+				 * @param	{Error}		error		An optional error object
+				 * @param	{Boolean}	shorten		An optional Boolean to shorten any core paths with {xjsfl}
+				 * @returns	{Array}					An array of the executing files, paths, lines and code
+				 */
+				getStack:function(error, shorten)
+				{
+					// error
+						var strStack	= (error instanceof Error ? error : new Error('Stack trace')).stack;
+
+					// parse stack
+						var rxParts		= /^(.*)?@(.*?):(\d+)$/mg;
+						var matches		= strStack.match(rxParts);
+
+					// remove the fake error
+						if( ! error )
+						{
+							matches = matches.slice(2); 
+						}
+						
+					// parse lines
+						var stack		= [];
+						var rxFile		= /(.+?)([^\\\/]*)$/;
+						var parts, fileParts, path, file;
+
+						for (var i = 0; i < matches.length; i++)
+						{
+							// error, file, line number
+								rxParts.lastIndex	= 0;
+								parts				= rxParts.exec(matches[i]);
+								
+							// file parts
+								fileParts			= (parts[2] || '').match(rxFile);
+								path				= fileParts ? fileParts[1] : '';
+								file				= fileParts ? fileParts[2] : '';
+
+							// stack object
+								stack[i] =
+								{
+									line	:parseInt(parts[3]) || '',
+									code	:parts[1] || '',
+									file	:file,
+									path	:window.URI ? URI.asPath(path, shorten) : path,
+									uri		:FLfile.platformPathToURI(path + file)
+								};
+						}
+
+					// return
+						return stack;
+				},
+				
 			// ---------------------------------------------------------------------------------------------------------------
 			// Other
 
