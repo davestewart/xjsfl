@@ -47,7 +47,7 @@
 				{
 					FLfile.createFolder(uri);
 				}
-				
+
 				delete flFile;
 		})();
 
@@ -1240,9 +1240,9 @@
 							function log(message)
 							{
 								xjsfl.output.log('WARNING! ' + message + ' in "' +URI.asPath(uri)+ 'manifest.xml"');
-							}	
+							}
 						}
-						
+
 					// if no module manifest, assume the module is code-only, and return
 						else
 						{
@@ -1275,7 +1275,7 @@
 
 					// add the URI to xjsfl.settings.uris.modules
 						xjsfl.settings.uris.add(uri, 'module');
-						
+
 					// copy any flash assets
 						var assetsURI = uri + 'flash/';
 						if(FLfile.exists(assetsURI))
@@ -1362,14 +1362,14 @@
 						{
 							// create module
 								var module = new xjsfl.classes.Module(namespace, properties, window);
-								
+
 							// register with module and window
 								if(module)
 								{
 									modules[namespace] = module;
 									window[namespace] = module;
 								}
-								
+
 							// call constructor
 								if(window)
 								{
@@ -1554,4 +1554,5 @@
 		}
 
 	}
+
 	
