@@ -868,7 +868,4 @@
 	// ---------------------------------------------------------------------------------------------------------------
 	// register
 
-		if(xjsfl && xjsfl.classes)
-		{
-			xjsfl.classes.register('URI', URI);
-		}
+		xjsfl.classes.register('URI', URI);

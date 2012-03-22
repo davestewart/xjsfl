@@ -21,7 +21,7 @@
 				var results = dom.xmlPanel(uri);
 				if(results.dismiss == 'accept')
 				{
-					xjsfl.classes.Output.inspect(results);
+					xjsfl.classes.cache.Output.inspect(results);
 				}
 			}
 			else

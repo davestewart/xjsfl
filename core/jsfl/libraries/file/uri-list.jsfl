@@ -179,9 +179,6 @@
 	// --------------------------------------------------------------------------------
 	// Register class
 	
-		if(xjsfl.classes)
-		{
-			xjsfl.classes.register('URIList', URIList);
-		}
+		xjsfl.classes.register('URIList', URIList);
 
 

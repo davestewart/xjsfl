@@ -462,7 +462,7 @@
 				var uriError	= xjsfl.uri + 'core/assets/templates/errors/error.txt';
 
 			// reload required classes if not defined
-				if( ! xjsfl.classes.Template )
+				if( ! xjsfl.classes.cache.Template )
 				{
 					xjsfl.output.log('loading files needed for debugging...', false, false);
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/uri.jsfl');
@@ -475,12 +475,12 @@
 				for(var i = 0; i < stack.length; i++)
 				{
 					stack[i].index = i;
-					content += new xjsfl.classes.Template(uriError, stack[i]).render(); // reference Template class directly
+					content += new xjsfl.classes.cache.Template(uriError, stack[i]).render(); // reference Template class directly
 				}
 
 			// build output
 				var data		= { error:error.toString(), content:content };
-				var output		= new xjsfl.classes.Template(uriErrors, data).render();
+				var output		= new xjsfl.classes.cache.Template(uriErrors, data).render();
 
 			// set loading to false
 				xjsfl.loading = false;
@@ -919,7 +919,7 @@
 //  ██████ ██ █████ █████ █████ █████ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// # Classes - Core methods to load and register framework libraries and classes 
+// # Classes - Core methods to load and register framework libraries and classes
 
 	/**
 	 * Core methods to load and register framework libraries and classes
@@ -928,9 +928,16 @@
 	xjsfl.classes =
 	{
 		/**
-		 * @type {Object}	A hash of class/object name:uris
+		 * @type {Object}	A hash of object name:uris
+		 * Populated in core bootstrap
 		 */
-		uris:{},
+		uris:xjsfl.classes.uris, // populated in core bootstrap
+		
+		/**
+		 * @type {Object}	A hash of classes and functions
+		 * Populated in core bootstrap
+		 */
+		cache:xjsfl.classes.cache,
 
 		/**
 		 * Load a class or array of classes from disk
@@ -1028,18 +1035,15 @@
 		 */
 		register:function(name, obj, uri)
 		{
-			if( ! /^(paths|load|loadFolder|require|register|restore)$/.test(name) )
-			{
-				// log
-				//TODO determine type of obj, and change log message
-					xjsfl.output.log('registering class "' + name + '"', false, false);
+			// log
+				xjsfl.output.log('registering "' + name + '"', false, false);
 
-				// store class
-					xjsfl.classes[name] = obj;
+			// store class
+				xjsfl.classes.cache[name] = obj;
 
-				// store URI
-					xjsfl.classes.uris[name] = uri ? URI.toURI(uri) : Utils.getStack().pop().uri;
-			}
+			// store URI
+				xjsfl.classes.uris[name] = uri ? URI.toURI(uri) : Utils.getStack().pop().uri;
+
 			return this;
 		},
 
@@ -1055,7 +1059,7 @@
 			// restore all classes if no name is passed
 				if(arguments.length === 1)
 				{
-					for (name in xjsfl.classes)
+					for (name in xjsfl.classes.cache)
 					{
 						xjsfl.classes.restore(scope, name);
 					}
@@ -1064,17 +1068,14 @@
 			// restore only one class
 				else if(typeof name === 'string')
 				{
-					if( ! /^load|require|register|restore$/.test(name) )
-					{
-						scope[name] = xjsfl.classes[name];
-					}
+					scope[name] = xjsfl.classes.cache[name];
 				}
 
 			// return this for chaining
 				return this;
 		}
 	}
-
+	
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██   ██          ██       ██
@@ -1253,7 +1254,7 @@
 						var name = String(manifest.meta.name);
 						if( ! name )
 						{
-							log('Manifest <meta.name> not declared');
+							log('Manifest module.meta.name not declared');
 							return false;
 						}
 						xjsfl.output.trace('registering module "' +name+ '"');
@@ -1263,7 +1264,7 @@
 						var namespace			= String(manifest.data.namespace);
 						if( ! namespace )
 						{
-							log('Manifest <data.namespace> not declared');
+							log('Manifest module.data.namespace not declared');
 							return false;
 						}
 						manifests[namespace]	= manifest;
@@ -1361,7 +1362,7 @@
 						try
 						{
 							// create module
-								var module = new xjsfl.classes.Module(namespace, properties, window);
+								var module = new xjsfl.classes.cache.Module(namespace, properties, window);
 
 							// register with module and window
 								if(module)
