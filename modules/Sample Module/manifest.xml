@@ -1,7 +1,7 @@
 <manifest>
 	<module>
 		<meta>
-			<name>Sample</name>
+			<name>Sample Module</name>
 			<description>A sample module, with all source, demonstrating AS3/JSFL functionality</description>
 			<version>0.1</version>
 			<url>www.xjsfl.com/category/support/tutorials/modules</url>
@@ -13,7 +13,7 @@
 		</meta>
 		<data>
 			<namespace>Sample</namespace>
-			<panel>xJSFL Sample</panel>
+			<panel>xJSFL Sample Module</panel>
 			<preload>false</preload>
 			<uri token="sample" />
 		</data>

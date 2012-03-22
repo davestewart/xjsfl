@@ -8,6 +8,9 @@ var Sample =
 		{
 			// load the default config object
 				this.config		= this.loadConfig();
+			
+			// debug
+				this.log('created!');
 				
 			// set a value, using a library function
 				this.date		= getDate();
