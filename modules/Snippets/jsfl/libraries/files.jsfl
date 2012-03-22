@@ -145,8 +145,7 @@ FileManager =
 			// variables
 			
 				// debug
-					clear();
-					Snippets.log('building set for "' + URI.asPath(folderURI, true)+ '"');
+					Snippets.log('building set for "' + URI.asPath(folderURI, true)+ '"', true);
 		
 				// uris
 					folderURI			= URI.toURI(folderURI);

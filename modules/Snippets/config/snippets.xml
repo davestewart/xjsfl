@@ -6,9 +6,9 @@
 		<icon name="file" value="Filesystem/file/file_code.png"/>
 		<icon name="function" value="Filesystem/file/file_actionscript.png"/>
 	</icons>
-	<sets current="Sample Snippets">
-		<set name="Sample Snippets" uri="{xjsfl}modules/Snippets/snippets/"/>
-		<set name="Code Examples" uri="{xjsfl}modules/Code Examples/jsfl/"/>
+	<sets current="User Snippets">
+		<set name="User Snippets" uri="{user}jsfl/snippets/"/>
 		<set name="Commands Folder" uri="{flash}Commands/"/>
+		<set name="Code Examples" uri="{xjsfl}modules/Code Examples/jsfl/"/>
 	</sets>
 </settings>
