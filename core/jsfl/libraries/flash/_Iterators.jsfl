@@ -182,6 +182,7 @@
 				{
 					context = new Context(false, context, false, false, false);
 				}
+				trace(context)
 
 			// if a timeline was found, process its layers
 				if(context.timeline)

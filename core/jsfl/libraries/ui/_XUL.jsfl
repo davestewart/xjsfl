@@ -1801,5 +1801,3 @@
 	// register
 
 		xjsfl.classes.register('XUL', XUL);
-
-

@@ -903,9 +903,9 @@
 				 * @returns	{Boolean}
 				 * @see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7fc4.html
 				 */
-				synchronizeWithHeadVersion:function(swapStrokeAndFill)
+				synchronizeWithHeadVersion:function()
 				{
-					return document.synchronizeWithHeadVersion(swapStrokeAndFill);
+					return document.synchronizeWithHeadVersion();
 				}
 			},
 			imports:

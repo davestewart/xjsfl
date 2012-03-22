@@ -107,5 +107,7 @@
 			this.prototype.extend(_interface);
 		};
 
+	// ---------------------------------------------------------------------------------------------------------------
+	// register
 
-xjsfl.classes.register('Base', Base, this);
+		xjsfl.classes.register('Base', Base, this);

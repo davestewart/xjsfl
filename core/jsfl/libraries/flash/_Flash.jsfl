@@ -36,7 +36,8 @@
 	
 		/**
 		 * Gets the selected layers of a Timeline
-		 * @returns	{Array}				An Array of Layer instances
+		 * @returns		{Array}						An Array of Layer instances
+		 * @property	{String}	selectedLayers	Gets the selected layers of a Timeline
 		 */
 		Timeline.prototype.__defineGetter__
 		(
@@ -64,6 +65,7 @@
 		/**
 		 * Gets the short name of a Library Item
 		 * @returns	{String}			The short name of an item
+		 * @function
 		 */
 		LibraryItem.prototype.__defineGetter__
 		(

@@ -55,14 +55,13 @@ JSON =
 
 
 		/**
-		 * JSON.encode
 		 * Converts the given argument into a JSON respresentation.
-		 *
-		 * @param	{Mixed} obj The json-serializble *thing* to be converted
 		 *
 		 * Non-integer/string keys are skipped in the object, as are keys that point to a
 		 * function.
 		 *
+		 * @name	JSON.encode
+		 * @param	{Mixed} obj The json-serializble *thing* to be converted
 		 */
 		function encode( obj )
 		{

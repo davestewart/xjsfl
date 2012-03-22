@@ -12,7 +12,7 @@
 // XUL Control - OO representation of a dialog control
 
 	// make sure XUL is loaded first
-		xjsfl.classes.load('xul');
+		include('xul');
 
 	// --------------------------------------------------------------------------------
 	// Constructor

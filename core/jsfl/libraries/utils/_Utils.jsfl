@@ -1468,51 +1468,45 @@
 				},
 
 				/**
-				 * Returns a list of URIs for a given folder reference and optional condition
-				 * @param	{String}	ref			An absolute or relative folder path or URI (wildcards allowed)
-				 * @param	{Folder}	ref			A valid Folder instance
-				 * @param	{Array}		ref			An Array of URIs (each of which are filtered then passed back)
+				 * Returns a list of URIs for a given glob path, folder reference and optional condition
+				 * @param	{String}	folder		An absolute or relative folder path or URI (wildcards allowed)
+				 * @param	{Folder}	folder		A valid Folder instance
+				 * @param	{URI}		folder		A valid URI instance
 				 * @param	{Number}	$depth		An optional max depth to search to
 				 * @param	{Boolean}	$filesOnly	An optional Boolean to get files only
 				 * @param	{RegExp}	$filter		A RegExp to match each URI
-				 * @param	{Array}		$extensions	An Array of extensions to match
 				 * @returns	{Array}					An Array of URIs
 				 */
-				getURIs:function(ref, $depth, $filesOnly, $filter, $extensions)
+				getURIs:function(folder, $depth, $filesOnly, $filter, $extensions)
 				{
 					//TODO - check this works for recursive URIs
 					//TODO - Pass true to set max depth to infinite
 
-					// folder uri;
-						var uri;
-
-					// Array
-						if(ref instanceof Array)
-						{
-							return ref;
-						}
-
-					// Folder: new Folder()
-						if(ref instanceof Folder)
-						{
-							uri = ref.uri;
-						}
-
+					// get URI
+						var uri	= folder instanceof URI
+									? folder.uri
+									: folder instanceof Folder
+										? folder.uri
+										: typeof folder === 'string'
+											? URI.toURI(folder, 1)
+											:null;
+												
 					// path or URI
-						else if(URI.isURI(ref))
+						if(uri)
 						{
-							if(ref.indexOf('*') > -1)
+							if(/\/\*$/.test(uri))
 							{
-								return Utils.walkFolder(ref, true);
+								uri = uri.replace('*', '');
+								return Utils.walkFolder(uri, true);
 							}
-							else
+							else if(FLfile.exists(uri))
 							{
-								return new Folder(ref).uris;
+								return new Folder(uri).uris;
 							}
 						}
-
-					// otherwise, return Array
-						return [ref];
+						
+					// error if not exists, or not a glob
+						throw new Error('Error in Utils.getURIs(): The folder reference "' +folder+ '" is not a valid folder reference')
 
 					// folder URI: c:/temp/
 					// folder URI: c:/temp/*
@@ -1643,7 +1637,8 @@
 				/**
 				 * Recursively trawl a folder's contents, optionally calling a callback per element (note that $ arguments may passed in any order)
 				 * @param	{String}	folder			The path or uri to a valid folder
-				 * @param	{Folder}	folder			A valid Folder object
+				 * @param	{Folder}	folder			A valid Folder instance
+				 * @param	{URI}		folder			A valid URI instance
 				 * @param	{Function}	$callback		An optional callback of the format callback(element, index, depth, indent) to call on each element. Return false to skip processing of that element. Return true to cancel all iteration.
 				 * @param	{Number}	$maxDepth		An optional max depth to recurse to, defaults to 100
 				 * @param	{Boolean}	$returnURIs		An optional Boolean to return all parsed URIs
@@ -1735,20 +1730,29 @@
 							var uris		= [];
 							var indent		= '';
 							var depth		= 0;
-							var _folder		= typeof folder === 'string' ? new Folder(URI.toURI(folder, 1)) : null;
-
+							var uri			= folder instanceof URI
+												? folder.uri
+												: folder instanceof Folder
+													? folder.uri
+													: typeof folder === 'string'
+														? URI.toURI(folder, 1)
+														:null;
+												
 						// process
-							if(_folder instanceof Folder && _folder.exists)
+							if(uri)
 							{
-								var result =  process(_folder, 0);
-								uris.shift();
-								return returnURIs ? uris : result;
+								if(FLfile.exists(uri))
+								{
+									var folder	= new Folder(uri);
+									var result	=  process(folder, 0);
+									uris.shift();
+									return returnURIs ? uris : result;
+								}
+								throw new Error('Error in Utils.walkFolder(): The folder reference "' +folder+ '" does not exist')
 							}
-							else
-							{
-								return returnURIs ? [] : null;
-							}
-
+							
+						// error
+							throw new Error('Error in Utils.walkFolder(): The folder reference "' +folder+ '" is not a valid folder reference')
 				},
 
 				/**
@@ -1865,7 +1869,4 @@
 	// ---------------------------------------------------------------------------------------------------------------
 	// register
 
-		if(xjsfl && xjsfl.classes)
-		{
-			xjsfl.classes.register('Utils', Utils);
-		}
+		xjsfl.classes.register('Utils', Utils);
