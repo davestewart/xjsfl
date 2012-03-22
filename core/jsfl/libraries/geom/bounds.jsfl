@@ -127,32 +127,43 @@
 		
 		Bounds.prototype =
 		{
+			/** @type {Number}	Gets the width of the Bounds object */
 			get width()
 			{
 				return this.right - this.left;
 			},
 			
+			/** @type {Number}	Gets the height of the Bounds object */
 			get height()
 			{
 				return this.bottom - this.top;
 			},
 			
+			/** @type {Point}	Gets the center of the Bounds object */
 			get center()
 			{
 				var x = this.left + (this.width / 2);
 				var y = this.top + (this.height / 2);
-				return {x:x, y:y};
+				return new Point(x, y);
 			},
+
+			/**
+			 * Returns a clone of the Bounds object
+			 * @returns	{Bounds}		A new Bounds object
+			 */
+			clone:function()
+			{
+				return new Bounds(this.x, this.y, this.width, this.height);
+			}
 			
+			/**
+			 * Returns a String representation of the Bounds object
+			 * @returns	{Sting}		A String representation of the Bounds object
+			 */
 			toString:function()
 			{
 				return '[object Bounds top="' +this.top+ '" right="' +this.right+ '" bottom="' +this.bottom+ '" left="' +this.left+ '"]';
 			},
-
-			clone:function()
-			{
-				return new Bounds(this);
-			}
 		}
 
 		Bounds.toString = function()
