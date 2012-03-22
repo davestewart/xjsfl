@@ -154,7 +154,7 @@
 			clone:function()
 			{
 				return new Bounds(this.x, this.y, this.width, this.height);
-			}
+			},
 			
 			/**
 			 * Returns a String representation of the Bounds object
