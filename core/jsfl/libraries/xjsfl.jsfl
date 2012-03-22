@@ -64,7 +64,7 @@
 //                                    █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// /* Settings - Core settings and cached variables */
+// # Settings - Core settings and cached variables 
 
 	/**
 	 * Core settings and cached variables
@@ -276,7 +276,7 @@
 //                           █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// /* Debug - debugging methods for file, function and error */
+// # Debug - debugging methods for file, function and error 
 
 	/**
 	 * @type {Object}	The xJSFL Debug object
@@ -618,7 +618,7 @@
 //  ██     ██ ██ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// /* File - Methods to load framework assets, or handle common filesystem functionality */
+// # File - Methods to load framework assets, or handle common filesystem functionality 
 
 	/**
 	 * Methods to load framework assets, or handle common filesystem functionality
@@ -919,7 +919,7 @@
 //  ██████ ██ █████ █████ █████ █████ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// /* Classes - Core methods to load and register framework libraries and classes */
+// # Classes - Core methods to load and register framework libraries and classes 
 
 	/**
 	 * Core methods to load and register framework libraries and classes
@@ -1086,7 +1086,7 @@
 //  ██   ██ █████ █████ █████ ██ █████ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// /* Modules - Core methods to handle the initialization and loading of modules */
+// # Modules - Core methods to handle the initialization and loading of modules 
 
 	/**
 	 * Core methods to handle the initialization and loading of modules
@@ -1400,7 +1400,7 @@
 //  ██████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// /* UI - Global access to XUL UI dialogs */
+// # UI - Global access to XUL UI dialogs 
 
 	/**
 	 * Global access to XUL UI dialogs
@@ -1500,7 +1500,7 @@
 //  ██ ██ ██ ██  ████ ██ █████ ██ ██ ████ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// /* Initialisation - Functions to initialize and reload the framework */
+// # Initialisation - Functions to initialize and reload the framework 
 
 	/**
 	 * Final setup

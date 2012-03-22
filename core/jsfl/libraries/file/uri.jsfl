@@ -70,7 +70,7 @@
 		*/
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// /* URI Instance - Instantiatable class that can be used to easily create and manipulate URI strings */
+	// # URI Instance - Instantiatable class that can be used to easily create and manipulate URI strings 
 
 		/**
 		 * URI Constructor
@@ -143,10 +143,10 @@
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// /* Static methods - a host of static utility functions that can be used to manipulate paths or URIs */
+	// # Static methods - a host of static utility functions that can be used to manipulate paths or URIs 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// /* Creation functions */
+		// # Creation functions 
 
 			/**
 			 * Create a valid URI from virtually any URI or path
@@ -427,7 +427,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// /* Conversion functions */
+		// # Conversion functions 
 
 			/**
 			 * Perform simple path to URI conversion
@@ -548,7 +548,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// /* Testing functions */
+		// # Testing functions 
 
 			/**
 			 * Test if the supplied value is a URI-formatted string
@@ -622,7 +622,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// /* Extraction functions */
+		// # Extraction functions 
 
 			/**
 			 * Returns the file or folder name of the item referenced by the path or URI (note names are unescaped)
@@ -802,7 +802,7 @@
 			}
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// /* Utility functions */
+		// # Utility functions 
 
 			URI.tidy = function(pathOrURI)
 			{

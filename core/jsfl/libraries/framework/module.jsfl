@@ -76,7 +76,7 @@
 				constructor:Module,
 
 			// ----------------------------------------------------------------------------------------
-			// /* properties */
+			// # properties 
 
 				/**
 				 * @type {String} The namespace of the module
@@ -108,7 +108,7 @@
 				
 
 			// ----------------------------------------------------------------------------------------
-			// /* methods */
+			// # methods 
 
 				/**
 				 * Load a named module Config file object, either a default, or a specific object

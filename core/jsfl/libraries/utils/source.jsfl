@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                              
 //  ██                                  
@@ -12,12 +12,19 @@
 // Source - examine and manipulate source code
 
 	/*
+
+		Recognises sections:
+		
+			/** ... * /	- doc comments
+			// # title	- section titles
+	
 		Recognises tags:
 		
 			@class		- class name
 			@param		- param properties
 			@returns	- return values
 			@type		- variable
+			@any		- any other tag format treated as text
 			
 		Also useful for Documentor:
 			
@@ -113,7 +120,7 @@
 					
 				// variables
 					var path			= URI.asPath(this.uri);
-					var rx				= /\/\*([^@{}\r\n]+?)\*\/|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
+					var rx				= /\/\*\s*#\s*([^@{}\r\n]+?)|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
 					var matches;
 					var m;
 		
@@ -199,13 +206,13 @@
 					var comment		= matches[2].trim();
 					var code		= matches[3].trim();
 					
-				// // /* heading-style comment */
+				// // # heading-style comment 
 					if(heading)
 					{
 						var obj = this.makeHeading(heading);
 					}
 					
-				// /** doc comment */code
+				// #* doc comment code
 					else
 					{
 						//TODO Add proper support for __getters__
