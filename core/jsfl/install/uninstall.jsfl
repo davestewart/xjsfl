@@ -40,7 +40,7 @@
 				var trgURIs			= [];
 				var xulURI			= xjsfl.uri + 'core/ui/uninstall.xul';
 				var installURI		= xjsfl.uri + 'core/assets/install/';
-				var folderURIs		= xjsfl.settings.uris.all.concat([installURI]);
+				var folderURIs		= xjsfl.settings.uris.get().concat([installURI]);
 				
 			// collate URIs
 				for each(var uri in folderURIs)
