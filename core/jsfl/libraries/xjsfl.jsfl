@@ -415,8 +415,20 @@
 		 * @param	{Boolean}	log			An optional Boolean to log the error
 		 * @param	{Boolean}	testing		Internal use only. Removes test() stack items
 		 */
-		error:function(error, log, testing)
+		error:function(error, testing)
 		{
+			// reload required classes if not defined
+				if( ! xjsfl.classes.cache.Template )
+				{
+					include = function(){ trace('Ignoring include...'); };
+					xjsfl.output.log('loading files needed for debugging...');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Class.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/FileSystemObject.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/File.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/Template.jsfl');
+				}
+
 			// variables
 				var stack;
 				if(error instanceof Error)
@@ -438,18 +450,6 @@
 				var uriErrors	= xjsfl.uri + 'core/assets/templates/errors/errors.txt';
 				var uriError	= xjsfl.uri + 'core/assets/templates/errors/error.txt';
 
-			// reload required classes if not defined
-				if( ! xjsfl.classes.cache.Template )
-				{
-					include = function(){ trace('Ignoring include...'); };
-					xjsfl.output.log('loading files needed for debugging...', 1);
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/URI.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/FileSystemObject.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/File.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/Template.jsfl');
-				}
-
 			// build errors
 				var content = '';
 				for(var i = 0; i < stack.length; i++)
@@ -470,15 +470,9 @@
 				Table.print(data)
 				*/
 
-			// trace and return
-				if(log)
-				{
-					xjsfl.output.log(output);
-				}
-				else
-				{
-					fl.trace(output);
-				}
+			// log, trace and return
+				xjsfl.output.log(output);
+				trace(output);
 				return output;
 		},
 

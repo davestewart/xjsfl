@@ -29,5 +29,5 @@
 	catch(error)
 	{
 		xjsfl.output.warn('error running user bootstrap');
-		debug(error, true);
+		debug(error);
 	}

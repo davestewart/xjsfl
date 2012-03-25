@@ -69,9 +69,13 @@
 					if(level > 0)
 					{
 						message = message.toUpperCase();
-						if(level === 2)
+						if(level >= 2)
 						{
 							output = '----------------------------------------------------------------------------------------------------' + newLine;
+						}
+						if(level == 3)
+						{
+							message += ('----------------------------------------------------------------------------------------------------' + newLine);
 						}
 					}
 					
@@ -141,8 +145,8 @@
 			
 			warn:function(message)
 			{
-				trace('> xjsfl: WARNING - ' + message);
-				this.log(message, Log.WARN);
+				trace('\n> xjsfl: WARNING - ' + message + '\n');
+				this.log(message + '\n', Log.WARN, 3);
 			},
 			
 			/**

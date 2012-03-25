@@ -78,8 +78,6 @@
 						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 						
 						
-						trace(asdha);
-						
 					// load globals and key libraries
 						xjsfl.output.trace('loading core classes...', 1);
 						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/framework/Globals.jsfl');
@@ -98,21 +96,13 @@
 						
 					// initialize
 						xjsfl.initGlobals(this, 'window');
-			
 			}
 			catch(error)
 			{
 				xjsfl.output.warn('error running core bootstrap');
-				trace('load utils')
-				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/utils.jsfl');
-				trace('load core')
+				xjsfl.output.log('reloading xjsfl...');
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
-				trace('load globals')
-				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/framework/globals.jsfl');
-				trace('init globals')
-				xjsfl.initGlobals(this, 'window');
-				trace('debug')
-				xjsfl.debug.error(error, true);
+				xjsfl.debug.error(error);
 			}
 			
 		// --------------------------------------------------------------------------------
@@ -129,7 +119,7 @@
 				catch(error)
 				{
 					xjsfl.output.warn('error loading supporting libraries');
-					debug(error, true);
+					debug(error);
 				}			
 			}
 			
@@ -147,7 +137,7 @@
 				catch(error)
 				{
 					xjsfl.output.warn('error initializing modules');
-					debug(error, true);
+					debug(error);
 				}			
 			}
 			
@@ -164,7 +154,7 @@
 				catch(error)
 				{
 					xjsfl.output.warn('error running user bootstrap');
-					debug(error, true);
+					debug(error);
 				}			
 			}
 	
