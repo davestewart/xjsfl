@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Change the selected item's names to match their library item's name
  * @icon {iconsURI}Design/text/text_replace.png
  */
@@ -73,17 +73,19 @@
 								case 'path':
 									rename(element, item.name);
 								break;
-							
 							}
 						}
 						else
 						{
 							format('Skipping {element.elementType} "{element.name}"', element);
 						}
-						
-					// update document
-						$dom.update()
-				}
+					}
+					
+				// update document
+					$dom.update()
+					
+				// list
+					list($selection, 'name');
 			}
 			catch(error)
 			{
