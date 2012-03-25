@@ -1,7 +1,5 @@
 if(window.xjsfl && xjsfl.uri)
 {
-	var uri = xjsfl.uri + 'core/temp/xjsfl.log';
-	var contents = FLfile.read(uri);
-	//fl.outputPanel.clear()
+	var contents = FLfile.read(xjsfl.uri + 'core/temp/logs/main.txt');
 	fl.trace(contents.replace(/\r/g, ''));
 }
