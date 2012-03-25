@@ -20,36 +20,12 @@
 	 * @see		License:		http://www.xjsfl.com/license
 	 */
 
-	// --------------------------------------------------------------------------------
-	// setup
-
-		/**
-		 * Fake xjsfl instantation for Komodo autocomplete
-		 */
+	// Fake xjsfl instantation for Komodo autocomplete
 		if( ! xjsfl )
 		{
 			xjsfl = { };
 		}
 
-		(function flFile()
-		{
-			// if pre-CS4, extend FLfile to add platform to uri conversion (needs to be loaded in advance because of various file / path operations during setup)
-			   if( ! FLfile['platformPathToURI'] )
-			   {
-				   var path = 'jsfl/libraries/flfile.jsfl';
-				   xjsfl.output.trace('loading "{core}' +path+ '"');
-				   fl.runScript(xjsfl.uri + 'core/' + path);
-			   }
-
-		   // ensure temp folder exists
-				var uri = xjsfl.uri + 'core/temp/';
-				if( ! FLfile.exists(uri) )
-				{
-					FLfile.createFolder(uri);
-				}
-
-				delete flFile;
-		})();
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -205,10 +181,10 @@
 
 					// get all searchable paths
 						var paths = Utils.getSearchableURIs(uri, 'folders', true);
-						xjsfl.output.log('added ' +paths.length+ ' search paths for "' +path+ '"');
+						xjsfl.output.trace('added ' +paths.length+ ' search paths for "' +path+ '"');
 						if(paths.length > 50)
 						{
-							xjsfl.output.log('WARNING! Adding this many search paths can slow down file searching. Consider using manifest.xml files to exlude sub folders');
+							xjsfl.output.warn('WARNING! Adding this many search paths can slow down file searching. Consider using manifest.xml files to exlude sub folders');
 						}
 
 					//BUG - for some reason, an error is thrown when there are 70+ paths in pocket god.
@@ -262,6 +238,7 @@
 		newLine:fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n'
 
 	}
+	
 
 // ------------------------------------------------------------------------------------------------------------------------
 //
@@ -444,7 +421,7 @@
 				var stack;
 				if(error instanceof Error)
 				{
-					stack	= Utils.getStack(error, true);
+					stack = Utils.getStack(error, true);
 					if(testing)
 					{
 						stack.splice(stack.length - 3, 2);
@@ -464,10 +441,13 @@
 			// reload required classes if not defined
 				if( ! xjsfl.classes.cache.Template )
 				{
-					xjsfl.output.log('loading files needed for debugging...', false, false);
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/uri.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/filesystem.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/template.jsfl');
+					include = function(){ trace('Ignoring include...'); };
+					xjsfl.output.log(Log.INFO, 'loading files needed for debugging...', false, false);
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/URI.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/FileSystemObject.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/File.jsfl');
+					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/Template.jsfl');
 				}
 
 			// build errors
@@ -493,7 +473,7 @@
 			// trace and return
 				if(log)
 				{
-					xjsfl.output.log(output, false, true);
+					xjsfl.output.log(Log.INFO, output);
 				}
 				else
 				{
@@ -633,8 +613,10 @@
 
 		lastLoadTime:0,
 
-		stack:[],
+		stackLimit:99,
 
+		stack:[],
+		
 		/**
 		 * Finds all files of a particular type within the cascading file system
 		 *
@@ -751,16 +733,15 @@
 		 * Attempts to find and run or return files from the cascading file structure.
 		 * Parameters and return type vary depending on file type!
 		 *
-		 * @param	{String}		path	The relative or absolute path, or uri to the file
-		 * @param	{String}		path	The name or path fragment to a file, with or without the file extension
-		 * @param	{String}		type	The folder type in which to look (i.e. settings) for the file(s)
-		 * @param	{Boolean}		quiet	Loads the file quietly, without tracing to the Outupt panel
+		 * @param	{String}		pathOrName	The relative or absolute path, or uri to the file
+		 * @param	{String}		pathOrName	The name or path fragment to a file, with or without the file extension
+		 * @param	{String}		type		The folder type in which to look (i.e. settings) for the file(s)
 		 *
-		 * @returns	{Boolean}				A Boolean indicating Whether the file was successfully found and loaded
-		 * @returns	{XML}					An XML object of the content of the file, if XML
-		 * @returns	{String}				The string content of the file otherwise
+		 * @returns	{Boolean}					A Boolean indicating Whether the file was successfully found and loaded
+		 * @returns	{XML}						An XML object of the content of the file, if XML
+		 * @returns	{String}					The string content of the file otherwise
 		 */
-		load:function (path, type, quiet)
+		load:function (pathOrName, type)
 		{
 			/*
 				// path types
@@ -774,39 +755,41 @@
 				// also allow load() to take a wildcard URI, i.e. load('path/to/ *.jsfl', true);
 			*/
 
-			// variables
-				var result	= null;
-
-
 			// --------------------------------------------------------------------------------
-			// Resolve URI
+			// Resolve URI and load content in
+
+				// variables
+					var uriResult	= null;
 
 				// a URI was passed in
-					if(URI.isURI(path))
+					if(URI.isURI(pathOrName))
 					{
-						result		= FLfile.exists(path) ? path : null;
+						uriResult	= FLfile.exists(pathOrName) ? pathOrName : null;
 					}
 
 				// a single path was passed in, so convert it to a uri
 					else if(type == undefined || type === true || type === false)
 					{
-						var uri		= URI.toURI(path, 1);
-						result		= FLfile.exists(uri) ? uri : null;
+						var uri		= URI.toURI(pathOrName, 1);
+						uriResult	= FLfile.exists(uri) ? uri : null;
 					}
 
 				// name and type supplied, so find the file we need in the cascading file system
 					else
 					{
-						result = xjsfl.file.find(type, path);
+						uriResult	= xjsfl.file.find(type, pathOrName);
 					}
 
 			// --------------------------------------------------------------------------------
-			// take action on results
+			// take action on uriResult
 
-				// if result is null, no files were found
-					if(result == null)
+				// variables
+					var content;
+					
+				// if uriResult is null, no files were found
+					if(uriResult == null)
 					{
-						path = URI.toPath(path);
+						var path = URI.toPath(pathOrName);
 						if(type == null || type === true || type === false)
 						{
 							var message = 'Error in xjsfl.file.load(): The file "' +path+ '" could not be found';
@@ -821,29 +804,20 @@
 				// otherwise, do something with the uri / uris (plural) if more than 1 was found
 					else
 					{
-						var uris = Utils.isArray(result) ? result : [result];
-
+						var uris = Utils.isArray(uriResult) ? uriResult : [uriResult];
 						for each(var uri in uris)
 						{
 
 							// variables
-								uri		= String(uri);
-								var ext	= uri.match(/(\w+)$/)[1];
+								uri				= String(uri);
+								var ext			= URI.getExtension(uri);
+								var shortPath	= URI.asPath(uri, true);
 
 							// flag
 								xjsfl.file.stack.push(uri);
 
-							// logging
-								if(uri.indexOf('manifest.xml') !== -1)
-								{
-									quiet = true;
-								}
-
 							// log
-								if(quiet !== true)
-								{
-									xjsfl.output.log('loading "' + URI.asPath(uri, true) + '"');
-								}
+								xjsfl.output.log(Log.FILE, 'loading file "' + shortPath + '"');
 
 							// do something depending on extension
 								switch(ext)
@@ -851,34 +825,34 @@
 									case 'jsfl':
 										// load JSFL script
 											this.lastLoadTime = new Date().getTime();
-											fl.runScript(uri);
-											xjsfl.file.stack.pop();
+											content		= fl.runScript(uri);
 
 										// test for load errors
 											xjsfl.debug.load(URI.toPath(uri));
-
-										// otherwise, just return the URI
-											return uri;
 									break;
 
 									case 'xul':
 									case 'xml':
-										var contents	= FLfile.read(uri);
-										contents		= contents.replace(/<\?.+?>/, ''); // remove any doc type declaration
-										xjsfl.file.stack.pop();
-										return new XML(contents);
+										content			= FLfile.read(uri);
+										content			= content.replace(/<\?.+?>/, ''); // remove any doc type declaration
+										content			= new XML(content);
 									break;
 
 									default:
-										xjsfl.file.stack.pop();
-										return FLfile.read(uri);
+										content			= FLfile.read(uri);
 								}
 
 						}
 					}
+					
+			// log					
+				xjsfl.output.log(Log.FILE, 'loaded file: "' +shortPath+ '"');
 
+			// flag
+				xjsfl.file.stack.pop();
+				
 			// return
-				return undefined;
+				return content;
 		},
 
 		/**
@@ -903,7 +877,7 @@
 		 */
 		copy:function(srcPathOrURI, trgPathOrURI)
 		{
-
+			// not yet implemented
 		}
 	}
 
@@ -921,27 +895,21 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // # Classes - Core methods to load and register framework libraries and classes
 
-	/**
-	 * Core methods to load and register framework libraries and classes
-	 * @class
-	 */
 	xjsfl.classes =
 	{
-		/**
-		 * @type {Object}	A hash of object name:uris
-		 * Populated in core bootstrap
-		 */
-		uris:xjsfl.classes.uris, // populated in core bootstrap
+		/** @type {Object}	Cache of all loaded URIs */
+		loadedURIs:{},
 		
-		/**
-		 * @type {Object}	A hash of classes and functions
-		 * Populated in core bootstrap
-		 */
-		cache:xjsfl.classes.cache,
-
+		/** @type {Object}	Cache of class URIs */
+		uris:{},
+		
+		/** @type {Object}	Cache of class definitions */
+		cache:{},
+		
 		/**
 		 * Load a class or array of classes from disk
 		 *
+		 * @param	{String}	fileRef		A class name
 		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
 		 * @param	{Array}		fileRef		An Array of class filepaths
@@ -950,79 +918,92 @@
 		 */
 		load:function(fileRef, reload)
 		{
-			// variables
-				/**
-				 * @type {Array}	An Array of filename tokens / URIs
-				 */
-				var tokens = [];
-
-			// a wildcard path of the format 'path/to/folder/*'
-				if(typeof fileRef === 'string' && fileRef.indexOf('*') > -1)
+			// --------------------------------------------------------------------------------
+			// resolve Array
+			
+				if(fileRef instanceof Array)
 				{
-					// resolve the (final) wildcard URI and folder URI
-						var uri			= URI.toURI(fileRef.replace(/\.jsfl$/, '.jsfl'), 1);
-						var folderURI	= URI.getFolder(uri);
-
-					// this should result in an Array of URIs
-
-					// test for recursive
-						if(fileRef.indexOf('**') > -1)
+					for each(var file in fileRef)
+					{
+						xjsfl.classes.load(file, reload);
+					}
+				}
+				
+			// --------------------------------------------------------------------------------
+			// resolve wildcard
+			
+				else if(typeof fileRef === 'string' && fileRef.indexOf('*') !== -1)
+				{
+					// variables
+						var folder 	= fileRef.substr(0, fileRef.indexOf('*'));
+						var pattern	= fileRef.substr(fileRef.indexOf('*'));
+						var uris	= Utils.glob(folder, pattern);
+						
+					// load files
+						xjsfl.classes.load(uris);
+				}
+				
+				
+			// --------------------------------------------------------------------------------
+			// Load URI references
+			
+				if(URI.isURI(fileRef))
+				{
+					// variables
+						var uri		= fileRef;
+						var name	= uri.split('/').pop().replace(/\.\w+$/, '');
+					
+					// never reload xjsfl
+						if(name === 'xjsfl')
 						{
-							var tokens = Utils.walkFolder(folderURI, true);
+							return;
+						}
+						
+					// load
+						if(FLfile.exists(uri))
+						{
+							// otherwise, load
+								if( ! this.loadedURIs[uri.toLowerCase()] || reload)
+								{
+									// exit if stack limit is reached
+										if(xjsfl.file.stack.length > xjsfl.file.stackLimit)
+										{
+											xjsfl.output.log('not loading library: ' + name)
+											return;
+										}
+										else
+										{
+											xjsfl.output.trace('loading library: ' + name);
+										}
+										
+									// load class
+										this.loadedURIs[uri.toLowerCase()] = true;
+										xjsfl.output.log(Log.FILE, 'load library: "' + name + '"');
+										xjsfl.file.load(uri);
+								}
+								else
+								{
+									xjsfl.output.log(Log.INFO, 'already loaded library: "' + name + '"');
+								}
 						}
 						else
 						{
-							var files = FLfile.listFolder(uri, 'files');
-							for each(var file in files)
-							{
-								tokens.push(folderURI + file);
-							}
+							xjsfl.output.log(Log.FILE, 'ERROR: library "' + name + '" could not be found');
 						}
 				}
-
-			// make sure paths/URIs are in an array, so we can treat them all the same
-				else
+			
+			// --------------------------------------------------------------------------------
+			// resolve single tokens
+			
+				else if(typeof fileRef === 'string' && /^\w+$/.test(fileRef) && fileRef != 'xjsfl')
 				{
-					tokens = fileRef instanceof Array ? fileRef : [fileRef];
+					var uris = xjsfl.file.find('library', fileRef);
+					xjsfl.classes.load(uris);
 				}
-
-			// load classes
-				for each(var token in tokens)
-				{
-					if(token.indexOf('xjsfl') === -1) // never reload load xjsfl
-					{
-						// if the token is not a URI, find the URI(s) of the token
-							if( ! URI.isURI(token) )
-							{
-								var uris = xjsfl.file.find('library', token) || [];
-							}
-							else
-							{
-								var uris = [token];
-							}
-
-						// now that we have an Array of URIs, loop over them and load any that have not already been loaded
-							for each(var uri in uris)
-							{
-								if(URI.isFile(uri))
-								{
-									var loadedURIs = Utils.getValues(xjsfl.classes.uris);
-									if(loadedURIs.indexOf(uri) === -1 || reload)
-									{
-										xjsfl.file.load(uri);
-									}
-									else
-									{
-										var path = URI.toPath(uri, true);
-										xjsfl.output.log('skipping "' +path+ '" (already loaded!)', false, false);
-									}
-								}
-							}
-					}
-				}
-
+	
+	
 			// return
-				return this;
+				return this;			
 		},
 
 		/**
@@ -1036,17 +1017,19 @@
 		register:function(name, obj, uri)
 		{
 			// log
-				xjsfl.output.log('registering "' + name + '"', false, false);
+				xjsfl.output.log(Log.INFO, 'registering ' +(/[a-z]/.test(name[0]) ? 'function ' : 'class ')+ name);
+
+			// work out URI before utils has loaded					
+				var error	= new Error();
+				var rx		= /@(.+):\d+\s*$/;
+				var match	= error.stack.match(rx);
+				var uri		= uri || match ? FLfile.platformPathToURI(match[1]) : null;
 
 			// store class
-				xjsfl.classes.cache[name] = obj;
-
-			// store URI
-				xjsfl.classes.uris[name] = uri ? URI.toURI(uri) : Utils.getStack().pop().uri;
-
-			return this;
+				xjsfl.classes.cache[name]	= obj;
+				xjsfl.classes.uris[name]	= uri;
 		},
-
+			
 		/**
 		 * Internal function that restores a class/function to the supplied namespace
 		 *
@@ -1064,18 +1047,35 @@
 						xjsfl.classes.restore(scope, name);
 					}
 				}
-
+	
 			// restore only one class
 				else if(typeof name === 'string')
 				{
 					scope[name] = xjsfl.classes.cache[name];
 				}
-
+	
 			// return this for chaining
 				return this;
 		}
 	}
 	
+	/**
+	 * Loads a class from disk, even if it's already been loaded.
+	 * @param	{String}	className	The class filename (without extension) to load
+	 * @info							This method accepts multiple arguments
+	 */
+	xjsfl.require = function (className)
+	{
+		xjsfl.file.stackLimit = 1;
+		for (var i = 0; i < arguments.length; i++)
+		{
+			xjsfl.classes.load(arguments[i], true);
+		}
+		xjsfl.file.stackLimit = 99;
+	}
+	
+
+		
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██   ██          ██       ██
@@ -1240,7 +1240,7 @@
 							manifest = manifest.module;
 							function log(message)
 							{
-								xjsfl.output.log('WARNING! ' + message + ' in "' +URI.asPath(uri)+ 'manifest.xml"');
+								xjsfl.output.warn('WARNING! ' + message + ' in "' +URI.asPath(uri)+ 'manifest.xml"');
 							}
 						}
 
@@ -1254,17 +1254,17 @@
 						var name = String(manifest.meta.name);
 						if( ! name )
 						{
-							log('Manifest module.meta.name not declared');
+							xjsfl.output.warn('Manifest module.meta.name not declared');
 							return false;
 						}
-						xjsfl.output.trace('registering module "' +name+ '"');
+						xjsfl.output.trace('registering module "' +name+ '"', 1);
 
 					// update manifest with the *actual* URI, and store on main xjsfl object
 						manifest.data.uri		= uri;
 						var namespace			= String(manifest.data.namespace);
 						if( ! namespace )
 						{
-							log('Manifest module.data.namespace not declared');
+							xjsfl.output.warn('Manifest module.data.namespace not declared');
 							return false;
 						}
 						manifests[namespace]	= manifest;
@@ -1302,16 +1302,16 @@
 							// copy files, if any
 								if(copyURIs.length)
 								{
-									xjsfl.output.log('copying / updating ' + copyURIs.length + ' asset(s) to the Flash configuration folder');
+									xjsfl.output.trace('copying / updating ' + copyURIs.length + ' asset(s) to the Flash configuration folder');
 									for each(var obj in copyURIs)
 									{
 										new File(obj.fromURI).copy(obj.toURI, true);
-										xjsfl.output.log('copying asset to "' +obj.toPath+ '"', false, false);
+										xjsfl.output.trace('copying asset to "' +obj.toPath+ '"', false, false);
 									}
 								}
 								else
 								{
-									xjsfl.output.log('assets are already up to date', false, false);
+									xjsfl.output.trace('assets are already up to date', false, false);
 								}
 						}
 
@@ -1522,38 +1522,59 @@
 	/**
 	 * Initialize the environment by extracting variables / objects / functions to global scope
 	 * @param	{Object}	scope			The scope into which the framework should be extracted
-	 * @param	{String}	scopeName		An optional id, which when supplied, traces a short message to the Output panel
+	 * @param	{String}	$scopeName		An optional id, which when supplied, traces a short message to the Output panel
+	 * @param	{Array}		$classes		An optional Array of classes to load
 	 * @returns
 	 */
-	xjsfl.init = function(scope, scopeName)
+	xjsfl.init = function(scope, $scopeName, $classes)
 	{
-		if( ! (xjsfl.initializing || xjsfl.loading) )
-		{
-			// set flag
-				xjsfl.initializing = true;
-
-			// copy core variables and functions into scope
-				xjsfl.initGlobals(scope, scopeName);
-
-			// debug
-				if(scopeName)
-				{
-					xjsfl.output.trace('copying classes to [' +scopeName+ ']');
-				}
-
-			// copy registered classes into scope
-				xjsfl.classes.restore(scope);
-
-			// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
-				scope.xJSFL = xjsfl;
-				delete xjsfl.initializing;
-		}
-		else
-		{
-			var uri = Utils.getStack().pop().uri;
-			xjsfl.output.log('"' +URI.toPath(uri, true)+ '" attempted to reinitialize...', false, false);
-		}
-
+		// variables
+			var scopeName	= '';
+			var classes		= [];
+			var loading		= xjsfl.initializing || xjsfl.loading;
+			
+		// parameter shift
+			for each(var param in [$scopeName, $classes])
+			{
+				if(typeof param === 'string')
+					scopeName = param;
+				if(param instanceof Array)
+					classes = param;
+			}
+		
+		// only initialize if not loading
+			if( ! loading )
+			{
+				// set flags
+					xjsfl.initializing		= true;
+					xjsfl.file.stackLimit	= 99;
+	
+				// copy core variables and functions into scope
+					xjsfl.initGlobals(scope, scopeName);
+	
+				// debug
+					if(scopeName)
+					{
+						xjsfl.output.trace('copying classes to [' +scopeName+ ']');
+					}
+	
+				// copy registered classes into scope
+					xjsfl.classes.restore(scope);
+	
+				// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
+					scope.xJSFL = xjsfl;
+					delete xjsfl.initializing;
+					
+				// return
+					return xjsfl;
+			}
+			
+		// if classes were specified, load if search paths have been initialized
+			var paths = xjsfl.settings.searchPaths.get();
+			if(paths.length && classes.length)
+			{
+				xjsfl.classes.load(classes, ! loading);
+			}
 	}
 
-	
+		

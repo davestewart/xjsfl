@@ -14,41 +14,8 @@
 // Core Bootstrap - Sets up the framework, then loads core classes and modules
 
 	// --------------------------------------------------------------------------------
-	// Log constants
-
-		/**
-		 * @type {Object}	A selection of constants that can be used with xjsfl.output.log
-		 */
-		Log =
-		{
-			EVENT_SPLASH			:'EVENT_SPLASH',
-			EVENT_INIT				:'EVENT_INIT',
-		
-			FILE_FIND				:'FILE_FIND',
-			FILE_LOAD				:'FILE_LOAD',
-			FILE_COPY				:'FILE_COPY',
-		
-			CLASS_LOAD				:'CLASS_LOAD',
-			CLASS_REGISTER			:'CLASS_REGISTER',
-		
-			SYSTEM_INFO				:'SYSTEM_INFO',
-			SYSTEM_MESSAGE			:'SYSTEM_MESSAGE',
-			SYSTEM_WARNING			:'SYSTEM_WARNING',
-			SYSTEM_ERROR			:'SYSTEM_ERROR',
-			
-			USER_INFO				:'USER_INFO',
-			USER_MESSAGE			:'USER_MESSAGE',
-			USER_WARNING			:'USER_WARNING',
-			USER_ERROR				:'USER_ERROR',
-		};
-
-	// --------------------------------------------------------------------------------
 	// initialize
 	
-		/**
-		 * Create some temporary objects to handle the heavy-lifting before the 
-		 * supporting classes are loaded and the main xJSFL class is instantiated
-		 */
 		(function()
 		{
 			// clear existing values, in case we're reloading
@@ -59,156 +26,87 @@
 						delete xjsfl[name];
 					}
 				}
-
+				
 			// temp trace
 				trace = fl.trace;
-				
-			// placeholder for settings
-				xjsfl.settings = {};
 
-			// output needs to be created before main library is loaded
-				xjsfl.output =
-				{
-					/**
-					 * Traces an "> xjsfl:" message to the Output panel
-					 * @param	{String}	message		The message to log
-					 * @param	{Boolean}	highlight	An optional Boolean to highlight the message
-					 */
-					trace:function(message, highlight)
-					{
-						if(highlight)
-						{
-							fl.trace('');
-							message = String(message).toUpperCase();
-						}
-						fl.trace('> xjsfl: ' + message);
-					},
-
-					/**
-					 * Logs a message to the xjsfl log, and optionally traces it
-					 * @param	{String}	message		The text of the log message
-					 * @param	{Boolean}	highlight	An optional Boolean to highlight the message
-					 * @param	{Boolean}	trace		An optional Boolean to trace the message, defaults to true
-					 * @param	{Boolean}	clear		An optional Boolean to clear the log file, defaults to false
-					 * @returns
-					 */
-					log:function(message, highlight, trace, clear)
-					{
-						// trace
-							trace = typeof trace !== 'undefined' ? trace : true;
-							if(trace)
-							{
-								this.trace(message, highlight);
-							}
-
-						// variables
-							var newLine	= fl.version.substr(0, 3).toLowerCase() === 'win' ? '\r\n' : '\n';
-							var uri		= xjsfl.uri + 'core/temp/xjsfl.log';
-							var date	= new Date();
-							var time	= date.toString().match(/\d{2}:\d{2}:\d{2}/) + ':' + (date.getMilliseconds() / 1000).toFixed(3).substr(2);
-						
-						// clear
-							if(clear)
-							{
-								FLfile.remove(uri);
-								xjsfl.output.log('xjsfl log created');
-							}
-
-						// log
-							if(highlight)
-							{
-								message = String(message).toUpperCase();
-							}
-							FLfile.write(uri, (highlight ? newLine : '') + time + '\t' + message + newLine, 'append');
-					}
-				}
-				
-			// classes
-				xjsfl.classes =
-				{
-					uri:null,
-					
-					uris:{},
-					
-					cache:{},
-					
-					preload:function(path)
-					{
-						xjsfl.output.log('loading "{core}jsfl/' +path+ '"');
-						this.uri = xjsfl.uri + 'core/jsfl/' +path;
-						fl.runScript(this.uri);
-					},
-					
-					register:function(name, obj, uri)
-					{
-						// log
-							xjsfl.output.log('registering class "' + name + '"', false, false);
-			
-						// store class
-							xjsfl.classes.cache[name] = obj;
-							xjsfl.classes.uris[name] = Utils.getStack().pop().uri;
-					},
-				}
-
-		})()
-
+			// ensure FLfile.platformPathToURI() exists
+			   if( ! FLfile['platformPathToURI'] )
+			   {
+				   fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/FLfile.jsfl');
+			   }
+			   
+		   // ensure temp & logs folders exists
+				var uri = xjsfl.uri + 'core/temp/';
+				FLfile.createFolder(uri);
+				FLfile.createFolder(uri + 'logs/');
+		})();
+		
 	// --------------------------------------------------------------------------------
 	// load framework
 	
 		// --------------------------------------------------------------------------------
 		// attempt to load core
-	
-			try
-			{
+		
 				// --------------------------------------------------------------------------------
 				// set up
-	
-					// log
-						xjsfl.output.log('running core bootstrap...', true, true, true)
+				
+					// debug
+						//fl.outputPanel.clear();
+						trace('\n> xjsfl: RUNNING CORE BOOTSTRAP...');
 	
 					// flags
 						xjsfl.loading = true;
-	
-					// never debug the bootstrap!
-						var debugState = false;
-						if(xjsfl.debug)
-						{
-							debugState = xjsfl.debug.state;
-							xjsfl.debug.state = false;
-						}
 
+					// load proxy classes
+						trace('> xjsfl: loading proxy classes...');
+						fl.runScript(xjsfl.uri + 'core/jsfl/proxies.jsfl');
+
+					// logs
+						xjsfl.output.reset(Log.INFO);
+						xjsfl.output.reset(Log.FILE);
+						
 				// --------------------------------------------------------------------------------
 				// load files
 				
 					// need to load Utils & URI libraries first as core methods rely on them
-						xjsfl.output.log('loading core...', true);
-						xjsfl.classes.preload('libraries/utils/utils.jsfl');
-						xjsfl.classes.preload('libraries/framework/globals.jsfl');
-						xjsfl.classes.preload('libraries/file/uri.jsfl');
-						xjsfl.classes.preload('libraries/file/uri-list.jsfl');
-						xjsfl.classes.preload('libraries/xjsfl.jsfl');
+						
+					// load main xjsfl class
+						xjsfl.output.trace('loading xjsfl...');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
+						
+					// load globals
+						xjsfl.output.trace('loading core classes...', 1);
+						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/framework/Globals.jsfl');
+						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
+						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/file/URI.jsfl');
+						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/file/URIList.jsfl');
 						
 					// add core and user URIs
+						xjsfl.output.trace('adding search paths...', 1);
 						if(FLfile.exists(fl.configURI + 'xJSFL/'))
 						{
 							xjsfl.settings.uris.add(fl.configURI + 'xJSFL/', 'core');
 						}
 						xjsfl.settings.uris.add(xjsfl.uri + 'core/', 'core');
 						xjsfl.settings.uris.add(xjsfl.uri + 'user/', 'user');
-	
+						
 					// initialize
 						xjsfl.initGlobals(this, 'window');
+						
+			
+			try
+			{
 			}
 			catch(error)
 			{
-				xjsfl.output.log('error running core bootstrap', true);
+				xjsfl.output.warn('error running core bootstrap');
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/utils.jsfl');
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/framework/globals.jsfl');
 				xjsfl.initGlobals(this, 'window');
 				xjsfl.debug.error(error, true);
 			}
-			
 			
 		// --------------------------------------------------------------------------------
 		// attempt to load core libraries
@@ -217,16 +115,17 @@
 			{
 				try
 				{
-					xjsfl.output.log('loading core libraries...', true);
-					xjsfl.classes.load(['file', 'folder', 'template', 'class', 'base', 'events']);
-					xjsfl.classes.load('libraries/**'); // could just send a folder referernce through here (it knows it needs to be .jsfl)
+					xjsfl.output.trace('loading supporting classes...', 1);
+					include('File', 'Folder', 'Module', 'Table', 'Template', 'XML');
+					xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/**/*.jsfl');
 				}
 				catch(error)
 				{
-					xjsfl.output.log('error loading core libraries', true);
+					xjsfl.output.warn('error loading supporting libraries');
 					debug(error, true);
 				}			
 			}
+			
 			
 		// --------------------------------------------------------------------------------
 		// attempt to load modules
@@ -235,12 +134,12 @@
 			{
 				try
 				{
-					xjsfl.output.log('initialising modules...', true);
+					xjsfl.output.trace('initialising modules...', 1);
 					xjsfl.modules.find();
 				}
 				catch(error)
 				{
-					xjsfl.output.log('error initializing modules', true);
+					xjsfl.output.warn('error initializing modules');
 					debug(error, true);
 				}			
 			}
@@ -252,12 +151,12 @@
 			{
 				try
 				{
-					xjsfl.output.log('running user bootstrap...', true);
+					xjsfl.output.trace('running user bootstrap...', 1);
 					xjsfl.file.load('//user/jsfl/bootstrap.jsfl');
 				}
 				catch(error)
 				{
-					xjsfl.output.log('error running user bootstrap', true);
+					xjsfl.output.warn('error running user bootstrap');
 					debug(error, true);
 				}			
 			}
@@ -267,7 +166,7 @@
 		
 			if(xjsfl.loading)
 			{
-				xjsfl.output.log('ready!', true);
+				xjsfl.output.trace('ready!');
 				delete xjsfl.loading;
 			}
 
