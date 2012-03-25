@@ -87,12 +87,26 @@
 			
 			/**
 			 * Logs a message to the xjsfl or file log, and optionally traces it
-			 * @param	{String}	type		The type of log (must be a Log.CONSTANT)
 			 * @param	{String}	message		The text of the log message
-			 * @param	{Number}	level		An optional Number to accentuate the message. 1 = capitals, 2 = horizontal rule & capitals
+			 * @param	{String}	$type		An optional Log.CONSTANT type for the log message. Defaults to Log.INFO
+			 * @param	{Boolean}	$level		An optional Boolean to accentuate the message with a new line and capitals
+			 * @param	{Number}	$level		An optional Number to accentuate the message with a new line and: 1 = capitals, 2 = horizontal rule & capitals
 			 */
-			log:function(type, message, level)
+			log:function(message, $type, $level)
 			{
+				// parameters
+					var type, level;
+					for each(var param in [$type, $level])
+					{
+						if(typeof param === 'string')
+							type = param;
+						if(typeof param === 'number')
+							level = param;
+						if(typeof param === 'boolean')
+							level = param === true ? 1 : 0;
+					}
+					type		= type || Log.INFO;
+				
 				// date
 					var date	= new Date();
 					var time	= date.toString().match(/\d{2}:\d{2}:\d{2}/) + ':' + (date.getMilliseconds() / 1000).toFixed(3).substr(2);
@@ -122,13 +136,13 @@
 			{
 				var output = this.create('> xjsfl: ', message, level)
 				fl.trace(output.replace(/[ \t]+/g, ' ').replace(/\r/g, ''));
-				this.log(Log.TRACE, message, level);
+				this.log(message, Log.TRACE, level);
 			},
 			
 			warn:function(message)
 			{
 				trace('> xjsfl: WARNING - ' + message);
-				this.log(Log.WARN, message);
+				this.log(message, Log.WARN);
 			},
 			
 			/**
@@ -139,7 +153,7 @@
 			{
 				var name = type == Log.FILE ? 'file' : 'main';
 				FLfile.remove(xjsfl.uri + 'core/temp/logs/' + name + '.txt');
-				xjsfl.output.log(type, name + ' log created');
+				xjsfl.output.log(name + ' log created', type);
 			},
 			
 		}

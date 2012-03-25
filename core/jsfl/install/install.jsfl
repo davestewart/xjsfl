@@ -58,13 +58,13 @@
 					{
 						if( ! FLfile.exists(trgURI))
 						{
-							xjsfl.output.log('creating folder "' +trgPath+ '"');
+							xjsfl.output.trace('creating folder "' +trgPath+ '"');
 							FLfile.createFolder(trgURI);
 						}
 					}
 					else
 					{
-						xjsfl.output.log('copying file to "' +trgPath+ '"');
+						xjsfl.output.trace('copying file to "' +trgPath+ '"');
 						if(FLfile.exists(trgURI))
 						{
 							FLfile.remove(trgURI);
@@ -106,12 +106,12 @@
 				}
 				
 			// write install URI
-				xjsfl.output.log('writing xjsfl.uri file');
+				xjsfl.output.trace('writing xjsfl.uri file');
 				save(fl.configURI + 'Tools/xjsfl.ini', 'xjsfl.uri = "' +xjsfl.uri+ '";');
 
 			// we're done!
-				xjsfl.output.log('installation complete\n', true);
-				xjsfl.output.log('Restart Flash to start using xJSFL!');
+				xjsfl.output.trace('installation complete\n', true);
+				xjsfl.output.trace('Restart Flash to start using xJSFL!');
 				
 		// ----------------------------------------------------------------------------------------
 		// show installation spalsh, and set user info

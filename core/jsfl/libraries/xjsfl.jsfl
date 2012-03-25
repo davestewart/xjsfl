@@ -442,7 +442,7 @@
 				if( ! xjsfl.classes.cache.Template )
 				{
 					include = function(){ trace('Ignoring include...'); };
-					xjsfl.output.log(Log.INFO, 'loading files needed for debugging...', false, false);
+					xjsfl.output.log('loading files needed for debugging...', 1);
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/URI.jsfl');
 					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/FileSystemObject.jsfl');
@@ -473,7 +473,7 @@
 			// trace and return
 				if(log)
 				{
-					xjsfl.output.log(Log.INFO, output);
+					xjsfl.output.log(output);
 				}
 				else
 				{
@@ -817,7 +817,7 @@
 								xjsfl.file.stack.push(uri);
 
 							// log
-								xjsfl.output.log(Log.FILE, 'loading file "' + shortPath + '"');
+								xjsfl.output.log('loading file: "' + shortPath + '" ...', Log.FILE);
 
 							// do something depending on extension
 								switch(ext)
@@ -846,7 +846,7 @@
 					}
 					
 			// log					
-				xjsfl.output.log(Log.FILE, 'loaded file: "' +shortPath+ '"');
+				xjsfl.output.log('loaded file:  "' +shortPath+ '" OK', Log.FILE);
 
 			// flag
 				xjsfl.file.stack.pop();
@@ -978,17 +978,17 @@
 										
 									// load class
 										this.loadedURIs[uri.toLowerCase()] = true;
-										xjsfl.output.log(Log.FILE, 'load library: "' + name + '"');
+										xjsfl.output.log('load library: "' + name + '"', Log.FILE);
 										xjsfl.file.load(uri);
 								}
 								else
 								{
-									xjsfl.output.log(Log.INFO, 'already loaded library: "' + name + '"');
+									xjsfl.output.log('already loaded library: "' + name + '"');
 								}
 						}
 						else
 						{
-							xjsfl.output.log(Log.FILE, 'ERROR: library "' + name + '" could not be found');
+							xjsfl.output.warn('library "' + name + '" could not be found', Log.FILE);
 						}
 				}
 			
@@ -1017,7 +1017,7 @@
 		register:function(name, obj, uri)
 		{
 			// log
-				xjsfl.output.log(Log.INFO, 'registering ' +(/[a-z]/.test(name[0]) ? 'function ' : 'class ')+ name);
+				xjsfl.output.log('registering ' +(/[a-z]/.test(name[0]) ? 'function ' : 'class ')+ name);
 
 			// work out URI before utils has loaded					
 				var error	= new Error();
@@ -1238,10 +1238,6 @@
 						if(manifest)
 						{
 							manifest = manifest.module;
-							function log(message)
-							{
-								xjsfl.output.warn('WARNING! ' + message + ' in "' +URI.asPath(uri)+ 'manifest.xml"');
-							}
 						}
 
 					// if no module manifest, assume the module is code-only, and return
@@ -1251,10 +1247,14 @@
 						}
 
 					// feedback
+						function warn(message)
+						{
+							xjsfl.output.warn(message + ' in "' +URI.asPath(uri)+ 'manifest.xml"');
+						}
 						var name = String(manifest.meta.name);
 						if( ! name )
 						{
-							xjsfl.output.warn('Manifest module.meta.name not declared');
+							warn('Manifest module.meta.name not declared');
 							return false;
 						}
 						xjsfl.output.trace('registering module "' +name+ '"', 1);
@@ -1264,7 +1264,7 @@
 						var namespace			= String(manifest.data.namespace);
 						if( ! namespace )
 						{
-							xjsfl.output.warn('Manifest module.data.namespace not declared');
+							warn('Manifest module.data.namespace not declared');
 							return false;
 						}
 						manifests[namespace]	= manifest;

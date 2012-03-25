@@ -64,10 +64,10 @@
 					// load strap
 						clear();
 						fl.trace(FLfile.read(xjsfl.uri + 'core/assets/misc/uninstall.txt').replace(/\r\n/g, '\n'));
-						xjsfl.output.log('uninstalling xjsfl', true);
+						xjsfl.output.trace('uninstalling xjsfl', true);
 				
 					// feedback
-						xjsfl.output.log('deleting files/folders', true);
+						xjsfl.output.trace('deleting files/folders', 1);
 						
 					// delete files
 						for (var i = trgURIs.length - 1; i > 0; i--)
@@ -83,7 +83,7 @@
 									xjsfl.output.log('deleting file "' +path+ '"');
 									if( ! file.remove(true) )
 									{
-										xjsfl.output.log('WARNING: the file "' +path+ '" could not be removed!');
+										xjsfl.output.warn('the file "' +path+ '" could not be removed!');
 									}
 								}
 								
@@ -93,19 +93,19 @@
 									var folder = new Folder(uri);
 									if(folder.exists && folder.parent.uri !== fl.configDirectory && folder.uris.length == 0)
 									{
-										xjsfl.output.log('deleting folder "' +path+ '"');
+										xjsfl.output.trace('deleting folder "' +path+ '"');
 										if( ! folder.remove(true) )
 										{
-											xjsfl.output.log('WARNING: the folder "' +path+ '" could not be removed!');
+											xjsfl.output.warn('the folder "' +path+ '" could not be removed!');
 										}
 									}
 								}
 						}
 						
 					// warn user about xJSFL extension
-						xjsfl.output.log('One last thing...', true);
-						xjsfl.output.log('The xJSFL extension is currently in use, so you will need to remove it manually from:');
-						xjsfl.output.log(URI.asPath(fl.configURI + 'External Libraries/'));
+						xjsfl.output.trace('One last thing...', true);
+						xjsfl.output.trace('The xJSFL extension is currently in use, so you will need to remove it manually from:');
+						xjsfl.output.trace(URI.asPath(fl.configURI + 'External Libraries/'));
 				}
 				else
 				{
@@ -120,7 +120,7 @@
 				$dom.xmlPanel(xulURI);
 				
 			// sob!
-				xjsfl.output.log('uninstallation complete. sob :(', true);
+				xjsfl.output.trace('uninstallation complete. sob :(', true);
 				
 			// delete values
 				for(var name in xjsfl)

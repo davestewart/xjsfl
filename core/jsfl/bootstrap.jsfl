@@ -48,12 +48,15 @@
 		// --------------------------------------------------------------------------------
 		// attempt to load core
 		
+			try
+			{
 				// --------------------------------------------------------------------------------
 				// set up
 				
 					// debug
 						//fl.outputPanel.clear();
 						trace('\n> xjsfl: RUNNING CORE BOOTSTRAP...');
+						trace('> xjsfl: installation location: "' +FLfile.uriToPlatformPath(xjsfl.uri)+ '"');
 	
 					// flags
 						xjsfl.loading = true;
@@ -69,20 +72,22 @@
 				// --------------------------------------------------------------------------------
 				// load files
 				
-					// need to load Utils & URI libraries first as core methods rely on them
 						
 					// load main xjsfl class
 						xjsfl.output.trace('loading xjsfl...');
 						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
 						
-					// load globals
+						
+						trace(asdha);
+						
+					// load globals and key libraries
 						xjsfl.output.trace('loading core classes...', 1);
 						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/framework/Globals.jsfl');
 						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
 						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/file/URI.jsfl');
 						xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/file/URIList.jsfl');
 						
-					// add core and user URIs
+					// add search paths
 						xjsfl.output.trace('adding search paths...', 1);
 						if(FLfile.exists(fl.configURI + 'xJSFL/'))
 						{
@@ -93,18 +98,20 @@
 						
 					// initialize
 						xjsfl.initGlobals(this, 'window');
-						
 			
-			try
-			{
 			}
 			catch(error)
 			{
 				xjsfl.output.warn('error running core bootstrap');
+				trace('load utils')
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/utils.jsfl');
+				trace('load core')
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
+				trace('load globals')
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/framework/globals.jsfl');
+				trace('init globals')
 				xjsfl.initGlobals(this, 'window');
+				trace('debug')
 				xjsfl.debug.error(error, true);
 			}
 			

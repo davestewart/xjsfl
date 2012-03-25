@@ -27,7 +27,7 @@
 			 */
 			function include(className)
 			{
-				xjsfl.output.log(Log.INFO, 'include classes: "' + Array.slice.call(this, arguments).join('", "') + '"');
+				xjsfl.output.log('include classes: "' + Array.slice.call(this, arguments).join('", "') + '"');
 				for (var i = 0; i < arguments.length; i++)
 				{
 					xjsfl.classes.load(arguments[i]);

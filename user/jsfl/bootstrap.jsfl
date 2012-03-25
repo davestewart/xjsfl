@@ -19,7 +19,7 @@
 			//xjsfl.settings.folders.set('temp', 'c:/temp/')
 
 		// load user libraries
-			xjsfl.output.log('loading user libraries...', true);
+			xjsfl.output.log('loading user libraries...', 1);
 			xjsfl.classes.load('/jsfl/libraries/*.jsfl');
 
 		// add user code
@@ -28,6 +28,6 @@
 	}
 	catch(error)
 	{
-		xjsfl.output.log('error running user bootstrap');
+		xjsfl.output.warn('error running user bootstrap');
 		debug(error, true);
 	}
