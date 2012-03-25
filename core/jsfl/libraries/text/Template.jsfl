@@ -13,6 +13,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Template - Handes loading and population of text data, including nested templating and indentation
 
+	// includes
+		xjsfl.init(this, ['File', 'URI', 'Utils']);
+		
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
 
@@ -131,12 +134,12 @@
 						var file	= new File(uri, this.render());
 						if( ! file.save() )
 						{
-							xjsfl.output.warn('The template "' +URI.asPath(uri)+ '" was not saved');
+							xjsfl.output.trace('The template "' +URI.asPath(uri)+ '" was not saved');
 						}
 					}
 					else
 					{
-						xjsfl.output.warn('A template cannot be saved over itself!');
+						xjsfl.output.trace('A template cannot be saved over itself!');
 					}
 
 					return this;

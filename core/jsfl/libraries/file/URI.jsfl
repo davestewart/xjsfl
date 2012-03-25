@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // URI - Handles URI and path conversion, including detection and resolution of relative paths
 
+	// includes
+		xjsfl.init(this, ['Utils']);
+		
 	// ---------------------------------------------------------------------------------------------------------------
 	// notes on JSFL and xJSFL URI juggling
 
@@ -102,6 +105,12 @@
 			get name()
 			{
 				return URI.getName(this.uri);
+			},
+
+			/** @type {String}	The name of the file or folder referred to by the URI instance */
+			get extension()
+			{
+				return URI.getExtension(this.uri);
 			},
 
 			/** @type {String}	The platform-specific path of the file or folder referred to by the URI instance */
@@ -636,6 +645,17 @@
 				return removeExtension ? name.replace(/\.\w+$/, '') : name;
 			}
 
+			/**
+			 * Returns the file extension
+			 * @param	{String}	pathOrURI		A vald path or URI
+			 * @returns	{String}					The file extensions
+			 */
+			URI.getExtension = function(pathOrURI)
+			{
+				var match = String(pathOrURI).match(/\.(\w+)$/);
+				return match ? match[1] : '';
+			}
+			
 			/**
 			 * Returns the current folder path of the item referenced by the path or URI
 			 * @param	{String}	pathOrURI	A valid path or URI

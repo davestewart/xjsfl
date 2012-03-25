@@ -11,9 +11,8 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Flash - Miscellaneous methods and properties that should already be part of Flash (but aren't!)
 
-	// init
-	
-		xjsfl.init(this);
+	// includes
+		xjsfl.init(this, ['Events']);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// Document

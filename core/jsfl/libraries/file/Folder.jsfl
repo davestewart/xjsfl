@@ -12,51 +12,37 @@
 // Folder - JSFL OO representation of operating system folders
 
 	// includes
-		include('filesystem', 'uri', 'template');
+		xjsfl.init(this, ['Class', 'FileSystemObject', 'File', 'Template', 'URI', 'Utils']);
 
 	// -------------------------------------------------------------------------------------------------------------------
-	// constructor
+	// class
 
-		/**
-		 * Folder class
-		 * @extends	{FileSystemObject}
-		 * @param	{String}				pathOrUri	The uri or path to the object
-		 * @param	{Boolean}				create		An optional Boolean flag on whether to create the folder or not, defaults to false
-		 */
-		Folder = function(pathOrUri, create)
+		Folder =
 		{
-			// ensure a trailing slash //
-				pathOrUri = String(pathOrUri).replace(/\/*$/, '/');
-
-			// uri
-				var uri = URI.getFolder(URI.toURI(pathOrUri, 1));
-
-			// constructor
-				FileSystemObject.call(this, uri);
-				if(create && ! this.exists)
-				{
-					this.create();
-				}
-		}
-
-		Folder.toString = function()
-		{
-			return '[class Folder]';
-		}
-
-	// -------------------------------------------------------------------------------------------------------------------
-	// prototype members
-
-		folder =
-		{
-
 			// -------------------------------------------------------------------------------------------------------------------
 			// # methods
 
 				/**
-				 * reset constructor
+				 * Folder class
+				 * @extends	{FileSystemObject}
+				 * @param	{String}				pathOrUri	The uri or path to the object
+				 * @param	{Boolean}				create		An optional Boolean flag on whether to create the folder or not, defaults to false
 				 */
-				constructor:Folder,
+				init:function(pathOrUri, create)
+				{
+					// ensure a trailing slash /
+						pathOrUri = String(pathOrUri).replace(/\/*$/, '/');
+		
+					// uri
+						var uri = URI.getFolder(URI.toURI(pathOrUri, 1));
+		
+					// constructor
+						this._super(uri);
+						if(create && ! this.exists)
+						{
+							this.create();
+						}
+				},
 
 				create:function()
 				{
@@ -270,12 +256,14 @@
 				}
 		}
 
-	// -------------------------------------------------------------------------------------------------------------------
-	// inheritance & assign methods
-
-		Folder.prototype = new FileSystemObject;
-		Utils.extend(Folder.prototype, folder);
-		delete folder;
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// create
+	
+		Folder = FileSystemObject.extend(Folder);
+		Folder.toString = function()
+		{
+			return '[class Folder]';
+		}
 
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------

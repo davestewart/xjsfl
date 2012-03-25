@@ -14,52 +14,38 @@
 	//BUG Fix File so it doesn't write when you access a setter by mistake. Iterating through files using Table.print(folder.contents) overwrote all files with garbage!
 
 	// includes
-		xjsfl.init(this);
-		include('filesystem');
+		xjsfl.init(this, ['Class', 'FileSystemObject', 'Folder', 'URI', 'Utils']);
+		
 
 	// -------------------------------------------------------------------------------------------------------------------
-	// constructor
+	// class
 
-		/**
-		 * File class
-		 * @extends	{FileSystemObject}
-		 * @param	{String}				pathOrUri	The uri or path to the object
-		 * @param	{String}				contents	An optional string contents of the file, or true to save a blank file
-		 */
-		File = function(pathOrUri, contents)
-		{
-			// uri
-				var uri = URI.toURI(pathOrUri, 1);
-
-			// constructor
-				FileSystemObject.call(this, uri);
-
-			// if there's any data, save it
-				if(contents !== undefined)
-				{
-					this.write(String(contents === true ? '' : contents), false);
-				}
-		}
-
-		File.toString = function()
-		{
-			return '[class File]';
-		}
-
-
-	// -------------------------------------------------------------------------------------------------------------------
-	// properties
-
-		file =
+		File =
 		{
 
 			// -------------------------------------------------------------------------------------------------------------------
 			// # methods
 
 				/**
-				 * reset constructor
+				 * File class
+				 * @extends	{FileSystemObject}
+				 * @param	{String}				pathOrUri	The uri or path to the object
+				 * @param	{String}				contents	An optional string contents of the file, or true to save a blank file
 				 */
-				constructor:File,
+				init:function(pathOrUri, contents)
+				{
+					// uri
+						var uri = URI.toURI(pathOrUri, 1);
+		
+					// constructor
+						this._super(uri);
+		
+					// if there's any data, save it
+						if(contents !== undefined)
+						{
+							this.write(String(contents === true ? '' : contents), false);
+						}
+				},
 
 				/**
 				 * Opens the file in the associated application
@@ -130,7 +116,7 @@
 					// get target URI
 						var trgURI = URI.toURI(trgURIOrPath, 1);
 
-					//Output.inspect(this)
+					//inspect(this)
 					// if the file exists, copy it
 						if(this.exists)
 						{
@@ -390,14 +376,19 @@
 
 		}
 
-	// -------------------------------------------------------------------------------------------------------------------
-	// inheritance & assign methods
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// create
+	
+		File = FileSystemObject.extend(File);
+		File.toString = function()
+		{
+			return '[class File]';
+		}
 
-		File.prototype = new FileSystemObject;
-		Utils.extend(File.prototype, file);
-		delete file;
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// register classes with xjsfl
 	
 		xjsfl.classes.register('File', File);
+
+	

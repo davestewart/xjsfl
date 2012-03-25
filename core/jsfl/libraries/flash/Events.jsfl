@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Events - OO events
 
+	// includes
+		xjsfl.init(this, ['Utils']);
+		
 	/*
 	 * IMPORTANT - unexpected results with Frame callbacks
 	 *

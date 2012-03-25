@@ -25,7 +25,7 @@
 			 * @returns	{Document}		A Document object
 			 * @returns	{Boolean}		False if not available
 			 */
-			dom:function()
+			get dom()
 			{
 				var dom = fl.getDocumentDOM();
 				if(dom)
@@ -41,7 +41,7 @@
 			 * @returns	{Timeline}		A Timelineobject
 			 * @returns	{Boolean}		False if not available
 			 */
-			timeline:function()
+			get timeline()
 			{
 				if(UI.dom)
 				{
@@ -56,7 +56,7 @@
 			 * @returns	{Array}			An array of library items
 			 * @returns	{Boolean}		False if not available
 			 */
-			items:function()
+			get items()
 			{
 				if(UI.dom)
 				{
@@ -76,13 +76,14 @@
 			 * @returns	{Array}			An array of elements
 			 * @returns	{Boolean}		False if no selection
 			 */
-			selection:function()
+			get selection()
 			{
 				if(UI.dom)
 				{
-					if($selection.length > 0)
+					var selection = UI.dom.selection;
+					if(selection.length > 0)
 					{
-						return $selection;
+						return selection;
 					}
 					alert('Make a selection before running this script');
 					return false;
@@ -94,7 +95,7 @@
 			 * Lightweight function to return the current UI state
 			 * @returns	{Object}
 			 */
-			state:function()
+			get state()
 			{
 				//TODO Add in boolean to also get the selected elements
 				var obj = {};

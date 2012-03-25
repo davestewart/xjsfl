@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Iterators - Iterate thorugh documents, items, timelines, layers, frames and elements
 
+	// includes
+		xjsfl.init(this, ['Context', 'Utils']);
+		
 	/*
 		Iterates through every item, layer, frame, element, and in the callback
 		add the context to the a global array. Then afterwards, the user can jump
@@ -187,7 +190,7 @@
 			// if a timeline was found, process its layers
 				if(context.timeline)
 				{
-					//Output.inspect(context, 'Context')
+					//inspect(context, 'Context')
 
 					for(var i = 0; i < context.timeline.layers.length; i++)
 					{

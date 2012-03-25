@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // ItemCollection
 
+	// includes
+		xjsfl.init(this, ['Collection', 'Context', 'ElementCollection', 'Output', 'Utils']);
+		
 	// context = lib or folder?
 
 /*
@@ -40,19 +43,19 @@
 	/**
 	 * ItemCollection class enacpsulates and modifies Arrays of LibraryItems
 	 */
-	var ItemCollection =
+	ItemCollection =
 	{
 		className:'ItemCollection',
 
 		library:null,
 
-		constructor:function(elements)
+		init:function(elements)
 		{
 			var dom = $dom;
 			if(dom)
 			{
 				this.library = dom.library;
-				this.base(elements);
+				this._super(elements);
 			}
 			else
 			{

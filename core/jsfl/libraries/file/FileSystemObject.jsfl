@@ -13,34 +13,17 @@
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // FileSystemObject - Base FileSystem class for Folder and File classes
 
-	// temp init
-		xjsfl.init(this, 'filesystem');
-		xjsfl.classes.load('utils', 'uri');
-
-	// -------------------------------------------------------------------------------------------------------------------
-	// constructor and inheritance
-
-		/**
-		 * FileSytemObject class
-		 * @param	{String} pathOrUri The uri or path to the object
-		 */
-		FileSystemObject = function(uri)
-		{
-			if(uri)
-			{
-				this.uri = uri;
-			}
-		}
-
-		FileSystemObject.toString = function()
-		{
-			return '[class FileSystemObject]';
-		}
-
+	// includes
+		xjsfl.init(this, ['Class', 'URI']);
+		
 	// -------------------------------------------------------------------------------------------------------------------
 	// prototype
 
-		FileSystemObject.prototype =
+		/**
+		 * FileSytemObject class
+		 * @class
+		 */
+		FileSystemObject =
 		{
 
 			// -------------------------------------------------------------------------------------------------------------------
@@ -55,9 +38,17 @@
 			// methods
 
 				/**
-				 * reset constructor
+				 * FileSytemObject class
+				 * @param	{String} pathOrUri The uri or path to the object
+				 * @constructor
 				 */
-				constructor:FileSystemObject,
+				init:function(uri)
+				{
+					if(uri)
+					{
+						this.uri = uri;
+					}
+				},
 
 				/**
 				 * Deletes the item from the filesystem
@@ -66,10 +57,10 @@
 				 */
 				remove:function(skipConfirmation)
 				{
-					state = false;
+					var state = false;
 					if(skipConfirmation != true)
 					{
-						state = confirm('Do you want to delete "' +this.path+ '"') === true;
+						state = window.confirm('Do you want to delete "' +this.path+ '"') === true;
 					}
 					if(skipConfirmation == true || state)
 					{
@@ -77,6 +68,11 @@
 						return FLfile.remove(this.uri);
 					}
 					return this;
+				},
+				
+				toString:function()
+				{
+					return '[object FileSystemObject uri="' +this.uri+ '"]';
 				},
 
 			// -------------------------------------------------------------------------------------------------------------------
@@ -184,8 +180,18 @@
 
 		}
 
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// create
+	
+		FileSystemObject = Class.extend(FileSystemObject);
+		FileSystemObject.toString = function()
+		{
+			return '[class FileSystemObject]';
+		}
+
+
 // -----------------------------------------------------------------------------------------------------------------------------------------
 // register classes with xjsfl
 
 	xjsfl.classes.register('FileSystemObject', FileSystemObject);
-
+	

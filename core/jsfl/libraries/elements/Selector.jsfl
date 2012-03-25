@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Selector - Class which holds JSFL rules (methods) and other parameters to compare against potentially-selected objects
 
+	// includes
+		xjsfl.init(this, ['Utils']);
+		
 	// ----------------------------------------------------------------------------------------------------
 	// constructor
 

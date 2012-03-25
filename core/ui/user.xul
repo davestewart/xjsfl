@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <dialog id="sample" title=" xJSFL - Update User Info" buttons="accept">
-	<label width="310" value="Update your user information below:" />
+	<label width="310" value="Please update your user information below." />
+	<label width="310" value="This will be used in the various tools and scripts in the framework, and not for anything without your permission" />
 	<spacer />
 	<grid>
 		<columns id="columns">

@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Source - examine and manipulate source code
 
+	// includes
+		xjsfl.init(this, ['Base', 'URI']);
+
 	/*
 
 		Recognises sections:

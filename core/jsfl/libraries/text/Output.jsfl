@@ -14,6 +14,9 @@
 // Output - provides logging functionality, object introspection, and a variety of printing and formatting methods
 
 
+	// includes
+		xjsfl.init(this, ['Table', 'Utils']);
+
 	/**
 	 * Provides logging functionality, object introspection, and a variety of printing and formatting methods
 	 */

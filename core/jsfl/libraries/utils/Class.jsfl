@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████ ██                   
 //  ██     ██                   
@@ -11,212 +11,102 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Class - OO Class class for creating and modifying JavaScript classes
 
-	// ------------------------------------------------------------------------------------------------
-	// Constructor
-	
-		/**
-		 * Class.js, version 1.1
-		 * Copyright 2006-2007, Dean Edwards
-		 * License: http://www.opensource.org/licenses/mit-license.php
-		 *
-		 * Modified (ever-so slightly) by Dave Stewart
-		 *
-		 * @see http://dean.edwards.name/weblog/2006/03/base/
-		 * @see http://dean.edwards.name/weblog/2006/05/prototype-and-base/
-		 * 
+	// --------------------------------------------------------------------------------
+	// class
+		
+		/* Simple JavaScript Inheritance
+		 * @author			John Resig http://ejohn.org/
+		 * @contributor		Dave Stewart
+		 * MIT Licensed
 		 */
-		var Class = function()
+		(function ()
 		{
-			// dummy
-		};
+			var initializing = false;
+			var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+			
+			// The base Class implementation (does nothing)
+			this.Class = function () { };
 		
-	// ------------------------------------------------------------------------------------------------
-	// Static extend method
-	
-		/**
-		 * 
-		 * @param	_instance	
-		 * @param	_static	
-		 * @returns		
-		 */
-		Class.extend = function(_instance, _static) // subclass
-		{
-			var extend = Class.prototype.extend;
-			
-			// build the prototype
-			Class._prototyping = true;
-			var proto = new this;
-			extend.call(proto, _instance);
-			delete Class._prototyping;
-			
-			// extend the wrapper for the constructor function
-			//var constructor = proto.constructor.valueOf(); //-dean
-			var constructor = proto.constructor;
-			var klass = proto.constructor = function()
+			// Create a new Class that inherits from this class
+			Class.extend = function (prop)
 			{
-				if (!Class._prototyping)
-				{
-					if (this._constructing || this.constructor == klass) // instantiation
-					{
-						this._constructing = true;
-						constructor.apply(this, arguments);
-						delete this._constructing;
-					}
-					else if (arguments[0] != null) // casting
-					{
-						return (arguments[0].extend || extend).call(arguments[0], proto);
-					}
-				}
-			};
-			
-			// build the class interface
-			klass.ancestor = this;
-			klass.extend = this.extend;
-			klass.forEach = this.forEach;
-			klass.implement = this.implement;
-			klass.prototype = proto;
-			klass.toString = this.toString;
-			
-			klass.valueOf = function(type)
-			{
-				//return (type == "object") ? klass : constructor; //-dean
-				return (type == "object") ? klass : constructor.valueOf();
-			};
-			
-			extend.call(klass, _static);
-			// class initialisation
-			if (typeof klass.init == "function") klass.init();
-			return klass;
-		};
-	
+				var _super = this.prototype;
 		
-	// ------------------------------------------------------------------------------------------------
-	// Prototype
-	
-		Class.prototype = {	
-			extend: function(source, value)
-			{
-				if (arguments.length > 1) // extending with a name/value pair
-				{
-					var ancestor = this[source];
-					if (ancestor && (typeof value == "function") && // overriding a method?
-						// the valueOf() comparison is to avoid circular references
-						(!ancestor.valueOf || ancestor.valueOf() != value.valueOf()) &&
-						/\bbase\b/.test(value))
-					{
-						// get the underlying method
-						var method = value.valueOf();
-						// override
-						value = function()
-						{
-							var previous = this.base || Class.prototype.base;
-							this.base = ancestor;
-							var returnValue = method.apply(this, arguments);
-							this.base = previous;
-							return returnValue;
-						};
-						// point to the underlying method
-						value.valueOf = function(type)
-						{
-							return (type == "object") ? value : method;
-						};
-						value.toString = Class.toString;
-					}
-					this[source] = value;
-				}
-				else if (source) // extending with an object literal
-				{
-					var extend = Class.prototype.extend;
-					// if this object has a customised extend method then use it
-					if (!Class._prototyping && typeof this != "function") {
-						extend = this.extend || extend;
-					}
-					var proto = {toSource: null};
-					// do the "toString" and other methods manually
-					var hidden = ["constructor", "toString", "valueOf"];
-					// if we are prototyping then include the constructor
-					var i = Class._prototyping ? 0 : 1;
-					while (key = hidden[i++])
-					{
-						if (source[key] != proto[key])
-						{
-							extend.call(this, key, source[key]);
+				// Instantiate a base class (but only create the instance,
+				// don't run the init constructor)
+				initializing = true;
+				var prototype = new this();
+				initializing = false;
 		
+				// Copy the properties over onto the new prototype
+				for (var name in prop)
+				{
+					// variables
+						var getter = prop.__lookupGetter__(name);
+						var setter = prop.__lookupSetter__(name);
+						
+					// getters / setters
+						if ( getter || setter )
+						{
+							if ( getter ) prototype.__defineGetter__(name, getter);
+							if ( setter ) prototype.__defineSetter__(name, setter);
 						}
-					}
-					// copy each of the source object's properties to this object
-					for (var key in source)
-					{
-						if (!proto[key]) extend.call(this, key, source[key]);
-					}
+						
+					// normal property
+						else
+						{
+							// Check if we're overwriting an existing function
+								if(typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name]))
+								{
+									prototype[name] =
+									(function (name, fn)
+									{
+										return function ()
+										{
+											var tmp = this._super;
+						
+											// Add a new ._super() method that is the same method
+											// but on the super-class
+											this._super = _super[name];
+						
+											// The method only need to be bound temporarily, so we
+											// remove it when we're done executing
+											var ret = fn.apply(this, arguments);
+											this._super = tmp;
+						
+											return ret;
+										};
+									})(name, prop[name]);
+								}
+								else
+								{
+									prototype[name] =  prop[name];
+								}
+						}
+		
 				}
-				return this;
-			},
 		
-			base: function()
-			{
-				// call this method from any other method to invoke that method's ancestor
-			}
-		};
-		
-	// ------------------------------------------------------------------------------------------------
-	// Initialize
-	
-		Class = Class.extend({
-			constructor: function()
-			{
-				this.extend(arguments[0]);
-			}
-		},
-		{
-			ancestor: Object,
-			version: "1.1",
-			
-			forEach: function(object, block, context)
-			{
-				for (var key in object)
+				// The dummy class constructor
+				function Class()
 				{
-					if (this.prototype[key] === undefined)
-					{
-						block.call(context, object[key], key, object);
-					}
+					// All construction is actually done in the init method
+					if (!initializing && this.init) this.init.apply(this, arguments);
 				}
-			},
-				
-			/**
-			 * 
-			 * @param		
-			 * @returns		
-			 */
-			implement: function()
-			{
-				for (var i = 0; i < arguments.length; i++)
-				{
-					if (typeof arguments[i] == "function")
-					{
-						// if it's a function, call it
-						arguments[i](this.prototype);
-					}
-					else
-					{
-						// add the interface using the extend method
-						this.prototype.extend(arguments[i]);
-					}
-				}
-				return this;
-			},
-			
-			toString: function()
-			{
-				return String(this.valueOf());
-			}
-		});
 		
-		Class.toString = function()
-		{
-			return '[class Class]';
-		}
+				// Populate our constructed prototype object
+				Class.prototype = prototype;
 		
-	// register
-		xjsfl.classes.register('Class', Class)
+				// Enforce the constructor to be what we expect
+				Class.prototype.constructor = Class;
 		
+				// And make this class extendable
+				Class.extend = arguments.callee;
+		
+				return Class;
+			};
+		})();
+		
+	// --------------------------------------------------------------------------------
+	// register class
+		
+		xjsfl.classes.register('Class', Class);

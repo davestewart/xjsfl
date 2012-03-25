@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // ElementCollection
 
+	// includes
+		xjsfl.init(this, ['Collection', 'Output', 'Utils']);
+		
 	/**
 	 * ElementCollection class enacpsulates and modifies Arrays of stage Elements
 	 */
@@ -22,14 +25,14 @@
 
 		selection:null,
 
-		constructor:function(elements)
+		init:function(elements)
 		{
 			this.dom = $dom;
-			if(!this.dom)
+			if( ! this.dom )
 			{
 				throw new Error('ElementCollection requires that a document be open before instantiation');
 			}
-			this.base(elements);
+			this._super(elements);
 		},
 
 		/**

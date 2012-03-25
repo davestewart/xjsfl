@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████                      ██       
 //  ██  ██                      ██       
@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Bounds
 
+	// includes
+		xjsfl.init(this, ['Point']);
+		
 	// --------------------------------------------------------------------------------
 	// Bounds object
 
@@ -81,7 +84,7 @@
 							}
 
 						// Array - selection or list of elements
-							else if(args[0] instanceof Array)
+							else if(args[0] instanceof Array && args[0].length)
 							{
 								var top, left, right, bottom, element = args[0][0]
 								this.top		= element.top;
@@ -127,6 +130,11 @@
 		
 		Bounds.prototype =
 		{
+			top			:0,
+			left		:0,
+			right		:0,
+			bottom		:0,
+			
 			/** @type {Number}	Gets the width of the Bounds object */
 			get width()
 			{
@@ -162,7 +170,7 @@
 			 */
 			toString:function()
 			{
-				return '[object Bounds top="' +this.top+ '" right="' +this.right+ '" bottom="' +this.bottom+ '" left="' +this.left+ '"]';
+				return '[object Bounds top="' +this.top+ '" left="' +this.left+ '" right="' +this.right+ '" bottom="' +this.bottom+ '"]';
 			},
 		}
 

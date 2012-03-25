@@ -11,6 +11,8 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Utils - static library of utility functions
 
+	// includes
+		xjsfl.init(this, ['Folder', 'JSON', 'SimpleTemplate', 'URI', 'XML']);
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// class
@@ -84,14 +86,14 @@
 				 * Extends an object or array with more properties or elements
 				 *
 				 * @param	{Object}	obj			A source Object to be extended
-				 * @param	{Object}	props		The properties to be added
+				 * @param	{Object}	source		The properties to be added
 				 * @returns	{Object}				The modified object
 				 *
 				 * @param	{Array}		obj			A source Array to be extended
-				 * @param	{Array}		props		The elements to be added
+				 * @param	{Array}		source		The elements to be added
 				 * @returns	{Array}					The modified array
 				 */
-				extend:function(obj, props)
+				extend:function(obj, source)
 				{
 					// variables
 						var prop;
@@ -103,31 +105,32 @@
 						}
 
 					// extend array
-						if(Utils.isArray(obj) && Utils.isArray(props))
+						if(Utils.isArray(obj) && Utils.isArray(source))
 						{
-							for(var i = 0; i < props.length; i++)
+							for(var i = 0; i < source.length; i++)
 							{
-								obj.push(props[i]);
+								obj.push(source[i]);
 							}
 						}
 
 					// extend object
-						else if (typeof props === "object")
+						else if (typeof source === "object")
 						{
-							for ( var i in props )
+							for ( var name in source )
 							{
 								// getters / setters
-									var g = props.__lookupGetter__(i), s = props.__lookupSetter__(i);
-									if ( g || s )
+									var getter = source.__lookupGetter__(name);
+									var setter = source.__lookupSetter__(name);
+									if ( getter || setter )
 									{
-										if ( g ) obj.__defineGetter__(i, g);
-										if ( s ) obj.__defineSetter__(i, s);
+										if ( getter ) obj.__defineGetter__(name, getter);
+										if ( setter ) obj.__defineSetter__(name, setter);
 									}
 
 								// normal property
 									else
 									{
-										obj[i] = props[i];
+										obj[name] = source[name];
 									}
 							}
 						}
@@ -1066,7 +1069,7 @@
 				pad:function(value, length, chr, right)
 				{
 					value	= String(value || '');
-					chr		= chr || '0';
+					chr		= typeof chr === 'undefined' ? '0' : chr;
 					length	= typeof length === 'undefined' ? 6 : length;
 					while(value.length < length)
 					{
@@ -1195,38 +1198,41 @@
 								matchNames			= matchNames ? 'matchIndex,match,' + matchNames : null;
 								
 							// exec
-								var exec;
-								while(exec = rxGlobal.exec(str))
+								if(matchesGlobal)
 								{
-									// stop processing if no matches (otherwise, exec() will loop forever)
-										if(exec[0] == '')break;
-										
-									// set up local matches array, with the match index if an object is being returned
-										matchesLocal	= matchNames ? [exec.index] : [];
-										
-									// add matches
-										for (var i = 0; i < exec.length; i++)
-										{
-											matchesLocal.push(exec[i]);
-										}
-										
-									// finalise matches
-										if(matchNames)
-										{
-											// create an object
-											matchesLocal = Utils.combine(matchNames, matchesLocal)
-										}
-										else
-										{
-											// add match index to array
-											matchesLocal.push(exec.index);
-										}
-										matchesGlobal.push(matchesLocal);
-										
-								}
-								
-							// reset lastIndex (this is important so subsequent matches don't fail!)
-								rxGlobal.lastIndex	= 0; 
+									var exec;
+									while(exec = rxGlobal.exec(str))
+									{
+										// stop processing if no matches (otherwise, exec() will loop forever)
+											if(exec[0] == '')break;
+											
+										// set up local matches array, with the match index if an object is being returned
+											matchesLocal	= matchNames ? [exec.index] : [];
+											
+										// add matches
+											for (var i = 0; i < exec.length; i++)
+											{
+												matchesLocal.push(exec[i]);
+											}
+											
+										// finalise matches
+											if(matchNames)
+											{
+												// create an object
+												matchesLocal = Utils.combine(matchNames, matchesLocal)
+											}
+											else
+											{
+												// add match index to array
+												matchesLocal.push(exec.index);
+											}
+											matchesGlobal.push(matchesLocal);
+											
+									}
+									
+								// reset lastIndex (this is important so subsequent matches don't fail!)
+									rxGlobal.lastIndex	= 0;
+							}
 						}
 						
 					// match
@@ -1237,25 +1243,28 @@
 								matchNames		= matchNames ? 'match,' + matchNames : null;
 					
 							// sub matches
-								for (var i = 0; i < matchesGlobal.length; i++)
+								if(matchesGlobal)
 								{
-									// variables
-										matchesLocal		= matchesGlobal[i].match(rxLocal);
-										
-									// stop processing if matches were empty
-										if(matchesLocal[0] == '')
-										{
-											matchesGlobal.pop();
-											break;
-										}
-										
-									// finalise matches
-										matchesGlobal[i]	= matchNames ? Utils.combine(matchNames, matchesLocal) : matchesLocal;
+									for (var i = 0; i < matchesGlobal.length; i++)
+									{
+										// variables
+											matchesLocal		= matchesGlobal[i].match(rxLocal);
+											
+										// stop processing if matches were empty
+											if(matchesLocal[0] == '')
+											{
+												matchesGlobal.pop();
+												break;
+											}
+											
+										// finalise matches
+											matchesGlobal[i]	= matchNames ? Utils.combine(matchNames, matchesLocal) : matchesLocal;
+									}
 								}
 						}
 						
 					// return
-						return matchesGlobal;
+						return matchesGlobal || null;
 				},
 
 				/**

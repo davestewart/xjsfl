@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██  ██ ██  ██ ██
 //  ██  ██ ██  ██ ██
@@ -10,6 +10,9 @@
 //
 // ------------------------------------------------------------------------------------------------------------------------
 // XUL - OO library for creating and managing XUL dialogs
+
+	// includes
+		xjsfl.init(this, ['JSFLInterface', 'URI', 'Utils', 'XML', 'XMLList', 'XULControl', 'XULEvent']);
 
 	// --------------------------------------------------------------------------------
 	// constructor
@@ -514,7 +517,7 @@
 							{
 								// debug
 									var match = matches[0].trim();
-									//Output.inspect(matches);
+									//inspect(matches);
 
 								// spacer
 									if(match == '')
@@ -551,7 +554,7 @@
 
 										//TODO update this to work with Utils.parseValue
 
-											// Output.inspect([control, label, value])
+											// inspect([control, label, value])
 
 										// compound value
 											if(/^[\[{]/.test(value))
@@ -590,7 +593,7 @@
 													value = values;
 											}
 
-											//Output.list([label, control)
+											//list([label, control)
 
 										// add control
 											switch(control)
@@ -711,7 +714,7 @@
 									}
 
 								// output
-									//Output.inspect([matches[0]..trim(), control, label, value], 'Add');
+									//inspect([matches[0]..trim(), control, label, value], 'Add');
 
 
 							}
@@ -839,7 +842,7 @@
 									}
 								}
 							}
-							//Output.inspect(attributes)
+							//inspect(attributes)
 
 						// add control
 							xml					= this._addControl('colorchip', id, label, xml, attributes, validation, events);
@@ -859,7 +862,7 @@
 					{
 						// build xml
 							var xml				= XUL.templates.choosefile.copy();
-							//Output.inspect(attributes, 'Attributes')
+							//inspect(attributes, 'Attributes')
 
 						// add control
 							xml					= this._addControl('choosefile', id, label, xml, attributes, validation, events);

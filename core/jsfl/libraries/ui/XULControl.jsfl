@@ -11,8 +11,8 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // XUL Control - OO representation of a dialog control
 
-	// make sure XUL is loaded first
-		include('xul');
+	// includes
+		xjsfl.init(this, ['Utils', 'XUL']);
 
 	// --------------------------------------------------------------------------------
 	// Constructor
@@ -38,7 +38,7 @@
 				 */
 				this.type		= type;
 
-			// getter functions, so the full xml doesn't it doesn't print when Output.inspect()ing
+			// getter functions, so the full xml doesn't it doesn't print when inspect()ing
 
 				/**
 				 * Gets the XUL instance the control belongs to
@@ -189,7 +189,7 @@
 						}
 
 					// debug
-						//Output.inspect(value)
+						//inspect(value)
 
 					// return
 						return typeof value === 'string' && value === '' ? null : value;

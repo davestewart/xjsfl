@@ -11,10 +11,13 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Collection
 
+	// includes
+		xjsfl.init(this, ['Class', 'Output', 'Utils']);
+		
 	/**
 	 * Base Collection class with core methods to iterate over and manipulate elements
 	 */
-	collection =
+	Collection =
 	{
 
 		elements:[],
@@ -26,7 +29,7 @@
 		 * @param	{Array}			elements	An array of values
 		 * @returns	{Collection}				A new Collection
 		 */
-		constructor:function(elements)
+		init:function(elements)
 		{
 			this.elements = [];
 			this.add(elements);//elements = elements instanceof Array ? elements : [];
@@ -237,7 +240,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // register classes with xjsfl
 
-	Collection = xjsfl.classes.cache.Class.extend(collection);
+	Collection = Class.extend(Collection);
 	Collection.toString = function()
 	{
 		return '[class Collection]';
