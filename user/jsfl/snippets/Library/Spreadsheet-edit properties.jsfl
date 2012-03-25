@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Export the items to a spreadsheet for mass editing, then import again once saved
  * @icon {iconsURI}UI/table/table_edit.png
  */
@@ -28,9 +28,9 @@
 					this.file		= new File(uri, true);
 
 				// grab keys and filter
-					var ignore		= 'constructor,timeline,sourceFilePath,scalingGridRect,sourceLibraryName,linkageImportForRS,linkageIdentifier,quality'.split(',');
+					var ignore		= 'constructor,timeline,sourceFilePath,scalingGridRect,shortName,sourceLibraryName,linkageImportForRS,linkageIdentifier,quality'.split(',');
 					var keys		= Utils.getKeys(this.items);
-					keys			= keys.filter(function(key){return ignore.indexOf(key) == -1});
+					keys			= keys.filter(function(key){return ignore.indexOf(key) === -1});
 
 				// reorder keys, with path, then name, so user can easily rename items
 					var index		= keys.indexOf('name');
@@ -87,7 +87,7 @@
 					}
 
 				// update modified
-					this.modified = this.file.modified;
+					this.modified	= this.file.modified;
 
 				// get file contents
 					var lines		= this.file.contents.split(/[\r\n]+/g);
@@ -126,6 +126,9 @@
 										}
 									}
 							}
+							
+						// update the item
+							document.library.updateItem(path);
 					}
 
 				// prompt
@@ -142,16 +145,17 @@
 				if(this.items)
 				{
 					// ui
-						var ui = <ui>
+						var ui = 
+						<ui>
 							<label flex="1" width="370" value="This script exports the values of the selected objects to a CSV file, which is then opened in Excel for easy editing. Once edited, just click 'Import' to update the selected objects with the new values."/>
 							<spacer />
 							<label value="IMPORTANT: Ensure Excel is open before exporting values." flex="1" />
 							<spacer />
 							<separator />
 							<hbox>
-								<button id="export" label="Export" width="120" />
-								<button id="import" label="Import" width="120" />
-								<button id="cancel" label="Cancel" width="120" />
+								<button id="export" label="1: Export" width="120" />
+								<button id="import" label="2: Import" width="120" />
+								<button id="cancel" label="3: Close" width="120" />
 							</hbox>
 						</ui>
 

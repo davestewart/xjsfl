@@ -15,13 +15,17 @@ xjsfl.init(this);
 			var folderURI	= new URI(uri).getParent();
 			var moduleURI;
 
-		// walk up folder structure and test for manifest.xml
+		// walk up folder structure and test for manifest.xml + module
 			while( ! moduleURI && ! URI.isRoot(folderURI) )
 			{
 				var file = new File(folderURI + 'manifest.xml');
 				if(file.exists)
 				{
-					moduleURI = new URI(file.uri).folder;
+					var xml = load(file.uri);
+					if(xml.module.length())
+					{
+						moduleURI = new URI(file.uri).folder;
+					}
 				}
 				folderURI = folderURI.getParent();
 			}
