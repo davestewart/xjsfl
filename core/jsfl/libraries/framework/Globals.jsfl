@@ -128,11 +128,6 @@
 			};
 			
 			/**
-			 * A shortcut to the Utils debug() method
-			 * @see Utils.debug
-			 */
-			
-			/**
 			 * Catch-all wrapper for the xjsfl.debug object
 			 * @param	{Error}		obj			A javaScript Error object
 			 * @param	{Function}	obj			A function to test
