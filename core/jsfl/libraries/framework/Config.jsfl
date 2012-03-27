@@ -154,7 +154,7 @@
 					}
 					else
 					{
-						return value.length() == 1 && value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
+						return value.length() == 1 || value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
 					}
 
 			},
