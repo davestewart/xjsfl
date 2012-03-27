@@ -261,130 +261,6 @@
 	 */
 	xjsfl.debug =
 	{
-		_error:false,
-
-		_runScript:fl.runScript,
-
-		/*
-		init:function(scope, state)
-		{
-			// variables
-				state = state !== false;
-				var fl = scope.flash || flash;
-
-			// set or reset functions
-				if(state)
-				{
-					// delegate loading functionality
-						if(fl.runScript !== xjsfl.debug.file)
-						{
-							xjsfl.output.trace('Turning file debugging: on');
-							fl.runScript = xjsfl.debug.file;
-						}
-
-					// clear the debug log
-						xjsfl.debug.clear();
-				}
-				else
-				{
-					if(xjsfl.settings.flags.debugging)
-					{
-						xjsfl.output.trace('Turning file debugging: off');
-						fl.runScript = xjsfl.debug._runScript;
-						delete fl._runScript;
-					}
-				}
-
-			// debug
-				xjsfl.output.trace('File debugging is: ' + (state ? 'on': 'off'));
-		},
-		*/
-
-		/**
-		 * Debugs script files by loading and eval-ing them
-		 * @param	{String}	pathOrURI	The URI or path of the file to load
-		 */
-		file:function(pathOrURI)
-		{
-			// make uri
-				var uri = URI.toURI(pathOrURI, 1);
-
-			if(FLfile.exists(uri))
-			{
-				// Turn on file debugging if not yet set
-					var state = false;
-					if( ! this.state )
-					{
-						xjsfl.debug._error	= false;
-						state				= true;
-						this['state']		= true; // brackets used, otherwise Komodo puts state above func in the code outliner
-					}
-
-				// debug
-					xjsfl.output.trace('Debugging "' + FLfile.uriToPlatformPath(uri) + '"...');
-
-				// test the new file
-					var jsfl = FLfile.read(uri).replace(/\r\n/g, '\n');
-					try
-					{
-						// test file
-							eval(jsfl);
-
-						// turn off file debugging if this load was the initial load
-							if(state)
-							{
-								this['state'] = false;
-							}
-
-						// return
-							return true;
-					}
-
-				// log errors if there are any
-					catch(err)
-					{
-						//Output.inspect(err)
-
-						// create a new error object the first time an error is trapped
-							if( ! xjsfl.debug._error)
-							{
-								// flag
-									xjsfl.debug._error = true;
-
-								// variables
-									var evalLine	= 294;	// this needs to be the actual line number of the eval(jsfl) line above
-									var line		= parseInt(err.lineNumber) - (evalLine) + 1;
-
-								// turn off debugging
-									this['state'] = false;
-
-								// create a new "fake" error
-									var error			= new Error(err.name + ': ' + err.message);
-									error.name			= err.name;
-									error.lineNumber	= line;
-									error.fileName		= uri;
-
-								// log the "fake" error
-									xjsfl.debug.log(error);
-
-								// throw the new error so further script execution is halted
-									throw(error)
-							}
-
-						// re-throw the fake error (this only occurs in higher catches)
-							else
-							{
-								throw(err);
-							}
-					}
-			}
-			else
-			{
-				throw(new URIError('URIError: The uri "' +uri+ '" does not exist'));
-			}
-
-		},
-
 		/**
 		 * Tests a callback and outputs the error stack if the call fails. Add additional parameters after the callback reference
 		 * @param	{Function}	fn			The function to test
@@ -409,7 +285,85 @@
 		},
 
 		/**
-		 * Traces a human-readable error stack to the Output Panel
+		 * Tests for errors in loaded JSFL files
+		 */
+		load:function(path)
+		{
+			// clear any previous errors
+				//this.clear();
+				if(xjsfl.halted)
+				{
+					//return;
+				}
+			
+			// detect if there's an error loading files, either by the output panel, or by a delay, caused by the user responding to an alert box
+
+				// detect delay since the file was loaded
+					var delay		= new Date().getTime() - xjsfl.file.lastLoadTime;
+
+				// grab panel output
+					var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
+					fl.outputPanel.save(outputURI);
+					var output		= FLfile.read(outputURI);
+					FLfile.remove(outputURI);
+
+				// determine error type, if any
+					var state	= false;
+					var message	= '...';
+					if(delay > 11250)
+					{
+						message = 'a delay (possibly due to an error alert box) was detected';
+						state	= true;
+					}
+					else if(/(The following JavaScript error\(s\) occurred:|Open a Flash document \(FLA\) before running this script\.)\s*$/.test(output))
+					{
+						message = 'a JavaScript error was thrown';
+						state	= true;
+					}
+					
+				
+			// generate an error if the file appeared to load incorrectly
+				if(state)
+				{
+					//TODO	Think about loading and eval()ing the file to detect errors. Would need to create a file and run eval in the same dir so that any URI.toURI()s succeed
+					
+					// create a new error object (but only the first time an error is trapped)
+						if( ! xjsfl.halted )
+						{
+							// flags
+								xjsfl.halted		= true;
+								xjsfl.loading		= false;
+								
+							// build error
+								var error			= new Error('<error>', '', 0);
+								error.message		= 'A loading file appears to contain errors, because ' +message;
+								error.fileName		= URI.toURI(path);
+								error.stack			= error.stack.replace('Error("<error>","",0)@:0', 'Exact cause of error unknown. Run file manually to debug@' +path+ ':0');
+								
+							// remove fake items
+								var arr				= error.stack.split(/[\r\n]+/);
+								arr.splice(1,2);
+								error.stack			= arr.join('\n');
+								
+							// log a file warning
+								xjsfl.output.log('JavaScript error in "' +path+ '"\n', Log.FILE, 3);
+								
+							// debug this error
+								xjsfl.debug.error(error);
+								
+							// pop the stack!
+								xjsfl.file.stack.pop();
+								
+							// throw a new Error
+								//throw error;
+								throw new Error('File load error');
+						}
+				}
+		},
+		
+		
+		/**
+		 * Generates, logs and traces a human-readable error stack
 		 *
 		 * @param	{Error}		error		A JavaScript Error object
 		 * @param	{Boolean}	log			An optional Boolean to log the error
@@ -420,13 +374,18 @@
 			// reload required classes if not defined
 				if( ! xjsfl.classes.cache.Template )
 				{
-					include = function(){ trace('Ignoring include...'); };
-					xjsfl.output.log('loading files needed for debugging...');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Class.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/FileSystemObject.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/File.jsfl');
-					fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/Template.jsfl');
+					// override include so dependencies aren't loaded
+						include = function(){ trace('Ignoring include...'); };
+						
+					// load files needed for debugging
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/utils/Class.jsfl');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/FileSystemObject.jsfl');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/file/File.jsfl');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/Output.jsfl');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/Template.jsfl');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/flash/PropertyResolver.jsfl');
+						fl.runScript(xjsfl.uri + 'core/jsfl/libraries/text/Table.jsfl');
 				}
 
 			// variables
@@ -445,140 +404,58 @@
 					stack	= Utils.getStack(error, true);
 					stack	= stack.slice(1);
 				}
-
-			// template uris
-				var uriErrors	= xjsfl.uri + 'core/assets/templates/errors/errors.txt';
-				var uriError	= xjsfl.uri + 'core/assets/templates/errors/error.txt';
-
-			// build errors
-				var content = '';
-				for(var i = 0; i < stack.length; i++)
+				
+			// log error as JSON
+				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/objects/JSON.jsfl');
+				FLfile.write(xjsfl.uri + 'core/temp/error.txt', JSON.encode(stack));
+				
+			// generate error text
+				if(true)
 				{
-					stack[i].index = i;
-					content += new xjsfl.classes.cache.Template(uriError, stack[i]).render(); // reference Template class directly
-				}
-
-			// build output
-				var data		= { error:error.toString(), content:content };
-				var output		= new xjsfl.classes.cache.Template(uriErrors, data).render();
-
-			// set loading to false
-				xjsfl.loading = false;
-
-				/*
-				var data = Utils.getValues(stack, ['file','line','path','code'], true)
-				Table.print(data)
-				*/
-
-			// log, trace and return
-				xjsfl.output.log(output);
-				trace(output);
-				return output;
-		},
-
-		/**
-		 * Detects errors in loaded files
-		 */
-		load:function(path)
-		{
-			// detect if there's an error loading files, either by the output panel, or by a delay, caused by the user responding to an alert box
-
-				// grab panel output
-					var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
-					fl.outputPanel.save(outputURI);
-					var output		= FLfile.read(outputURI);
-					FLfile.remove(outputURI);
-
-				// detect delay since the file was loaded
-					var delay = new Date().getTime() - xjsfl.file.lastLoadTime;
-
-			// throw a new fake error if the file appeared to load incorrectly
-				if(/(The following JavaScript error\(s\) occurred:|Open a Flash document \(FLA\) before running this script\.)\s*$/.test(output) || delay > 250)
-				{
-					// create a new error object the first time an error is trapped
-						if( ! xjsfl.debug._error)
+					// template uris
+						var uriErrors	= xjsfl.uri + 'core/assets/templates/errors/errors.txt';
+						var uriError	= xjsfl.uri + 'core/assets/templates/errors/error.txt';
+		
+					// build errors
+						var content = '';
+						for(var i = 0; i < stack.length; i++)
 						{
-							// flag
-								xjsfl.debug._error	= true;
-
-							// throw error
-								var error			= new Error('<error>', '', 0);
-								var stack			= Utils.getStack();
-								stack.shift();
-								error.message		= 'The file "' +path+ '" contains errors';
-								error.fileName		= URI.toURI(path);
-								error.stack			= error.stack.replace('Error("<error>","",0)@:0', '<unknown>@' +path+ ':0');
-								xjsfl.loading		= false;
-								throw error;
+							stack[i].index = i;
+							content += new xjsfl.classes.cache.Template(uriError, stack[i]).render(); // reference Template class directly
 						}
+		
+					// build output
+						var data		= { error:error.toString(), content:content };
+						var output		= new xjsfl.classes.cache.Template(uriErrors, data).render();
 				}
+				else
+				{
+					var data = Utils.getValues(stack, ['path','file','line','code'], true)
+					var output = '\n\n' + new Table(data).render(false);
+				}
+
+			// log
+				xjsfl.output.warn('The following JavaScript error(s) occurred:');
+				xjsfl.output.log(output);
+				trace(output.replace(/^[\r\n]+/, ''))
+				
+			// update flags
+				xjsfl.loading	= false;
+				//xjsfl.halted	= false;
 		},
 
 		/**
-		 * Logs the results of an error to the temp directory so Komodo can read in the data
-		 *
-		 * @param	{String}	uri			The URI of the erroring file
-		 * @param	{Number}	line		The line number of the error
-		 * @param	{String}	name		The name of the error
-		 * @param	{String}	message		The error message
-		 */
-		log:function(error)
-		{
-			var data		= [error.fileName, error.lineNumber, error.name, error.message].join('\r\n');
-			var state		= FLfile.write(xjsfl.uri + 'core/temp/error.txt', data);
-		},
-
-		/**
-		 * Clears any existing error logs
+		 * Clears any existing errors & logs
 		 */
 		clear:function()
 		{
+			xjsfl.halted = false;
 			var uri = xjsfl.uri + 'core/temp/error.txt';
 			if(FLfile.exists(uri))
 			{
 				FLfile.remove(uri);
 			}
 		},
-
-		/** @type {Boolean}	Set the file debugging state */
-		set state(state)
-		{
-			//TODO Think about making this a simple boolean, then updating file.load() to check for debug.state == true
-
-			// set or reset functions
-				if(state)
-				{
-					// delegate loading functionality
-						if(fl.runScript !== xjsfl.debug.file)
-						{
-							xjsfl.output.trace('turning file debugging: on');
-							fl.runScript = xjsfl.debug.file;
-							//fl.trace('>>' + fl.runScript)
-						}
-
-					// clear the debug log
-						xjsfl.debug.clear();
-				}
-				else
-				{
-					if(xjsfl.debug.state)
-					{
-						xjsfl.output.trace('turning file debugging: off');
-						fl.runScript = xjsfl.debug._runScript;
-						delete fl._runScript;
-					}
-				}
-
-			// debug
-				xjsfl.output.trace('file debugging is: ' + (state ? 'on': 'off'));
-
-		},
-
-		/** @type {Boolean}	Get the file debugging state */
-		get state()
-		{
-			return fl.runScript === xjsfl.debug.file;
-		}
 	}
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -806,12 +683,19 @@
 								uri				= String(uri);
 								var ext			= URI.getExtension(uri);
 								var shortPath	= URI.asPath(uri, true);
+								
+							// exit early if file is in a recursive loop (this can happen with recursive includes)
+								if(this.stack.indexOf(uri) !== -1)
+								{
+									//trace('FILE LOADED:' + uri);
+									return null;
+								}
 
 							// flag
 								xjsfl.file.stack.push(uri);
 
 							// log
-								xjsfl.output.log('loading file: "' + shortPath + '" ...', Log.FILE);
+								xjsfl.output.log('[' +this.stack.length+ '] loading file: "' + shortPath + '" ...', Log.FILE);
 
 							// do something depending on extension
 								switch(ext)
@@ -840,10 +724,23 @@
 					}
 					
 			// log					
-				xjsfl.output.log('loaded file:  "' +shortPath+ '" OK', Log.FILE);
+				xjsfl.output.log('[' +(this.stack.length - 1)+ '] loaded file:  "' +shortPath+ '" OK', Log.FILE);
 
 			// flag
 				xjsfl.file.stack.pop();
+				
+			// if all files have loaded, and execution is halted, reset the flag
+				if(this.stack.length == 0)
+				{
+					//xjsfl.output.log('all files loaded', Log.FILE);
+					if(xjsfl.halted)
+					{
+						xjsfl.output.log('Setting xjsfl.halted to false', Log.FILE);
+						xjsfl.halted = false;
+						throw new Error('File load error');
+					}
+				}
+				
 				
 			// return
 				return content;
@@ -907,41 +804,27 @@
 		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
 		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
 		 * @param	{Array}		fileRef		An Array of class filepaths
-		 * @param	{Boolean}	reload		An optional Boolean to force all files to reload if already loaded
+		 * @param	{Boolean}	reload		An optional Boolean to force a reload of loaded URIs
 		 * @returns	{xjsfl}					The main xJSFL object
 		 */
 		load:function(fileRef, reload)
 		{
-			// --------------------------------------------------------------------------------
-			// resolve Array
-			
-				if(fileRef instanceof Array)
+			// catch errors
+				if(arguments.length > 2 || typeof reload === 'string')
 				{
-					for each(var file in fileRef)
-					{
-						xjsfl.classes.load(file, reload);
-					}
+					throw new Error('xjsfl.classes.load() accepts only 2 arguments: fileRef (which can be an Array) & reload.');
 				}
 				
-			// --------------------------------------------------------------------------------
-			// resolve wildcard
-			
-				else if(typeof fileRef === 'string' && fileRef.indexOf('*') !== -1)
+			// exit if xjsfl is halted
+				if(xjsfl.halted)
 				{
-					// variables
-						var folder 	= fileRef.substr(0, fileRef.indexOf('*'));
-						var pattern	= fileRef.substr(fileRef.indexOf('*'));
-						var uris	= Utils.glob(folder, pattern);
-						
-					// load files
-						xjsfl.classes.load(uris);
+					return;
 				}
-				
-				
+			
 			// --------------------------------------------------------------------------------
 			// Load URI references
 			
-				if(URI.isURI(fileRef))
+				if(URI.isURI(fileRef) && String(fileRef).indexOf('*') === -1)
 				{
 					// variables
 						var uri		= fileRef;
@@ -959,7 +842,14 @@
 							// otherwise, load
 								if( ! this.loadedURIs[uri.toLowerCase()] || reload)
 								{
-									// exit if stack limit is reached
+									// exit if file is already loading
+										if(xjsfl.file.stack.indexOf(uri) !== -1)
+										{
+											//trace('FILE ALREADY LOADED:' + uri);
+											return null;
+										}
+
+									// exit if file.stack limit is reached
 										if(xjsfl.file.stack.length > xjsfl.file.stackLimit)
 										{
 											xjsfl.output.log('not loading library: ' + name)
@@ -987,15 +877,55 @@
 				}
 			
 			// --------------------------------------------------------------------------------
+			// resolve wildcard
+			
+				else if(typeof fileRef === 'string' && fileRef.indexOf('*') !== -1)
+				{
+					// variables
+						var folder 	= URI.toURI(fileRef.substr(0, fileRef.indexOf('*')), 1);
+						var pattern	= fileRef.substr(fileRef.indexOf('*'));
+						var uris	= Utils.glob(folder, pattern);
+						
+					// debug
+						if(uris.length)
+						{
+							xjsfl.output.log('found ' +uris.length+ ' file(s) files in path "' +fileRef+ '"');
+						}
+						else
+						{
+							xjsfl.output.warn('path "' +fileRef+ '" did not resolve to any files');
+						}
+						
+					// load files
+						xjsfl.classes.load(uris, reload);
+				}
+				
+			// --------------------------------------------------------------------------------
 			// resolve single tokens
 			
 				else if(typeof fileRef === 'string' && /^\w+$/.test(fileRef) && fileRef != 'xjsfl')
 				{
 					var uris = xjsfl.file.find('library', fileRef);
-					xjsfl.classes.load(uris);
+					for each(var uri in uris)
+					{
+						xjsfl.classes.load(uri, reload);
+					}
 				}
 	
 	
+			// --------------------------------------------------------------------------------
+			// resolve Array
+			
+				else if(fileRef instanceof Array && fileRef.length)
+				{
+					var operation = reload ? 'require' : 'include';
+					xjsfl.output.log(operation + ' classes: "' + fileRef.join('", "') + '"', Log.FILE);
+					for each(var file in fileRef)
+					{
+						xjsfl.classes.load(file, reload);
+					}
+				}
+
 			// return
 				return this;			
 		},
@@ -1010,8 +940,11 @@
 		 */
 		register:function(name, obj, uri)
 		{
-			// log
-				xjsfl.output.log('registering ' +(/[a-z]/.test(name[0]) ? 'function ' : 'class ')+ name);
+			// only log if we're not in the middle of an error
+				if( ! xjsfl.halted )
+				{
+					xjsfl.output.log('registering ' +(/[a-z]/.test(name[0]) ? 'function ' : 'class ')+ name);
+				}
 
 			// work out URI before utils has loaded					
 				var error	= new Error();
@@ -1022,6 +955,8 @@
 			// store class
 				xjsfl.classes.cache[name]	= obj;
 				xjsfl.classes.uris[name]	= uri;
+				
+				//alert(name)
 		},
 			
 		/**
@@ -1053,23 +988,6 @@
 		}
 	}
 	
-	/**
-	 * Loads a class from disk, even if it's already been loaded.
-	 * @param	{String}	className	The class filename (without extension) to load
-	 * @info							This method accepts multiple arguments
-	 */
-	xjsfl.require = function (className)
-	{
-		xjsfl.file.stackLimit = 1;
-		for (var i = 0; i < arguments.length; i++)
-		{
-			xjsfl.classes.load(arguments[i], true);
-		}
-		xjsfl.file.stackLimit = 99;
-	}
-	
-
-		
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██   ██          ██       ██
@@ -1174,12 +1092,13 @@
 				},
 
 				/**
-				 * Finds and stores information about all module manifests in the xJSFL/modules (or supplied) folder.
+				 * Returns the base URI of all modules in a given folder and sub folder
 				 * Called in the main bootstrap, and can be called manually in the user bootstrap to add other folders.
 				 * @param	{String}	uri			An optional folder URI to search in, defaults to xJSFL/modules/
-				 * @returns	{xjsfl}					The main xJSFL object
+				 * @param	{Boolean}	init		An optional Boolean to initialize any found modules
+				 * @returns	{Array}					An Array of module URIs
 				 */
-				find:function(uri)
+				find:function(uri, init)
 				{
 					// callback function to process files and folders
 						function processFile(element)
@@ -1198,17 +1117,23 @@
 								var manifest = xjsfl.file.load(element.uri);
 								if(manifest.module.length())
 								{
-									xjsfl.modules.init(element.parent.uri);
+									var uri = element.parent.uri;
+									uris.push(uri);
+									if(init)
+									{
+										xjsfl.modules.init(uri);
+									}
 									return false;
 								}
 							}
 						};
 
 					// find and load modules automatically
+						var uris = [];
 						Utils.walkFolder(uri || xjsfl.settings.folders.modules, processFile);
 
 					// return
-						return this;
+						return uris;
 				},
 
 				//TODO Does init() need to be public? Consider making it private
@@ -1437,8 +1362,8 @@
 				this.dialogs.push(xul);
 
 			// debug
-				//Output.list(this.dialogs, null, 'Dialog opened')
-
+				xjsfl.output.log('Showing XUL dialog "' +xul.title+ '"');
+			
 			// show
 				var settings = $dom.xmlPanel(uri);
 
@@ -1451,7 +1376,7 @@
 			// return settings
 				return settings;
 		},
-
+		
 		handleEvent:function(xulid, type, id)
 		{
 			var dialog = this.dialogs[xulid];
@@ -1459,7 +1384,19 @@
 			{
 				dialog.handleEvent(type, id);
 			}
-		}
+		},
+
+		getFlashData:function()
+		{
+			var xul = this.dialogs[this.dialogs.length - 1];
+			return xul ? xul.flashData : null;
+		},
+		
+		setFlashData:function(data)
+		{
+			var xul = this.dialogs[this.dialogs.length - 1];
+			xul ? xul.flashData = data: null;
+		},
 
 	}
 
@@ -1505,7 +1442,7 @@
 		// These properties are assigned using extend, to remain hidden from Komodo's code-intelligence
 			var props =
 			{
-				toString:function(){ return '[object xJSFL]'; }
+				toString:function(){ return '[extension xJSFL]'; }
 			};
 			for(var prop in props)
 			{
@@ -1518,16 +1455,12 @@
 	 * @param	{Object}	scope			The scope into which the framework should be extracted
 	 * @param	{String}	$scopeName		An optional id, which when supplied, traces a short message to the Output panel
 	 * @param	{Array}		$classes		An optional Array of classes to load
-	 * @returns
 	 */
 	xjsfl.init = function(scope, $scopeName, $classes)
 	{
-		// variables
+		// parameter shift
 			var scopeName	= '';
 			var classes		= [];
-			var loading		= xjsfl.initializing || xjsfl.loading;
-			
-		// parameter shift
 			for each(var param in [$scopeName, $classes])
 			{
 				if(typeof param === 'string')
@@ -1535,40 +1468,39 @@
 				if(param instanceof Array)
 					classes = param;
 			}
-		
+			
 		// only initialize if not loading
-			if( ! loading )
+			if( ! xjsfl.loading )
 			{
-				// set flags
-					xjsfl.initializing		= true;
-					xjsfl.file.stackLimit	= 99;
-	
-				// copy core variables and functions into scope
-					xjsfl.initGlobals(scope, scopeName);
-	
 				// debug
 					if(scopeName)
 					{
-						xjsfl.output.trace('copying classes to [' +scopeName+ ']');
+						xjsfl.output.trace('initializing [' +scopeName+ ']', 1);
 					}
+
+				// set flags
+					xjsfl.file.stackLimit	= 99;
+	
+				// copy core variables and functions into scope
+					xjsfl.initVars(scope);
 	
 				// copy registered classes into scope
 					xjsfl.classes.restore(scope);
 	
 				// flag xJSFL initialized by setting a scope-level variable (xJSFL, not xjsfl)
 					scope.xJSFL = xjsfl;
-					delete xjsfl.initializing;
-					
-				// return
-					return xjsfl;
 			}
 			
-		// if classes were specified, load if search paths have been initialized
-			var paths = xjsfl.settings.searchPaths.get();
-			if(paths.length && classes.length)
+		// if classes were specified, and search paths have been initialized, attempt to load classes
+			if( ! xjsfl.halted )
 			{
-				xjsfl.classes.load(classes, ! loading);
+				var paths = xjsfl.settings.searchPaths.get();
+				if(paths.length && classes.length)
+				{
+					xjsfl.classes.load(classes); // , ! xjsfl.loading
+				}
 			}
+
 	}
 
 		
