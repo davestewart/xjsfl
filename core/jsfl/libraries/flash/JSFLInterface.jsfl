@@ -14,14 +14,15 @@
 	JSFLInterface =
 	{
 		/**
-
 		 * Serializes values to XML so they can be passed to Flash and be deserialized to values again
-		 *
-		 * @param	{Value}		value	Any value
-		 * @returns	{String}			An XML String
+		 * @param	{Value}		value		Any value
+		 * @returns	{String}				An XML String
 		 */
 		serialize:function(value)
 		{
+			// stack to prevent recursion
+				var stack = [];
+				
 			// utilities
 
 				function escapeXML(xml)
@@ -56,6 +57,13 @@
 
 				function toXML(value)
 				{
+					if(stack.indexOf(value) !== -1)
+					{
+						return;
+					}
+					
+					stack.push(value);
+					
 					var type = typeof value;
 					if (type == 'string')
 					{
@@ -89,14 +97,16 @@
 					{
 						return objectToXML(value);
 					}
-					if (type == 'xml')
+					else if (type == 'xml')
 					{
 						return '<xml>' + escapeXML(value.toXMLString()) + '</xml>';
 					}
 					else
 					{
-						return '<null />';
+						return '<null incompatible="1" />';
 					}
+					
+					stack.pop();
 				}
 
 			// code
@@ -111,3 +121,5 @@
 	}
 
 	xjsfl.classes.register('JSFLInterface', JSFLInterface);
+
+	
