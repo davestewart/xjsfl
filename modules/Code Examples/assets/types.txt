@@ -1,13 +1,30 @@
 stage
 	different element types on stage
-		symbol
-		video
-		graphic
-		video
-		textfield
-		shape
-		group
+	
+		elements
 		
+			shape
+				group
+				rectangle
+				oval
+				
+			text
+				static
+				dynamic
+				input
+				
+			instance
+				bitmap
+				video
+				embedded video
+				linked video
+				compiled clip
+				
+				symbol
+					movieclip
+					graphic
+					button
+					
 	hierarchies
 	selection
 	
