@@ -27,11 +27,19 @@
 			 */
 			function include(className)
 			{
-				xjsfl.output.log('include classes: "' + Array.slice.call(this, arguments).join('", "') + '"');
-				for (var i = 0; i < arguments.length; i++)
-				{
-					xjsfl.classes.load(arguments[i]);
-				}
+				xjsfl.classes.load(Array.slice.call(this, arguments), arguments);
+			}
+			
+			/**
+			 * Loads a class from disk, even if it's already been loaded.
+			 * @param	{String}	className	The class filename (without extension) to load
+			 * @info							This method accepts multiple arguments
+			 */
+			function require(className)
+			{
+				xjsfl.file.stackLimit = 1;
+				xjsfl.classes.load(Array.slice.call(this, arguments), true);
+				xjsfl.file.stackLimit = 99;
 			}
 			
 			/**
@@ -157,77 +165,64 @@
 	// # Shortcuts
 	
 		/**
-		 * Create global variables and functions in supplied scope
-		 * @param	scope		{Object}	The scope into which the framework should be extracted
-		 * @param	scopeName	{String}	An optional scopeName, which when supplied, traces a short message to the Output panel
+		 * Create global variables in supplied scope
+		 * @param	scope		{Object}	The scope into which the vars should be set
 		 * @returns
 		 */
-		xjsfl.initGlobals = function(scope, scopeName)
+		xjsfl.initVars = function(scope)
 		{
 			// initialize only if core $dom method is not yet defined
 				if(typeof scope.$dom === 'undefined')
 				{
-					// ----------------------------------------------------------------------------------------------------
-					// debug
+					/**
+					 * Gets the current Document object
+					 * @property	{Document}		$dom	The current DOM
+					 */
+					scope.__defineGetter__( '$dom', function()
+					{
+						return fl.getDocumentDOM();
+					});
 					
-						if(scopeName)
+					/**
+					 * Gets the current Timeline
+					 * @property	{Timeline}	$timeline	The current Timeline
+					 */
+					scope.__defineGetter__( '$timeline', function()
+					{
+						var dom = fl.getDocumentDOM();
+						return dom ? dom.getTimeline() : null;
+					});
+					
+					/**
+					 * Gets the current Library
+					 * @property	{Library}	$library	The current Library
+					 */
+					scope.__defineGetter__( '$library', function()
+					{
+						var dom = fl.getDocumentDOM(); return dom ? dom.library : null;
+					});
+					
+					/**
+					 * Set or get the current selection
+					 * @property	{Array}		$selection	The current selection
+					 */
+					scope.__defineGetter__( '$selection', function()
+					{
+						var dom = fl.getDocumentDOM(); return dom ? dom.selection.reverse() : null;
+					});
+					
+					scope.__defineSetter__( '$selection', function(elements)
+					{
+						var dom = fl.getDocumentDOM();
+						if(dom)
 						{
-							xjsfl.output.trace('initializing [' +scopeName+ ']', 1);
+							dom.selectNone();
+							dom.selection = elements instanceof Array ? elements : [elements];
 						}
-	
-					// ----------------------------------------------------------------------------------------------------
-					// variables
-					
-						/**
-						 * Gets the current Document object
-						 * @property	{Document}		$dom	The current DOM
-						 */
-						scope.__defineGetter__( '$dom', function()
-						{
-							return fl.getDocumentDOM();
-						});
-						
-						/**
-						 * Gets the current Timeline
-						 * @property	{Timeline}	$timeline	The current Timeline
-						 */
-						scope.__defineGetter__( '$timeline', function()
-						{
-							var dom = fl.getDocumentDOM();
-							return dom ? dom.getTimeline() : null;
-						});
-						
-						/**
-						 * Gets the current Library
-						 * @property	{Library}	$library	The current Library
-						 */
-						scope.__defineGetter__( '$library', function()
-						{
-							var dom = fl.getDocumentDOM(); return dom ? dom.library : null;
-						});
-						
-						/**
-						 * Set or get the current selection
-						 * @property	{Array}		$selection	The current selection
-						 */
-						scope.__defineGetter__( '$selection', function()
-						{
-							var dom = fl.getDocumentDOM(); return dom ? dom.selection.reverse() : null;
-						});
-						
-						scope.__defineSetter__( '$selection', function(elements)
-						{
-							var dom = fl.getDocumentDOM();
-							if(dom)
-							{
-								dom.selectNone();
-								dom.selection = elements instanceof Array ? elements : [elements];
-							}
-						});
+					});
 				}
 		};
 	
-			
 			
 	// ------------------------------------------------------------------------------------------------
 	// final setup
@@ -244,6 +239,7 @@
 				['debug', debug],
 				
 				['include', include],
+				['require', require],
 				['save', save],
 				['load', load],
 				
