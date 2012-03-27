@@ -53,6 +53,6 @@
 	// ---------------------------------------------------------------------------------------------------------------
 	// register
 
-		xjsfl.classes.register('XUL', XUL);
+		xjsfl.classes.register('XULEvent', XULEvent);
 
 

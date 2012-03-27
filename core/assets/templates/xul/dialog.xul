@@ -18,7 +18,12 @@
 	</content>
 
 	<script>
-		xjsfl.ui.handleEvent({xulid}, 'initialize');
+		<![CDATA[
+			if(window.xjsfl)
+			{
+				xjsfl.ui.handleEvent({xulid}, 'initialize');
+			}
+		]]>
 	</script>
 
 </dialog>

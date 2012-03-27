@@ -12,7 +12,8 @@
 // XUL - OO library for creating and managing XUL dialogs
 
 	// includes
-		xjsfl.init(this, ['JSFLInterface', 'URI', 'Utils', 'XML', 'XMLList', 'XULControl', 'XULEvent']);
+		//xjsfl.halted = false;
+		xjsfl.init(this, ['Utils', 'URI', 'File', 'XML', 'String', 'XULControl', 'XULEvent', 'JSFLInterface']);
 
 	// --------------------------------------------------------------------------------
 	// constructor
@@ -35,6 +36,7 @@
 				this.xml		= xjsfl.file.load('xul/dialog.xul', 'template', true);
 				this.controls	= {};
 				this.settings	= {};
+				this.flashData	= null;
 
 			// private properties
 				this.events		= {};
@@ -1184,33 +1186,31 @@
 				// custom controls
 
 					/**
-					 * Add a Flash control to the UI
-					 * @param	{String}	src			Source path to the SWF, (important!) relative to the XML saved location
+					 * Add a Flash control to the UI (for the moment, this replaces any existing controls)
+					 * @param	{String}	src			Source path to the SWF, (important!) relative to the calling file (defaults to user/)
 					 * @param	{Number}	width		The width of the Flash window
 					 * @param	{Number}	height		The height of the Flash window
+					 * @param	{Object}	data		An optional Object of name:value pairs to be saved to the same folder as the Flash element (use AS3 to retrieve them)
+					 * @param	{XML}		data		An optional XML 
 					 * @param	{Array}		properties	An optional Array of property names to be created
-					 * @param	{Object}	data		An optional Object of name:value pairs to be set locally as a SharedObject (use AS3 to retrieve them)
 					 * @returns	{XUL}					The XUL dialog
 					 */
-					setFlash:function(src, width, height, properties, data)
+					setFlash:function(uriOrPath, width, height, data, properties)
 					{
 						//TODO add functinality to save a string of variables to a hard-coded location, as you can't pass in query strings, which you then load in manually
 						//TODO Can the SWF determine its location using ExternalInterface, or do we need to use a hardcoded URL? Does MMExecute work in a XUL dialog?
 
 						// build xml
 							var xml			= XUL.templates.flash.copy();
-							var uri			= URI.toURI(src, 1);
+							
+						// src must be a relative path (NOT absolute URI) such as path/to/file.swf or ../file.swf
+							var uri			= URI.toURI(uriOrPath, 1);
+							var src			= URI.pathTo(xjsfl.uri + 'core/ui/', uri);
 							xml..flash.@src	= src;
 
 						// add control and set XML
 							xml					= this._addControl('flash', 'flash', null, xml, {width:width, height:height});
 							this.setXML(xml);
-
-						// properties
-							for each(var property in properties)
-							{
-								this.addProperty(property); // TODO check if we need to first set() the property to have it work
-							}
 
 						// update size
 							this.xml.@width		= width;
@@ -1219,27 +1219,30 @@
 						// set data
 							if(data)
 							{
-								//TODO Add in save to XML code here
-								//var uri = new URI()
-								//this.setFlashData(data, uri);
+								this.setFlashData(data);
+							}
+
+						// properties
+							for each(var property in properties)
+							{
+								this.addProperty(property); // TODO check if we need to first set() the property to have it work
 							}
 
 						// return
 							return this;
 					},
 					
-					
 					/**
 					 * Stores data for any Flash elements as local SharedObject data
-					 * @param	{Object}	data		An Object of name:value pairs to be set locally as a SharedObject (use AS3 to retrieve them)
-					 * @param	{String}	uri			The URI to the XML file to save
+					 * @param	{Object}	data		Any object that can be serialized to XML
 					 * @returns	{XUL}					The XUL dialog
 					 */
-					setFlashData:function(data, uri)
+					setFlashData:function(data)
 					{
-						save(uri, JSFLInterface.serialize(data));
+						this.flashData = data;
+						return this;
 					},
-
+					
 					/**
 					 * Replace the standard XML dialog template
 					 * @param	{String}	xml			An XML String containing dialog controls
@@ -1372,13 +1375,14 @@
 			// event handling
 
 				/**
-				 * Add (or actually, set) a event callback for an id
+				 * Add (or actually, set) a event callback for an id. Global events take only type and callback arguments.
 				 * @param	{String}	ids			The id(s) of the element to register the callback for
 				 * @param	{String}	types		The type(s) of callback. Values can be create, change, click, setfocus. Separate multiple types with spaces or commas if required
 				 * @param	{Function}	callback	The callback to call. Format must be function(event){ ... }
+				 * @param	{Object}	scope		An optional scope in which event callbacks should run. Defaults to the current XUL instance
 				 * @returns	{XUL}					The XUL dialog
 				 */
-				addEvent:function(ids, types, callback)
+				addEvent:function(ids, types, callback, scope)
 				{
 					// xul-level events
 						if(arguments.length == 2 && typeof types == 'function')
@@ -1435,6 +1439,12 @@
 											this.events[type][id] = callback;
 									}
 								}
+						}
+						
+					// assign scope
+						if(scope)
+						{
+							this.setEventScope(scope);
 						}
 
 					// return
@@ -1560,16 +1570,16 @@
 				 * @param	{String}	uriOrPath		A valid URI or path of where to save the dialog's XML file
 				 * @returns	{XUL}						The XUL dialog
 				 */
-				saveAs:function(uriOrPath)
+				saveAs:function(pathOrURI)
 				{
 					// check file is an XML file
-						if( ! /\/[^\/]+\.xml/.test(uri))
+						if(URI.getExtension(pathOrURI) !== 'xul')
 						{
-							throw new Error('XUL.saveAs(): dialog uri must end with an .xml extension');
+							throw new Error('XUL.saveAs(): dialog uri must end with .xul extension');
 						}
 
 					// make URI
-						this.uri	= URI.toURI(uriOrPath, 1);
+						this.uri = URI.toURI(pathOrURI, 1);
 
 					// return
 						return this;
@@ -1583,7 +1593,6 @@
 				 */
 				show:function(onAccept, onCancel)
 				{
-
 					// --------------------------------------------------------------------------------
 					// force a document open if none is
 
@@ -1591,6 +1600,24 @@
 						{
 							fl.createDocument();
 						}
+						
+						/*
+							// can we set the AS3 timeout to longer than 15 seconds so we don't get these errors?
+							
+							Error: Error #1502: A script has executed for longer than the default timeout period of 15 seconds.
+								at com.xjsfl.jsfl.io::JSFL$/trace()
+								at Splash()
+								
+								
+							fl.showIdleMessage(state)
+							
+							Lets you disable the warning about a script running too long (pass false). You might want to do
+							this when processing batch operations that take a long time to complete. To re-enable the alert,
+							issue the command again, this time passing true.
+							
+							@see http://help.adobe.com/en_US/Flash/10.0_ExtendingFlash/WS5b3ccc516d4fbf351e63e3d118a9024f3f-7b87.html
+						*/
+						
 
 					// --------------------------------------------------------------------------------
 					// build and show panel
@@ -1731,18 +1758,21 @@
 							{
 								// variables
 									var events		= types[type].split(/ /g);
+									var event;
 									var nodes		= this.xml.get('..' + type);
+									var node;
 
 								// for each node
-									for each(var node in nodes)
+									for each(node in nodes)
 									{
 										// id
 											var id = node.@id;
 
 										// assign handler. Note that the xulid will be assigned and the {xulid} placeholder replaced during xjsfl.ui.show()
-											for each(var event in events)
+											for each(event in events)
 											{
-												node.@['on' + event] = "xjsfl.ui.handleEvent('{xulid}', '" +event+ "', '" +id+ "');";
+												// Note that the window.xjsfl is needed so that the installation dialogs don't error
+												node['@on' + event] = "window.xjsfl && xjsfl.ui.handleEvent('{xulid}', '" +event+ "', '" +id+ "');";
 											}
 									}
 							}

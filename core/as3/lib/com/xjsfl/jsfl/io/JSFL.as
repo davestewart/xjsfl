@@ -74,19 +74,20 @@ package com.xjsfl.jsfl.io
 					{
 						jsfl = functionName + '.apply(' +scope + ', [' + args.join(', ') + '])';
 					}
+					log('call', jsfl);
 
 				// make the call
+					var result:*;
 					if (JSFL.isPanel)
 					{
-						var call	:String	= 'try{JSFLInterface.serialize(' + jsfl + ');}catch(err){xjsfl.debug.error(err);}';
+						// A load/scope bug with Flash/JSFL sometimes seems to prevent JSFLInterface from loading properly, then all calls fail :(
+						var call	:String	= 'try{xjsfl.classes.cache.JSFLInterface.serialize(' + jsfl + ');}catch(err){xjsfl.debug.error(err);}';
 						var value	:String	= MMExecute(call);
-						return JSFLInterface.deserialize(value);
+						result				= JSFLInterface.deserialize(value);
 					}
-					else
-					{
-						log('call', jsfl);
-						return null;
-					}
+					
+				// return
+					return result;
 			}
 			
 			/**
@@ -98,7 +99,7 @@ package com.xjsfl.jsfl.io
 			{
 				if (JSFL.isPanel)
 				{
-					return JSFLInterface.deserialize(MMExecute('JSFLInterface.serialize(' + property + ')'));
+					return JSFLInterface.deserialize(MMExecute('xjsfl.classes.cache.JSFLInterface.serialize(' + property + ')'));
 				}
 				else
 				{
@@ -111,7 +112,7 @@ package com.xjsfl.jsfl.io
 			{
 				if (JSFL.isPanel)
 				{
-					return JSFLInterface.deserialize(MMExecute('JSFLInterface.serialize(' + property + ')'));
+					return JSFLInterface.deserialize(MMExecute('xjsfl.classes.cache.JSFLInterface.serialize(' + property + ')'));
 				}
 				else
 				{
@@ -232,7 +233,10 @@ package com.xjsfl.jsfl.io
 			
 			private static function log(type:String, message:*):void
 			{
-				_trace('JSFL > ' +type + ': ' + message);
+				if ( ! JSFL.isPanel)
+				{
+					_trace('JSFL > ' +type + ': ' + message);
+				}
 			}
 		
 
@@ -241,5 +245,5 @@ package com.xjsfl.jsfl.io
 
 function _trace(...args):void
 {
-	trace(args);
+	trace('> JSFL:' +args);
 }
