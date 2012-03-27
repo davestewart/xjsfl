@@ -13,15 +13,14 @@
 
 	(function()
 	{
+		//delete xjsfl.uri;
+		
 		try
 		{
 			if(xjsfl)
 			{
-				// load xJSFL uri
-					fl.runScript(fl.configURI + 'Tools/xJSFL.ini');
-
 				// load only if not yet initialized (otherwise fl.reloadTools() runs this file)
-					if( ! xjsfl.initialized )
+					if( ! xjsfl.uri )
 					{
 						// ------------------------------------------------------------------------------------------------------------------------
 						// functions
@@ -45,7 +44,7 @@
 								// check xjsfl folder exists
 									if( ! FLfile.exists(xjsfl.uri) )
 									{
-										trace('> The xJSFL installation folder at "' +uriToPath(xjsfl.uri)+ '" appears to have been moved or deleted.');
+										trace('> xjsfl: The xJSFL installation folder at "' +uriToPath(xjsfl.uri)+ '" appears to have been moved or deleted, so xJSFL cannot load.');
 										return;
 									}
 
@@ -87,11 +86,11 @@
 								delete xjsfl.MM_path;
 								delete xjsfl.MM_loaded;
 
+							// set xJSFL uri
+								xjsfl.uri = FLfile.read(fl.configURI + 'Tools/xJSFL.ini');
+
 							// load framework
 								xjsfl.reload();
-
-							// set initialized
-								xjsfl.initialized = true;
 					}
 			}
 		}
@@ -99,7 +98,7 @@
 		{
 			if(error.message.match('xjsfl is not defined'))
 			{
-				fl.trace('> ' +error+ '. Check your Flash "Configuration/External Libraries" folder for "xjsfl.dll"');
+				fl.trace('> ' +error+ '. Check your Flash "Configuration/External Libraries" folder for the xJSFL extension');
 			}
 			else
 			{

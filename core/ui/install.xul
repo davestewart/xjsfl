@@ -1,29 +1,7 @@
-<?xml version="1.0"?>
 <dialog id="sample" title=" xJSFL - Installation complete!" buttons="accept">
-	<flash class="control" id="flash" src="swf/install.swf" width="320" height="280" />
+	<flash class="control" id="flash" src="swf/splash.swf" width="320" height="280" />
 	<spacer />
-	<label width="310" value="Installation complete!" />
+	<label width="310" value="Thanks for installing xJSFL!" />
 	<spacer />
-	<label width="310" value="To personalise your installation, along with any future scripts you create, enter your details below." />
-	<spacer />
-	<grid>
-		<columns id="columns">
-			<column flex="1"/>
-			<column flex="2"/>
-		</columns>
-		<rows id="controls" width="2000">
-			<row template="textbox">
-				<label value="Name:" width="60"/>
-				<textbox class="control" id="name" width="240" required="false" />
-			</row>
-			<row template="textbox">
-				<label value="Email:" width="60"/>
-				<textbox class="control" id="email" width="240" required="false" />
-			</row>
-			<row template="textbox">
-				<label value="URL:" width="60"/>
-				<textbox class="control" id="url" width="240" required="false" />
-			</row>
-		</rows>
-	</grid>
+	<label width="310" value="To start using xJSFL now, restart Flash, then go to: Window > Other Panels > xJSFL Snippets." />
 </dialog>

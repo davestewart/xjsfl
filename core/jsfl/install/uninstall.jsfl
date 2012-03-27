@@ -24,13 +24,18 @@
 				}
 				
 			// confirm uninstallation
-				if( ! confirm('Are you sure you want to uninstall xJSFL?\n\nThis will remove all xJSFL (and module) commands, panels, scripts other installation files from the main Flash folder, but will leave your xJSFL folder files intact.\n\nYou can reinstall xJSFL at any time by running "install.jsfl" in the main xJSFL folder.') )
+				if( ! confirm('Are you sure you want to uninstall xJSFL?\n\nThis will remove all xJSFL (and module) commands, panels, scripts other installation files from the main Flash folder, but will leave your xJSFL folder and files intact.\n\nYou can reinstall xJSFL at any time by running "install.jsfl" in the main xJSFL folder.') )
 				{
 					return false;
 				}
 				
 			// init
-				xjsfl.init(window);
+				xjsfl.init(this);
+				clear();
+				
+			// variables
+				var baseURI, trgURI, uris;
+				var trgURIs			= [];
 				
 		// ----------------------------------------------------------------------------------------
 		// variables
@@ -38,36 +43,37 @@
 			// variables
 				var baseURI, trgURI, uris;
 				var trgURIs			= [];
-				var xulURI			= xjsfl.uri + 'core/ui/uninstall.xul';
+				
+			// get all flash folders that would have content copied to the main Flash folder
 				var installURI		= xjsfl.uri + 'core/assets/install/';
 				var folderURIs		= xjsfl.settings.uris.get().concat([installURI]);
 				
-			// collate URIs
-				for each(var uri in folderURIs)
+			// grab file and folder URIs
+				for each(var folder in folderURIs)
 				{
-					baseURI			= uri + 'flash/'
-					uris			= Utils.walkFolder(baseURI, true);
-					for each(uri in uris)
+					var baseURI		= folder + 'flash/'
+					var uris		= Utils.glob(baseURI, '**/*');
+					for each(var uri in uris)
 					{
-						trgURI = URI.reTarget(uri, fl.configURI, baseURI);
+						var trgURI	= URI.reTarget(uri, fl.configURI, baseURI);
 						trgURIs.push(trgURI);
 					}
 				}
-				trgURIs = Utils.toUniqueArray(trgURIs).sort();
+				trgURIs = Utils.toUniqueArray(trgURIs);
 				
 		// ----------------------------------------------------------------------------------------
 		// OK, let's go!
 		
 			// confirm deleting all files
-				if(confirm('Click OK to delete ' +trgURIs.length+ ' files from the Flash configuration folder...'))
+				if(confirm('Click OK to delete ' +trgURIs.length+ ' files/folders from the Flash configuration folder...'))
 				{
 					// load strap
 						clear();
 						fl.trace(FLfile.read(xjsfl.uri + 'core/assets/misc/uninstall.txt').replace(/\r\n/g, '\n'));
 						xjsfl.output.trace('uninstalling xjsfl', true);
-				
+
 					// feedback
-						xjsfl.output.trace('deleting files/folders', 1);
+						xjsfl.output.trace('deleting files/folders', true);
 						
 					// delete files
 						for (var i = trgURIs.length - 1; i > 0; i--)
@@ -80,7 +86,7 @@
 								if(uri.type == 'file')
 								{
 									var file = new File(uri);
-									xjsfl.output.log('deleting file "' +path+ '"');
+									xjsfl.output.trace('deleting file "' +path+ '"');
 									if( ! file.remove(true) )
 									{
 										xjsfl.output.warn('the file "' +path+ '" could not be removed!');
@@ -90,15 +96,18 @@
 							// handle folder
 								else
 								{
-									var folder = new Folder(uri);
-									if(folder.exists && folder.parent.uri !== fl.configDirectory && folder.uris.length == 0)
-									{
-										xjsfl.output.trace('deleting folder "' +path+ '"');
-										if( ! folder.remove(true) )
+									// variables
+										var folder = new Folder(uri);
+									
+									// only delete empty folders that are not the first folder of the Flash config URI, i.e. WindowSWF, External Tools, etc
+										if(folder.exists && folder.parent.uri !== fl.configDirectory && folder.uris.length == 0)
 										{
-											xjsfl.output.warn('the folder "' +path+ '" could not be removed!');
+											xjsfl.output.trace('deleting folder "' +path+ '"');
+											if( ! folder.remove(true) )
+											{
+												xjsfl.output.warn('the folder "' +path+ '" could not be removed!');
+											}
 										}
-									}
 								}
 						}
 						
@@ -112,12 +121,18 @@
 					return;
 				}
 
-			// we're done! so show the splash dialog :)
-				if( ! $dom )
-				{
-					fl.createDocument();
-				}
-				$dom.xmlPanel(xulURI);
+		// ----------------------------------------------------------------------------------------
+		// show uninstallation spalsh
+		
+			var xul = XUL
+				.factory()
+				.load('//core/ui/uninstall.xul')
+				.setFlashData({click:'http://www.xjsfl.com/support/feedback'})
+				.setButtons('accept')
+				.show();
+
+			// open DLL folder
+				new Folder(fl.configURI + 'External Libraries/').open();
 				
 			// sob!
 				xjsfl.output.trace('uninstallation complete. sob :(', true);
@@ -125,7 +140,10 @@
 			// delete values
 				for(var name in xjsfl)
 				{
-					delete xjsfl[name];
+					if(name !== 'uri')
+					{
+						delete xjsfl[name];
+					}
 				}
 	}
 

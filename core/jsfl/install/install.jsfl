@@ -14,14 +14,8 @@
 	function install(window)
 	{
 		// ----------------------------------------------------------------------------------------
-		// set up
+		// checks
 		
-			// variables
-				xjsfl =
-				{
-					uri:String(fl.scriptURI).replace('core/jsfl/install/install.jsfl', '')
-				}
-			
 			// Check for native E4X
 				if( ! window.XMLList)
 				{
@@ -36,21 +30,59 @@
 					return false;
 				}
 				
-			// load bootstrap
-				//TODO - Add in checks in case bootstrap fails
-				fl.runScript(xjsfl.uri + 'core/jsfl/bootstrap.jsfl');
+		// ----------------------------------------------------------------------------------------
+		// set up
+		
+			// determine xJSFL URI
+				xjsfl			= window['xjsfl'] || {};
+				xjsfl.uri		= fl.scriptURI.replace('core/jsfl/install/install.jsfl', '');
+				xjsfl.loading	= true;
 				
-			// load strap
+			// load splash text
 				fl.outputPanel.clear();
 				fl.trace(FLfile.read(xjsfl.uri + 'core/assets/misc/splash.txt').replace(/\r\n/g, '\n'));
 
-			// feedback
-				xjsfl.output.log('installing xjsfl', true);
+			// load proxy classes
+				fl.trace('\n> xjsfl: INSTALLING xJSFL...');
+				fl.trace('> xjsfl: loading proxy classes...');
+				fl.runScript(xjsfl.uri + 'core/jsfl/proxies.jsfl');
+
+			// logs
+				xjsfl.output.reset(Log.INFO);
+				xjsfl.output.reset(Log.FILE);
 				
 		// ----------------------------------------------------------------------------------------
-		// variables
+		// load framework
 		
-			// function
+			// load main xjsfl class
+				xjsfl.output.trace('loading xjsfl...');
+				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl');
+				
+			// load globals and key libraries
+				xjsfl.output.trace('loading core classes...', 1);
+				xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/framework/Globals.jsfl');
+				xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/utils/Utils.jsfl');
+				xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/file/URI.jsfl');
+				xjsfl.classes.load(xjsfl.uri + 'core/jsfl/libraries/file/URIList.jsfl');
+				
+			// add search paths and load supporting libraries
+				xjsfl.output.trace('loading supporting classes...', 1);
+				xjsfl.settings.uris.add(xjsfl.uri + 'core/', 'core');
+				xjsfl.classes.load(['JSFLInterface', 'XUL', 'Output', 'File', 'Folder']);
+
+			// initialize
+				xjsfl.init(this);
+				
+		// ----------------------------------------------------------------------------------------
+		// install files
+		
+		if(true)
+		{
+
+			// debug
+				xjsfl.output.trace('copying installation files...', true);
+				
+			// copy function
 				function copy(srcURI, trgURI)
 				{
 					var trgPath = URI.toPath(trgURI, true);
@@ -74,22 +106,16 @@
 				}
 		
 			// variables
-				var srcURI;
-				var trgURI;
 				var win				= fl.version.indexOf('WIN') !== -1;
 				var installURI		= xjsfl.uri + 'core/assets/install/flash/';
-				var uris			= Utils.walkFolder(installURI, true);
+				var uris			= Utils.glob(installURI, '**/*');
 				
-		// ----------------------------------------------------------------------------------------
-		// OK, let's go!
-		
 			// copy files
-				xjsfl.output.log('copying installation files', true);
 				for each(var uri in uris)
 				{
 					// URIs
-						srcURI		= new URI(uri);
-						trgURI		= URI.reTarget(srcURI, fl.configURI, installURI);
+						var srcURI	= new URI(uri);
+						var trgURI	= URI.reTarget(srcURI, fl.configURI, installURI);
 						
 					// libs
 						if(srcURI.path.indexOf('External Libraries') !== -1)
@@ -105,45 +131,33 @@
 						}
 				}
 				
+			// initialize modules
+				xjsfl.modules.find(xjsfl.uri + 'modules/', true);
+				
 			// write install URI
 				xjsfl.output.trace('writing xjsfl.uri file');
-				save(fl.configURI + 'Tools/xjsfl.ini', 'xjsfl.uri = "' +xjsfl.uri+ '";');
+				save(fl.configURI + 'Tools/xjsfl.ini', xjsfl.uri);
 
 			// we're done!
-				xjsfl.output.trace('installation complete\n', true);
-				xjsfl.output.trace('Restart Flash to start using xJSFL!');
+				xjsfl.output.trace('installation complete!\n', true);
+				xjsfl.output.trace('Restart Flash to start using xJSFL');
+		}
 				
 		// ----------------------------------------------------------------------------------------
-		// show installation spalsh, and set user info
+		// splash
 		
-			// callbacks
-				function onAccept(name, email, url)
-				{
-					var params = ['name', 'email', 'url'];
-					for (var i = 0; i < params.length; i++)
-					{
-						config.set('personal.' + params[i], arguments[i]);
-					}
-					onCancel();
-				}
+			// set up environment
+				xjsfl.loading = false;
+				xjsfl.init(this);
 				
-				function onCancel()
-				{
-					var str	= 'Thanks for installing xJSFL!'
-							+ '\n\nTo update your user details in future, go to: Commands > xJSFL > Update User Info.'
-							+ '\n\nTo start using xJSFL now, restart Flash, then go to: Window > Other Panels > xJSFL Snippets.'
-							+ '\n\nGo to www.xjsfl.com/support for help, documentation & tutorials.'
-					alert(str);
-				}
-				
-			// get values and show splash
-				var config	= new Config('user');
-				var values	= config.get('personal');
+			// splash
 				var xul = XUL
 					.factory()
 					.load('//core/ui/install.xul')
-					.setValues(values)
-					.show(onAccept, onCancel);
+					.setButtons('accept')
+					.show();
 	}
 
 	install(this);
+
+
