@@ -317,7 +317,7 @@
 					}
 					else if(/(The following JavaScript error\(s\) occurred:|Open a Flash document \(FLA\) before running this script\.)\s*$/.test(output))
 					{
-						message = 'a JavaScript error was thrown';
+						message = 'Flash threw a JavaScript error';
 						state	= true;
 					}
 					
@@ -336,7 +336,7 @@
 								
 							// build error
 								var error			= new Error('<error>', '', 0);
-								error.message		= 'A loading file appears to contain errors, because ' +message;
+								error.message		= "The currently-loading file wouldn't run, as " +message + '.';
 								error.fileName		= URI.toURI(path);
 								error.stack			= error.stack.replace('Error("<error>","",0)@:0', 'Exact cause of error unknown. Run file manually to debug@' +path+ ':0');
 								
@@ -889,11 +889,11 @@
 					// debug
 						if(uris.length)
 						{
-							xjsfl.output.log('found ' +uris.length+ ' file(s) files in path "' +fileRef+ '"');
+							xjsfl.output.log('found ' +uris.length+ ' file(s) files in path "' +fileRef+ '"', Log.FILE);
 						}
 						else
 						{
-							xjsfl.output.warn('path "' +fileRef+ '" did not resolve to any files');
+							xjsfl.output.log('path "' +fileRef+ '" did not resolve to any files', Log.FILE);
 						}
 						
 					// load files
@@ -1442,7 +1442,7 @@
 		// These properties are assigned using extend, to remain hidden from Komodo's code-intelligence
 			var props =
 			{
-				toString:function(){ return '[extension xJSFL]'; }
+				toString:function(){ return '[object xJSFL]'; }
 			};
 			for(var prop in props)
 			{
