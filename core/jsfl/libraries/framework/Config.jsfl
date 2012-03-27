@@ -130,9 +130,8 @@
 			constructor:Config,
 
 			/**
-			 * Gets the value of the specified node path
+			 * Gets the value of the specified node path. Attributes are automatically converted to type
 			 * @param	{String}		path		A dot-notation path to a node or attribute
-			 * @param	{Boolean}		asXML		A Boolean flag indicating that you want to return the actual XML, rather than return the XML, parse the value to the currect datatype
 			 * @returns	{value}						The value of the node / attribute, or null (===) if no value, or undefined (===) if missing. Test for XML with typeof value === 'xml'
 			 */
 			get:function(path)
@@ -147,14 +146,18 @@
 					var value	= this.xml.get(path);
 					var length	= value.length();
 
-				// result will always be an XML node, now choose whether to convert it
+				// result will always be an XMLList, now choose whether to convert it
 					if(length == 0)
 					{
 						return undefined;
 					}
+					else if(length == 1)
+					{
+						return value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
+					}
 					else
 					{
-						return value.length() == 1 || value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
+						return value;
 					}
 
 			},
