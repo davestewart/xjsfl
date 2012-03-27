@@ -123,7 +123,7 @@
 					
 				// variables
 					var path			= URI.asPath(this.uri);
-					var rx				= /\/\*\s*#\s*([^@{}\r\n]+?)|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
+					var rx				= /\/\/\s*#\s*([^@{}\r\n]+)|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
 					var matches;
 					var m;
 		
@@ -1173,7 +1173,7 @@
 	// Final setup
 	
 		// extensions
-	
+		
 			Source.classes.Comment				= Base.extend(Source.classes.Comment);
 			Source.classes.Heading				= Source.classes.Comment.extend(Source.classes.Heading);
 			Source.classes.DocComment			= Source.classes.Comment.extend(Source.classes.DocComment);
