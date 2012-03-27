@@ -12,7 +12,7 @@
 // Folder - JSFL OO representation of operating system folders
 
 	// includes
-		xjsfl.init(this, ['Class', 'FileSystemObject', 'File', 'Template', 'URI', 'Utils']);
+		xjsfl.init(this, ['Class', 'FileSystemObject', 'File', 'URI', 'Utils']);
 
 	// -------------------------------------------------------------------------------------------------------------------
 	// class
@@ -63,9 +63,13 @@
 					}
 					else
 					{
-						var uri			= xjsfl.uri + 'core/assets/templates/mac/open folder.applescript';
-						var command		= new Template(uri, {path:this.path}).render();
-						var exec		= 'osascript -e "' +command+ '"';
+						// load template if not already loaded
+							include('Template');
+						
+						// create the command
+							var uri			= xjsfl.uri + 'core/assets/templates/mac/open folder.applescript';
+							var command		= new Template(uri, {path:this.path}).render();
+							var exec		= 'osascript -e "' +command+ '"';
 					}
 					FLfile.runCommandLine(exec);
 					return this;
