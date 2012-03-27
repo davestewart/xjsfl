@@ -15,15 +15,16 @@
 
 	try
 	{
-		// register any placeholder paths
-			//xjsfl.settings.folders.set('temp', 'c:/temp/')
-
 		// load user libraries
 			xjsfl.output.log('loading user libraries...', 1);
-			xjsfl.classes.load('/jsfl/libraries/*.jsfl');
+			xjsfl.classes.load('/jsfl/libraries/*.jsfl'); // A leading / path defaults to the curretn root, in this case /xJSFL/user/
 
 		// add user code
-			// something...
+		
+			// e.g. register any placeholder paths
+			// xjsfl.settings.folders.set('temp', 'c:/temp/')
+			
+			// etc...
 
 	}
 	catch(error)
