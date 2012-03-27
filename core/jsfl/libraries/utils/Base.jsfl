@@ -145,6 +145,6 @@
 	// ---------------------------------------------------------------------------------------------------------------
 	// register
 	
-		//xjsfl.classes.register('Base', Base);
+		xjsfl.classes.register('Base', Base);
 		
 		//trace('BASE');
