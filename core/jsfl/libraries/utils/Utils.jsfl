@@ -1857,7 +1857,7 @@
 									line	:parseInt(parts[3]) || '',
 									code	:parts[1] || '',
 									file	:file,
-									path	:window.URI ? URI.asPath(path, shorten) : path,
+									path	:path.replace(/\\/g, '/'),
 									uri		:FLfile.platformPathToURI(path + file)
 								};
 						}

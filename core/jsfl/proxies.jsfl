@@ -1,15 +1,15 @@
 // ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████                  ██             
-//  ██  ██                                 
-//  ██  ██ ████ █████ ██ ██ ██ █████ █████ 
-//  ██████ ██   ██ ██ ██ ██ ██ ██ ██ ██    
-//  ██     ██   ██ ██  ███  ██ █████ █████ 
-//  ██     ██   ██ ██ ██ ██ ██ ██       ██ 
-//  ██     ██   █████ ██ ██ ██ █████ █████ 
+//           ██ ██████ ██████ ██
+//           ██ ██     ██     ██
+//  ██ ██    ██ ██     ██     ██
+//  ██ ██    ██ ██████ █████  ██
+//   ███     ██     ██ ██     ██
+//  ██ ██    ██     ██ ██     ██
+//  ██ ██ █████ ██████ ██     ██████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Proxies
+// xJSFL Proxy - Initial code needed to get the framework up and running
 
 	// --------------------------------------------------------------------------------
 	// Log constants
@@ -38,7 +38,7 @@
 		xjsfl.settings = { };
 	
 	// --------------------------------------------------------------------------------
-	// placeholder for settings
+	// placeholder for file
 	
 		xjsfl.file =
 		{
@@ -68,7 +68,10 @@
 				// level
 					if(level > 0)
 					{
-						message = message.toUpperCase();
+						if(level == 1 || level == 2)
+						{
+							message = message.toUpperCase();
+						}
 						if(level >= 2)
 						{
 							output = '----------------------------------------------------------------------------------------------------' + newLine;
@@ -99,8 +102,8 @@
 			log:function(message, $type, $level)
 			{
 				// parameters
-					var type, level;
-					for each(var param in [$type, $level])
+					var param, type, level;
+					for each(param in [$type, $level])
 					{
 						if(typeof param === 'string')
 							type = param;
@@ -125,7 +128,7 @@
 					if(type === Log.FILE)
 					{
 						var uri			= xjsfl.uri + 'core/temp/logs/file.txt';
-						var indent		= new Array(xjsfl.file.stack.length).join('	');
+						var indent		= new Array(xjsfl.file.stack.length + 1).join('	');
 						var output		= this.create(time, indent + message, level, true);
 						FLfile.write(uri, output, 'append');
 					}
@@ -162,123 +165,144 @@
 			
 		}
 	
-	// ----------------------------------------------------------------------------------------------------
-	// Utils Proxy
-	
-		Utils =
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██  ██   ██ ██
+//  ██  ██  ██      ██
+//  ██  ██ █████ ██ ██ █████
+//  ██  ██  ██   ██ ██ ██
+//  ██  ██  ██   ██ ██ █████
+//  ██  ██  ██   ██ ██    ██
+//  ██████  ████ ██ ██ █████
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// Utils - static library of utility functions
+
+	Utils =
+	{
+		/**
+		 * Checks if the object is a true Array or not
+		 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
+		 * @returns	{Boolean}				True or false
+		 */
+		isArray:function (obj)
 		{
-			/**
-			 * Checks if the object is a true Array or not
-			 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
-			 * @returns	{Boolean}				True or false
-			 */
-			isArray:function (obj)
+			return Object.prototype.toString.call(obj) === "[object Array]";
+		},
+		
+		/**
+		 * Returns a list of URIs for a given glob path, folder reference and optional condition
+		 * @param	{String}	folder		An absolute or relative folder path or URI (wildcards allowed)
+		 * @param	{Folder}	folder		A valid Folder instance
+		 * @param	{URI}		folder		A valid URI instance
+		 * @param	{Number}	$depth		An optional max depth to search to
+		 * @param	{Boolean}	$filesOnly	An optional Boolean to get files only
+		 * @param	{RegExp}	$filter		A RegExp to match each URI
+		 * @returns	{Array}					An Array of URIs
+		 */
+		getURIs:function(folder, $depth, $filesOnly, $filter, $extensions)
+		{
+			function process(folderURI)
 			{
-				return Object.prototype.toString.call(obj) === "[object Array]";
-			},
-			
-			/**
-			 * Returns a list of URIs for a given glob path, folder reference and optional condition
-			 * @param	{String}	folder		An absolute or relative folder path or URI (wildcards allowed)
-			 * @param	{Folder}	folder		A valid Folder instance
-			 * @param	{URI}		folder		A valid URI instance
-			 * @param	{Number}	$depth		An optional max depth to search to
-			 * @param	{Boolean}	$filesOnly	An optional Boolean to get files only
-			 * @param	{RegExp}	$filter		A RegExp to match each URI
-			 * @returns	{Array}					An Array of URIs
-			 */
-			getURIs:function(folder, $depth, $filesOnly, $filter, $extensions)
-			{
-				function process(folderURI)
+				var items = FLfile.listFolder(folderURI);
+				for each(var item in items)
 				{
-					var items = FLfile.listFolder(folderURI);
-					for each(var item in items)
+					var uri = folderURI + item;
+					if(FLfile.getAttributes(uri).indexOf('D') > -1)
 					{
-						var uri = folderURI + item;
-						if(FLfile.getAttributes(uri).indexOf('D') > -1)
+						if( ! filesOnly )
 						{
-							if( ! filesOnly )
-							{
-								uris.push(uri + '/');
-							}
-							process(uri + '/');
+							uris.push(uri + '/');
 						}
-						else
-						{
-							uris.push(uri);
-						}
+						process(uri + '/');
+					}
+					else
+					{
+						uris.push(uri);
 					}
 				}
-				
-				var uris = [];
-				process(folder);
-				return uris;
 			}
-		}
+			
+			var uris = [];
+			process(folder);
+			return uris;
+		},
+
+	}
 		
 		
-	// ----------------------------------------------------------------------------------------------------
-	// URI Proxy
+// ------------------------------------------------------------------------------------------------------------------------
+//
+//  ██  ██ ██████ ██
+//  ██  ██ ██  ██ ██
+//  ██  ██ ██  ██ ██
+//  ██  ██ ██████ ██
+//  ██  ██ ██ ██  ██
+//  ██  ██ ██  ██ ██
+//  ██████ ██  ██ ██
+//
+// ------------------------------------------------------------------------------------------------------------------------
+// URI - Handles URI and path conversion, including detection and resolution of relative paths
 	
-		URI =
+	URI =
+	{
+		/**
+		 * Test if the supplied value is a URI-formatted string
+		 * @param	{String}	pathOrURI	A valid path or URI
+		 * @returns	{Boolean}				true or false, depending on the result
+		 */
+		isURI:function(pathOrURI)
 		{
-			/**
-			 * Test if the supplied value is a URI-formatted string
-			 * @param	{String}	pathOrURI	A valid path or URI
-			 * @returns	{Boolean}				true or false, depending on the result
-			 */
-			isURI:function(pathOrURI)
-			{
-				return typeof pathOrURI === 'string' && pathOrURI.indexOf('file:///') === 0;
-			},
-			
-			toURI:function(pathOrURI)
-			{
-				if( ! URI.isURI)
-				{
-					pathOrURI = FLfile.platformPathToURI(pathOrURI);
-				}
-				return pathOrURI;
-			},
-			
-			toPath:function(pathOrURI, shorten)
-			{
-				if(URI.isURI)
-				{
-					pathOrURI = FLfile.uriToPlatformPath(pathOrURI);
-				}
-				if(shorten)
-				{
-					var core = FLfile.uriToPlatformPath(xjsfl.uri + 'core/');
-					pathOrURI = pathOrURI.replace(core, '{core}');
-				}
-				return pathOrURI.replace(/\\/g, '/');
-			},
-			
-			asPath:function(pathOrURI, shorten)
-			{
-				return URI.toPath(pathOrURI, shorten);
-			},
-			
-			/**
-			 * Returns the file extension
-			 * @param	{String}	pathOrURI		A vald path or URI
-			 * @returns	{String}					The file extensions
-			 */
-			getExtension:function(pathOrURI)
-			{
-				var match = String(pathOrURI).match(/\.(\w+)$/);
-				return match ? match[1] : '';
-			},
-			
-			/**
-			 * Returns the current folder path of the item referenced by the path or URI
-			 * @param	{String}	pathOrURI	A valid path or URI
-			 * @returns	{String}				The folder of the path or URI
-			 */
-			getFolder:function(pathOrURI)
-			{
-				return String(pathOrURI).replace(/([^\/\\]+)$/, '');
-			},
-		}
+			return typeof pathOrURI === 'string' && pathOrURI.indexOf('file:///') === 0;
+		},
 		
+		toURI:function(pathOrURI)
+		{
+			if( ! URI.isURI)
+			{
+				pathOrURI = FLfile.platformPathToURI(pathOrURI);
+			}
+			return pathOrURI;
+		},
+		
+		toPath:function(pathOrURI, shorten)
+		{
+			if(URI.isURI)
+			{
+				pathOrURI = FLfile.uriToPlatformPath(pathOrURI);
+			}
+			if(shorten)
+			{
+				var core = FLfile.uriToPlatformPath(xjsfl.uri + 'core/');
+				pathOrURI = pathOrURI.replace(core, '{core}');
+			}
+			return pathOrURI.replace(/\\/g, '/');
+		},
+		
+		asPath:function(pathOrURI, shorten)
+		{
+			return URI.toPath(pathOrURI, shorten);
+		},
+		
+		/**
+		 * Returns the file extension
+		 * @param	{String}	pathOrURI		A vald path or URI
+		 * @returns	{String}					The file extensions
+		 */
+		getExtension:function(pathOrURI)
+		{
+			var match = String(pathOrURI).match(/\.(\w+)$/);
+			return match ? match[1] : '';
+		},
+		
+		/**
+		 * Returns the current folder path of the item referenced by the path or URI
+		 * @param	{String}	pathOrURI	A valid path or URI
+		 * @returns	{String}				The folder of the path or URI
+		 */
+		getFolder:function(pathOrURI)
+		{
+			return String(pathOrURI).replace(/([^\/\\]+)$/, '');
+		},
+	}
+	
