@@ -13,9 +13,6 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Setup - sets up user information the first time the framework is run
 
-	// initialise
-		xjsfl.init(this);
-
 	// --------------------------------------------------------------------------------
 	// functions
 	
@@ -41,31 +38,31 @@
 				{
 					config.xml.user[name] = params[name];
 				}
+				trace('Saving user information to ' + URI.toPath(config.uri, true));
 				config.save();
 			}
 			
 		// setup
-			function setup(force)
+			function setup()
 			{
-				var name = config.xml.user.name.toString();
-				if( ! name || force)
-				{
-					XUL
-						.factory()
-						.load('//core/ui/user.xul')
-						.setFlashData({click:'http://www.xjsfl.com/support/setup/quick-start/getting-started'})
-						.addEvent('email', 'change', onChange)
-						.setButtons('accept')
-						.setValues(config.xml.user.*)
-						.show(onComplete);
-				}
+				XUL
+					.factory()
+					.load('//core/ui/user.xul')
+					.setFlashData({click:'http://www.xjsfl.com/support/setup/quick-start/getting-started'})
+					.addEvent('email', 'change', onChange)
+					.setButtons('accept')
+					.setValues(config.xml.user.*)
+					.show(onComplete);
 			}
 	
 	// --------------------------------------------------------------------------------
 	// code
-	
+
+		// initialise
+			xjsfl.init(this);
+
 		// variables
-			var config	= new Config('xjsfl.xml');
+			var config = new Config('xjsfl.xml');
 			
 		// run
 			setup();
