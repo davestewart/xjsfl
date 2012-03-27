@@ -1281,9 +1281,13 @@
 				{
 					if(typeof values == 'xml')
 					{
-						for each(var node in values.*)
+						if(values.length() === 1 && values.*.length() > 0)
 						{
-							this.setValue(node.name(), String(node));
+							values = values.*;
+						}
+						for each(var node in values)
+						{
+							this.setValue(node.name(), String(node.valueOf()));
 						}
 					}
 					else
