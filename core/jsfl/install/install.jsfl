@@ -78,7 +78,6 @@
 		
 		if(true)
 		{
-
 			// debug
 				xjsfl.output.trace('copying installation files...', true);
 				
@@ -137,6 +136,10 @@
 			// write install URI
 				xjsfl.output.trace('writing xjsfl.uri file');
 				save(fl.configURI + 'Tools/xjsfl.ini', xjsfl.uri);
+				
+			// copy user config
+				xjsfl.output.trace('copying user config file');
+				copy(xjsfl.uri + 'core/config/xjsfl.xml', xjsfl.uri + 'user/config/xjsfl.xml');
 
 			// we're done!
 				xjsfl.output.trace('installation complete!\n', true);

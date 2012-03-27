@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
-<dialog id="sample" title=" xJSFL - Update User Info" buttons="accept">
-	<label width="310" value="Please update your user information below." />
-	<label width="310" value="This will be used in the various tools and scripts in the framework, and not for anything without your permission" />
+<dialog id="sample" title=" xJSFL - User Information" buttons="accept">
+	<flash class="control" id="flash" src="swf/splash.swf" width="320" height="280" />
+	<spacer />
+	<label width="310" value="Hello there!" />
+	<label width="310" value="To personalise your installation, along with any future scripts you create, enter your details below." />
 	<spacer />
 	<grid>
 		<columns id="columns">
 			<column flex="1"/>
 			<column flex="2"/>
 		</columns>
-		<rows id="controls" width="2000">
+		<rows id="controls">
 			<row template="textbox">
 				<label value="Name:" width="60"/>
 				<textbox class="control" id="name" width="240" required="false" />
