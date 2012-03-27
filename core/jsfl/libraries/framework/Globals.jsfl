@@ -27,11 +27,11 @@
 			 */
 			function include(className)
 			{
-				xjsfl.classes.load(Array.slice.call(this, arguments), arguments);
+				xjsfl.classes.load(Array.slice.call(this, arguments));
 			}
 			
 			/**
-			 * Loads a class from disk, even if it's already been loaded.
+			 * Loads a class from disk (even if it's already been loaded) but not its dependencies
 			 * @param	{String}	className	The class filename (without extension) to load
 			 * @info							This method accepts multiple arguments
 			 */
