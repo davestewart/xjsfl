@@ -12,14 +12,14 @@
 // Source - examine and manipulate source code
 
 	// includes
-		xjsfl.init(this, ['Base', 'URI']);
+		xjsfl.init(this, ['Class', 'URI']);
 
 	/*
 
 		Recognises sections:
 		
 			/** ... * /	- doc comments
-			// # title	- section titles
+			// #1 title	- section titles
 	
 		Recognises tags:
 		
@@ -123,7 +123,7 @@
 					
 				// variables
 					var path			= URI.asPath(this.uri);
-					var rx				= /\/\/\s*#\s*([^@{}\r\n]+)|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
+					var rx				= /\/\/\s*#(\d*)\s*([^@{}\r\n]+)|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
 					var matches;
 					var m;
 		
@@ -205,14 +205,15 @@
 			parseMatch:function(matches)
 			{
 				// comment and object
-					var heading		= matches[1].trim();
-					var comment		= matches[2].trim();
-					var code		= matches[3].trim();
+					var level		= parseInt(matches[1]);
+					var heading		= matches[2].trim();
+					var comment		= matches[3].trim();
+					var code		= matches[4].trim();
 					
 				// // # heading-style comment 
 					if(heading)
 					{
-						var obj = this.makeHeading(heading);
+						var obj = this.makeHeading(heading, level);
 					}
 					
 				// #* doc comment code
@@ -426,7 +427,7 @@
 		// --------------------------------------------------------------------------------
 		// make functions
 		
-			makeHeading:function(text)
+			makeHeading:function(text, level)
 			{
 				// variables
 					var props	= text.split(/\s+-\s+/);
@@ -434,7 +435,7 @@
 					var desc	= props.shift();
 					
 				// object
-					var obj		= new Source.classes.Heading(heading.trim(), desc ? desc.trim() : '');
+					var obj		= new Source.classes.Heading(heading.trim(), desc ? desc.trim() : '', level);
 					
 				// debug
 					if(this.debug)
@@ -472,7 +473,7 @@
 					}
 		
 				// set class name for this file if not already set
-					if(this.className == '')
+					if( ! this.className)
 					{
 						this.className	= name;
 						this.classType	= 'function';
@@ -482,7 +483,7 @@
 					this.parseComment(comment, obj);
 					
 				// set as constructor
-					if(obj.flags.class)
+					if(obj.flags.class || name === URI.getName(this.uri, true))
 					{
 						obj.addFlag('constructor');
 					}
@@ -607,7 +608,7 @@
 	
 		/*
 			+- Comment						class, text, line
-			|	+- Heading					class, text, line
+			|	+- Heading					class, text, line, level
 			|	+- DocComment				class, text, line, tags
 			|		+- Element				class, text, line, tags, object, name
 			|			+- Variable			class, text, line, tags, object, name, type, 
@@ -640,7 +641,7 @@
 			 * @param	{String}	text	Description
 			 * @param	{Number}	line	Description
 			 */
-			constructor:function(text, line)
+			init:function(text, line)
 			{
 				this.class		= 'Comment';
 				this.line		= line || null;
@@ -690,15 +691,16 @@
 		 */
 		Source.classes.Heading =
 		{
-			constructor:function(text, line)
+			init:function(text, line, level)
 			{
 				this.base(text, line);
+				this.level		= level || 1;
 				this.class		= 'Heading';
 			},
 				
 			toString:function()
 			{
-				return '[object Heading text="' +(this.class ? this.getText() : '')+ '"]';
+				return '[object Heading level="' +this.level+ '" text="' +(this.class ? this.getText() : '')+ '"]';
 			}
 		}
 		
@@ -712,7 +714,7 @@
 			tags		:{},
 			flags		:{},
 			
-			constructor:function(text, line)
+			init:function(text, line)
 			{
 				this.base(text, line);
 				this.class		= 'DocComment';
@@ -828,7 +830,7 @@
 			object		:null,
 			name		:'',
 			
-			constructor:function(name, text, line)
+			init:function(name, text, line)
 			{
 				this.base(text, line);
 				this.class		= 'Element';
@@ -851,7 +853,7 @@
 		{
 			type		:'',
 			
-			constructor:function(name, type, text, line)
+			init:function(name, type, text, line)
 			{
 				this.base(name, text, line);
 				this.class		= 'Variable';
@@ -876,7 +878,7 @@
 			writable	:false,
 			acesss		:'',
 			
-			constructor:function(name, type, text, accessor, line)
+			init:function(name, type, text, accessor, line)
 			{
 				this.base(name, type, text);
 				this.class		= 'Accessor';
@@ -921,7 +923,7 @@
 				name		:'',
 				signature	:'',
 				
-				constructor	:function(signature, text, params, returns, line)
+				init:function(signature, text, params, returns, line)
 				{
 					// name
 						var name = ''
@@ -1025,7 +1027,7 @@
 			
 				members		:[],
 				
-				constructor	:function(name, text, members, line)
+				init	:function(name, text, members, line)
 				{
 					// super
 						this.base(name, text, line);
@@ -1113,7 +1115,7 @@
 			class		:null,
 			text		:'',
 			
-			constructor	:function(text)
+			init	:function(text)
 			{
 				this.class		= this.class || 'Tag';
 				this.text		= String(text).trim();
@@ -1134,7 +1136,7 @@
 		{
 			type		:'',
 			
-			constructor	:function(type, text)
+			init	:function(type, text)
 			{
 				this.class		= this.class || 'Value';
 				this.type		= String(type).trim();
@@ -1156,7 +1158,7 @@
 		{
 			name		:'',
 			
-			constructor	:function(name, type, text)
+			init	:function(name, type, text)
 			{
 				this.class		= this.class || 'Param';
 				this.name		= String(name).trim();
@@ -1174,7 +1176,7 @@
 	
 		// extensions
 		
-			Source.classes.Comment				= Base.extend(Source.classes.Comment);
+			Source.classes.Comment				= Class.extend(Source.classes.Comment);
 			Source.classes.Heading				= Source.classes.Comment.extend(Source.classes.Heading);
 			Source.classes.DocComment			= Source.classes.Comment.extend(Source.classes.DocComment);
 			Source.classes.Element				= Source.classes.DocComment.extend(Source.classes.Element);
@@ -1182,7 +1184,7 @@
 			Source.classes.Accessor				= Source.classes.Variable.extend(Source.classes.Accessor);
 			Source.classes.Function				= Source.classes.Element.extend(Source.classes.Function);
 			
-			Source.classes.Tag					= Base.extend(Source.classes.Tag);
+			Source.classes.Tag					= Class.extend(Source.classes.Tag);
 			Source.classes.Value				= Source.classes.Tag.extend(Source.classes.Value);
 			Source.classes.Param				= Source.classes.Value.extend(Source.classes.Param);
 				

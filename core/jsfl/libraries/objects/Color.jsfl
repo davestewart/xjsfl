@@ -12,7 +12,7 @@
 // Color
 
 	// includes
-		xjsfl.init(this, ['Base']);
+		xjsfl.init(this, ['Class']);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// Class
@@ -25,7 +25,7 @@
 
 		var aColor =
 		{
-			constructor : function (){ this.warn(); },
+			init : function (){ this.warn(); },
 			toHex : function (){ this.warn(); },
 			toRGB : function (){ this.warn(); },
 			toXYZ : function (){ this.warn(); },
@@ -155,14 +155,14 @@
 				alert('aColor should not be created directly. Treat this as an abstract class.');
 			}
 		}
-		aColor = Base.extend(aColor);
+		aColor = Class.extend(aColor);
 
 	// ----------------------------------------------------------------------------------------------------
 	// Hex
 
 		var Hex =
 		{
-			constructor : function (hex){
+			init : function (hex){
 				this.hex = hex;
 				if (this.hex.substring(0,1) == '#') this.hex = this.hex.substring(1,7);
 			},
@@ -203,7 +203,7 @@
 
 		var RGB =
 		{
-			constructor : function (r,g,b){
+			init : function (r,g,b){
 				this.r = Math.min(255,Math.max(r,0));
 				this.g = Math.min(255,Math.max(g,0));
 				this.b = Math.min(255,Math.max(b,0));
@@ -306,7 +306,7 @@
 
 		var XYZ =
 		{
-			constructor : function (x,y,z){
+			init : function (x,y,z){
 				this.x = x;
 				this.y = y;
 				this.z = z;
@@ -405,7 +405,7 @@
 
 		var CIELab =
 		{
-			constructor : function (l,a,b){
+			init : function (l,a,b){
 				this.l = l;
 				this.a = a;
 				this.b = b;
@@ -484,7 +484,7 @@
 
 		var HSV =
 		{
-			constructor : function (h,s,v){
+			init : function (h,s,v){
 				this.h = h;
 				this.s = s;
 				this.v = v;
@@ -553,7 +553,7 @@
 
 		var CMY =
 		{
-			constructor : function (c,m,y){
+			init : function (c,m,y){
 				this.c = c;
 				this.m = m;
 				this.y = y;
@@ -610,7 +610,7 @@
 
 		var CMYK =
 		{
-			constructor : function (c,m,y,k){
+			init : function (c,m,y,k){
 				this.c = c;
 				this.m = m;
 				this.y = y;
@@ -652,7 +652,7 @@
 
 		var CIELCh =
 		{
-			constructor : function (l,c,h){
+			init : function (l,c,h){
 				this.l = l;
 				this.c = c;
 				this.h = h<360?h:(h-360);
