@@ -18,14 +18,14 @@
 	// functions
 	
 		// ------------------------------------------------------------------------------------------------
-		// # File-related functions
+		// # Library functions
 		
 			/**
 			 * Loads a class from disk, but only if it's not yet been loaded.
 			 * @param	{String}	className	The class filename (without extension) to load
 			 * @info							This method accepts multiple arguments
 			 */
-			function include(className)
+			include = function(className)
 			{
 				xjsfl.classes.load(Array.slice.call(this, arguments));
 			}
@@ -35,20 +35,23 @@
 			 * @param	{String}	className	The class filename (without extension) to load
 			 * @info							This method accepts multiple arguments
 			 */
-			function require(className)
+			require = function(className)
 			{
 				xjsfl.file.stackLimit = 1;
 				xjsfl.classes.load(Array.slice.call(this, arguments), true);
 				xjsfl.file.stackLimit = 99;
 			}
 			
+		// ------------------------------------------------------------------------------------------------
+		// # File functions
+		
 			/**
 			 * Loads a file using the xjsfl.file.load() method
 			 * @param	{String}	pathOrURI	A valid path or URI
 			 * @param	{Boolean}	quiet		An optional Boolean to not trace the load to the Output panel
 			 * @returns	{Boolean}				Trie of false, depeneding on whether the file loaded
 			 */
-			function load(pathOrURI, quiet)
+			load = function(pathOrURI, quiet)
 			{
 				return xjsfl.file.load(URI.toURI(pathOrURI, 1), null, quiet);
 			}
@@ -59,7 +62,7 @@
 			 * @param	{String}	contents	The contents to save
 			 * @returns	{Boolean}				Trie of false, depeneding on whether the file saved
 			 */
-			function save(pathOrURI, contents)
+			save = function(pathOrURI, contents)
 			{
 				return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents);
 			};
@@ -72,28 +75,26 @@
 			 * Trace arguments to the Output panel
 			 * @param {Mixed}	...args		Multiple parameters
 			 */
-			function trace()
+			trace = function()
 			{
 				fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))
 			};
 			
 			
 			/**
-			 * A shortcut to the Output.format() method
-			 * @see Utils.format
+			 * Shortcut to String.inject() that populates a template string with values, and traces to the Output panel
+			 * @param	{String}	template	A template String containing {placeholder} variables
+			 * @param	{Object}	values		Any Object or instance of Class that with named properties
+			 * @param	{Array}		values		An Array of values, which replace named placeholders in the order they are found
+			 * @param	{Mixed}		...values	Any values, passed in as parameters, which replace named placeholders in the order they are found
+			 * @returns	{String}				The populated String
 			 */
-			function format()
+			format = function(template, values)
 			{
-				if(Output && Output.format)
-				{
-					Output.format.apply(this, arguments);
-				}
-				else
-				{
-					trace('format() not yet initialised');
-				}
+				values = Array.prototype.splice.call(arguments, 1);
+				fl.outputPanel.trace(String(template).inject.apply(this, values));
 			}
-	
+			
 			/**
 			 * Clears the Output panel
 			 */
@@ -107,7 +108,7 @@
 			 * A shortcut to the Output inspect() method
 			 * @see Output.inspect
 			 */
-			function inspect()
+			inspect = function()
 			{
 				if(xjsfl.classes.cache.Output)
 				{
@@ -123,7 +124,7 @@
 			 * A shortcut to the Output list() method
 			 * @see Output.list
 			 */
-			function list()
+			list = function()
 			{
 				if(xjsfl.classes.cache.Output)
 				{
@@ -144,7 +145,7 @@
 			 * @param	{Object}	scope		An alternative scope to run the function in
 			 * @returns	{Value}					The result of the function if successful
 			 */
-			function debug(obj, params, scope)
+			debug = function(obj, params, scope)
 			{
 				if(obj instanceof Error)
 				{
@@ -244,4 +245,5 @@
 				['load', load],
 				
 			].forEach(function(f){xjsfl.classes.register(f[0], f[1]);});
+			
 			
