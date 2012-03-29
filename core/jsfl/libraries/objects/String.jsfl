@@ -51,27 +51,49 @@
 		}
 	
 		/**
-		 * Populates a template string with values
-		 * @param	{Object}	properties	Any Object or instance of Class that with named properties
-		 * @param	{Array}		properties	An Array of values, which replace named {placeholders} in the order they are found
+		 * Injects a template string with values
+		 * @param	{Object}	obj			Any Object or instance of Class that with named properties
+		 * @param	{Array}		obj			An Array of values, which replace named {placeholders} in the order they are found
 		 * @param	{Mixed}		...rest		Instead of an Array, just a list of arguments, which replace named placeholders in the order they are found
 		 * @returns {String}
 		 */
-		String.prototype.populate = function(properties)
+		String.prototype.inject = function(obj)
 		{
-			/*
-				Conditions where we derive the properties:
-				- there are more than 2 arguments
-				- properties is an Array
-				- properties is a primitive datatype, string, number, boolean
-			*/
-			if( arguments.length > 1 || Utils.isArray(properties) || (typeof properties in {string:1, number:1, boolean:1, date:1}) )
-			{
-				var keys	= Utils.toUniqueArray(String(this.match(/{\w+}/g)).match(/\w+/g));
-				var values	= Utils.isArray(properties) ? properties : Utils.getArguments(arguments, 0);
-				properties	= Utils.combine(keys, values);
-			}
-			return new SimpleTemplate(this, properties).output;
+			// params
+				var params	= Array.slice.call(this, arguments);
+				var obj		= params.length > 1
+								? params
+								: typeof params[0] === 'object'
+									? params[0]
+									: [params];
+				
+			// variables
+				var rx		= /{([^}]+)}/g;
+				var values	= {};
+				var length	= 0;
+				
+				
+			// replacement functions
+				function arrMatch(match, key)
+				{
+					if(typeof values[key] === 'undefined')
+					{
+						values[key] = length++;
+					}
+					return obj[values[key]];
+				}
+				
+				function objMatch(match, key)
+				{
+					if(typeof values[key] === 'undefined')
+					{
+						values[key] = key.indexOf('.') == -1 ? obj[key] : Utils.getDeepValue(obj, key);
+					}
+					return values[key];
+				}
+				
+			// return
+				return str.replace(rx, obj instanceof Array ? arrMatch : objMatch);
 		}
 	
 	// ----------------------------------------------------------------------------------------------------

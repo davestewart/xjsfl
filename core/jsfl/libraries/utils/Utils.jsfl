@@ -24,7 +24,7 @@
 		Utils =
 		{
 			// ---------------------------------------------------------------------------------------------------------------
-			// # Object methods 
+			// #1 Object methods 
 
 				/**
 				 * Checks if the object is a true Object or not
@@ -80,6 +80,28 @@
 					}
 
 					return temp;
+				},
+				
+				/**
+				 * Clones an object
+				 * @param	{Object}	obj		The object reference
+				 * @returns	{Object}			The cloned object
+				 */
+				clone:function(obj)
+				{
+					if (obj instanceof Object && obj.constructor != Function)
+					{
+						var clone = obj instanceof Array ? [] : {}, prop;
+						for (prop in obj)
+						{
+							if ( obj.hasOwnProperty(prop) )
+							{
+								clone[prop] = (obj[prop] instanceof Object)? doop(obj[prop]) : obj[prop];
+							}
+						}
+						return clone;
+					}
+					return obj;
 				},
 
 				/**
@@ -291,7 +313,7 @@
 				
 				
 			// ---------------------------------------------------------------------------------------------------------------
-			// # Object-Oriened Coding methods 
+			// # OOP methods 
 
 				/**
 				 * A better typeof function
@@ -486,7 +508,7 @@
 
 
 			// ---------------------------------------------------------------------------------------------------------------
-			// # Arry methods 
+			// # Array methods 
 
 				/**
 				 * Checks if the object is a true Array or not
@@ -500,7 +522,8 @@
 
 
 				/**
-				 * Turns a single string of tokens into an array of trimmed tokens, by splitting at non-word characters, or a supplied delimited
+				 * Turns a single string of tokens into an array of trimmed tokens, by splitting at non-word characters, or a supplied delimiter
+				 *
 				 * It either returns an existing array, splits a string at delimiters, or wraps the single value in an array
 				 *
 				 * @param	{String}	value		A string
@@ -672,7 +695,9 @@
 
 				/**
 				 * Run each element of an array through a callback function
-				 * Used to call functions in a loop without writing loop code or forEach closure, or checking that original argument is an array
+				 *
+				 * Used to call functions in a loop without writing loop code or forEach closure 
+				 * or checking that original argument is an array
 				 *
 				 * @param	{Array}		arr			An array of elements to be passed to the callback
 				 * @param	{Function}	func		The function to call
@@ -1079,31 +1104,6 @@
 				},
 
 				/**
-				 * Populates a template string with values
-				 * @param	{String}	template	A template String containing {placeholder} variables
-				 * @param	{Object}	properties	Any Object or instance of Class that with named properties
-				 * @param	{Array}		properties	An Array of values, which replace named placeholders in the order they are found
-				 * @param	{Mixed}		...rest		Any values, passed in as parameters, which replace named placeholders in the order they are found
-				 * @returns	{String}				The populated String
-				 */
-				populate:function(template, properties)
-				{
-					/*
-						Conditions where we derive the properties:
-						- there are more than 2 arguments
-						- properties is an Array
-						- properties is a primitive datatype, string, number, boolean
-					*/
-					if( arguments.length > 2 || Utils.isArray(properties) || (typeof properties in {string:1, number:1, boolean:1, date:1}) )
-					{
-						var keys	= Utils.toUniqueArray(String(template.match(/{\w+}/g)).match(/\w+/g));
-						var values	= Utils.isArray(properties) ? properties : Utils.getArguments(arguments, 1);
-						properties	= Utils.combine(keys, values);
-					}
-					return new SimpleTemplate(template, properties).output;
-				},
-				
-				/**
 				 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
 				 * @param	{String}	value		An input string
 				 * @param	{Boolean}	trim		An optional flag to trim the string, on by default
@@ -1171,7 +1171,11 @@
 			// # RegExp methods 
 
 				/**
-				 * Performs a global RegExp match but returns an Array of local match Arrays, or Objects if matchNames are supplied
+				 * Performs a global RegExp match but returns a 2D Array of local match Arrays, or Objects if matchNames are supplied
+				 *
+				 * This saves you running 2 separate RegExp loops to extract both global and local matchs, and also
+				 * packages assigning match values to named properties
+				 *
 				 * @param	{String}	str				The string to be matched
 				 * @param	{RegExp}	rxGlobal		A global RegExp object or literal
 				 * @param	{String}	params			An optional comma-delimited string of local match names

@@ -24,19 +24,6 @@
 	{
 
 		/**
-		 * Formats a string and subsequent arguments to the Output panel
-		 * @param	{String}	value	A String value with named {placeholder} variables
-		 * @param	{Object}	params	A parameters Object, Array, 
-		 * @returns	{String}			The populated string
-		 */
-		format:function(value, params)
-		{
-			var str = Utils.populate.apply(this, arguments);
-			fl.outputPanel.trace(str);
-			return str;
-		},
-		
-		/**
 		 * Converts a typical [object Object] string into an [object Class value="1" property="2"] string
 		 * Should only be used on JavaScript Objects that already convert properly to String
 		 * @param	{Object}	obj			Any object that can be converted to a String
