@@ -10,7 +10,7 @@
 			if($dom)
 			{
 				// grab uri
-					var uri		= FLfile.read(xjsfl.uri + 'core/temp/uri.txt');
+					var uri		= FLfile.read(xjsfl.uri + 'core/jsfl/run/temp/uri.txt');
 					var path	= FLfile.uriToPlatformPath(uri);
 
 				// exit early if the file doesn't exist

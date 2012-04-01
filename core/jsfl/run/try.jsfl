@@ -4,7 +4,7 @@
 	(function()
 	{
 		// grab uri
-			var uri = FLfile.read(xjsfl.uri + 'core/temp/uri.txt');
+			var uri = FLfile.read(xjsfl.uri + 'core/jsfl/run/temp/uri.txt');
 
 		// run the file
 			if(uri && FLfile.exists(uri))
