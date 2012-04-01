@@ -38,7 +38,7 @@
 		   
 	   // ensure temp & logs folders exists
 			FLfile.createFolder(xjsfl.uri + 'core/temp/');
-			FLfile.createFolder(xjsfl.uri + 'core/temp/logs/');
+			FLfile.createFolder(xjsfl.uri + 'core/logs/');
 		
 	// --------------------------------------------------------------------------------
 	// load framework

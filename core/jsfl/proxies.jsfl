@@ -119,7 +119,7 @@
 					var time	= date.toString().match(/\d{2}:\d{2}:\d{2}/) + ':' + (date.getMilliseconds() / 1000).toFixed(3).substr(2);
 
 				// log to main
-					var uri			= xjsfl.uri + 'core/temp/logs/main.txt';
+					var uri			= xjsfl.uri + 'core/logs/main.txt';
 					var output		= this.create(time, type + '\t' + message, level, true);
 					FLfile.write(uri, output, 'append');
 					//trace(message);
@@ -127,7 +127,7 @@
 				// extra logging for file
 					if(type === Log.FILE)
 					{
-						var uri			= xjsfl.uri + 'core/temp/logs/file.txt';
+						var uri			= xjsfl.uri + 'core/logs/file.txt';
 						var indent		= new Array(xjsfl.file.stack.length + 1).join('	');
 						var output		= this.create(time, indent + message, level, true);
 						FLfile.write(uri, output, 'append');
@@ -159,7 +159,7 @@
 			reset:function(type)
 			{
 				var name = type == Log.FILE ? 'file' : 'main';
-				FLfile.remove(xjsfl.uri + 'core/temp/logs/' + name + '.txt');
+				FLfile.remove(xjsfl.uri + 'core/logs/' + name + '.txt');
 				xjsfl.output.log(name + ' log created', type);
 			},
 			

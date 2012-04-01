@@ -302,7 +302,7 @@
 					var delay		= new Date().getTime() - xjsfl.file.lastLoadTime;
 
 				// grab panel output
-					var outputURI	= xjsfl.uri + 'core/temp/output-panel.txt';
+					var outputURI	= xjsfl.uri + 'core/jsfl/run/temp/output-panel.txt';
 					fl.outputPanel.save(outputURI);
 					var output		= FLfile.read(outputURI);
 					FLfile.remove(outputURI);
@@ -406,8 +406,9 @@
 				}
 				
 			// log error as JSON
+				var data = Utils.getValues(stack, ['uri','line','code'], true);
 				fl.runScript(xjsfl.uri + 'core/jsfl/libraries/objects/JSON.jsfl');
-				FLfile.write(xjsfl.uri + 'core/temp/error.txt', JSON.encode(stack));
+				FLfile.write(xjsfl.uri + 'core/jsfl/run/temp/error.txt', JSON.encode({message:error.message, stack:data}));
 				
 			// generate error text
 				if(true)
@@ -435,7 +436,7 @@
 				}
 
 			// log
-				xjsfl.output.warn('The following JavaScript error(s) occurred:');
+				xjsfl.output.warn('File load error:');
 				xjsfl.output.log(output);
 				trace(output.replace(/^[\r\n]+/, ''))
 				
@@ -450,7 +451,7 @@
 		clear:function()
 		{
 			xjsfl.halted = false;
-			var uri = xjsfl.uri + 'core/temp/error.txt';
+			var uri = xjsfl.uri + 'core/jsfl/run/temp/error.txt';
 			if(FLfile.exists(uri))
 			{
 				FLfile.remove(uri);
@@ -1043,6 +1044,7 @@
 		 * 5 -	...xjsfl.modules.create(), which creates and registers the module internally, so it
 		 *		can be retrieved if necessary via xjsfl.modules.getModule(namespace)
 		 *
+		 * @ignore
 		 */
 		function modules()
 		{
