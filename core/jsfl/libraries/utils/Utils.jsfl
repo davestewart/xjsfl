@@ -374,7 +374,12 @@
 
 					return undefined;
 				},
-
+				
+				getAS3BaseClass:function()
+				{
+					throw new Error('The method Utils.getAS3BaseClass() has been moved to ActionScript.getBaseClass(). Please update your source code.');
+				},
+				
 				/**
 				 * Gets the prototype chain of an object
 				 * @param	{Object}	obj				An instantiated object
@@ -692,6 +697,50 @@
 					qsort(arr, 0, arr.length);
 					return arr;
 				},
+				
+				/**
+				 * Returns the difference between two arrays
+				 * @param		{Array}		arr1		The first Array
+				 * @param		{Array}		arr2		The second Array
+				 * @param		{Number}	type		An optional index to change the returned elements: -1 for array 1 elements not found in array 2, 0 for those found in both, and 1 for those in array 2 not found in array 1; defaults to -1
+				 * @returns		{Array}					The resulting Array
+				 */
+				diff:function(arr1, arr2, type)
+				{
+					// parameters
+						if(typeof type === 'undefined')
+						{
+							type = -1;
+						}
+						else if(type === 1)
+						{
+							var temp = arr2;
+							arr2 = arr1;
+							arr1 = temp;
+						}
+						
+					// variables
+						var element;
+						var arrIn	= [];
+						var arrOut	= [];
+						
+					// do the difference
+						for (var i = 0; i < arr1.length; i++)
+						{
+							element = arr1[i];
+							if(arr2.indexOf(element) > -1)
+							{
+								arrIn.push(element);
+							}
+							else
+							{
+								arrOut.push(element);
+							}
+						}
+						
+					// return
+						return type == 0 ? arrIn : arrOut;
+				},
 
 				/**
 				 * Run each element of an array through a callback function
@@ -830,6 +879,45 @@
 				},
 
 				/**
+				 * Gets the nearest value to a target value from an array of values
+				 * @param	{Array}		values		An Array of values
+				 * @param	{Number}	value		A single numeric value
+				 * @param	{Number}	returnIndex	An optional Boolean to return the index rather than the value
+				 * @returns	{Number}				A value or index
+				 */
+				getNearestValue:function(values, value, returnIndex)
+				{
+					var lower = values[0];
+					var upper = values[values.length - 1];
+					if(value <= lower)
+					{
+						return lower;
+					}
+					else if(value >= upper)
+					{
+						return upper;
+					}
+					else
+					{
+						var index = 1;
+						while(values[index] <= value && index < values.length - 1)
+						{
+							index++;
+						}
+						lower = values[index - 1];
+						upper = values[index];
+						if(returnIndex)
+						{
+							return value - lower < upper - value ? index - 1 : index;
+						}
+						else
+						{
+							return value - lower < upper - value ? lower : upper;
+						}
+					}
+				},
+
+				/**
 				 * Comparison function to get a max or min value within an array of objects
 				 * @param	{Array}		elements		An Array of objects with named properties
 				 * @param	{String}	prop			The property to test
@@ -878,7 +966,7 @@
 					// return
 						return returnElement ? [minElement, maxElement] : [minValue, maxValue];
 				},
-
+				
 				/**
 				 * Gets properties from an object's namespace via a dot.syntax.path String
 				 * @param	{Object}	obj			The root object from which to extract the deep value
@@ -1883,3 +1971,4 @@
 	// register
 
 		xjsfl.classes.register('Utils', Utils);
+
