@@ -18,8 +18,9 @@
 
 		Recognises sections:
 		
-			/** ... * /	- doc comments
-			// #1 title	- section titles
+			/** ... * /		- doc comments
+			// # title		- section titles
+			// #1 title		- numbered section titles
 	
 		Recognises tags:
 		
@@ -693,7 +694,7 @@
 		{
 			init:function(text, line, level)
 			{
-				this.base(text, line);
+				this._super(text, line);
 				this.level		= level || 1;
 				this.class		= 'Heading';
 			},
@@ -716,7 +717,7 @@
 			
 			init:function(text, line)
 			{
-				this.base(text, line);
+				this._super(text, line);
 				this.class		= 'DocComment';
 				this.flags		= {};
 				this.tags		= {};
@@ -832,7 +833,7 @@
 			
 			init:function(name, text, line)
 			{
-				this.base(text, line);
+				this._super(text, line);
 				this.class		= 'Element';
 				this.name		= name;
 				this.object		= null;
@@ -855,7 +856,7 @@
 			
 			init:function(name, type, text, line)
 			{
-				this.base(name, text, line);
+				this._super(name, text, line);
 				this.class		= 'Variable';
 				this.type		= type;
 				this.reorderProps();
@@ -880,7 +881,7 @@
 			
 			init:function(name, type, text, accessor, line)
 			{
-				this.base(name, type, text);
+				this._super(name, type, text);
 				this.class		= 'Accessor';
 				this.readable	= accessor == 'get';
 				this.writable	= accessor == 'set';
@@ -937,7 +938,7 @@
 						}
 						
 					// super
-						this.base(name, text, line);
+						this._super(name, text, line);
 						this.tags		= {};
 						this.class		= 'Function';
 						
@@ -1030,7 +1031,7 @@
 				init	:function(name, text, members, line)
 				{
 					// super
-						this.base(name, text, line);
+						this._super(name, text, line);
 						this.tags = {};
 						
 					// variables
@@ -1140,7 +1141,7 @@
 			{
 				this.class		= this.class || 'Value';
 				this.type		= String(type).trim();
-				this.base(text);
+				this._super(text);
 			},
 
 			toString:function()
@@ -1162,7 +1163,7 @@
 			{
 				this.class		= this.class || 'Param';
 				this.name		= String(name).trim();
-				this.base(type, text);
+				this._super(type, text);
 			},
 
 			toString:function()
