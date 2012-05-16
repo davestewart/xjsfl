@@ -16,7 +16,7 @@
 				// exit early if the file doesn't exist
 					if( ! FLfile.exists(uri))
 					{
-						xjsfl.trace('The file "' +path+ '" does not exist');
+						xjsfl.output.trace('The file "' +path+ '" does not exist');
 						return false;
 					}
 
@@ -34,13 +34,13 @@
 							jsfl		= jsfl.replace('xjsfl.init(this)', '');
 
 						// debug
-							xjsfl.trace('Running file "' +path+ '" on ' +sel.length+ ' library item(s)...');
+							xjsfl.output.trace('Running file "' +path+ '" on ' +sel.length+ ' library item(s)...');
 
 						// loop
 							for(var i = 0; i < sel.length; i++)
 							{
 								// open librray item
-									xjsfl.trace("Updating item '" + sel[i].name + "'")
+									xjsfl.output.trace("Updating item '" + sel[i].name + "'")
 									lib.editItem(sel[i].name);
 
 								// execute script
@@ -49,7 +49,7 @@
 					}
 					else
 					{
-						xjsfl.trace('The JSFL command was empty');
+						xjsfl.output.trace('The JSFL command was empty');
 					}
 			}
 

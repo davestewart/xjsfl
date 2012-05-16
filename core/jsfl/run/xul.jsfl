@@ -26,6 +26,6 @@
 			}
 			else
 			{
-				xjsfl.trace('The file "' +FLfile.uriToPlatformPath(uri)+ '" was not found');
+				xjsfl.output.trace('The file "' +FLfile.uriToPlatformPath(uri)+ '" was not found');
 			}
 	}())

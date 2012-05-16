@@ -12,18 +12,20 @@
 				// remove any existing error logs
 					xjsfl.debug.clear();
 
-				// debug file
+				// run the file
 					try
 					{
-						xjsfl.debug.file(uri);
+						xjsfl.file.load(uri);
 					}
 
 				// top-level catch (errors are logged to disk within xjsfl.debug.file)
-					catch(err)
+					catch(error)
 					{
+						xjsfl.debug.error(error);
+						
 						var str			= "\nThe following JSFL error occurred:\n\n";
-						str				+= 'At line ' +err.lineNumber+ ' of file "' +err.fileName.split('/').pop()+ '":\n';
-						str				+= err.message + '\n';
+						str				+= 'At line ' +error.lineNumber+ ' of file "' +error.fileName.split('/').pop()+ '":\n';
+						str				+= error.message + '\n';
 						fl.trace(str);
 					}
 			}
