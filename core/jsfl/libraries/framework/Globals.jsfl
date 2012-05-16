@@ -92,7 +92,7 @@
 			format = function(template, values)
 			{
 				values = Array.prototype.splice.call(arguments, 1);
-				fl.outputPanel.trace(String(template).inject.apply(this, values));
+				fl.outputPanel.trace(String(template).inject(values));
 			}
 			
 			/**
