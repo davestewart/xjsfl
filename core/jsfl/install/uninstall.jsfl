@@ -118,7 +118,7 @@
 				}
 				else
 				{
-					return;
+					return false;
 				}
 
 		// ----------------------------------------------------------------------------------------
@@ -145,6 +145,12 @@
 						delete xjsfl[name];
 					}
 				}
+				
+			// set "uninstalled" flag
+				xjsfl.uninstalled = true;
+				
+			// return
+				return true;
 	}
-
+	
 	uninstall(this);

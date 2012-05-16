@@ -16,18 +16,49 @@
 		// ----------------------------------------------------------------------------------------
 		// checks
 		
-			// Check for native E4X
+			// check for native E4X
 				if( ! window.XMLList)
 				{
 					alert('xJSFL cannot be installed on this version of Flash.\n\nThe framework requires E4X, which is available only in Flash CS3 or newer.');
 					return false;
 				}
 				
-			// Check user is not installing into particular Flash folders
+			// check user is not installing into the Flash Configuration folder
 				if(fl.scriptURI.indexOf(fl.configURI) === 0)
 				{
 					alert('xJSFL cannot be installed in the Flash configuration folder, as this could create file-dependency loops.\n\nPlease move the xJSFL installation folder elsewhere and try again.');
 					return false;
+				}
+				
+			// check if user is using CS5, and if so, warn about empty error messages
+				if(fl.version.split(/[, ]/)[1] == '11')
+				{
+					var strs =
+					[
+						"It looks like you're using Flash CS5.",
+						"Unfortunately, CS5 has a bug where JavaScript error messages are output empty, meaning that on this platform, any JSFL errors that are thrown will be difficult to impossible to debug.",
+						"This issue doesn't affect the normal operation of xJSFL, but it *is* problematic during the everyday development of scripts (which invariably, will throw errors).",
+						"Note that Flash CS4 does not exhibit this behaviour, so if possible, you might find it easier to develop on CS4 instead.",
+						"Click OK to continue the installation."
+					];
+					var result = confirm(strs.join('\n\n'));
+					if(result !== true)
+					{
+						return false;
+					}
+				}
+				
+			// check that another extension hasn't broken for..in or for..each loops
+				var obj		= {};
+				var arr		= [];
+				var names	= [];
+				for(var name in obj)names.push(obj[name]);
+				for(var name in arr)names.push(arr[name]);
+				if(names.length)
+				{
+					var str = 'It looks like another script or extension has broken for..each loops by adding one or more methods to the Object or Array prototypes.\n\nThese extension(s) will need to be uninstalled or disabled before installation can continue. Check the Output panel for details.';
+					fl.trace('\nThe offending code is:\n\n\t' + names.join('\n\n').replace(/\n/g, '\n\t') + '\n\nPlease do a text search in your Flash configuration and Flash application folders for this \nJSFL code, and remove / disable their owning extensions for xJSFL installation to succeed.');
+					alert(str);
 				}
 				
 		// ----------------------------------------------------------------------------------------
