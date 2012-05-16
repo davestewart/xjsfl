@@ -91,9 +91,9 @@
 					}
 					return values[key];
 				}
-				
+
 			// return
-				return str.replace(rx, obj instanceof Array ? arrMatch : objMatch);
+				return this.replace(rx, obj instanceof Array ? arrMatch : objMatch);
 		}
 	
 	// ----------------------------------------------------------------------------------------------------
