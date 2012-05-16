@@ -52,9 +52,9 @@
 									var config = new XML(FLfile.read(xjsfl.uri + 'core/config/xjsfl.xml'));
 
 								// don't load framework if disabled
-									if(config && config.settings.@disabled == 1)
+									if(config && config.settings.enabled == 0)
 									{
-										trace('> xJSFL is currently disabled. To enable, go to Commands > xJSFL > Toggle Enabled');
+										trace('> xJSFL is currently disabled. To enable, see the Configuration dialog at Commands > xJSFL > Configuration');
 									}
 
 								// otherwise load framework
