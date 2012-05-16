@@ -14,20 +14,24 @@
 	// --------------------------------------------------------------------------------
 	// class
 		
-		/* Simple JavaScript Inheritance
-		 * @author			John Resig http://ejohn.org/
-		 * @contributor		Dave Stewart
-		 * MIT Licensed
+		/**
+		 * Simple JavaScript inheritance
+		 *
+		 * Combination of John Resig's Simple JavaScript Inheritane and Getters and Setters code
+		 * @see				http://ejohn.org/blog/simple-javascript-inheritance/
+		 * @see				http://ejohn.org/blog/javascript-getters-and-setters/
 		 */
 		(function ()
 		{
 			var initializing = false;
 			var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 			
-			// The base Class implementation (does nothing)
 			this.Class = function () { };
 		
-			// Create a new Class that inherits from this class
+			/**
+			 * Static method to create a new class, or extend an existing one
+			 * @param	{Object}	prop	The properties to add to the class
+			 */
 			Class.extend = function (prop)
 			{
 				var _super = this.prototype;
