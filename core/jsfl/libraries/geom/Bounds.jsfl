@@ -19,7 +19,9 @@
 
 		/**
 		 * Bounds object. Args: 0=Document size, 1=Element, 1=radius, 1=Array, 2=width,height, 4=width,height,x,y
+		 *
 		 * Useful for quickly creating objects on the stage
+		 *
 		 * @param	{Element}	element		A stage element
 		 * @param	{Number}	element		A radius
 		 * @param	{Array}		element		A selection
