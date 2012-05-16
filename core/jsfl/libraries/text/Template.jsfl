@@ -37,6 +37,7 @@
 				this.set(data);
 			}
 
+			//alert(pathOrURI)
 			/*
 			_render = function()
 			{
@@ -122,15 +123,15 @@
 
 				/**
 				 * Saves the rendered template to a file
-				 * @param	{String}	uriOrPath	The uri of where to save the file
+				 * @param	{String}	pathOrURI	The uri of where to save the file
 				 * @param	{Boolean}	overwrite	An optional Boolean specifying whether to overwrite an existing file or not
 				 */
-				save:function(uriOrPath, overwrite)
+				save:function(pathOrURI, overwrite)
 				{
-					if(uriOrPath != this.uri)
+					if(pathOrURI != this.uri)
 					{
 						//TODO Make sure this works properly (and compare to previous version)
-						var uri		= URI.toURI(uriOrPath, 1);
+						var uri		= URI.toURI(pathOrURI, 1);
 						var file	= new File(uri, this.render());
 						if( ! file.save() )
 						{
