@@ -569,10 +569,16 @@
 					prop = String(prop);
 
 				// RegExp comparison (^=, $=, *=)
-					//TODO Complete RegExp comparison
-					if(value instanceof RegExp)
+					if(operand === '^=' || operand === '$=' || operand === '*=')
 					{
-						return value.test(prop);
+						var rxStr = operand === '^='
+									? '^' + value
+									: operand === '$='
+										? value + '$'
+										: value;
+										
+						var rx = new RegExp(rxStr)
+						return rx.test(prop);
 					}
 
 				// finally, string operand (=, !=)
@@ -1301,7 +1307,8 @@
 			 */
 			selected:function(items)
 			{
-				return this.getSelectedItems();
+				var selected = this.getSelectedItems() || [];
+				return Utils.diff(items, selected, 0)
 			}
 
 		},
