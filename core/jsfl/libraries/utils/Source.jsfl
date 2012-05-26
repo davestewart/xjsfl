@@ -100,11 +100,12 @@
 				{
 					if(member instanceof Source.classes.Element && member.getTag('class'))
 					{
-						memebers.push(member);
+						members.push(member);
 					}
 				}
 				return members;
 			},
+	
 	
 		// --------------------------------------------------------------------------------
 		// parsing functions
@@ -436,7 +437,7 @@
 					var desc	= props.shift();
 					
 				// object
-					var obj		= new Source.classes.Heading(heading.trim(), desc ? desc.trim() : '', level);
+					var obj		= new Source.classes.Heading(heading.trim(), desc ? desc.trim() : '', text, level);
 					
 				// debug
 					if(this.debug)
@@ -609,7 +610,7 @@
 	
 		/*
 			+- Comment						class, text, line
-			|	+- Heading					class, text, line, level
+			|	+- Heading					class, text, line, desc, level
 			|	+- DocComment				class, text, line, tags
 			|		+- Element				class, text, line, tags, object, name
 			|			+- Variable			class, text, line, tags, object, name, type, 
@@ -692,13 +693,19 @@
 		 */
 		Source.classes.Heading =
 		{
-			init:function(text, line, level)
+			init:function(text, desc, line, level)
 			{
 				this._super(text, line);
 				this.level		= level || 1;
+				this.addText(desc || '');
 				this.class		= 'Heading';
 			},
 				
+			getText:function()
+			{
+				return this.text[0];
+			},
+			
 			toString:function()
 			{
 				return '[object Heading level="' +this.level+ '" text="' +(this.class ? this.getText() : '')+ '"]';
