@@ -35,7 +35,7 @@
 				init:function(pathOrUri, contents)
 				{
 					// uri
-						var uri = URI.toURI(pathOrUri, 1);
+						var uri = URI.toURI(pathOrUri, 5);
 		
 					// constructor
 						this._super(uri);

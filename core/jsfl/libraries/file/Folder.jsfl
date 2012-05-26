@@ -34,7 +34,7 @@
 						pathOrUri = String(pathOrUri).replace(/\/*$/, '/');
 		
 					// uri
-						var uri = URI.getFolder(URI.toURI(pathOrUri, 1));
+						var uri = URI.getFolder(URI.toURI(pathOrUri, 5));
 		
 					// constructor
 						this._super(uri);
