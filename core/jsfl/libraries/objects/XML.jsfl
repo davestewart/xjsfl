@@ -9,7 +9,13 @@
 //  ██  ██ ██   ██ ██████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// XML - XML extensions to work around Spidermonkey's buggy E4X declarate filtering
+// XML
+
+	/**
+	 * XML
+	 * @overview	XML extensions to work around Spidermonkey's buggy E4X declarate filtering
+	 * @instance	xml
+	 */
 
 (function xml()
 {
@@ -19,9 +25,32 @@
 	// --------------------------------------------------------------------------------
 	// RegExps
 	
+		/**
+		 * Finds the full path
+		 * @type {RegExp}	operator, node, index, filter, attribute, matchIndex
+		 * @ignore
+		 */
 		var rxPath			= /(?:(\.{0,2})([\-*\w]+))?(?:\[(\d+)\])?(?:\.\((.+?)\))?(?:\.(@[\-\w]+))?/g;
+		
+		/**
+		 *
+		 * @type {RegExp}	type, attr, operator, value
+		 * @ignore
+		 */
 		var rxFilter		= /([@#\.])([\w_-:]+)([\^\$!=<>]+)?([^"'\(\)]+)?/;
+		
+		/**
+		 * 
+		 * @type {RegExp}	.(type, attr, operator, value) / 
+		 * @ignore
+		 */
 		var rxFilterOnly	= new RegExp('^\.?\\(' +rxFilter.source+ '\\)$');
+		
+		/**
+		 * Matches an attribute
+		 * @type {RegExp}	i.e. @name, @some-name, @some_name
+		 * @ignore
+		 */		
 		var rxAttribute		= /^@[\w-_]+$/;
 		
 			
@@ -30,6 +59,7 @@
 	
 		/**
 		 * Alternative syntax for get, which allows a single filter to be passed in
+		 *
 		 * @param	{String}	path		An xJSFL E4X Path expression to a node
 		 * @param	{Boolean}	descendants	An optional Boolean to debug the path to the node
 		 * @returns	{XMLList}				An XML list of targetted nodes
@@ -39,7 +69,8 @@
 		 */
 		function find(attribute, descendants)
 		{
-
+			var path = '';
+			return this.get(path);
 		}
 		XML.prototype.function::find = find;
 		
@@ -48,13 +79,15 @@
 	
 		/**
 		 * Gets nodes according to an path or callback
+		 *
 		 * @param	{String}	path		An xJSFL E4X Path expression to a node
 		 * @param	{Boolean}	debug		An optional Boolean to debug the path to the node
 		 * @returns	{XMLList}				An XML list of targetted nodes
-		 * @example							xml.find('#id');
-		 * @example							xml.find('.class');
-		 * @example							xml.find('a.b.c.(@name=dave)');
-		 * @example							xml.find('a.b.c.(@name=dave).d.e.@attr');
+		 * @example							xml.get('#id');
+		 * @example							xml.get('.class');
+		 * @example							xml.get('a.b.c.(@name=dave)');
+		 * @example							xml.get('a.b.c.(@name=dave).d.e.@attr');
+		 * @see								http://www.connectedpixel.com/blog/e4x/callbackfilters
 		 */
 		function get(path, debug)
 		{
@@ -167,6 +200,7 @@
 		
 		/**
 		 * Sets a child node on the node via String path
+		 *
 		 * @param	{String}	path		An xJSFL E4X Path expression to a node
 		 * @param	{Object}	value		A value to assign or append to the targetted node
 		 * @param	{Boolean}	append		An optional Boolean to append rather than replace/update the targetted node
@@ -365,6 +399,7 @@
 		
 		/**
 		 * Remove the current node/attribute(s), or targeted node/attribute(s) from the current node
+		 *
 		 * @param	{String}	path		An optional xJSFL E4X Path expression to a node
 		 * @returns	{Boolean}				True or false, depending on a sucessful deletion. false means the node has no parent, or has already been deleted
 		 */
@@ -402,29 +437,15 @@
 		}
 		XML.prototype.function::remove = remove;
 
-
-	// --------------------------------------------------------------------------------
-	// PrettyPrint
-		
-		/**
-		 * Returns a pretty-printed XML string with correct tabbing and linespacing
-		 * @param	{Object}	useSystemNewline	An optional Boolean to 
-		 * @returns	{String}						An XML String
-		 */
-		function prettyPrint(useSystemNewline)
-		{
-			return this.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, useSystemNewline ? xjsfl.settings.newLine : '\n');
-		}
-		XML.prototype.function::prettyPrint = prettyPrint;
-
 		
 	// --------------------------------------------------------------------------------
 	// Filter
 		
 		/**
-		 * Returns a pretty-printed XML string with correct tabbing and linespacing
-		 * @param	{Object}	useSystemNewline	An optional Boolean to 
-		 * @returns	{String}						An XML String
+		 * Filters the existing nodeset using an xJSFL E4X callback expression
+		 *
+		 * @param	{String}	path		An xJSFL E4X Path expression to a node
+		 * @returns	{XMLList}				An XML list of targetted nodes
 		 */
 		function filter(filter)
 		{
@@ -483,6 +504,154 @@
 				return elements;
 
 		}
+		// Should this be XMLList!?
 		XML.prototype.function::filter = filter;
+		
+		
+	// --------------------------------------------------------------------------------
+	// PrettyPrint
+		
+		/**
+		 * Returns a pretty-printed XML string with correct tabbing and linespacing
+		 *
+		 * @param	{Object}	useSystemNewline	An optional Boolean to 
+		 * @returns	{String}						An XML String
+		 */
+		function prettyPrint(useSystemNewline)
+		{
+			return this.toXMLString().replace(/ {2}/g, '\t').replace(/\n/g, useSystemNewline ? xjsfl.settings.newLine : '\n');
+		}
+		XML.prototype.function::prettyPrint = prettyPrint;
+
+
 	
 })()
+
+/*
+	var xml =
+		<xml>
+			<path>
+				<to>
+					<node index="1" value="value1" id="ID"/>
+					<node index="2" value="value2" />
+					<node index="3" value="value3" class="green"/>
+					<node index="4" value="value4" class="red">
+						<target index="5" id="dummy"/>
+						<target index="6" id="gateway" class="green">
+							<node index="7" id="final" />
+						</target>
+					</node>
+				</to>
+				<node index="8" value="value1" id="ID"/>
+			</path>
+			<node index="9" value="value1" id="ID"/>
+		</xml>
+*/
+		
+
+/*
+	//var path	= "xml.path.to.node.(.value4).target.(#gateway).node.(@value=Dave)";
+	//var path	= "xml.path.to.node.(function::attribute('value') == 'value4').target.(function::attribute('id') == 'gateway')";
+	//var path	= "xml.path.to.node.(function::attribute('value') == 'value4').target";
+	//var node	= xml.path.to.node.(function::attribute('value') == 'value4').target.(function::attribute('id') == 'gateway')
+	//var nodes	= eval(str);
+	
+	
+	//var path	= "path.to.node.(.red).target.(#gateway).@class";
+	
+	//var path = 'path.to'
+	//var path	= ".*.(.green)";
+	//var path	= ".green";
+	//var path	= "@class^=g";
+	
+	//var path	= "@index>1";
+	//var path	= "path.to.node.(@index>2)";
+	//var path	= "path.to.node.(@index)";
+	//var path	= ".*.(#ID)";
+	//var nodes	= findNode(xml, path, true, true);
+
+	var nodes	= xml.get(path, true, true);
+*/
+
+//var nodes = xml.path.to.node.(@index == 3)
+
+/*
+
+	trace(nodes.length(), nodes.toXMLString())
+	
+	var state = xml.find('path.to.node').remove();
+	trace(state)
+	
+	trace(xml.toXMLString())
+	
+	//var node = xml.path.to.node.(function::attribute('id') == 'ID').remove()
+	//var node = xml.find('@id', true).remove()
+	
+	//var node = xml.find('node', true, true).remove()
+	trace();
+	
+	var node = xml..*.(function::name() == 'node');
+	var node = xml..*.(function::attribute('index') > 0);
+	//var node = xml.find('@index>0', true, true);
+	
+	
+	var node = xml.find('@index>0', false, true);
+	var node = xml.find('*.(@index>0)', false, true);
+	
+	var node = xml.find('@index>0', true, true);
+	var node = xml.find('*.(@index>0)', true, true);
+	var node = xml.find('.*.(@index>0)', false, true);
+	var node = xml.find('..*.(@index>0)', false, true);
+	
+	function callback(node, index)
+	{
+		return node.@index > 4;
+	}
+	
+	var node = xml.find(callback, true)[0].remove()
+	
+	delete[0]//.remove()
+	//inspect(node)
+*/
+
+
+
+
+
+/*
+	
+clear();
+var xml =
+	<xml>
+		<a id="a" vowel="true"/>
+		<b id="b" />
+		<c id="c" class="test" />
+		<d id="d" class="test">
+			<e id="e" vowel="true">
+				<f id="f" class="test" />
+			</e>
+		</d>
+	</xml>
+	
+
+	//inspect(xml.get('a'));
+	//inspect(xml.get('d.e.f'));
+	//inspect(xml.get('*.(.test)'));
+	inspect(xml.get('*.(@class=test)', true));
+	
+	//inspect(xml.get('#id'));
+	//inspect(xml.get('.class'));
+	//inspect(xml.get('a.b.c.(@name=dave)'));
+	//inspect(xml.get('a.b.c.(@name=dave).d.e.@attr'));
+
+	//xml.remove('*.(.test)', true)
+	//xml.remove('a.@id', true)
+
+	//delete xml.*.(function::attribute('@class') == 'test')
+	
+	
+	//trace(xml.toXMLString());
+*/
+	
+	
+
