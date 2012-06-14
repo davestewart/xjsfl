@@ -6,6 +6,8 @@ package
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
+	import flash.utils.setTimeout;
+	import flash.external.ExternalInterface;
 	
 	import fl.controls.Button;
 	
@@ -48,6 +50,9 @@ package
 					
 				// generic resize handler
 					addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+
+				// register external function
+					ExternalInterface.addCallback('externalFunction', externalFunction);
 			}
 			
 			
@@ -147,7 +152,15 @@ package
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Protected methods
 		
-			
+			protected function externalFunction(value):String
+			{
+				// feedback
+					tfResults.text = 'External function called with value "' +value+ '"';
+					
+				// return
+					return 'function called!';
+			}
+
 
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Utilities
