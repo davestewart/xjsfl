@@ -27,6 +27,7 @@
 		 *
 		 * @param	{String}	namespace		The namespace of the module in the xjsfl.modules object, i.e. "keyframer"
 		 * @param	{object}	properties		The properties and methods of the object. Supply a constructor with "init:function(){ ... }"
+		 * @param	{Window}	window			The current window object
 		 */
 		Module = function(namespace, properties, window)
 		{
@@ -102,14 +103,6 @@
 				uri:		'',
 
 				/**
-				 * @type {String} The shortened path to the module's folder
-				 */
-				get path()
-				{
-					return URI.asPath(this.uri, true);
-				},
-
-				/**
 				 * @type {SWFPanel} A reference to the panel, if it exists
 				 */
 				panel:		null,
@@ -130,8 +123,8 @@
 				},
 
 				/**
-				 * Calls the module's panel
-				 * @returns	{Boolean}	true if there's a panel, false otherwise
+				 * Calls an externally-registered function in the module's panel. Note that the number of arguments MUST match the registered function
+				 * @returns	{Object}	The result of the call
 				 * @example				module.call('someFunction', 1, 2, 3);
 				 */
 				call:function()
@@ -140,7 +133,6 @@
 					{
 						return this.panel.call.apply(this.panel, arguments)
 					}
-					return false;
 				},
 
 				/**
@@ -172,7 +164,8 @@
 				 */
 				toString:function()
 				{
-					return '[object Module name="' +this.name+ '" path="' +this.path+ '"]';
+					var path = URI.asPath(this.uri);
+					return '[object Module name="' +this.name+ '" path="' +path+ '"]';
 				}
 
 		}
