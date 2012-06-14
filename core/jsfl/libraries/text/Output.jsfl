@@ -11,15 +11,16 @@
 //                     ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Output - provides logging functionality, object introspection, and a variety of printing and formatting methods
-
-
-	// includes
-		xjsfl.init(this, ['Table', 'Utils']);
+// Output
 
 	/**
-	 * Provides logging functionality, object introspection, and a variety of printing and formatting methods
+	 * Output
+	 * @overview	Provides logging functionality, object introspection, and a variety of printing and formatting methods
+	 * @instance	Output
 	 */
+
+	xjsfl.init(this, ['Table', 'Utils']);
+
 	Output =
 	{
 
@@ -320,6 +321,7 @@
 					 * @param	{Object}		value			Any value or object
 					 * @param	{Boolean}		getClassName	return the class name rather than the type if possible
 					 * @returns	The type of classname of a value
+					 * @ignore
 					 */
 					function getType(value, getClassName)
 					{
@@ -385,7 +387,7 @@
 
 							case 'xml':
 								// If an XMLList has only one element, you can treat is as XML
-								// @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/XMLList.html
+								// http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/XMLList.html
 								className = value.length() > 1 ? 'XMLList' : 'XML';
 							break;
 
@@ -552,16 +554,6 @@
 				// return
 					return strOutput;
 
-		},
-
-		/**
-		 * Convenience function to Table.print() to output value in tabular format
-		 * @param	{array}		arr			An Array of values
-		 * @returns	{String}				The output of the print() call
-		 */
-		table:function(arr)
-		{
-			return Table.print(arr);
 		},
 
 		/**
