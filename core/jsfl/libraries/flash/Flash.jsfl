@@ -9,10 +9,14 @@
 //  ██     ██ █████ █████ ██ ██ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Flash - Miscellaneous methods and properties that should already be part of Flash (but aren't!)
+// Flash
 
-	// includes
-		xjsfl.init(this, ['Events']);
+	/**
+	 * Flash
+	 * @overview	Miscellaneous methods and properties that should already be part of Flash (but aren't!)
+	 */
+
+	xjsfl.init(this, ['Events']);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// Document
@@ -35,12 +39,11 @@
 	
 		/**
 		 * Gets the selected layers of a Timeline
-		 * @returns		{Array}						An Array of Layer instances
-		 * @property	{String}	selectedLayers	Gets the selected layers of a Timeline
+		 * @type		{String}
+		 * @name		Timeline.selectedLayers
+		 * @example		var layers = $timeline.selectedLayers;
 		 */
-		Timeline.prototype.__defineGetter__
-		(
-			'selectedLayers',
+		Timeline.prototype.__defineGetter__('selectedLayers',
 			function ()
 			{
 				// variables
@@ -57,18 +60,17 @@
 					return	selectedLayers;
 			}
 		);
-
+		
 	// ----------------------------------------------------------------------------------------------------
 	// Library
 	
 		/**
-		 * Gets the short name of a Library Item
-		 * @returns	{String}			The short name of an item
-		 * @function
+		 * The short name of an item
+		 * @type		{String}
+		 * @name		LibraryItem.shortname
+		 * @example		$library.items[20].shortName = 'Symbol 5'
 		 */
-		LibraryItem.prototype.__defineGetter__
-		(
-			'shortName',
+		LibraryItem.prototype.__defineGetter__('shortName',
 			function()
 			{
 				return this.name.split('/').pop();
