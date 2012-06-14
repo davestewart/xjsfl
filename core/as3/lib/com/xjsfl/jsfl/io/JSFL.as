@@ -47,6 +47,8 @@ package com.xjsfl.jsfl.io
 			 */		 		 		 		
 			public static function call(functionName:String, args:Array = null, scope:String = null):*
 			{
+				//return;
+				
 				// variables
 					args		= args || [];
 					scope		= scope || functionName.replace(/\.\w+$/, '');
@@ -60,6 +62,7 @@ package com.xjsfl.jsfl.io
 						}
 						else
 						{
+							// BUG - is there a bug in authoring here?
 							args[i] = JSFLInterface.serialize(args[i]);
 						}
 					}
@@ -86,8 +89,11 @@ package com.xjsfl.jsfl.io
 						result				= JSFLInterface.deserialize(value);
 					}
 					
+
+					
 				// return
 					return result;
+					
 			}
 			
 			/**
