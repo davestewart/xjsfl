@@ -9,13 +9,18 @@
 //  ██████ █████ ██ █████ █████  ████ █████ ██   █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Selectors - static repository of tests used by the Selector class
+// Selectors
 
-	// includes
-		xjsfl.init(this, ['Context', 'Iterators', 'Selector', 'Utils']);
+	/**
+	 * Selectors
+	 * @overview	Static repository of tests used by the Selector class
+	 * @instance	
+	 */
+
+	xjsfl.init(this, ['Context', 'Iterators', 'Selector', 'Utils']);
 		
 	// ----------------------------------------------------------------------------------------------------
-	// MAIN SELECTORS CLASS
+	// # Main Selectors class
 
 		var Selectors =
 		{
@@ -174,6 +179,10 @@
 						*/
 						//var chunker = /(:([\-\w]+)\((.+)\))|([\*\d\w][\-\w\d\s_*{|}]+)|\/([\-\w\s\/_*{|}]+)|\.([*A-Z][\w*]+)|\.([a-z][\w.*]+)|:([a-z]\w+)|\[((\w+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
 						var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z_*][\-\w\s_.*{|}]*)|\/([\-\w\s\/_*{|}]+)|:([*A-Z][\w*]+)|:([a-z][\w*]+\.[\w.*]+)|:([a-z]\w+)|\[(([\w\.]+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
+									//  1 2          3      4                              5                   6               7                       8           9 10       11                12
+
+						var chunker = /(:([\-\w]+)\((.+)\))|([A-Za-z0-9_*].*)|\/([\-\w\s\/_*{|}]+)|\.([*A-Z][\w*]+)|\.([a-z][\w.*]+)|:([a-z]\w+)|\[(([\w\.]+)([\^$*!=<>]{1,2})?(.+?)?)\]/g;
+									//  1 2          3      4                                 5                6                7                8              9 10      11                12
 	
 					// variables
 						var exec,
@@ -216,25 +225,25 @@
 									selector.params	= [null, exec[3], type];
 								}
 	
-							// 4: name "this is a name"
+							// 4: name "Item_03"
 								else if(exec[4])
 								{
 									selector.type	= 'filter';
-									selector.type	= 'name';
+									selector.name	= 'name';
 									selector.method	= object.filter.name;
 									selector.params	= [null, Selector.makeRX(exec[4], selector), selector.range];
 								}
 	
-							// 5: path "/path/to/item" (can only be Library)
+							// 5: path "/path/to/item" (can only be Library or Stage)
 								else if(exec[5])
 								{
 									selector.type	= 'filter';
 									selector.name	= 'path';
 									selector.method	= object.filter.path;
-									selector.params	= [null, Selector.makeRX(exec[5], selector), selector.range];
+									selector.params	= [null, Selector.makeRX(exec[5].replace(/(^\/+|\/+$)/g, ''), selector), selector.range];
 								}
 	
-							// 6: Class ":Class"
+							// 6: Class ".Class"
 								else if(exec[6])
 								{
 									selector.type	= 'filter';
@@ -243,7 +252,7 @@
 									selector.params	= [null, Selector.makeRX(exec[6], selector)];
 								}
 	
-							// 7: package ":com.domain.package.Class"
+							// 7: package ".com.domain.package.Class"
 								else if(exec[7])
 								{
 									selector.type	= 'filter';
@@ -310,7 +319,7 @@
 										}
 										else
 										{
-											attValue = Selector.makeRX(exec[12], selector);
+											attValue = /[\*{}]/.test(attValue) ? Selector.makeRX(attValue, selector) : attValue;
 										}
 	
 									// assign
@@ -340,6 +349,10 @@
 	
 				// debug
 					//inspect(selectors, 'SELECTORS');
+					if(selectors.length == 0)
+					{
+						//throw new Error('Error: The selector expression "' +expression+ '" is not valid');
+					}
 	
 				// return
 					return selectors;
@@ -485,13 +498,11 @@
 //  ██████ █████ ██   █████        ██   █████ █████  ████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Core Tests
+// # Core Tests
 
 	Selectors.core =
 	{
-		/**
-		 *
-		 */
+		// # Filter
 		filter:
 		{
 			/**
@@ -507,6 +518,8 @@
 			 */
 			attribute:function(item, name, operand, value, range, custom)
 			{
+				//trace('Testing attribute: ' + [item, name, operand, value, range, custom]);
+				
 				// variables
 					var callback, prop;
 
@@ -559,6 +572,7 @@
 					}
 
 				// range comparison (={min|max} converted to range object {min:n, max:m})
+				// NOTE: this does not handle mixed values, like 'star1' to 'star5'
 					if(range)
 					{
 						//trace('RANGE');
@@ -571,6 +585,7 @@
 				// RegExp comparison (^=, $=, *=)
 					if(operand === '^=' || operand === '$=' || operand === '*=')
 					{
+						//trace('CONTAINS, STARTS OR ENDS WITH')
 						var rxStr = operand === '^='
 									? '^' + value
 									: operand === '$='
@@ -581,21 +596,40 @@
 						return rx.test(prop);
 					}
 
+				// test for wildcards
+					if(value instanceof RegExp)
+					{
+						//trace('REGEXP')
+						switch(operand)
+						{
+							case '=':		return value.test(prop);
+							case '!=':		return ! value.test(prop);
+							default:		return false;
+						}
+					}
+
 				// finally, string operand (=, !=)
-					//trace('STRING');
 					switch(operand)
 					{
 						case '=':		return prop === value;
 						case '!=':		return prop !== value;
 						default:		return false;
 					}
+
 			}
 
 		},
 
+		// # Math
 		math:
 		{
 
+			/**
+			 * Returns items within a min and max range value
+			 * @param		{String}		str			A numeric value
+			 * @param		{Object}		range		A Range object with .min and .max values
+			 * @returns		{Boolean}					true or false depending if the value was was within the range
+			 */
 			range:function(str, range)
 			{
 				var value = parseFloat(str);
@@ -613,6 +647,7 @@
 
 		},
 
+		// # Find
 		find:
 		{
 			/**
@@ -682,13 +717,15 @@
 
 		},
 
+		// # Combo
 		combo:
 		{
 			/**
-			 *
-			 * @param	selector
-			 * @param	test
-			 * @returns
+			 * Returns the opposite value to that of the supplied expression
+			 * @param		{Array}		items			An Array of items
+			 * @param		{String}	expression		The CSS expression to negate
+			 * @param		{String}	type			The type of selection
+			 * @returns		{Array}						An Array of items
 			 */
 			not:function(items, expression, type)
 			{
@@ -718,14 +755,23 @@
 			 */
 			contains:function(items, expression, type)
 			{
+				throw new ReferenceError('The :contains() selector is not implemented yet');
 				return items;
 			},
 			
 			has:function(items, expression, type)
 			{
+				throw new ReferenceError('The :has() selector is not implemented yet');
 				return items;
 			},
 			
+			/**
+			 * Randomly returns items according to a 0.0 - 1.0 theshold
+			 * @param		{Array}		items			An Array of items
+			 * @param		{String}	expression		An expression of the format 0.0 to 1.0
+			 * @param		{String}	type			Description
+			 * @returns		{Array}						An Array of items
+			 */
 			random:function(items, expression, type)
 			{
 				var amount = parseFloat(expression);
@@ -755,6 +801,7 @@
 								0		1		2	3	4
 								odd		odd			
 								even	even			
+								random	random
 								3				3		
 								3n				3		
 								3n+1			3	+	1
@@ -828,7 +875,7 @@
 //  ██████ ██ █████ ██ ██ ██ █████ ██ ██  ████        ██   █████ █████  ████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Element Tests
+// # Element Tests
 
 	Selectors.element =
 	{
@@ -843,6 +890,7 @@
 			return Selectors.register(pattern, callback, 'element');
 		},
 
+		// # Filters
 		filter:
 		{
 			/**
@@ -963,6 +1011,7 @@
 
 		},
 
+		// # Find
 		find:
 		{
 			selected:function(items)
@@ -972,6 +1021,7 @@
 			}
 		},
 
+		// # Psuedo
 		pseudo:
 		{
 			/**
@@ -1083,7 +1133,7 @@
 //  ██  ████ █████ ██ ██ ██        ██   █████ █████  ████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Item Tests
+// # Item Tests
 
 	Selectors.item =
 	{
@@ -1092,6 +1142,7 @@
 			Selectors.register(pattern, callback, 'item');
 		},
 
+		// # Filters
 		filter:
 		{
 			/**
@@ -1198,6 +1249,7 @@
 
 		},
 
+		// # Find
 		find:
 		{
 			/**
@@ -1313,6 +1365,7 @@
 
 		},
 
+		// # Pseudo
 		pseudo:
 		{
 			/**
@@ -1425,10 +1478,11 @@
 //    ██   ██ ██ ██ ██ █████ ██ ██ ██ ██ █████        ██   █████ █████  ████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Timeline Tests
+// # Timeline Tests
 
 	Selectors.timeline =
 	{
+		// # Pseudo
 		pseudo:
 		{
 			/**
@@ -1478,8 +1532,7 @@
 			 */
 			audible:function(timeline)
 			{
-				var context = Context.create();//new Context(this, timeline);
-				return Iterators.layers(context, null, function (frame){ return frame.soundLibraryItem != null; });
+				return Iterators.layers(timeline, null, function (frame){ return frame.soundLibraryItem != null; });
 			}
 		},
 
