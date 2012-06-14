@@ -215,7 +215,8 @@ FileManager =
 										// get source
 											try
 											{
-												var members		= Source.parseFile(uri).getMembers();
+												var source = new Source();
+												var members = source.parseFile(uri).getMembers();
 											}
 											catch(error)
 											{
@@ -224,7 +225,7 @@ FileManager =
 											}
 											
 										// determine snippets instructions by checking leading DocComment
-												var process		= 'file';
+											var process		= 'file';
 											var member		= members.shift();
 											if(member instanceof Source.classes.DocComment)
 											{
