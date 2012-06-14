@@ -14,7 +14,16 @@
 // Config
 
 	// -----------------------------------------------------------------------------------------------------------
+	// functions
+
+		function getPath(uri)
+		{
+			return FLfile.uriToPlatformPath(uri).replace(/\\/g, '/');
+		}
+
+	// -----------------------------------------------------------------------------------------------------------
 	// setup
+
 		// document dom
 			var dom = fl.getDocumentDOM();
 			if( ! dom )
@@ -51,12 +60,20 @@
 			// ---------------------------------------------------------------------------------------------------
 			// update installation folder
 			
-				var installURI = FLfile.platformPathToURI(results.installfolder);
-				if(xjsfl.uri != installURI)
+				var installURI = String(FLfile.platformPathToURI(results.installfolder)).replace(/\/*$/, '/');	
+				if(FLfile.exists(installURI + 'core/jsfl/libraries/xjsfl.jsfl'))
 				{
-					var iniURI = fl.configURI + 'Tools/xJSFL.ini';
-					FLfile.write(iniURI, folderURI);
-					alert('The xJSFL installation location has been updated. Restart Flash for changes to take effect.');
+					installURI = installURI			
+					if(xjsfl.uri != installURI)
+					{
+						var iniURI = fl.configURI + 'Tools/xJSFL.ini';
+						FLfile.write(iniURI, installURI);
+						alert('The xJSFL installation location has been changed to "' +getPath(installURI)+ '".\n\nRestart Flash for changes to take effect.');
+					}
+				}
+				else
+				{
+					alert('The xJSFL installation location cannot be changed, as "' +getPath(installURI)+ '" is not an xJSFL installation folder.');
 				}
 				
 			// ---------------------------------------------------------------------------------------------------
