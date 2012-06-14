@@ -26,17 +26,17 @@
 		{
 
 			/**
-			 * Tests whether an element is one of the few elements that needs resolving
-			 * @param	{Object}	instance	An object or class instance
+			 * Tests whether an object is one of the few objects that needs resolving
+			 * @param	{Object}	object		An object or class instance
 			 * @returns	{Boolean}				true or false, depending on the result
 			 */
-			testInstance:function(instance)
+			testObject:function(object)
 			{
-				return instance instanceof SymbolItem || instance instanceof Shape || instance instanceof Window;
+				return object instanceof SymbolItem || object instanceof Shape || object instanceof Window;
 			},
 
 			/**
-			 * Tests an element to see if a property name needs resolving
+			 * Tests an object to see if a property name needs resolving
 			 * @param	{String}	name		A property name
 			 * @returns	{Boolean}				true or false, depending on the result
 			 */
@@ -46,48 +46,48 @@
 			},
 
 			/**
-			 * Resolves the property value of an element
-			 * @param	{Object}	element		An object or class instance
+			 * Resolves the property value of an object
+			 * @param	{Object}	object		An object or class instance
 			 * @param	{String}	name		A property name
 			 * @returns	{Object}				The value of the property
 			 */
-			resolve:function(element, name)
+			resolve:function(object, name)
 			{
-				if(element instanceof SymbolInstance)
+				if(object instanceof SymbolInstance)
 				{
 					var method = this.methods[name];
-					return method ? method(element) : element[name];
+					return method ? method(object) : object[name];
 				}
-				return element[name];
+				return object[name];
 			},
 
 			methods:
 			{
-				brightness:function(element)
+				brightness:function(object)
 				{
-					if(element instanceof Element)
+					if(object instanceof Element)
 					{
-						return element.colorMode === 'brightness' ? element.brightness : undefined;
+						return object.colorMode === 'brightness' ? object.brightness : undefined;
 					}
-					return element.brightness;
+					return object.brightness;
 				},
 
-				tintColor:function(element)
+				tintColor:function(object)
 				{
-					if(element instanceof Element)
+					if(object instanceof Element)
 					{
-						return element.colorMode === 'tintColor' ? element.tintColor : undefined;
+						return object.colorMode === 'tint' ? object.tintColor : undefined;
 					}
-					return element.tintColor;
+					return object.tintColor;
 				},
 
-				tintPercent:function(element)
+				tintPercent:function(object)
 				{
-					if(element instanceof Element)
+					if(object instanceof Element)
 					{
-						return element.colorMode === 'tintPercent' ? element.tintPercent : undefined;
+						return object.colorMode === 'tint' ? object.tintPercent : undefined;
 					}
-					return element.tintPercent;
+					return object.tintPercent;
 				},
 			},
 
