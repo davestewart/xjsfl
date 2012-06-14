@@ -9,10 +9,15 @@
 //  ██   ██ █████ █████ █████ ██ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Module - Base class used to create and manage xJSFL Modules
+// Module
 
-	// includes
-		xjsfl.init(this, ['Config', 'URI', 'Utils']);
+	/**
+	 * Module
+	 * @overview	Base class used to create and manage xJSFL Modules
+	 * @instance	module
+	 */
+
+	xjsfl.init(this, ['Config', 'URI', 'Utils']);
 		
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
@@ -79,7 +84,7 @@
 				constructor:Module,
 
 			// ----------------------------------------------------------------------------------------
-			// # properties 
+			// # Properties 
 
 				/**
 				 * @type {String} The namespace of the module
@@ -111,7 +116,7 @@
 				
 
 			// ----------------------------------------------------------------------------------------
-			// # methods 
+			// # Methods 
 
 				/**
 				 * Load a named module Config file object, either a default, or a specific object
@@ -127,6 +132,7 @@
 				/**
 				 * Calls the module's panel
 				 * @returns	{Boolean}	true if there's a panel, false otherwise
+				 * @example				module.call('someFunction', 1, 2, 3);
 				 */
 				call:function()
 				{
