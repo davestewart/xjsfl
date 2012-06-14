@@ -1,6 +1,7 @@
 ﻿package com.xjsfl.ui
 {
 	import com.xjsfl.geom.Size;
+	import com.xjsfl.ui.events.UIEvent;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	
@@ -17,16 +18,9 @@
 	public class Component extends Sprite
 	{
 		
-		
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Variables
 		
-			// static variables
-					
-				// event
-					public static const RESIZE			:String			= 'Component.resize';
-					public static const DRAW			:String			= 'Component.draw';
-					
 			// properties
 			
 				// layout
@@ -155,7 +149,7 @@
 			{
 				if (newWidth != _width || newHeight != _height)
 				{
-					dispatchEvent(new Event(Event.RESIZE, true));
+					dispatchEvent(new UIEvent(UIEvent.RESIZE));
 					_width = newWidth;
 					_height = newHeight;
 				}
@@ -172,7 +166,7 @@
 					_invalidationCallback();
 				}
 				removeEventListener(Event.ENTER_FRAME, onInvalidate);
-				dispatchEvent(new Event(Component.DRAW));
+				dispatchEvent(new UIEvent(UIEvent.DRAW));
 			}	
 
 			
