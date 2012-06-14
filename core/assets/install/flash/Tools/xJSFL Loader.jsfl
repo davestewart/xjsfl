@@ -42,9 +42,9 @@
 							xjsfl.reload = function()
 							{
 								// check xjsfl folder exists
-									if( ! FLfile.exists(xjsfl.uri) )
+									if( ! FLfile.exists(xjsfl.uri + 'core/jsfl/libraries/xjsfl.jsfl') )
 									{
-										trace('> xjsfl: The xJSFL installation folder at "' +uriToPath(xjsfl.uri)+ '" appears to have been moved or deleted, so xJSFL cannot load.');
+										trace('> xjsfl: The folder "' +uriToPath(xjsfl.uri)+ '" does not appear to be an xJSFL installation folder, so xJSFL cannot load.');
 										return;
 									}
 
@@ -87,7 +87,7 @@
 								delete xjsfl.MM_loaded;
 
 							// set xJSFL uri
-								xjsfl.uri = FLfile.read(fl.configURI + 'Tools/xJSFL.ini');
+								xjsfl.uri = FLfile.read(fl.configURI + 'Tools/xJSFL.ini').replace(/\/*$/, '/');
 
 							// load framework
 								xjsfl.reload();
