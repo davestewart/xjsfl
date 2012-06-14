@@ -13,67 +13,69 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // ActionScript
 
+	xjsfl.init(this);
+		
 	/**
 	 * ActionScript
 	 * @overview	Provides ActionScript 3 related utilities
 	 * @instance	ActionScript
 	 */
-
-ActionScript =
-{
-	/**
-	 * Gets the AS3 base class of an item or element
-	 * @param		{LibraryItem}	item		A library item
-	 * @param		{Element}		item		A library item
-	 * @returns		{String}					The String class of the object
-	 */
-	getBaseClass:function(item)
+	ActionScript =
 	{
-		if(item instanceof Element)
+		/**
+		 * Gets the AS3 base class of an item or element
+		 * @param		{LibraryItem}	item		A library item
+		 * @param		{Element}		item		A library item
+		 * @returns		{String}					The String class of the object
+		 */
+		getBaseClass:function(item)
 		{
-			item = item.libraryItem;
-		}
-		
-		if(item instanceof LibraryItem)
-		{
-			if(item.linkageBaseClass)
+			if(item instanceof Element)
 			{
-				return item.linkageBaseClass
+				item = item.libraryItem;
 			}
-			else
+			
+			if(item instanceof LibraryItem)
 			{
-				var types =
+				if(item.linkageBaseClass)
 				{
-					'movie clip'		: 'flash.display.MovieClip',
-					'button'			: 'flash.display.SimpleButton',
-					'bitmap'			: 'flash.display.Bitmap',
-					'sound'				: 'flash.media.Sound',
-					'video'				: 'flash.media.Video',
-					'font'				: 'flash.text.Font',
-				};
-				
-				if(item.itemType === 'movie clip')
-				{
-					return item.timeline.frameCount === 1 ? 'flash.display.Sprite' : types['movie clip'];
+					return item.linkageBaseClass
 				}
 				else
 				{
-					return types[item.itemType] || null;
+					var types =
+					{
+						'movie clip'		: 'flash.display.MovieClip',
+						'button'			: 'flash.display.SimpleButton',
+						'bitmap'			: 'flash.display.Bitmap',
+						'sound'				: 'flash.media.Sound',
+						'video'				: 'flash.media.Video',
+						'font'				: 'flash.text.Font',
+					};
+					
+					if(item.itemType === 'movie clip')
+					{
+						return item.timeline.frameCount === 1 ? 'flash.display.Sprite' : types['movie clip'];
+					}
+					else
+					{
+						return types[item.itemType] || null;
+					}
 				}
 			}
-		}
-		return null;
-	},
-	
-	compileSWC:function()
-	{
+			return null;
+		},
 		
-	},
+		compileSWC:function()
+		{
+			
+		},
+	
+	}
 
-}
-
-
-
+	xjsfl.classes.register('ActionScript', ActionScript);
+		
+		
 // http://help.adobe.com/en_US/flex/using/WS2db454920e96a9e51e63e3d11c0bf69084-7a80.html
 // http://troyworks.com/blog/2010/03/04/how-to-create-swc-actionscript-libraries/
 
