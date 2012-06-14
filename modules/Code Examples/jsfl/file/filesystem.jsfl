@@ -17,9 +17,7 @@
 
 		/**
 		 * create a new file and inspect its properties
-		 * which is ace
 		 * 
-		 * This should be useful
 		 * @param	{String}	filename	The filename
 		 * @param	{String}	folder		The folder
 		 * @returns	{String}				A new folder
@@ -74,6 +72,40 @@
 		function fileOpenWord()
 		{
 			var file = new File(temp + 'document.doc', 'Hello!').open();
+		}
+		
+		/**
+		 * Write to a writable and unwritable file and see the results
+		 */
+		function fileWritable()
+		{
+			// clear the existing file
+				var file = new File('writable.txt', '', true);
+				
+			// create the new (unsaved) file reference
+				var file = new File('writable.txt');
+				
+			// check contents
+				file.writable = false;
+				var written = file.write('Hello!');
+				
+			// results
+				trace('Writing to unwritable file...');
+				trace('contents: ' + file.contents);
+				trace('writable: ' + file.writable);
+				trace('written : ' + written);
+				trace('saved:    ' + file.saved);
+				
+			// set unwritable and attempt to write
+				file.writable = true;
+				var written = file.write('Goodbye!');
+				
+			// results
+				trace('\nWriting to writable file...');
+				trace('contents: ' + file.contents)
+				trace('writable: ' + file.writable);
+				trace('written : ' + written);
+				trace('saved:    ' + file.saved);
 		}
 
 	// --------------------------------------------------------------------------------

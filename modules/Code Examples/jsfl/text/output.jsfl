@@ -46,7 +46,7 @@
 		 */
 		function outputMultipleCustomList()
 		{
-			Output.list($library.items, ['name', 'timeline', 'itemType']);
+			Output.list($library.items, ['name', 'itemType']);
 		}
 	
 		/**
@@ -54,6 +54,7 @@
 		 */
 		function outputSelection()
 		{
+			if(UI.selection)
 			Output.list($selection[0]);
 		}
 			
@@ -83,6 +84,7 @@
 		 */
 		function outputInspectSelection()
 		{
+			if(UI.selection)
 			Output.inspect($selection, 5);
 		}
 
@@ -102,6 +104,7 @@
 		 */
 		function outputTableSelection()
 		{
+			if(UI.selection)
 			Output.table($selection);
 		}
 
