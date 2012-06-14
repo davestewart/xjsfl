@@ -9,10 +9,15 @@
 //  ██████  ███  █████ ██ ██  ████ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Events - OO events
+// Events
 
-	// includes
-		xjsfl.init(this, ['Utils']);
+	/**
+	 * Events
+	 * @overview	An OO event class to handle JSFL events
+	 * @instance	event
+	 */
+
+	xjsfl.init(this, ['Utils']);
 		
 	/*
 	 * IMPORTANT - unexpected results with Frame callbacks
@@ -34,7 +39,7 @@
 	 */
 
 	// --------------------------------------------------------------------------------
-	// Event classes
+	// # Event classes
 
 			Event = function(type, subtype)
 			{
@@ -128,7 +133,7 @@
 			MouseEvent.toString = function(){ return '[class MouseEvent]'; }
 
 	// --------------------------------------------------------------------------------
-	// static Event constants
+	// # Constants
 
 		// CS5 only
 			DocumentEvent.PUBLISHED		= 'documentPublished';
@@ -178,12 +183,12 @@
 */
 
 	// --------------------------------------------------------------------------------
-	// events object
+	// # Events object
 
 		var events =
 		{
 			// --------------------------------------------------------------------------------
-			// public functions
+			// # Methods
 
 				/**
 				 * Add an event handler function for a particular event type
