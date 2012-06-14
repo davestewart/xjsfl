@@ -161,7 +161,7 @@
 				 * Gets the interpolated distance in pixels from this Point to another Point
 				 * @param	{Point}		pt			The target Point
 				 * @param	{Number}	f			A number from 0 to 1 
-				 * @returns	{Number}				The distance in pixels
+				 * @returns	{Point}					The point object interpolated between the two points
 				 */
 				interpolate:function (pt, f)
 				{
