@@ -11,10 +11,15 @@
 //                      ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Template - Handes loading and population of text data, including nested templating and indentation
+// Template
 
-	// includes
-		xjsfl.init(this, ['File', 'URI', 'Utils']);
+	/**
+	 * Template
+	 * @overview	Handes loading and population of text data, including nested templating and indentation
+	 * @instance	template
+	 */
+
+	xjsfl.init(this, ['File', 'URI', 'Utils']);
 		
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
@@ -75,20 +80,27 @@
 		Template.prototype =
 		{
 			// --------------------------------------------------------------------------------
-			// properties
+			// # Properties
 
+				/** @type {String}	The URI of the Template */
 				uri:		'',
+				
 				input:		'',
+				
 				output:		'',
+				
 				data:		null,
+				
 				options:	null,
+				
 				_indent:	'',
 
 			// --------------------------------------------------------------------------------
-			// methods
+			// # Methods
 
 				/**
 				 * reset constructor
+				 * @ignore
 				 */
 				constructor:Template,
 

@@ -9,10 +9,15 @@
 //    ██   █████ █████ ██ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Table - Outputs 2D Array/Object arrays to easily-readable ASCII tables
+// Table
 
-	// includes
-		xjsfl.init(this, ['PropertyResolver', 'Utils']);
+	/**
+	 * Table
+	 * @overview	Outputs 2D Array/Object arrays to easily-readable ASCII tables
+	 * @instance	table
+	 */
+
+	xjsfl.init(this, ['PropertyResolver', 'Utils']);
 		
 	// ---------------------------------------------------------------------------------------------------------------
 	// Constructor
