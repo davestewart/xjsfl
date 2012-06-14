@@ -723,7 +723,8 @@
 			
 				toString:function()
 				{
-					return '[object PublishProfile]';
+					var name = this.getDOM ? this.getDOM().name : '';
+					return '[object PublishProfile dom="' +name+ '"]';
 				}
 		}
 		
