@@ -11,95 +11,110 @@
 //                                                                                   ██   ██     ██   ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Item Selector ($$) - CSS-style selection of items in the Libray panel
+// Item Selector
 
-	// includes
-		xjsfl.init(this, ['ItemCollection', 'Selectors']);
+	/**
+	 * ItemSelector ($$)
+	 * @overview	CSS-style selection of items in the Libray panel
+	 * @instance	
+	 */
+
+	xjsfl.init(this, ['ItemCollection', 'Selectors']);
 		
 	/**
 	 * Item selector function
 	 *
-	 * @param	{String}			expression	A String expression
-	 * @param	{String}			context		A path to a library Item
-	 * @param	{Item}				context		A library Item
-	 * @param	{Context}			context		A Context object with a valid item property
-	 * @returns	{ItemCollection}				An ItemCollection instance
+	 * @name	$$
+	 * @param	{String}				$expression		An optional selector expression
+	 *
+	 * @param	{Item}					$source			A Library Folder Item
+	 * @param	{Array}					$source			An optional Array of Library Items
+	 * @param	{ItemCollection}		$source			An optional ItemCollection instance
+	 * @param	{ElementCollection}		$source			An optional ElementCollection instance (its Library Items are extracted)
+	 *
+	 * @param	{Document}				$document		An optional Document instance. Defaults to the current Document
+	 * @param	{Context}				$document		An optional Context instance
+	 *
+	 * @param	{Boolean}				$debug			An optional Boolean to debug the result of the expression parsing
+	 * @returns	{ItemCollection}						An ItemCollection instance
 	 */
-	$$ = function(expression, context, debug)
+	$$ = function($expression, $source, $document, $debug)
 	{
 		// --------------------------------------------------------------------------------
-		// setup
+		// resolve parameters
 
-			// reference to library
-				var dom	= $dom;
-				if( ! dom)
+			// variables
+				var expression, items, source, context, dom, library, debug;
+				
+			// parameter shift
+				for each(var param in [$expression, $source, $document, $debug])
 				{
-					return null;
-				}
-				var library		= dom.library;
-
-		// --------------------------------------------------------------------------------
-		// resolve context
-
-			//TODO Review the use of context here
-
-			// check context is a library item (should be a folder) or valid path
-				if(context)
-				{
-					if(typeof context === 'string')
+					if(typeof param === 'string')
+						expression	= param;
+					else if(param instanceof LibraryItem)
 					{
-						var index	= library.findItemIndex(String(context));
-						context		= index != '' ? library.items[index] : null;
+						source		= param;
 					}
-					else if(context instanceof LibraryItem)
+					else if(param instanceof Array)
+						items		= param;
+					else if(param instanceof ItemCollection)
 					{
-						context = context;
+						items		= param.elements;
+						dom			= param.dom;
 					}
-					else if(context instanceof Context)
+					else if(param instanceof ElementCollection)
 					{
-						if(context.item)
-						{
-							context = context.item;
-						}
-						else
-						{
-							throw new Error('Library Selector Error: item not set on supplied Context object');
-						}
+						items		= param.items;
+						dom			= param.dom;
 					}
-					else
-					{
-						throw new Error('Library Selector Error: invalid context supplied');
-					}
+					else if(param instanceof Document)
+						dom			= param;
+					else if(param instanceof Context)
+						context		= param;
+					else if(typeof param === 'boolean')
+						debug		= param;
 				}
 
 		// --------------------------------------------------------------------------------
-		// convert arrays, element collections, single items, etc
+		// resolve variables
+		
+			// dom
+				dom = dom || (context ? context.dom : null) || $dom;
 
-			// TODO Handle arrays, element collections, single items, etc
+			// no document
+				if( ! dom )
+				{
+					throw new ReferenceError('ReferenceError in $$(): Open a document before attempting to select items');
+				}
 
-			/*
-				var item = $(':selected').get(0).libraryItem;
+			// if we've got items, and there's no expression, just return an ItemCollection of those items
+				if(items && ! expression)
+				{
+					return new ItemCollection(items, dom);
+				}
 
-				var elements = $(':selected').elements.filter( function(element){ return element.elementType == 'instance'; } )
-				var items = [];
-				elements.forEach(function(e){items.push(e.libraryItem)})
-
-				trace(items)
-				var collection = new ItemCollection(items)
-			*/
-
+			// library
+				library = dom.library;
+				
+			// source / items
+				if(source && source instanceof FolderItem)
+				{
+					items = library.items.filter( function(element){ return element.name.indexOf(source.name + '/') == 0; } );
+				}
+				else if( ! items )
+				{
+					items = library.items;
+				}
+				
 
 		// --------------------------------------------------------------------------------
 		// calculate selection and return
-
-			// grab items
-				items		= context ? Selectors.tests.items.find.decendents(library.items, context) : library.items;
 
 			// filter items
 				items		= Selectors.select(expression, items, library, debug);
 
 			// return
-				return new ItemCollection(items);
+				return new ItemCollection(items, dom);
 	}
 
 	xjsfl.classes.register('$$', $$);
