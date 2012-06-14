@@ -9,10 +9,15 @@
 //  ██████  ████ ██ ██ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Utils - static library of utility functions
+// Utils
 
-	// includes
-		xjsfl.init(this, ['Folder', 'JSON', 'SimpleTemplate', 'URI', 'XML']);
+	/**
+	 * Utils
+	 * @overview	static library of utility functions
+	 * @instance	Utils
+	 */
+
+	xjsfl.init(this, ['Folder', 'JSON', 'SimpleTemplate', 'URI', 'XML']);
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// class
@@ -28,7 +33,7 @@
 
 				/**
 				 * Checks if the object is a true Object or not
-				 * @param	{Object}	obj			Any object that needs to be checked if it's a true Array
+				 * @param	{Object}	obj			Any object that needs to be checked if it's a true Object
 				 * @returns	{Boolean}				True or false
 				 */
 				isObject:function(value)
@@ -89,20 +94,21 @@
 				 */
 				clone:function(obj)
 				{
-					if (obj instanceof Object && obj.constructor != Function)
+					if(obj == null || typeof(obj) != 'object')
 					{
-						var clone = obj instanceof Array ? [] : {}, prop;
-						for (prop in obj)
-						{
-							if ( obj.hasOwnProperty(prop) )
-							{
-								clone[prop] = (obj[prop] instanceof Object)? doop(obj[prop]) : obj[prop];
-							}
-						}
-						return clone;
+						return obj;
 					}
-					return obj;
+
+					var temp = obj.constructor() || {}; // changed
+
+					for(var key in obj)
+					{
+						temp[key] = Utils.clone(obj[key]);
+					}
+
+					return temp;
 				},
+
 
 				/**
 				 * Extends an object or array with more properties or elements
@@ -867,9 +873,12 @@
 						{
 							while(i++ < input.length - 1)
 							{
-								if( ! option || (option && output.indexOf(input[i][prop]) === -1) )
+								if(input[i] != undefined)
 								{
-									output.push(typeof prop === 'function' ? prop(input[i]) : input[i][prop]);
+									if( ! option || (option && output.indexOf(input[i][prop]) === -1) )
+									{
+										output.push(typeof prop === 'function' ? prop(input[i]) : input[i][prop]);
+									}
 								}
 							}
 						}
@@ -1381,13 +1390,18 @@
 
 				/**
 				 * Converts a wildcard (*) string into a non-greedy RegExp
-				 * @param	{String}	value	The wildcard string to convert
-				 * @returns	{RegExp}			The new RegExp
+				 * @param	{String}	value		The wildcard string to convert
+				 * @param	{Boolean}	exactMatch	An optional Boolean to force an exact match
+				 * @returns	{RegExp}				The new RegExp
 				 */
-				makeWildcard:function(value)
+				makeWildcard:function(value, exactMatch)
 				{
-					var rx = Utils.rxEscape(value).replace(/\\\*/g, '.*?');
-					return new RegExp(rx);
+					var str = Utils.rxEscape(value).replace(/\\\*/g, '.*?');
+					if(exactMatch)
+					{
+						str = '^' + str + '$';
+					}
+					return new RegExp(str);
 				},
 
 
@@ -1407,6 +1421,8 @@
 				{
 					// ----------------------------------------------------------------------------------------------------
 					// callback function
+					
+						//TODO - Allow one single glob path, "path/to/files/**/*.jsfl"
 					
 						function process(folderURI)
 						{
@@ -1458,7 +1474,7 @@
 							*/
 							//		jsfl/**/*.txt
 							/*
-								Is first chunked into RegExp parts:
+								Is first chunked into RegExp segments:
 								
 									1 - jsfl/
 									2 - .+/
@@ -1560,7 +1576,7 @@
 							}
 							
 						// process paths and grab URIs
-							var uri			= URI.toURI(pathOrURI);
+							var uri			= typeof pathOrURI === 'string' ? URI.toURI(pathOrURI, 1) : pathOrURI;
 							var uris		= [];
 							process(uri);
 						
@@ -1906,7 +1922,7 @@
 				},
 
 				/**
-				 * Returns an array of the the currently executing files, paths, lines, and code
+				 * Returns an array of the the currently executing files, paths, lines, and code (most-recent first)
 				 *
 				 * @param	{Error}		error		An optional error object
 				 * @param	{Boolean}	shorten		An optional Boolean to shorten any core paths with {xjsfl}
