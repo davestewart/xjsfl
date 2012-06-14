@@ -9,19 +9,27 @@
 //  █████ ██████ ██     ██████ ██ ██ ██  ████ █████ ██    ██   █████ █████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// JSFLInterface - Serialises values to XML for type-safe communication with Flash panels
+// JSFLInterface
+
+	/**
+	 * JSFLInterface
+	 * @overview	Serialises values to XML for type-safe communication with Flash panels
+	 * @instance	JSFLInterface
+	 */
 
 	JSFLInterface =
 	{
 		/**
 		 * Serializes values to XML so they can be passed to Flash and be deserialized to values again
-		 * @param	{Value}		value		Any value
-		 * @returns	{String}				An XML String
+		 * @param	{Value}		value				Any value
+		 * @param	{Boolean}	allowRecursive		An optional flag to allow recursive structures to be serialised
+		 * @returns	{String}						An XML String
 		 */
-		serialize:function(value)
+		serialize:function(value, allowRecursive)
 		{
 			// stack to prevent recursion
 				var stack = [];
+				allowRecursive = !! allowRecursive;
 				
 			// utilities
 
@@ -35,82 +43,100 @@
 						.replace(/\'/g, "&apos;");
 				}
 
-				function  objectToXML(obj)
+				function objectToXML(obj)
 				{
+					stack.push(obj);
 					var str = '<object>';
 					for (var prop in obj)
 					{
-						str += '<property id="' + prop + '">' + toXML(obj[prop]) + '</property>';
+						str += '<property id="' + prop + '">' + valueToXML(obj[prop]) + '</property>';
 					}
+					stack.pop();
 					return str + '</object>';
 				}
 
 				function arrayToXML(arr)
 				{
+					stack.push(arr);
 					var str = '<array>';
 					for (var i = 0; i < arr.length; i++)
 					{
-						str += '<property id="' + i + '">' + toXML(arr[i]) + '</property>';
+						str += '<property id="' + i + '">' + valueToXML(arr[i]) + '</property>';
 					}
+					stack.pop();
 					return str + '</array>';
 				}
 
-				function toXML(value)
+				function valueToXML(value)
 				{
-					if(stack.indexOf(value) !== -1)
-					{
-						return;
-					}
-					
-					stack.push(value);
-					
 					var type = typeof value;
-					if (type == 'string')
-					{
-						return '<string>' + escapeXML(value) + '</string>';
-					}
-					else if (type == 'undefined')
-					{
-						return '<undefined />';
-					}
-					else if (type == 'number')
-					{
-						return '<number>' + value + '</number>';
-					}
-					else if (value == null)
+					
+					if (value === null)
 					{
 						return '<null />';
 					}
-					else if (type == 'boolean')
+					
+					else if(type === 'object')
 					{
-						return value ? '<true />' : '<false />';
-					}
-					else if (value instanceof Date)
-					{
-						return '<date>' + value.getTime() + '</date>';
-					}
-					else if (value instanceof Array)
-					{
-						return arrayToXML(value);
-					}
-					else if (type == 'object')
-					{
-						return objectToXML(value);
-					}
-					else if (type == 'xml')
-					{
-						return '<xml>' + escapeXML(value.toXMLString()) + '</xml>';
-					}
-					else
-					{
-						return '<null incompatible="1" />';
+						// primitive object types
+							if (value instanceof Date)
+							{
+								return '<date>' + value.getTime() + '</date>';
+							}
+							
+						// recursive check
+							if( ! allowRecursive && stack.indexOf(value) !== -1 )
+							{
+								return '<null incompatible="1" recursive="1"><![CDATA[' +String(value)+ ']]></null>';
+							}
+							
+						// complex types
+							if (value instanceof Array)
+							{
+								return arrayToXML(value);
+							}
+							else if (type == 'object')
+							{
+								return objectToXML(value);
+							}
+							
+						// incompatible
+							else
+							{
+								return '<null incompatible="1" />';
+							}
 					}
 					
-					stack.pop();
+					else
+					{
+						if (type == 'boolean')
+						{
+							return value ? '<true />' : '<false />';
+						}
+						else if (type == 'number')
+						{
+							return '<number>' + value + '</number>';
+						}
+						else if (type == 'string')
+						{
+							return '<string>' + escapeXML(value) + '</string>';
+						}
+						else if (type == 'xml')
+						{
+							return '<xml>' + escapeXML(value.toXMLString()) + '</xml>';
+						}
+						else if (type == 'undefined')
+						{
+							return '<undefined />';
+						}
+					}
 				}
 
 			// code
-				return toXML(value);
+				var xml = valueToXML(value);
+				//fl.outputPanel.clear();
+				//fl.trace(new XML(xml));
+				return xml;
 
 		},
 
