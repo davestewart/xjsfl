@@ -97,26 +97,6 @@
 		}
 
 	// --------------------------------------------------------------------------------
-	// Table
-
-		/**
-		 * Output the selection as a table
-		 */
-		function outputTableSelection()
-		{
-			if(UI.selection)
-			Output.table($selection);
-		}
-
-		/**
-		 * Output the Preset panel as a table
-		 */
-		function outputTablePresets()
-		{
-			Output.table(app.presetPanel.items);
-		}
-	
-	// --------------------------------------------------------------------------------
 	// Folders
 	
 		/**
