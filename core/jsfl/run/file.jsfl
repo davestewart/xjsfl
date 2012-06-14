@@ -15,6 +15,7 @@
 				// run the file
 					try
 					{
+						//alert('Running "' +FLfile.uriToPlatformPath(uri).replace(/\\/g, '/')+ '"');
 						xjsfl.file.load(uri);
 					}
 
