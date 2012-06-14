@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Create a set of test elememts you can play with
  * @icon {iconsURI}Design/imaging/imaging_large_tiles.png
  */
@@ -39,6 +39,7 @@ function makeSquares(num, cols, gutter, style, setStage, clearStage)
 		lib.editItem(itemName);
 		dom.addNewRectangle({left:-25, top:-25, right:25, bottom:25}, 0);
 		dom.selectAll();
+		dom.breakApart();
 		switch(style)
 		{
 			case 'red':
