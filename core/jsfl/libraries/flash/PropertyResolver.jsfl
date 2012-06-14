@@ -11,7 +11,13 @@
 //                    ██                     █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Property Resolver - a set of routines to safely get, or gracefully skip, potentially unreachable properties
+// Property Resolver
+
+	/**
+	 * PropertyResolver
+	 * @overview	A set of routines to safely get, or gracefully skip, potentially unreachable properties
+	 * @instance	PropertyResolver
+	 */
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// librray
@@ -85,11 +91,11 @@
 				},
 			},
 
-		toString:function()
-		{
-			return '[class PropertyResolver]';
-		}
-
+			toString:function()
+			{
+				return '[class PropertyResolver]';
+			}
+	
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
