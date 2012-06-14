@@ -9,10 +9,15 @@
 //    ██   ██ ██ ██ ██ █████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Timer - A simple timing class
+// Timer
 
-	// includes
-		xjsfl.init(this, ['Utils']);
+	/**
+	 * Timer
+	 * @overview	A simple timing class
+	 * @instance	timer
+	 */
+
+	xjsfl.init(this, ['Utils']);
 		
 	// --------------------------------------------------------------------------------
 	// Constructor
@@ -36,6 +41,7 @@
 			{
 				/**
 				 * @type {Timer}
+				 * @ignore
 				 */
 				instance:{},
 
@@ -101,66 +107,84 @@
 
 		Timer.prototype =
 		{
-			constructor:Timer,
-
-			startDate:null,
-
-			endDate:null,
-
-			running:false,
-
-			get time()
-			{
-				return Timer.format(this.milliseconds);
-			},
-
-			get milliseconds()
-			{
-				if(this.endDate && this.startDate)
+			// --------------------------------------------------------------------------------
+			// # Properties - Some properties
+			
+				constructor:Timer,
+	
+				running:false,
+	
+				startDate:null,
+	
+				endDate:null,
+	
+				/**
+				 * @type {String}	The time, as a formatted string, the timer has been running for
+				 */
+				get time()
 				{
-					var ms = this.endDate.getTime() - this.startDate.getTime();
-				}
-				return new Date(ms || 0).getTime()
-			},
-
-			/**
-			 * Start the timer
-			 * @returns	{Timer}				Itself
-			 */
-			start:function()
-			{
-				this.running	= true;
-				this.startDate	= new Date();
-				return this;
-			},
-
-			/**
-			 * Stop the timer
-			 * @param	{Boolean}	print	Optionally print the results of the timer
-			 * @returns	{Timer}				Itself
-			 */
-			stop:function(print)
-			{
-				if(this.running)
+					return Timer.format(this.milliseconds);
+				},
+	
+				/**
+				 * @type {Number}	The number of milliseconds the timer has been running for
+				 */
+				get milliseconds()
 				{
-					this.endDate	= new Date();
-					this.running	= false;
-					if(print)
+					if(this.endDate && this.startDate)
 					{
-						fl.trace('Task "' +this.name+ '" took ' + this.time)
+						var ms = this.endDate.getTime() - this.startDate.getTime();
 					}
+					return new Date(ms || 0).getTime()
+				},
+	
+			// --------------------------------------------------------------------------------
+			// # Methods - Some methods
+				
+				/**
+				 * Start the timer
+				 * @returns	{Timer}				Itself
+				 *
+				 * @example						var timer1 = new Timer();
+				 *								timer1.start();
+				 *
+				 * @example						var timer2 = new Timer();
+				 *								timer2.start();
+				 */
+				start:function()
+				{
+					this.running	= true;
+					this.startDate	= new Date();
+					return this;
+				},
+	
+				/**
+				 * Stop the timer
+				 * @param	{Boolean}	print	Optionally print the results of the timer
+				 * @returns	{Timer}				Itself
+				 */
+				stop:function(print)
+				{
+					if(this.running)
+					{
+						this.endDate	= new Date();
+						this.running	= false;
+						if(print)
+						{
+							fl.trace('Task "' +this.name+ '" took ' + this.time)
+						}
+					}
+					return this;
+				},
+	
+				/**
+				 * Standard toString method
+				 * @returns	{String}			A String representation of the object
+				 */
+				toString:function()
+				{
+					return '[object Timer time="' +this.time+ '"]';
 				}
-				return this;
-			},
-
-			/**
-			 * Standard toString method
-			 * @returns	{String}			A String representation of the object
-			 */
-			toString:function()
-			{
-				return '[object Timer time="' +this.time+ '"]';
-			}
 		}
 
 	// --------------------------------------------------------------------------------

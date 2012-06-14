@@ -9,17 +9,24 @@
 //  ██████ ██ █████ █████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Class - OO Class class for creating and modifying JavaScript classes
+// Class
+
+	/**
+	 * Class
+	 * @overview	OO Class class for creating and extending JSFL/JavaScript classes
+	 * @instance	Class
+	 */
 
 	// --------------------------------------------------------------------------------
 	// class
 		
 		/**
-		 * Simple JavaScript inheritance
+		 * Static class for creating and modifying JavaScript classes
 		 *
 		 * Combination of John Resig's Simple JavaScript Inheritane and Getters and Setters code
-		 * @see				http://ejohn.org/blog/simple-javascript-inheritance/
-		 * @see				http://ejohn.org/blog/javascript-getters-and-setters/
+		 * @see			http://ejohn.org/blog/simple-javascript-inheritance/
+		 * @see			http://ejohn.org/blog/javascript-getters-and-setters/
+		 * @class
 		 */
 		(function ()
 		{
@@ -31,6 +38,8 @@
 			/**
 			 * Static method to create a new class, or extend an existing one
 			 * @param	{Object}	prop	The properties to add to the class
+			 * @class
+			 * @example		Class.extend(values);})
 			 */
 			Class.extend = function (prop)
 			{
