@@ -9,13 +9,17 @@
 //  ██     ██ ██ █████
 //
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-// File - JSFL OO representation of operating system files
+// File
 
-	//BUG Fix File so it doesn't write when you access a setter by mistake. Iterating through files using Table.print(folder.contents) overwrote all files with garbage!
+	/**
+	 * File
+	 * @overview	JSFL OO representation of operating system files
+	 * @instance	file
+	 */
 
-	// includes
-		xjsfl.init(this, ['Class', 'FileSystemObject', 'Folder', 'URI', 'Utils']);
+	xjsfl.init(this, ['Class', 'FileSystemObject', 'Folder', 'URI', 'Utils']);
 		
+	//BUG Fix File so it doesn't write when you access a setter by mistake. Iterating through files using Table.print(folder.contents) overwrote all files with garbage!
 
 	// -------------------------------------------------------------------------------------------------------------------
 	// class
@@ -23,29 +27,115 @@
 		File =
 		{
 
-			// -------------------------------------------------------------------------------------------------------------------
-			// # methods
-
 				/**
 				 * File class
 				 * @extends	{FileSystemObject}
-				 * @param	{String}				pathOrUri	The uri or path to the object
-				 * @param	{String}				contents	An optional string contents of the file, or true to save a blank file
+				 * @constructor
+				 * @name	File
+				 * @param	{String}		pathOrUri	The uri or path to the object
+				 * @param	{String}		contents	An optional string contents of the file, or true to save a blank file
+				 * @paramx	{Boolean}		force		An optional flag to force the file to be overwritten, if its already read-only
+				 * @param	{Boolean}		utf8		An optional flag to create a UTF8 file
 				 */
-				init:function(pathOrUri, contents)
+				init:function(pathOrURI, contents, force)
 				{
+					// error if pathOrURI is null
+						if(typeof pathOrURI === 'undefined' || pathOrURI == null)
+						{
+							pathOrURI = Utils.getStack()[5].uri;
+						}
+						else if(pathOrURI === '')
+						{
+							throw new ReferenceError('ReferenceError in new File(): the parameter pathOrURI cannot be empty, null or undefined');
+						}
+					
 					// uri
-						var uri = URI.toURI(pathOrUri, 5);
+						var uri = URI.toURI(pathOrURI, 5);
 		
 					// constructor
 						this._super(uri);
+						
+					// if UTF8, copy the existing template over, and write to this new file
+					// this doesn't seem to work, as extra chars are saved: Â© when it should be ©
+						/*
+						if(utf8)
+						{
+							var source = xjsfl.uri + 'assets/misc/utf8.txt';
+							if(this.exists && force)
+							{
+								this.remove(true);
+							}
+							FLfile.copy(source, uri);
+						}
+						*/
 		
 					// if there's any data, save it
 						if(contents !== undefined)
 						{
-							this.write(String(contents === true ? '' : contents), false);
+							this.write(String(contents === true ? '' : contents), false, force);
 						}
 				},
+
+			// -------------------------------------------------------------------------------------------------------------------
+			// # Properties
+
+				/**
+				 * @type {String} Get the contents of the file
+				 */
+				get contents (){ return this.exists ? FLfile.read(this.uri).replace(/\r\n/g, '\n') : ''; },
+
+				/**
+				 * @type {String} Set the contents of the file
+				 */
+				set contents (data){ this.write(data); },
+				
+				/**
+				 * @type {String} The file extension of the file
+				 */
+				get ext()
+				{
+					return this.uri ? this.uri.substr(this.uri.lastIndexOf('.') + 1) : '';
+				},
+
+				/**
+				 * @type {String} The file extension of the file (Synonym for ext)
+				 */
+				get extension()
+				{
+					return this.ext;
+				},
+
+				/**
+				 * @type {Number} Get the size of the file
+				 */
+				get size (){ return FLfile.getSize(this.uri); },
+				
+				/**
+				 * @type {Boolean} Set or get the read-only state of the filesystem object
+				 */
+				get writable (){ return this.exists && FLfile.getAttributes(this.uri).indexOf('R') === -1; },
+				set writable (state)
+				{
+					if(this.exists)
+					{
+						var attributes = FLfile.getAttributes(this.uri);
+						if(state)
+						{
+							attributes += 'W';
+						}
+						else
+						{
+							attributes = attributes.replace('W', '') + 'R';
+						}
+						FLfile.setAttributes(this.uri,  attributes);
+					}
+				},
+
+				/** @type {Boolean} Flag if the file has been saved */
+				saved:false,
+
+			// -------------------------------------------------------------------------------------------------------------------
+			// # Methods
 
 				/**
 				 * Opens the file in the associated application
@@ -186,10 +276,11 @@
 				 * Write or append data to the file
 				 * @param	{String}		data		The data to write to the file
 				 * @param	{Boolean}		append		An optional flag to append, rather than overwrite the file
+				 * @param	{Boolean}		force		An optional flag to force the write, if writable is set to false
 				 * @returns	{File}						The original file if successful
 				 * @returns	{Boolean}					A Boolean false if the operation failed
 				 */
-				write:function(data, append)
+				write:function(data, append, force)
 				{
 					// check that path exists
 						if( ! this.exists )
@@ -199,7 +290,15 @@
 						}
 
 					// write to the file
+						if(force)
+						{
+							this.writable = true;
+						}
 						var result = append ? FLfile.write(this.uri, data, 'append') : FLfile.write(this.uri, data);
+						if(result)
+						{
+							this.saved = true;
+						}
 
 					// return
 						return result ? this : false;
@@ -217,12 +316,12 @@
 				},
 
 				/**
-				 * Saves the file, optionally as UTF8
-				 * @param	{Boolean}		utf8		An optional Boolean indicating to save the file as UTF8
+				 * Saves the file
 				 * @returns {File}						The original file
 				 */
-				save:function(utf8)
+				save:function()
 				{
+					// this doesn't seem to work, as extra chars are saved: Â© when it should be ©
 					/*
 					if(utf8)
 					{
@@ -230,10 +329,6 @@
 						fl.outputPanel.trace(this.contents);
 						fl.outputPanel.save(this.uri, false, false);
 						fl.outputPanel.clear();
-					}
-					else
-					{
-
 					}
 					*/
 					this.write('', true);
@@ -334,45 +429,6 @@
 					var value	= name ? this.name : this.path;
 					return '[object File   ' +label+ '="' +value+ '" exists="' +this.exists+ '"]';
 				},
-
-			// -------------------------------------------------------------------------------------------------------------------
-			// # accessors
-
-				/**
-				 * @type {String} get the contents of the file
-				 */
-				get contents (){ return this.exists ? FLfile.read(this.uri).replace(/\r\n/g, '\n') : ''; },
-
-				/**
-				 * @type {String} Set the contents of the file
-				 */
-				set contents (data){ this.write(data); },
-				
-				/**
-				 * @type {String} The file extension of the file
-				 */
-				get ext()
-				{
-					return this.uri ? this.uri.substr(this.uri.lastIndexOf('.') + 1) : '';
-				},
-
-				/**
-				 * @type {String}	Gets the file extension of the file (Synonym for ext)
-				 */
-				get extension()
-				{
-					return this.ext;
-				},
-
-				/**
-				 * @type {Number} Get the size of the file
-				 */
-				get size (){ return FLfile.getSize(this.uri); },
-
-			// -------------------------------------------------------------------------------------------------------------------
-			// # properties
-
-				saved:false
 
 		}
 

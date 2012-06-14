@@ -11,34 +11,25 @@
 //                            █████                                       ████
 //
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-// FileSystemObject - Base FileSystem class for Folder and File classes
+// FileSystemObject
 
-	// includes
-		xjsfl.init(this, ['Class', 'URI']);
+	/**
+	 * FileSystemObject
+	 * @overview	Base FileSystem class for Folder and File classes
+	 */
+
+	xjsfl.init(this, ['Class', 'URI']);
 		
 	// -------------------------------------------------------------------------------------------------------------------
 	// prototype
 
-		/**
-		 * FileSytemObject class
-		 * @class
-		 */
 		FileSystemObject =
 		{
 
-			// -------------------------------------------------------------------------------------------------------------------
-			// # properties
-
-				/**
-				 * @type {String} The URI-formatted string (file:///) to the item
-				 */
-				uri:null,
-
-			// -------------------------------------------------------------------------------------------------------------------
-			// # methods
-
 				/**
 				 * FileSytemObject class
+				 * @constructor
+				 * @name	FileStystemObject
 				 * @param	{String} pathOrUri The uri or path to the object
 				 * @constructor
 				 */
@@ -50,34 +41,14 @@
 					}
 				},
 
-				/**
-				 * Deletes the item from the filesystem
-				 * @param	{Boolean} skipConfirmation An optional boolean to skip the user-confirmation window
-				 * @returns {Boolean} A Boolean indicating if the item was deleted or not
-				 */
-				remove:function(skipConfirmation)
-				{
-					var state = false;
-					if(skipConfirmation != true)
-					{
-						state = window.confirm('Do you want to delete "' +this.path+ '"') === true;
-					}
-					if(skipConfirmation == true || state)
-					{
-						FLfile.setAttributes(this.uri, 'W');
-						return FLfile.remove(this.uri);
-					}
-					return this;
-				},
-				
-				toString:function()
-				{
-					return '[object FileSystemObject uri="' +this.uri+ '"]';
-				},
-
 			// -------------------------------------------------------------------------------------------------------------------
-			// # accessors
-			
+			// # Properties
+
+				/**
+				 * @type {String} The URI-formatted string (file:///) to the item
+				 */
+				uri:null,
+				
 				/**
 				 * @type {String}	The name of the file or folder
 				 */
@@ -96,6 +67,19 @@
 					return this.uri && FLfile.exists(this.uri);
 				},
 
+				/**
+				 * @type {Array} The object's parent folder, or the same folder if the root
+				 */
+				get parent ()
+				{
+					if(this.uri)
+					{
+						var uri = URI.getParent(this.uri);
+						return new Folder(uri);
+					}
+					return null;
+				},
+				
 				/**
 				 * @type {Number} The number of seconds that have elapsed between January 1, 1970 and the time the file or folder was created, or "00000000" if the file or folder doesn’t exist
 				 */
@@ -144,39 +128,34 @@
 					return this.exists ? FLfile.setAttributes(this.uri, attributes) : null;
 				},
 
-				/**
-				 * @type {Boolean} Set or get the read-only state of the filesystem object
-				 */
-				get writable (){ return this.exists && FLfile.getAttributes(this.uri).indexOf('R') === -1; },
-				set writable (state)
-				{
-					if(this.exists)
-					{
-						var attributes = FLfile.getAttributes(this.uri);
-						if(state)
-						{
-							attributes += 'W';
-						}
-						else
-						{
-							attributes = attributes.replace('W', '') + 'R';
-						}
-						FLfile.setAttributes(this.uri,  attributes);
-					}
-				},
+			// -------------------------------------------------------------------------------------------------------------------
+			// # Methods
 
 				/**
-				 * @type {Array} The object's parent folder, or the same folder if the root
+				 * Deletes the item from the filesystem
+				 * @param	{Boolean} skipConfirmation An optional boolean to skip the user-confirmation window
+				 * @returns {Boolean} A Boolean indicating if the item was deleted or not
 				 */
-				get parent ()
+				remove:function(skipConfirmation)
 				{
-					if(this.uri)
+					var state = false;
+					if(skipConfirmation != true)
 					{
-						var uri = URI.getParent(this.uri);
-						return new Folder(uri);
+						state = window.confirm('Do you want to delete "' +this.path+ '"') === true;
 					}
-					return null;
-				}
+					if(skipConfirmation == true || state)
+					{
+						FLfile.setAttributes(this.uri, 'W');
+						return FLfile.remove(this.uri);
+					}
+					return this;
+				},
+				
+				toString:function()
+				{
+					return '[object FileSystemObject uri="' +this.uri+ '"]';
+				},
+
 
 		}
 
