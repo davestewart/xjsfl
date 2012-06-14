@@ -11,10 +11,15 @@
 //               █████ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Logger - logs data to a text file
+// Logger
 
-	// includes
-		xjsfl.init(this, ['File', 'SimpleTemplate', 'URI', 'Utils']);
+	/**
+	 * Logger
+	 * @overview	Logs data to a text file
+	 * @instance	logger
+	 */
+
+	xjsfl.init(this, ['File', 'SimpleTemplate', 'URI', 'Utils']);
 		
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
@@ -23,6 +28,7 @@
 		 * Logger constructor
 		 * @param	{String}	template	An optional input pattern
 		 * @param	{String}	uriOrPath	An optional URI or path to which to save a log file
+		 * @param	{URI}		uriOrPath	An optional URI instance to which to save a log file
 		 * @param	{Boolean}	append		An optional Boolean to append (rather than clear) any existing file, defaults to false
 		 */
 		function Logger(template, uriOrPath, append)
@@ -54,7 +60,7 @@
 		{
 
 			// ------------------------------------------------------------------------------------------------
-			// Properties
+			// # Properties
 
 				/**
 				 * @type {SimpleTemplate}	The SimpleTemplate the Logger uses to create the log
@@ -73,11 +79,12 @@
 
 				/**
 				 * @type {Object}			A hash of triggers
+				 * @ignore
 				 */
 				triggers:{},
 
 			// ------------------------------------------------------------------------------------------------
-			// Public methods
+			// # Logging methods
 
 				/**
 				 * Log a message (note that the order of $ arguments may be swapped)
@@ -159,7 +166,7 @@
 				},
 
 			// ------------------------------------------------------------------------------------------------
-			// Public file-only methods
+			// # File-related methods
 
 				/**
 				 * Writes directly to the log file, if there is one
@@ -238,7 +245,7 @@
 				},
 
 			// ------------------------------------------------------------------------------------------------
-			// File-only accessors
+			// # File-related accessors
 
 				/**
 				 * @type {String}			Get the contents of the log file
@@ -260,7 +267,7 @@
 				},
 
 			// ------------------------------------------------------------------------------------------------
-			// Utility methods
+			// # Utility methods
 
 				/**
 				 * Returns a String representation of the instance
