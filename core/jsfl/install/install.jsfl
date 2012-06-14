@@ -59,6 +59,7 @@
 					var str = 'It looks like another script or extension has broken for..each loops by adding one or more methods to the Object or Array prototypes.\n\nThese extension(s) will need to be uninstalled or disabled before installation can continue. Check the Output panel for details.';
 					fl.trace('\nThe offending code is:\n\n\t' + names.join('\n\n').replace(/\n/g, '\n\t') + '\n\nPlease do a text search in your Flash configuration and Flash application folders for this \nJSFL code, and remove / disable their owning extensions for xJSFL installation to succeed.');
 					alert(str);
+					return false;
 				}
 				
 		// ----------------------------------------------------------------------------------------
@@ -109,9 +110,6 @@
 		
 		if(true)
 		{
-			// debug
-				xjsfl.output.trace('copying installation files...', true);
-				
 			// copy function
 				function copy(srcURI, trgURI)
 				{
@@ -129,12 +127,17 @@
 						xjsfl.output.trace('copying file to "' +trgPath+ '"');
 						if(FLfile.exists(trgURI))
 						{
+							FLfile.setAttributes(trgURI, 'N');
 							FLfile.remove(trgURI);
 						}
 						FLfile.copy(srcURI, trgURI);
+						FLfile.setAttributes(trgURI, 'N');
 					}
 				}
 		
+			// debug
+				xjsfl.output.trace('copying installation files...', true);
+				
 			// variables
 				var win				= fl.version.indexOf('WIN') !== -1;
 				var installURI		= xjsfl.uri + 'core/assets/install/flash/';
