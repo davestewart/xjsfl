@@ -5,6 +5,7 @@
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.external.ExternalInterface;
+	import flash.ui.ContextMenu;
 
 	import flash.events.*;
 	
@@ -106,7 +107,8 @@
 							_xjsflURI			= xjsflURI.replace(/\/+$/, '/');
 						
 						// test that xJSFL is installed
-							enabled				= JSFL.isPanel ? MMExecute('xjsfl && xjsfl.modules') : true;
+							var state:Boolean	= MMExecute('!!(xjsfl && xjsfl.modules)') === 'true';
+							enabled				= JSFL.isPanel ? state : true;
 							
 						// continue if installed
 							if(enabled)
@@ -127,10 +129,10 @@
 									
 								// set up externally-callable methods
 									ExternalInterface.addCallback('reload', reload);
+									
+								// initialize
+									initialize();
 							}
-							
-						// initialize
-							initialize();
 					}
 					
 				// throw an error if previously-setup
@@ -153,7 +155,7 @@
 				}
 				else
 				{
-					//TDOD set up public methods so that we can activate or deactive the panel from JSFL
+					//TODO set up public methods so that we can activate or deactive the panel from JSFL
 				}
 			}
 			
@@ -222,7 +224,15 @@
 				if (!_root)
 				{
 					_root = value;
-					initContextMenu(_root);
+					if (enabled)
+					{
+						initContextMenu(_root);
+					}
+					else
+					{
+						_root.contextMenu = new ContextMenu();
+						_root.contextMenu.hideBuiltInItems();
+					}
 				}
 			}
 				
