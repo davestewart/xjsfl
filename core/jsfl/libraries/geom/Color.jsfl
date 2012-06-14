@@ -25,7 +25,6 @@
 		/**
 		 * Color Utils library
 		 * @see			http://www.madebypi.co.uk/labs/colorutils/
-		 * @requires	Dean Edwards "Base" class (included with original library)
 		 */
 
 		var aColor =
