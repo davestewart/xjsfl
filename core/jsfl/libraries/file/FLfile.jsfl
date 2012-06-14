@@ -9,7 +9,12 @@
 //  ██     ██████ ██   ██ ██ █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// FLfile - Adds FLfile platform-to-URI conversion compatibility for pre-CS4 versions of Flash
+// FLfile
+
+	/**
+	 * FLfile
+	 * @overview	Adds FLfile platform-to-URI conversion compatibility for pre-CS4 versions of Flash
+	 */
 
 	if( ! FLfile['platformPathToURI'])
 	{
