@@ -66,7 +66,7 @@
 			
 				<row template="targetlist">
 					<label value="Targetlist:" />
-					<targetlist id="targetlist" class="" width="100" height="" flex="1" pathtype="absolute" />
+					<targetlist id="targetlist" class="" width="300" height="" flex="1" pathtype="absolute" />
 					<property id="targetlist" />
 				</row>
 				<!-- https://developer.mozilla.org/en/XUL/targetlist -->
