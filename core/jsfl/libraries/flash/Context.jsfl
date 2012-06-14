@@ -9,10 +9,15 @@
 //  ██████ █████ ██ ██  ████ █████ ██ ██  ████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Context - Provides a convenient access to the major DOM elements
+// Context
 
-	// includes
-		xjsfl.init(this, ['File', 'URI', 'Utils']);
+	/**
+	 * Context
+	 * @overview	Provides a convenient access to the major DOM elements
+	 * @instance	context
+	 */
+
+	xjsfl.init(this, ['File', 'URI', 'Utils']);
 		
 	// --------------------------------------------------------------------------------
 	// Constructor
@@ -62,7 +67,7 @@
 				if(this.timeline)
 				{
 					if(layer)this.setLayer(layer);
-					if(this.layer.layerType !== 'folder')
+					if(this.layer && this.layer.layerType !== 'folder')
 					{
 						this.setFrame(frame);
 						if(this.frame)
@@ -76,7 +81,7 @@
 		}
 
 	// --------------------------------------------------------------------------------
-	// Static methods
+	// # Static methods
 
 		//TODO consider modifying Context.create() to just take a single argument
 		// That way you pass in any object, and the context is worked out automatically
@@ -121,11 +126,11 @@
 			Context.create('file:///c|path/to.fla>path/to/item~layer name@frame number or name:element name');
 
 			Context.create('file:///c|path/to.fla');
-			Context.create('>path/to/item');
+			Context.create('/path/to/item');
 			Context.create('~layer name or index');
 			Context.create('~[layer name,layer name,layer name,layer name]');
 			Context.create('@frame number or name');
-			Context.create(':element name');
+			Context.create('element name');
 			Context.create(URI.toURI());
 
 			switch(Utils.getClass(value))
@@ -140,7 +145,7 @@
 		Context.prototype =
 		{
 			// --------------------------------------------------------------------------------
-			// public Context properties
+			// # Properties
 
 			//TODO add layers and frames properties on timeline and layer changes
 
@@ -213,7 +218,7 @@
 				 */
 				get layerIndex()
 				{
-					if(this.timeline)
+					if(this.timeline && this.layer)
 					{
 						var name			= this.layer.name;
 						this.layer.name		= '__Context__';
@@ -228,7 +233,7 @@
 				},
 
 			// --------------------------------------------------------------------------------
-			// setters
+			// # Setter methods
 
 				/**
 				 * Set the DOM of the Context object
@@ -673,11 +678,9 @@
 					// return
 						return this;
 				},
-				/*
-				*/
 
 			// --------------------------------------------------------------------------------
-			// other methods
+			// # State methods
 
 				/**
 				 * Updates the timeline playhead to the correct frame
@@ -764,7 +767,7 @@
 
 
 			// --------------------------------------------------------------------------------
-			// selection methods
+			// # Selection methods
 
 				/**
 				 * Select the current context of the Context object
@@ -919,7 +922,7 @@
 				},
 
 			// --------------------------------------------------------------------------------
-			// utilities
+			// # Utility methods
 
 				/**
 				 * Returns a copy of the Context object
