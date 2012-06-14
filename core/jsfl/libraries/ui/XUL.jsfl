@@ -9,11 +9,16 @@
 //  ██  ██ ██████ ██████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// XUL - OO library for creating and managing XUL dialogs
+// XUL
 
-	// includes
-		//xjsfl.halted = false;
-		xjsfl.init(this, ['Utils', 'URI', 'File', 'XML', 'String', 'XULControl', 'XULEvent', 'JSFLInterface']);
+	/**
+	 * XUL
+	 * @overview	OO library for creating and managing XUL dialogs
+	 * @instance	xul
+	 */
+
+	//xjsfl.halted = false;
+	xjsfl.init(this, ['Utils', 'URI', 'File', 'XML', 'String', 'XULControl', 'XULEvent', 'JSFLInterface']);
 
 	// --------------------------------------------------------------------------------
 	// constructor
@@ -64,7 +69,7 @@
 
 
 	// ------------------------------------------------------------------------------------------------
-	// XUL static methods & properties
+	// # XUL static methods & properties
 
 		/**
 		 * Static convenience method to instantiate and return a new chainable XUL instance
@@ -155,7 +160,10 @@
 				if(xul && Utils.getKeys(xul.controls).length > 0)
 				{
 					xul.show(accept, cancel);
-					return xul.values;
+					if(xul.settings && xul.settings.dismiss === 'accept')
+					{
+						return xul.values;
+					}
 				}
 
 			// return
@@ -169,6 +177,7 @@
 
 		/**
 		 * Static control store
+		 * @ignore
 		 */
 		XUL.templates = {};
 
@@ -206,7 +215,7 @@
 					accepted:	false,
 
 			// --------------------------------------------------------------------------------
-			// accessors
+			// # Accessors
 
 					/**
 					 * @type {Object} The values of the dialog controls parsed into their correct data types
@@ -239,13 +248,14 @@
 			// methods
 
 				/**
-				 * reset constructor
+				 * Reset constructor
+				 * @ignore
 				 */
 				constructor:XUL,
 
 
 			// --------------------------------------------------------------------------------
-			// control methods
+			// # Control methods
 
 				// misc
 					/**
@@ -270,7 +280,7 @@
 
 							if(xml.label && xml.label.length())
 							{
-								xml.label.@value = label ? label + ':' : ' ';
+								xml.label.@value = label ? label + ' : ' : ' ';
 							}
 
 						// check id is not already defined
@@ -352,6 +362,7 @@
 					 * @param	{String}	id			The id of the new control
 					 * @param	{String}	selected	The value of the selected item
 					 * @returns	{XML}					The XML of the new children (altough the original parent is altered by reference anyway)
+					 * @ignore
 					 */
 					_addChildren:function(parent, values, id, selected)
 					{
@@ -726,7 +737,7 @@
 					},
 
 				// --------------------------------------------------------------------------------
-				// single controls
+				// # Single controls
 
 					/**
 					 * Add a Textbox control to the UI
@@ -914,10 +925,10 @@
 
 
 				// --------------------------------------------------------------------------------
-				// multiple-value controls
+				// # Multiple-value controls
 
 					/**
-					 * Add a Listbox control to the UI
+					 * Add a Listbox control to the UI (listbox does not allow multi-select)
 					 * @param	{String}	label			A label for the UI item
 					 * @param	{String}	id				An optional id, otherwise derived from the label
 					 * @param	{Object}	attributes		Optional attributes
@@ -1004,6 +1015,8 @@
 							this._addChildren(parent, values, id || label.toLowerCase());
 							
 							//TODO Add functionality to pre-check checkboxes by passing in a "checked" Array ( [1,0,1,1] ) in attributes
+							// and look at some kind of shorthand alternative to this
+							// check also the control values for this. label[name]=name, or label[name]=true/false ?
 							
 						// add control
 							xml					= this._addControl('checkboxgroup', id, label, xml, attributes, validation);
@@ -1096,7 +1109,7 @@
 					},
 
 				// --------------------------------------------------------------------------------
-				// other elemnts methods
+				// # Additional element methods
 
 					/**
 					 * Add a separator element to the dialog
@@ -1183,7 +1196,7 @@
 
 
 				// --------------------------------------------------------------------------------
-				// custom controls
+				// # Custom controls
 
 					/**
 					 * Add a Flash control to the UI (for the moment, this replaces any existing controls)
@@ -1269,7 +1282,7 @@
 
 
 			// --------------------------------------------------------------------------------
-			// Set methods
+			// # Set methods
 
 				/**
 				 * Sets the initial values of controls in the dialog
@@ -1376,7 +1389,7 @@
 
 
 			// --------------------------------------------------------------------------------
-			// event handling
+			// # Event handling
 
 				/**
 				 * Add (or actually, set) a event callback for an id. Global events take only type and callback arguments.
@@ -1470,6 +1483,7 @@
 				 * Handles all events in the XUL dialog
 				 * @param	{String}	type		The event type
 				 * @param	{String}	id			The control id
+				 * @private
 				 */
 				handleEvent:function (type, id)
 				{
@@ -1540,7 +1554,7 @@
 				},
 
 			// --------------------------------------------------------------------------------
-			// show
+			// # Loading and showing
 			
 				/**
 				 * Loads a dialog in from an external file
@@ -1612,6 +1626,7 @@
 								at com.xjsfl.jsfl.io::JSFL$/trace()
 								at Splash()
 								
+							PublishProfile scriptTimeLimit
 								
 							fl.showIdleMessage(state)
 							
@@ -1776,7 +1791,7 @@
 											for each(event in events)
 											{
 												// Note that the window.xjsfl is needed so that the installation dialogs don't error
-												node['@on' + event] = "window.xjsfl && xjsfl.ui.handleEvent('{xulid}', '" +event+ "', '" +id+ "');";
+												node['@on' + event] = "if(window.xjsfl)xjsfl.ui.handleEvent('{xulid}', '" +event+ "', '" +id+ "');";
 											}
 									}
 							}
@@ -1805,8 +1820,8 @@
 
 				},
 
-			// --------------------------------------------------------------------------------
-			// utilities
+			// ----------------------------------------------------------------------------#----
+			// # Utilities
 
 				/**
 				 * Parses a function source into an info object: {name:name, params:['param1','param2','param3']}
