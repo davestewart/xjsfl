@@ -9,10 +9,15 @@
 //  ██████ █████ ██ █████ █████  ████ █████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Selector - Class which holds JSFL rules (methods) and other parameters to compare against potentially-selected objects
+// Selector
 
-	// includes
-		xjsfl.init(this, ['Utils']);
+	/**
+	 * Selector
+	 * @overview	Class which holds JSFL rules (methods) and other parameters to compare against potentially-selected objects
+	 * @instance	
+	 */
+
+	xjsfl.init(this, ['Utils']);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// constructor
@@ -36,70 +41,76 @@
 
 		Selector.prototype =
 		{
-			/** @type {String}		The original pattern for the Selector */
-			pattern		:'',
-
-			/** @type {String}		The object, i.e. core, element, item, etc 	*/
-			object		:'',
-
-			/** @type {String}		The type, i.e. combo, filter, etc 	*/
-			type		:'',
-
-			/** @type {String}		The name of the Selector, i.e. "attribute" */
-			name		:'',
-
-			/** @type {Function}	A callback function with which to test items with */
-			method		:null,
-
-			/** @type {Array}		An Array of values to pass to the Selector's method */
-			params		:null,
-
-			/** @type {Object}		An object with .min and .max values */
-			range		:null,
-
-			/** @type {Boolean}		A Flag which decides whether items should be kept or discarded after a test() */
-			keep		:true,
-
-			/**
-			 * Filters a list
-			 * @param	{Array}		items	A list of Items or Elements
-			 * @param	{Object}	scope	An object scope
-			 * @returns	{Array}				A filtered list of Items or Elements
-			 */
-			filter:function(items, scope)
-			{
-				this.params[0]		= items
-				var results			= this.method.apply(scope, this.params);
-				results				= Utils.toUniqueArray(results);
-				return results;
-			},
-
-			/**
-			 * Test a single item or element at time
-			 * @param	{Object}	item	A valid Item or Element
-			 * @param	{Object}	scope	An Object scope
-			 * @returns	{Boolean}			true or false
-			 */
-			test:function(item, scope)
-			{
-				// assign the item as the first argument
-					this.params[0]	= item;
-
-				// get the result of the test
-					var state		= this.method.apply(scope, this.params);
-
-				// return the result
-					return this.keep ? state : ! state;
-			},
-
-			toString:function()
-			{
-				return '[object Selector type="' +this.type+ '" pattern="' +this.pattern+ '"]';
-			}
+			// --------------------------------------------------------------------------------
+			// # Properties
+			
+				/** @type {String}		The original pattern for the Selector */
+				pattern		:'',
+	
+				/** @type {String}		The object, i.e. core, element, item, etc 	*/
+				object		:'',
+	
+				/** @type {String}		The type, i.e. combo, filter, etc 	*/
+				type		:'',
+	
+				/** @type {String}		The name of the Selector, i.e. "attribute" */
+				name		:'',
+	
+				/** @type {Function}	A callback function with which to test items with */
+				method		:null,
+	
+				/** @type {Array}		An Array of values to pass to the Selector's method */
+				params		:null,
+	
+				/** @type {Object}		An object with .min and .max values */
+				range		:null,
+	
+				/** @type {Boolean}		A Flag which decides whether items should be kept or discarded after a test() */
+				keep		:true,
+	
+			// --------------------------------------------------------------------------------
+			// # Methods
+				
+				/**
+				 * Filters a list
+				 * @param	{Array}		items	A list of Items or Elements
+				 * @param	{Object}	scope	An object scope
+				 * @returns	{Array}				A filtered list of Items or Elements
+				 */
+				filter:function(items, scope)
+				{
+					this.params[0]		= items
+					var results			= this.method.apply(scope, this.params);
+					results				= Utils.toUniqueArray(results);
+					return results;
+				},
+	
+				/**
+				 * Test a single item or element at time
+				 * @param	{Object}	item	A valid Item or Element
+				 * @param	{Object}	scope	An Object scope
+				 * @returns	{Boolean}			true or false
+				 */
+				test:function(item, scope)
+				{
+					// assign the item as the first argument
+						this.params[0]	= item;
+	
+					// get the result of the test
+						var state		= this.method.apply(scope, this.params);
+	
+					// return the result
+						return this.keep ? state : ! state;
+				},
+	
+				toString:function()
+				{
+					return '[object Selector type="' +this.type+ '" pattern="' +this.pattern+ '"]';
+				}
 		}
 
 	// ----------------------------------------------------------------------------------------------------
-	// static methods
+	// # Static methods
 
 		Selector.toString = function()
 		{
@@ -119,10 +130,13 @@
 				expression		= expression.replace(/\*/g, '.*?');
 
 			// match any ranges i.e. {-100|100}
-				expression		= Selector.makeRange(expression, selector);
+				expression		= Selector
+									.makeRange(expression, selector)
+									.replace(/\//g, '\\/')
+									.replace(/([\(\)])/g, '\\$1');
 
 			// return
-				return new RegExp('^' + expression.replace(/\//g, '\\/') + '$', 'i');
+				return new RegExp('^' + expression + '$', 'i');
 				//return /\.\*|\\d\+/.test(expression) ? new RegExp('^' + expression.replace(/\//g, '\\/') + '$', 'i') : expression;
 		}
 
