@@ -7,7 +7,7 @@
 	// ----------------------------------------------------------------------------------------------------
 	// variables
 	
-		var fnCase, hash = {};
+		var fnCase, separator, hash = {};
 		
 	// ----------------------------------------------------------------------------------------------------
 	// functions
@@ -28,16 +28,16 @@
 				else if(hash[name].length == 1)
 				{
 					// rename old element
-						hash[name][0].name = name + '_1';
+						hash[name][0].name = name + separator + '1';
 					
 					// rename new element
-						name += '_2' ;
+						name += separator + '2' ;
 				}
 				
 			// if hash has more than one element, just rename the new element
 				else
 				{
-					name += '_' + (hash[name].length + 1);
+					name += separator + (hash[name].length + 1);
 				}
 				
 			// assign name to hash
@@ -45,12 +45,13 @@
 				hash[index].push(element);
 		}
 			
-		function onAccept(renameType, style)
+		function onAccept(renameType, style, _separator)
 		{
 			try
 			{
-				// set rename style
-					fnCase = style;
+				// variables
+					fnCase		= style;
+					separator	= _separator === 'Underscore' ? '_' : '';
 					
 				// loop over elements and rename
 					for each(var element in $selection)
@@ -63,15 +64,15 @@
 							switch(renameType)
 							{
 								case 'class':
-									rename(element, className || itemName);
+									rename(element, className || itemName, separator);
 								break;
 							
 								case 'item':
-									rename(element, item.shortName);
+									rename(element, item.shortName, separator);
 								break;
 							
 								case 'path':
-									rename(element, item.name);
+									rename(element, item.name, separator);
 								break;
 							}
 						}
@@ -101,7 +102,7 @@
 		xjsfl.init(this);
 		if(UI.selection)
 		{
-			XUL.create('title:Assign unique names,radio:Name after={Class or item name:class,Item Name:item,Path:path},radio:Style={camelCase:toCamelCase,under_score:toUnderscore}', onAccept)
+			XUL.create('title:Assign unique names,radio:Name after={Class or item name:class,Item Name:item,Path:path},radio:Style={camelCase:toCamelCase,under_score:toUnderscore},radios:Numeric Separator=[Underscore,None]', onAccept)
 		}
 		
 })()
