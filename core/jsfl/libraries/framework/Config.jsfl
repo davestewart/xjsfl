@@ -11,10 +11,15 @@
 //                              █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Config - an object oriented wrapper for easily saving and loading settings
+// Config
 
-	// includes
-		xjsfl.init(this, ['File', 'URI', 'Utils', 'XML']);
+	/**
+	 * Config
+	 * @overview	An object oriented wrapper for easily saving and loading settings
+	 * @instance	config
+	 */
+
+	xjsfl.init(this, ['File', 'URI', 'Utils', 'XML']);
 		
 	// ------------------------------------------------------------------------------------------------
 	// Constructor
@@ -112,170 +117,189 @@
 
 		Config.prototype =
 		{
-			xml:	null,
 			
-			autosave:true,
-
-			getFile:function()
-			{
-				return null;
-			},
-
-			get uri()
-			{
-				var file = this.getFile();
-				return file ? file.uri : null;
-			},
-
-			constructor:Config,
-
-			/**
-			 * Gets the value of the specified node path. Attributes are automatically converted to type
-			 * @param	{String}		path		A dot-notation path to a node or attribute
-			 * @returns	{value}						The value of the node / attribute, or null (===) if no value, or undefined (===) if missing. Test for XML with typeof value === 'xml'
-			 */
-			get:function(path)
-			{
+			// --------------------------------------------------------------------------------
+			// # Properties
+			
 				/**
-				 * nodes that exist, but with no value will return a null value (value === null)
-				 * nodes that don't exist will return undefined, but not null (value === undefined)
-				 * test for XML with typeof value == 'xml'
+				 * The uri of the config instance
+				 * @type {Object}
 				 */
-
-				// get the value
-					var value	= this.xml.get(path);
-					var length	= value.length();
-
-				// result will always be an XMLList, now choose whether to convert it
-					if(length == 0)
-					{
-						return undefined;
-					}
-					else if(length == 1)
-					{
-						return value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
-					}
-					else
-					{
-						return value;
-					}
-
-			},
-			
-			/**
-			 * Sets data on the wrapped XML data
-			 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
-			 * @param	{String}		path		An xJSFL XML notation path to a node or attribute
-			 * @param	{Value}			value		Any value that can be converted to a string
-			 * @param	{Boolean}		append		An optional Boolean that allows you to add the items to path, rather than replacing it
-			 * @returns	{Config}					The current Config node
-			 */
-			set:function(path, value, append)
-			{
-				// set value
-					this.xml.set(path, value, append);
-				
-				// save
-					if(this.autosave)
-					{
-						this.save();
-					}
-
-				// return
-					return this
-			},
-
-			remove:function(path)
-			{
-				// set value
-					this.xml.remove(path);
-				
-				// save
-					if(this.autosave)
-					{
-						this.save();
-					}
-
-				// return
-					return this
-			},
-
-			/**
-			 * Clears all nodes inside the internal XML
-			 * @returns	{Config}		The current Config node
-			 */
-			clear:function()
-			{
-				delete this.xml.*;
-				return this;
-			},
-
-			/**
-			 * Loads the XML config from disk
-			 * @returns	{Config}		The current Config node
-			 */
-			load:function()
-			{
-				this.xml = new XML(this.getFile().contents);
-				return this;
-			},
-
-			/**
-			 * Saves the pretty-printed XML to disk
-			 * @returns	{Config}		The current Config node
-			 */
-			save:function()
-			{
-				this.getFile().write(this.xml.prettyPrint());
-				return this;
-			},
-
-			/**
-			 * Removes the config file from disk
-			 * @returns	{Config}		The current Config node
-			 */
-			removeFile:function()
-			{
-				this.clear();
-				var uri = this.getFile().uri;
-				if(uri.indexOf('/xJSFL/core/config/') === -1)
+				get uri()
 				{
-					return this.getFile().remove(true);
-				}
-				return false;
-			},
-
-			/**
-			 * Returns a String representation of the Config instance
-			 * @returns	{String}			The String summary of the Config instance
-			 */
-			toString:function()
-			{
-				var nodes	= this.xml ? this.xml.*.length() : 0;
-				var file	= this.getFile();
-				var exists	= false;
-				var path	= ''
-				if(file)
+					var file = this.getFile();
+					return file ? file.uri : null;
+				},
+	
+				/** @type {XML}	The raw XML in the config object */
+				xml:	null,
+				
+				/** @type {Boolean}	A flag to save data as soon as it is set */
+				autosave:true,
+	
+				constructor:Config,
+	
+			// --------------------------------------------------------------------------------
+			// # File methods
+	
+				/**
+				 * Loads the XML config from disk
+				 * @returns	{Config}		The current Config node
+				 */
+				load:function()
 				{
-					exists	= file.exists;
-					path	= file.path;
-				}
-				return '[object Config path="' +path+ '" rootnodes=' +nodes+ ' exists=' +exists+ ']';
-			},
-
-			/**
-			 * Returns the pretty-printed XML contents
-			 * @returns	{String}			The pretty-printed XML contents
-			 */
-			toXMLString:function()
-			{
-				return this.xml.prettyPrint();
-			},
+					this.xml = new XML(this.getFile().contents);
+					return this;
+				},
+	
+				/**
+				 * Saves the pretty-printed XML to disk
+				 * @returns	{Config}		The current Config node
+				 */
+				save:function()
+				{
+					this.getFile().write(this.xml.prettyPrint());
+					return this;
+				},
+	
+				/**
+				 * Removes the config file from disk
+				 * @returns	{Config}		The current Config node
+				 */
+				removeFile:function()
+				{
+					this.clear();
+					var uri = this.getFile().uri;
+					if(uri.indexOf('/xJSFL/core/config/') === -1)
+					{
+						return this.getFile().remove(true);
+					}
+					return false;
+				},
+				
+				getFile:function()
+				{
+					return null;
+				},
+	
+			// --------------------------------------------------------------------------------
+			// # Data methods
 			
-			debug:function()
-			{
-				trace(this.toXMLString());
-			}
+				/**
+				 * Gets the value of the specified node path. Attributes are automatically converted to type
+				 * @param	{String}		path		A dot-notation path to a node or attribute
+				 * @returns	{value}						The value of the node / attribute, or null (===) if no value, or undefined (===) if missing. Test for XML with typeof value === 'xml'
+				 */
+				get:function(path)
+				{
+					/**
+					 * nodes that exist, but with no value will return a null value (value === null)
+					 * nodes that don't exist will return undefined, but not null (value === undefined)
+					 * test for XML with typeof value == 'xml'
+					 */
+	
+					// get the value
+						var value	= this.xml.get(path);
+						var length	= value.length();
+	
+					// result will always be an XMLList, now choose whether to convert it
+						if(length == 0)
+						{
+							return undefined;
+						}
+						else if(length == 1)
+						{
+							return value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
+						}
+						else
+						{
+							return value;
+						}
+	
+				},
+				
+				/**
+				 * Sets data on the wrapped XML data
+				 * Yeah, yeah, so it uses eval. It allows us to set attributes and nested nodes in one go, so I'm using it!
+				 * @param	{String}		path		An xJSFL XML notation path to a node or attribute
+				 * @param	{Value}			value		Any value that can be converted to a string
+				 * @param	{Boolean}		append		An optional Boolean that allows you to add the items to path, rather than replacing it
+				 * @returns	{Config}					The current Config node
+				 */
+				set:function(path, value, append)
+				{
+					// set value
+						this.xml.set(path, value, append);
+					
+					// save
+						if(this.autosave)
+						{
+							this.save();
+						}
+	
+					// return
+						return this
+				},
+	
+				remove:function(path)
+				{
+					// set value
+						this.xml.remove(path);
+					
+					// save
+						if(this.autosave)
+						{
+							this.save();
+						}
+	
+					// return
+						return this
+				},
+	
+				/**
+				 * Clears all nodes inside the internal XML
+				 * @returns	{Config}		The current Config node
+				 */
+				clear:function()
+				{
+					delete this.xml.*;
+					return this;
+				},
+				
+			// --------------------------------------------------------------------------------
+			// # Utility methods
+	
+				/**
+				 * Returns a String representation of the Config instance
+				 * @returns	{String}			The String summary of the Config instance
+				 */
+				toString:function()
+				{
+					var nodes	= this.xml ? this.xml.*.length() : 0;
+					var file	= this.getFile();
+					var exists	= false;
+					var path	= ''
+					if(file)
+					{
+						exists	= file.exists;
+						path	= file.path;
+					}
+					return '[object Config path="' +path+ '" rootnodes=' +nodes+ ' exists=' +exists+ ']';
+				},
+	
+				/**
+				 * Returns the pretty-printed XML contents
+				 * @returns	{String}			The pretty-printed XML contents
+				 */
+				toXMLString:function()
+				{
+					return this.xml.prettyPrint();
+				},
+				
+				debug:function()
+				{
+					trace(this.toXMLString());
+				}
 
 		}
 
