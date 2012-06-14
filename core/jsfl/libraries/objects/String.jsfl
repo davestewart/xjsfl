@@ -11,10 +11,15 @@
 //                             █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// String
+// String 
 
-	// includes
-		xjsfl.init(this, ['SimpleTemplate', 'Utils']);
+	/**
+	 * String
+	 * @overview	Additional functionality for native String object
+	 * @instance	'hello world'
+	 */
+
+	xjsfl.init(this, ['SimpleTemplate', 'Utils']);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// # Modify content 
@@ -134,7 +139,7 @@
 				.replace(/_/, ' ')
 				.replace(/([A-Z])([A-Z])([a-z])/g, '$1 $2$3')
 				.replace(/([a-z])([A-Z0-9])/g, '$1 $2')
-				.replace(/^ /g, '');
+				.replace(/^ /g, '').toLowerCase();
 		}
 		
 		/**
@@ -187,4 +192,3 @@
 				.replace(/&quot;/g,'"')
 			);                                                                     
 		};
-
