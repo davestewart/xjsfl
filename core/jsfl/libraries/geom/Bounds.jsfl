@@ -9,10 +9,15 @@
 //  ██████ █████ █████ ██ ██ █████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Bounds
+// Bounds 
 
-	// includes
-		xjsfl.init(this, ['Point']);
+	/**
+	 * Bounds
+	 * @overview	Creates and represents a rectangular bounding box object
+	 * @instance	bounds
+	 */
+
+	xjsfl.init(this, ['Point']);
 		
 	// --------------------------------------------------------------------------------
 	// Bounds object
@@ -132,48 +137,61 @@
 		
 		Bounds.prototype =
 		{
-			top			:0,
-			left		:0,
-			right		:0,
-			bottom		:0,
+			// --------------------------------------------------------------------------------
+			// # Properties
 			
-			/** @type {Number}	Gets the width of the Bounds object */
-			get width()
-			{
-				return this.right - this.left;
-			},
-			
-			/** @type {Number}	Gets the height of the Bounds object */
-			get height()
-			{
-				return this.bottom - this.top;
-			},
-			
-			/** @type {Point}	Gets the center of the Bounds object */
-			get center()
-			{
-				var x = this.left + (this.width / 2);
-				var y = this.top + (this.height / 2);
-				return new Point(x, y);
-			},
-
-			/**
-			 * Returns a clone of the Bounds object
-			 * @returns	{Bounds}		A new Bounds object
-			 */
-			clone:function()
-			{
-				return new Bounds(this.x, this.y, this.width, this.height);
-			},
-			
-			/**
-			 * Returns a String representation of the Bounds object
-			 * @returns	{Sting}		A String representation of the Bounds object
-			 */
-			toString:function()
-			{
-				return '[object Bounds top="' +this.top+ '" left="' +this.left+ '" right="' +this.right+ '" bottom="' +this.bottom+ '"]';
-			},
+				/** @type {Number}	The top of the bounds object */
+				top			:0,
+				
+				/** @type {Number}	The left of the bounds object */
+				left		:0,
+				
+				/** @type {Number}	The right of the bounds object */
+				right		:0,
+				
+				/** @type {Number}	The bottom of the bounds object */
+				bottom		:0,
+				
+				/** @type {Number}	Gets the width of the Bounds object */
+				get width()
+				{
+					return this.right - this.left;
+				},
+				
+				/** @type {Number}	Gets the height of the Bounds object */
+				get height()
+				{
+					return this.bottom - this.top;
+				},
+				
+				/** @type {Point}	Gets the center of the Bounds object */
+				get center()
+				{
+					var x = this.left + (this.width / 2);
+					var y = this.top + (this.height / 2);
+					return new Point(x, y);
+				},
+	
+			// --------------------------------------------------------------------------------
+			// # Methods
+				
+				/**
+				 * Returns a clone of the Bounds object
+				 * @returns	{Bounds}		A new Bounds object
+				 */
+				clone:function()
+				{
+					return new Bounds(this.x, this.y, this.width, this.height);
+				},
+				
+				/**
+				 * Returns a String representation of the Bounds object
+				 * @returns	{Sting}		A String representation of the Bounds object
+				 */
+				toString:function()
+				{
+					return '[object Bounds top="' +this.top+ '" left="' +this.left+ '" right="' +this.right+ '" bottom="' +this.bottom+ '"]';
+				},
 		}
 
 		Bounds.toString = function()

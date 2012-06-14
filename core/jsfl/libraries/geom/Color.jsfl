@@ -11,8 +11,13 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Color
 
-	// includes
-		xjsfl.init(this, ['Class']);
+	/**
+	 * Color
+	 * @overview	Represents, manipulates and converts to and from different colour spaces
+	 * @instance	color
+	 */
+
+	xjsfl.init(this, ['Class']);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// Class

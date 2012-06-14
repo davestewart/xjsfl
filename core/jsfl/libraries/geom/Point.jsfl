@@ -9,7 +9,13 @@
 //  ██     █████ ██ ██ ██  ████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Point - Point object
+// Point
+
+	/**
+	 * Point
+	 * @overview	Point object which represents and manipulates 2D points
+	 * @instance	point
+	 */
 
 	// ----------------------------------------------------------------------------------------------------
 	// constructor
@@ -31,7 +37,7 @@
 		Point.prototype =
 		{
 			// --------------------------------------------------------------------------------
-			// properties
+			// # Properties
 
 				/** @type {Number}	The x coordinate of the Point */			
 				x:null,
@@ -48,7 +54,7 @@
 				constructor:Point,
 				
 			// --------------------------------------------------------------------------------
-			// manipulation
+			// # Manipulation methods
 			
 				/**
 				 * Adds the coordinates of another Point to the existing point, and returns a new Point
@@ -124,7 +130,7 @@
 				},
 				
 			// --------------------------------------------------------------------------------
-			// calculation
+			// # Calculation methods
 			
 				/**
 				 * Gets the angle in degrees from this Point to another Point
@@ -164,7 +170,7 @@
 				},
 				
 			// --------------------------------------------------------------------------------
-			// utilities
+			// # Utility methods
 			
 				/**
 				 * Returns a copy of the current Point
@@ -186,7 +192,7 @@
 		}
 		
 	// ----------------------------------------------------------------------------------------------------
-	// static methods
+	// # Static methods
 	
 		/**
 		 * Gets the interpolated distance in pixels from a source Point a target Point

@@ -11,3 +11,15 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Matrix
 
+	/**
+	 * Matrix
+	 * @overview	Static matrix class with trasformation methods
+	 * @instance	Matrix
+	 */
+	
+	Matrix =
+	{
+		
+	}
+
+	xjsfl.classes.register('Matrix', Matrix);
