@@ -9,14 +9,19 @@
 //  ██████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// UI - Utility functions to ensure user has a document open, selection, etc, and alert if not
+// UI
 
+	/**
+	 * UI
+	 * @overview	User Interface class to provide structured access to core Flash UI elements like Document, Timeline, etc
+	 * @instance	UI
+	 */
 
 	// --------------------------------------------------------------------------------
 	// Library
 
 		/**
-		 * A set of functions to return objects or selections in the UI, or issue standard warnings if not available
+		 * @class UI
 		 */
 		UI =
 		{
@@ -24,6 +29,8 @@
 			 * Get the current Document DOM, or issue a standard warning if not available
 			 * @returns	{Document}		A Document object
 			 * @returns	{Boolean}		False if not available
+			 * @name	UI.dom
+			 * @static
 			 */
 			get dom()
 			{
@@ -40,6 +47,7 @@
 			 * Get the current Timeline, or issue a standard warning if not available
 			 * @returns	{Timeline}		A Timelineobject
 			 * @returns	{Boolean}		False if not available
+			 * @static
 			 */
 			get timeline()
 			{
@@ -55,6 +63,7 @@
 			 * Get the currently selected library items, or issue a standard warning if not selected
 			 * @returns	{Array}			An array of library items
 			 * @returns	{Boolean}		False if not available
+			 * @static
 			 */
 			get items()
 			{
@@ -75,6 +84,7 @@
 			 * Get the current selection, or issue a standard warning if nothing is selected
 			 * @returns	{Array}			An array of elements
 			 * @returns	{Boolean}		False if no selection
+			 * @static
 			 */
 			get selection()
 			{
@@ -94,6 +104,7 @@
 			/**
 			 * Lightweight function to return the current UI state
 			 * @returns	{Object}
+			 * @static
 			 */
 			get state()
 			{

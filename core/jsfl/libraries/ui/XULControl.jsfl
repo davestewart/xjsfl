@@ -9,10 +9,15 @@
 //  ██  ██ ██████ ██████    ██████ █████ ██ ██  ████ ██   █████ ██
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// XUL Control - OO representation of a dialog control
+// XUL Control
 
-	// includes
-		xjsfl.init(this, ['Utils', 'XUL']);
+	/**
+	 * XULControl
+	 * @overview	OO representation of a dialog control
+	 * @instance	control
+	 */
+
+	xjsfl.init(this, ['Utils', 'XUL']);
 
 	// --------------------------------------------------------------------------------
 	// Constructor
@@ -26,19 +31,23 @@
 		 */
 		function XULControl(id, type, xul, xml)
 		{
-			// properties
-
+			// --------------------------------------------------------------------------------
+			// # Properties
+			
 				/**
-				 * @Type {String}	The node id attribute of the control
+				 * @Type	{String}	The node id attribute of the control
+				 * @name	id
 				 */
 				this.id			= id;
 
 				/**
-				 * @type {String}	The XML node type of the control
+				 * @type	{String}	The XML node type of the control
+				 * @name	type
 				 */
 				this.type		= type;
 
-			// getter functions, so the full xml doesn't it doesn't print when inspect()ing
+			// --------------------------------------------------------------------------------
+			// # Getters - so the full xml doesn't it doesn't print when inspect()ing
 
 				/**
 				 * Gets the XUL instance the control belongs to
