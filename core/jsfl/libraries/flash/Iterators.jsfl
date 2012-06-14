@@ -9,10 +9,15 @@
 //  ██  ████ █████ ██   █████  ████ █████ ██   █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Iterators - Iterate thorugh documents, items, timelines, layers, frames and elements
+// Iterators
 
-	// includes
-		xjsfl.init(this, ['Context', 'Utils']);
+	/**
+	 * Iterators
+	 * @overview	Iterate thorugh documents, items, timelines, layers, frames and elements
+	 * @instance	Iterators
+	 */
+
+	xjsfl.init(this, ['Context', 'Utils']);
 		
 	/*
 		Iterates through every item, layer, frame, element, and in the callback
@@ -179,14 +184,22 @@
 			// create a Context object that callbacks can reference
 				if(context instanceof Context && context.timeline)
 				{
+					//trace('> cloning existing context')
 					context = context.clone();
+				}
+				else if(typeof context !== 'undefined')
+				{
+					//trace('> creating new context:' + context.name)
+					//inspect(context, 1, 'Timeline')
+					context = new Context(true, context, false, false, false);
+					//inspect(context, 1, 'Context')
 				}
 				else
 				{
-					context = new Context(false, context, false, false, false);
+					//trace(' > timeline - no timeline supplied');
+					context = new Context(true, true, false, false, false);
 				}
-				trace(context)
-
+				
 			// if a timeline was found, process its layers
 				if(context.timeline)
 				{
@@ -220,7 +233,7 @@
 				}
 				else
 				{
-					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.layers');;
+					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.layers (no timeline)');;
 				}
 				return false;
 		},
@@ -284,7 +297,7 @@
 				}
 				else
 				{
-					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.frames');;
+					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.frames (no layer)');;
 				}
 				return false;
 		},
@@ -328,7 +341,7 @@
 				}
 				else
 				{
-					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.elements');;
+					throw new ReferenceError('ReferenceError: Invalid Context supplied to Iterators.elements (no frame)');;
 				}
 
 			// done!
