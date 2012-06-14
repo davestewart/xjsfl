@@ -11,63 +11,86 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // Globals
 
-	// includes
-		xjsfl.init(this, ['Utils', 'URI', 'Output']);
+	/**
+	 * Globals
+	 * @overview	Framework functions that have been made global
+	 */
 
+	xjsfl.init(this, ['Utils', 'URI', 'Output']);
+	
+	// ----------------------------------------------------------------------------------------------------
+	// # Shortcuts
+	
+		/**
+		 * Create global variables in supplied scope
+		 * @param	scope		{Object}	The scope into which the vars should be set
+		 * @ignore
+		 * @returns
+		 */
+		xjsfl.initVars = function(scope)
+		{
+			// initialize only if core $dom method is not yet defined
+				if(typeof scope.$dom === 'undefined')
+				{
+					/**
+					 * Gets the current Document object
+					 * @type	{Document}
+					 * @name				$dom
+					 */
+					scope.__defineGetter__( '$dom', function()
+					{
+						return fl.getDocumentDOM();
+					});
+					
+					/**
+					 * Gets the current Timeline
+					 * @type	{Timeline}
+					 * @name				$timeline
+					 */
+					scope.__defineGetter__( '$timeline', function()
+					{
+						var dom = fl.getDocumentDOM();
+						return dom ? dom.getTimeline() : null;
+					});
+					
+					/**
+					 * Gets the current Library
+					 * @type	{Library}
+					 * @name				$library
+					 */
+					scope.__defineGetter__( '$library', function()
+					{
+						var dom = fl.getDocumentDOM();
+						return dom ? dom.library : null;
+					});
+					
+					/**
+					 * Set or get the current selection
+					 * @type	{Array}
+					 * @name				$selection
+					 */
+					scope.__defineGetter__( '$selection', function()
+					{
+						var dom = fl.getDocumentDOM();
+						return dom ? dom.selection.reverse() : null;
+					});
+					
+					scope.__defineSetter__( '$selection', function(elements)
+					{
+						var dom = fl.getDocumentDOM();
+						if(dom)
+						{
+							dom.selectNone();
+							dom.selection = elements instanceof Array ? elements : [elements];
+						}
+					});
+				}
+		};
+	
+	
 	// ----------------------------------------------------------------------------------------------------
 	// functions
 	
-		// ------------------------------------------------------------------------------------------------
-		// # Library functions
-		
-			/**
-			 * Loads a class from disk, but only if it's not yet been loaded.
-			 * @param	{String}	className	The class filename (without extension) to load
-			 * @info							This method accepts multiple arguments
-			 */
-			include = function(className)
-			{
-				xjsfl.classes.load(Array.slice.call(this, arguments));
-			}
-			
-			/**
-			 * Loads a class from disk (even if it's already been loaded) but not its dependencies
-			 * @param	{String}	className	The class filename (without extension) to load
-			 * @info							This method accepts multiple arguments
-			 */
-			require = function(className)
-			{
-				xjsfl.file.stackLimit = 1;
-				xjsfl.classes.load(Array.slice.call(this, arguments), true);
-				xjsfl.file.stackLimit = 99;
-			}
-			
-		// ------------------------------------------------------------------------------------------------
-		// # File functions
-		
-			/**
-			 * Loads a file using the xjsfl.file.load() method
-			 * @param	{String}	pathOrURI	A valid path or URI
-			 * @param	{Boolean}	quiet		An optional Boolean to not trace the load to the Output panel
-			 * @returns	{Boolean}				Trie of false, depeneding on whether the file loaded
-			 */
-			load = function(pathOrURI, quiet)
-			{
-				return xjsfl.file.load(URI.toURI(pathOrURI, 1), null, quiet);
-			}
-			
-			/**
-			 * Saves a file using the xjsfl.file.save() method
-			 * @param	{String}	pathOrURI	A valid path or URI
-			 * @param	{String}	contents	The contents to save
-			 * @returns	{Boolean}				Trie of false, depeneding on whether the file saved
-			 */
-			save = function(pathOrURI, contents)
-			{
-				return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents);
-			};
-			
-			
 		// ------------------------------------------------------------------------------------------------
 		// # Output functions
 		
@@ -162,69 +185,64 @@
 			}
 			
 			
-	// ----------------------------------------------------------------------------------------------------
-	// # Shortcuts
-	
-		/**
-		 * Create global variables in supplied scope
-		 * @param	scope		{Object}	The scope into which the vars should be set
-		 * @returns
-		 */
-		xjsfl.initVars = function(scope)
-		{
-			// initialize only if core $dom method is not yet defined
-				if(typeof scope.$dom === 'undefined')
-				{
-					/**
-					 * Gets the current Document object
-					 * @property	{Document}		$dom	The current DOM
-					 */
-					scope.__defineGetter__( '$dom', function()
-					{
-						return fl.getDocumentDOM();
-					});
-					
-					/**
-					 * Gets the current Timeline
-					 * @property	{Timeline}	$timeline	The current Timeline
-					 */
-					scope.__defineGetter__( '$timeline', function()
-					{
-						var dom = fl.getDocumentDOM();
-						return dom ? dom.getTimeline() : null;
-					});
-					
-					/**
-					 * Gets the current Library
-					 * @property	{Library}	$library	The current Library
-					 */
-					scope.__defineGetter__( '$library', function()
-					{
-						var dom = fl.getDocumentDOM(); return dom ? dom.library : null;
-					});
-					
-					/**
-					 * Set or get the current selection
-					 * @property	{Array}		$selection	The current selection
-					 */
-					scope.__defineGetter__( '$selection', function()
-					{
-						var dom = fl.getDocumentDOM(); return dom ? dom.selection.reverse() : null;
-					});
-					
-					scope.__defineSetter__( '$selection', function(elements)
-					{
-						var dom = fl.getDocumentDOM();
-						if(dom)
-						{
-							dom.selectNone();
-							dom.selection = elements instanceof Array ? elements : [elements];
-						}
-					});
-				}
-		};
-	
+		// ------------------------------------------------------------------------------------------------
+		// # Library functions
+		
+			/**
+			 * Loads a class from disk, but only if it's not yet been loaded.
+			 * @param	{String}	className	The class filename (without extension) to load
+			 * @info							This method accepts multiple arguments
+			 */
+			include = function(className)
+			{
+				xjsfl.classes.load(Array.slice.call(this, arguments));
+			}
 			
+			/**
+			 * Loads a class from disk (even if it's already been loaded) but not its dependencies
+			 * @param	{String}	className	The class filename (without extension) to load
+			 * @info							This method accepts multiple arguments
+			 */
+			require = function(className)
+			{
+				xjsfl.file.stackLimit = 1;
+				xjsfl.classes.load(Array.slice.call(this, arguments), true);
+				xjsfl.file.stackLimit = 99;
+			}
+			
+		// ------------------------------------------------------------------------------------------------
+		// # File functions
+		
+			/**
+			 * Attempts to directly load files, or find and run or return files from the cascading file structure.
+			 * Parameters and return type vary depending on file type!
+			 *
+			 * @param	{String}		pathOrName	The relative or absolute path, or uri to the file
+			 * @param	{String}		pathOrName	The name or path fragment to a file, with or without the file extension
+			 * @param	{String}		type		The folder type in which to look (i.e. settings) for the file(s)
+			 *
+			 * @returns	{Boolean}					A Boolean indicating Whether the file was successfully found and loaded
+			 * @returns	{XML}						An XML object of the content of the file, if XML
+			 * @returns	{String}					The string content of the file otherwise
+			 */
+			load = function(pathOrURI, type)
+			{
+				pathOrURI = type ? pathOrURI : URI.toURI(pathOrURI, 1);
+				return xjsfl.file.load(pathOrURI, type);
+			}
+			
+			/**
+			 * Saves a file using the xjsfl.file.save() method
+			 * @param	{String}	pathOrURI	A valid path or URI
+			 * @param	{String}	contents	The contents to save
+			 * @returns	{Boolean}				Trie of false, depeneding on whether the file saved
+			 */
+			save = function(pathOrURI, contents)
+			{
+				return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents);
+			};
+
+		
 	// ------------------------------------------------------------------------------------------------
 	// final setup
 	
