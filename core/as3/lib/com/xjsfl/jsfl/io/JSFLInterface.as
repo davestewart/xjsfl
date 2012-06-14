@@ -4,12 +4,8 @@ package com.xjsfl.jsfl.io
 	import flash.utils.describeType;
 
 	/**
-	 *
-	 * @langversion ActionScript 3
-	 * @playerversion Flash 9.0.0
-	 *
 	 * @author Matthew Tretter
-	 * @author Updated by Dave Stewart
+	 * @author Modified by Dave Stewart
 	 * @since  2008.04.24
 	 */
 	public class JSFLInterface
@@ -77,7 +73,6 @@ package com.xjsfl.jsfl.io
 						
 						default:
 							throw new Error('Objects of type ' + type + ' cannot be passed to JSFL');
-							break;
 					}
 				}
 
@@ -91,64 +86,63 @@ package com.xjsfl.jsfl.io
 			  */
 			public static function xmlToObject(xml:XML):*
 			{
-				
-				function unescapeXML(xml)
-				{
-					return xml
-						.replace(/&amp;/g, "&")
-						.replace(/&lt;/g, "<")
-						.replace(/&gt;/g, ">")
-						.replace(/&quot;/g, '"')
-						.replace(/&apos;/g, "'");
-				}
-
 				var obj:*;
 				var property:XML;
 				switch (xml.localName())
 				{
 					case 'xml':
 						obj = new XML(unescapeXML(xml.toString()));
-						break;
+					break;
 					case 'string':
 						obj = xml.toString();
-						break;
+					break;
 					case 'undefined':
 						obj = undefined;
-						break;
+					break;
 					case 'number':
 						obj = Number(xml.toString());
-						break;
+					break;
 					case 'null':
 						obj = null;
-						break;
+					break;
 					case 'true':
 						obj = true;
-						break;
+					break;
 					case 'false':
 						obj = false;
-						break;
+					break;
 					case 'date':
 						obj = new Date(Number(xml.toString()));
-						break;
+					break;
 					case 'object':
 						obj = {};
 						for each (property in xml.property)
 						{
 							obj[property.@id] = xmlToObject(property.*[0]);
 						}
-						break;
+					break;
 					case 'array':
 						obj = [];
 						for each (property in xml.property)
 						{
 							obj[property.@id] = xmlToObject(property.*[0]);
 						}
-						break;
+					break;
 				}
 				return obj;
 			}
 			
 	}
+}
+
+function unescapeXML(xml)
+{
+	return xml
+		.replace(/&amp;/g, "&")
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&quot;/g, '"')
+		.replace(/&apos;/g, "'");
 }
 
 
