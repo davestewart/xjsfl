@@ -222,7 +222,7 @@ package com.xjsfl.jsfl.panels
 			protected function getUIState():void 
 			{
 				// variables
-					var uiState:Object	= JSFL.call('xjsfl.ui.getState');
+					var uiState:Object	= JSFL.grab('UI.state');
 					
 				// update variables ahead of dispatching events
 					_document			= uiState.document;
