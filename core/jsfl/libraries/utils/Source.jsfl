@@ -9,10 +9,15 @@
 //  ██████ █████ █████ ██   █████ █████ 
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// Source - examine and manipulate source code
+// Source
 
-	// includes
-		xjsfl.init(this, ['Class', 'URI']);
+	/**
+	 * Source
+	 * @overview	Examine and manipulate source code
+	 * @instance	source
+	 */
+
+	xjsfl.init(this, ['Class', 'URI']);
 
 	/*
 
@@ -38,7 +43,25 @@
 			@private
 	*/
 
-	Source =
+
+	Source = function(pathOrURI, debug)
+	{
+		// populate properties in order, so they inspect() correctly
+			this.debug			= false;
+			this.uri			= '';
+			this.name			= '';
+			this.desc			= '';
+			this.instance		= '';
+			this.currentClass	= null;
+		
+		// assign path
+			if(pathOrURI)
+			{
+				this.parseFile(URI.toURI(pathOrURI, 1), debug);
+			}
+	}
+	
+	Source.prototype =
 	{
 		// --------------------------------------------------------------------------------
 		// variables
@@ -46,22 +69,21 @@
 			// debug
 				debug			:false,
 				
-			// variables that get populated as the fileis processed
+			// properties
+				uri				:'',
+				name			:'',
+				desc			:'',
+				instance		:'',
+				
+			// variables that get populated as the file is processed
 				currentClass	:null,
-				currentObj		:null,
 				
 			// properties
 				members			:[],
-				uri				:'',
 		
 	
 		// --------------------------------------------------------------------------------
 		// public functions
-		
-			process:function(uri, debug)
-			{
-				return this.parseFile(URI.toURI(uri, 1), debug);
-			},
 		
 			/**
 			 * Gets all memebers of the file, including comments
@@ -119,13 +141,12 @@
 			{
 				// properties
 					this.uri			= URI.toURI(uri, 1);
-					this.currentObj		= '';
 					this.debug			= debug;
 					this.members		= [];
 					
 				// variables
 					var path			= URI.asPath(this.uri);
-					var rx				= /\/\/\s*#(\d*)\s*([^@{}\r\n]+)|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
+					var rx				= /\/\/\s*([#@])(\d*)\s*([^@{}\r\n]+)|(\/\*\*[\s\S]*?\*\/)\s+([^\r\n]+)/g;
 					var matches;
 					var m;
 		
@@ -158,6 +179,11 @@
 								// update source properties
 									if(member instanceof Source.classes.Element)
 									{
+										if(member.getFlag('ignore'))
+										{
+											continue;
+										}
+									
 										if(member.getFlag('class'))
 										{
 											this.currentClass = member;
@@ -207,12 +233,13 @@
 			parseMatch:function(matches)
 			{
 				// comment and object
-					var level		= parseInt(matches[1]);
-					var heading		= matches[2].trim();
-					var comment		= matches[3].trim();
-					var code		= matches[4].trim();
+					var headingType	= matches[1];
+					var level		= parseInt(matches[2]);
+					var heading		= matches[3].trim();
+					var comment		= matches[4].trim();
+					var code		= matches[5].trim();
 					
-				// // # heading-style comment 
+				// # heading-style comment 
 					if(heading)
 					{
 						var obj = this.makeHeading(heading, level);
@@ -221,12 +248,25 @@
 				// #* doc comment code
 					else
 					{
-						//TODO Add proper support for __getters__
 						//TODO Add support for parsing comments before code, so that the object type can be overridden by comment tags
+						//TODO Make sure $ = function works
 						
 						// reg exp to match all member types
-							var rx = /^\s*((var\s+[\$\w]+\s+=)|(function\s+[\$\w]+\()|([\$\w.]+\s*=)|([\$\w]+\s*:\s*)|([gs]et\s+[\$\w]+\()|(__define[GS]etter__))/;
+							var rx = /^\s*((var\s+[\$\w]+\s+=)|(function\s+[\$\w]+\()|([\$\w.]+\s*=)|([\$\w]+\s*:\s*)|([gs]et\s+[\$\w]+\s*\()|.*(__define[GS]etter__))/;
+
+						// matches
+							/*
 							
+								Matches
+								1	the whole line
+								2	var word =
+								3	function word(
+								4	word = / word.word = 
+								5	word:
+								6	get word( or set word(
+								7	__definerGetter__ or __definerSetter__
+							*/
+
 						// examples
 							/*
 								// variables
@@ -235,6 +275,7 @@
 									
 								// functions
 									function Test(one, two, three)
+									test = function(one, two, three)
 									Object.Test = function (one, two, three)
 									var test = function(one, two, three)
 									
@@ -248,15 +289,16 @@
 									set value(value)
 							*/
 							
+							
 						// match and process
 							var subMatches = code.match(rx);
 							if(subMatches)
 							{
 								// variables
-									var isFunction	= code.indexOf('function') !== -1;
-									var isVariable	= subMatches[2] || subMatches[3] || subMatches[4];
-									var isProperty	= subMatches[5] || subMatches[6] || subMatches[4].indexOf('.') !== -1;
-									var isAccessor	= subMatches[6]; //|| subMatches[7];
+									var isFunction	= (code.indexOf('function') !== -1 && ! subMatches[7]);
+									var isVariable	= !! (subMatches[2] || subMatches[3] || subMatches[4]);
+									var isProperty	= !! (subMatches[5] || subMatches[6] || subMatches[7] || subMatches[4].indexOf('.') !== -1);
+									var isAccessor	= !! (subMatches[6] || subMatches[7]);
 									
 								// process
 									if(isFunction)
@@ -271,11 +313,29 @@
 									{
 										var obj = this.makeVariable(comment, code);
 									}
+									else
+									{
+										throw new Error('Unknown Object');
+									}
+									
+								// quit if no object
+									if(obj == null)
+									{
+										throw new Error('A null object was returned in "' +this.uri+ '" from: ' + code);
+									}
+									//inspect(obj)
 									
 								// update with object
-									if(isProperty && this.currentClass)
+								
+									//TODO review this block
+									
+									if(isProperty && this.currentClass && obj.hasTag)
 									{
-										obj.object = obj.getTag('extends') || obj.object ||  this.currentClass.name;
+										obj.object = obj.getTag('extends') || obj.object || this.currentClass.name;
+										if(obj.hasTag('property'))
+										{
+											obj.name = obj.getTag('property').text
+										}
 									}
 									
 								// set class flag
@@ -298,6 +358,18 @@
 							}
 					}
 					
+				// test if match was a file overview, and if so, add properties to main class
+					if(obj && obj.tags && obj.tags.overview)
+					{
+						this.name		= obj.text[0];
+						this.desc		= obj.tags.overview[0].text;
+						if(obj.tags.instance)
+						{
+							this.instance	= obj.tags.instance[0].text;
+						}
+						return null;
+					}
+					
 				// return
 					return obj;
 			},
@@ -315,16 +387,16 @@
 				// split comment into trimmed lines
 					var lines		= comment
 										.replace(/\r/g, '')
-										.replace(/^\s*\/\*\*\s*|\s*\*\/$/g, '')	// block-start /** and block-end */
-										.replace(/[\*\s]$/g, '')				// block-trailing *
+										.replace(/^\s*\/\*\*\s*|\s*\*\/$/g, '')			// block-start /** and block-end */
+										.replace(/[\*\s]$/g, '')						// block-trailing *
 										.replace(/^[\t ]*\*[\t ]*/gm, '')				// line-leading *
 										.split(/\n/g);
 										
-				// store a current object, so multi-line text can be added to it
+				// store a current object so multi-line text can be added to it
 					var textObject	= obj;
 										
 				// debug
-					//inspect(lines)
+					//inspect(lines);
 										
 				// process lines
 					for each(var line in lines)
@@ -333,7 +405,7 @@
 							line		= line.trim();
 							matches		= line.match(rxType);
 		
-						// reset currentObject if there's a blank line
+						// reset textObject if there's a blank line
 							if(line === '')
 							{
 								textObject = obj;
@@ -399,6 +471,7 @@
 										default: 
 											if(obj.addTag)
 											{
+												//inspect(matches)
 												textObject = matches[2] ? obj.addTag(matches[1], matches[2]) : obj.addFlag(matches[1]);
 											}
 									}
@@ -475,11 +548,13 @@
 					}
 		
 				// set class name for this file if not already set
+					/*
 					if( ! this.className)
 					{
 						this.className	= name;
 						this.classType	= 'function';
 					}
+					*/
 		
 				// parse comment
 					this.parseComment(comment, obj);
@@ -488,6 +563,14 @@
 					if(obj.flags.class || name === URI.getName(this.uri, true))
 					{
 						obj.addFlag('constructor');
+					}
+					
+				// rename if @name tag found
+					if(obj.tags.name)
+					{
+						var name =  obj.tags.name[0].text;
+						obj.signature = obj.signature.replace(obj.name, name);
+						obj.name = name;
 					}
 		
 				// return
@@ -531,24 +614,35 @@
 			makeAccessor:function(comment, code)
 			{
 				// variables
-					var rx		= /\b(get\b|set\b)?\s*([\.\w]+)/;
-					var obj		= new Source.classes.Accessor();
+					var rx1		= /^([gs])et\s*([\.\w]+)/;
+					var rx2		= /__define([GS])etter__\s*\(\s*['"]?([$_\w]+)/;
 					
-				// signature
-					var matches	= code.match(rx);
-					if(matches)
+				// properties
+					var obj		= new Source.classes.Accessor();
+					var type;
+					
+				// parse signature
+					var matches	= code.match(rx1) || code.match(rx2);
+
+									if(matches)
 					{
-						obj.name = matches[2];
-						if(matches[1] === 'get')
+						obj.name	= matches[2];
+						type		= matches[1].toLowerCase();
+						if(type === 'g')
 						{
 							obj.readable = true;
 						}
-						if(matches[1] === 'set')
+						if(type === 's')
 						{
 							obj.writable = true;
 						}
 					}
-		
+					else
+					{
+						throw new Error("Couldn't parse getter for code: " + code);
+						return null;
+					}
+					
 				// debug
 					if(this.debug)
 					{
@@ -569,26 +663,6 @@
 			{
 				return '[class Source members="' +this.members.length+ '" path="' +URI.asPath(this.uri, true)+ '"]';
 			},
-			
-		// classes
-		
-			classes:
-			{
-					
-				// Elements
-					Comment				:null,
-					Heading				:null,
-					Element				:null,
-					Variable			:null,
-					Accessor			:null,
-					Function			:null,
-					Class				:null, //TODO implement Source.classes.Class class
-					
-				// Tags
-					Tag					:null,
-					Value				:null,
-					Param				:null,
-			}
 
 	}
 	
@@ -625,8 +699,26 @@
 		*/
 
 	// --------------------------------------------------------------------------------
-	// Comments
+	// classes
 	// --------------------------------------------------------------------------------
+
+		Source.classes =
+		{
+				
+			// Elements
+				Comment				:null,
+				Heading				:null,
+				Element				:null,
+				Variable			:null,
+				Accessor			:null,
+				Function			:null,
+				Class				:null, //TODO implement Source.classes.Class class
+				
+			// Tags
+				Tag					:null,
+				Value				:null,
+				Param				:null,
+		}
 
 		/**
 		 * Base class to represent comments, and items that have comments
