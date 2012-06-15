@@ -170,7 +170,7 @@
 				/**
 				 * Combines keys and values to make a new populated Object
 				 * @param	{Array}		keys		An array of key names
-				 * @param	{String}	keys		A string of key names
+				 * @param	{String}	keys		A string of key names which will be split on commas
 				 * @param	{Array}		values		An array of values
 				 * @returns	{Object}				An Object containing the values assigned to keys
 				 */
@@ -180,15 +180,18 @@
 					{
 						keys = Utils.toArray(keys.trim(), /\s*,\s*/g);
 					}
-					var obj = {};
-					for (var i = 0; i < keys.length; i++)
+					if(keys)
 					{
-						if(keys[i] !== '')
+						var obj = {};
+						for (var i = 0; i < keys.length; i++)
 						{
-							obj[keys[i]] = values[i];
+							if(keys[i] !== '')
+							{
+								obj[keys[i]] = values[i];
+							}
 						}
+						return obj;
 					}
-					return obj;
 				},
 
 				/**
@@ -217,7 +220,7 @@
 						}
 						else
 						{
-							obj = Utils.getKeys(obj);
+							keys = Utils.getKeys(obj);
 						}
 						
 					// make hash
@@ -231,8 +234,8 @@
 				/**
 				 * Generic function to recurse a data structure, processing nodes and children with callbacks
 				 * @param	{Object}	rootElement		The root element to start processing on
-				 * @param	{Function}	fnChild			A callback function to call on child elements
-				 * @param	{Function}	fnContents		An optional callback function which should return an object which can be processed for its contents, i.e. folder.contents
+				 * @param	{Function}	fnChild			A callback function to call on child elements. Should be of the format "function process(value, index, depth){ ... }"
+				 * @param	{Function}	fnContents		An optional callback function of the format which should return an object which can be processed for its contents, i.e. folder.contents
 				 * @param	{Object}	scope			An optional Object on which to appy "this" scope to
 				 * @returns	{value}						The result of the passed fnChild function
 				 */
@@ -323,13 +326,16 @@
 
 				/**
 				 * A better typeof function
-				 * @param	{Object}	obj		Any object or value
+				 * @param	{Object}	value	Any object or value
 				 * @returns	{String}			The type of the object
 				 * @see							http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
 				 */
-				getType:function(obj)
+				getType:function(value)
 				{
-					return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+					// slight alteration here, otherwise null and undefined return 'window'
+					if(value === null) return null;
+					if(typeof value === 'undefined') return 'undefined';
+					return Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 				},
 
 				/**
@@ -338,36 +344,37 @@
 				 * @param	{value}		value		Any value
 				 * @returns	{String}				The class name of the value i.e. 'String', 'Date', 'CustomClass'
 				 */
-				getClass:function(obj)
+				getClass:function(value)
 				{
-					if (obj != null && obj.constructor && obj.constructor.toSource !== undefined)
+					if (value != null && value.constructor && value.constructor.toSource !== undefined)
 					{
 						// match constructor function name
-							var matches = obj.constructor.toSource().match(/^function\s*(\w+)/);
+							var matches = value.constructor.toSource().match(/^function\s*(\w+)/);
 							if (matches && matches.length == 2)
 							{
 								// fail if the return value is an anonymous / wrapped Function
 									if(matches[1] != 'Function')
 									{
-										//trace('Constructor')
+										trace('Constructor:' + value);
 										return matches[1];
 									}
 
-								// attempt to grab object toSource() result
+								// attempt to grab value.toSource() result
 									else
 									{
-										matches = obj.toSource().match(/^function\s*(\w+)/);
+										matches = value.toSource().match(/^function\s*(\w+)/);
 										if(matches && matches[1])
 										{
 											//trace('Source')
 											return matches[1];
 										}
 
-									// attempt to grab object toString() result
+									// attempt to grab value.toString() result
 										else
 										{
-											//matches = Object.prototype.toString.call(obj).match(/^\[\w+\s*(\w+)/);
-											matches = obj.toString().match(/^\[\w+\s*(\w+)/);
+											return Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1];
+											//matches = Object.prototype.toString.call(value).match(/^\[\w+\s*(\w+)/);
+											matches = value.toString().match(/^\[\w+\s*(\w+)/);
 											if(matches && matches[1])
 											{
 												//trace('String')
@@ -379,11 +386,6 @@
 					}
 
 					return undefined;
-				},
-				
-				getAS3BaseClass:function()
-				{
-					throw new Error('The method Utils.getAS3BaseClass() has been moved to ActionScript.getBaseClass(). Please update your source code.');
 				},
 				
 				/**
@@ -504,15 +506,16 @@
 				/**
 				 * Parses a function source into an object
 				 * @param	{Function}	fn		A reference to a function
+				 * @param	{String}	name	An optional name for anonymous functions
 				 * @returns	{Object}			An Object with name and params properties
 				 */
-				parseFunction:function(fn)
+				parseFunction:function(fn, name)
 				{
 					var matches		= fn.toSource().match(/function\s*((\w*)\s*\(([^\)]*)\))/);
 					if(matches)
 					{
-						var params = matches[3].match(/(\w+)/g);
-						return {signature:matches[0].replace(/function (\w+)/, '$1'), name:matches[2], params:params};
+						var params = matches[3].match(/([$\w]+)/g);
+						return {signature:matches[0].replace(/function (\w+)/, '$1'), name:matches[2] || name, params:params};
 					}
 					return {name:null, params:[], signature:''};
 				},
@@ -1274,21 +1277,28 @@
 				 * packages assigning match values to named properties
 				 *
 				 * @param	{String}	str				The string to be matched
-				 * @param	{RegExp}	rxGlobal		A global RegExp object or literal
+				 * @param	{RegExp}	rx				A RegExp object or literal
 				 * @param	{String}	params			An optional comma-delimited string of local match names
 				 * @param	{Array}		params			An optional Array of local match names
 				 * @param	{Boolean}	captureIndex	An optional Boolean to store the index of the global matches
 				 * @returns	{Array}						An Array of local match Arrays or Objects
 				 */
-				match:function(str, rxGlobal, matchNames, captureIndex)
+				match:function(str, rx, matchNames, captureIndex)
 				{
 					// variables
 						var matchesGlobal, matchesLocal, matchNames;
 						
-					// non-global regexp
-						var rxLocal			= new RegExp(rxGlobal.source);
+					// global regexp
+						var flags			= 'g{m}{i}'.inject(rx.multiline ? 'm' : '', rx.ignoreCase ? 'i' : '');
+						rxGlobal			= new RegExp(rx.source, flags);
+						
+					// local regexp
+						var rxLocal			= new RegExp(rx.source);
 						rxLocal.multiline	= rxGlobal.multiline;
 						rxLocal.ignoreCase	= rxGlobal.ignoreCase;
+						
+					// ensure input RegExp is global
+						//rxGlobal			= new RegExp(rxGlobal.source, rxGlobal.global, ;
 						
 					// exec
 						var n = 0;
@@ -1874,26 +1884,42 @@
 
 				/**
 				 * Returns a multiline string, showing the file/folder hierarchy of an input array of paths or URIs
-				 * @param	{Array}			paths	An array of paths or URIs
-				 * @returns	{String}				The hierarchial representation
+				 * @param	{Array}			source		An array of paths or URIs
+				 * @param	{String}		source		A path or URI
+				 * @returns	{String}					The hierarchial representation
 				 */
-				makeTree:function(paths)
+				makeTree:function(source)
 				{
-					var segments, name, indent;
-					var path, tree = '';
-					for each(path in paths)
+					var paths = typeof source === 'string' ? Utils.glob(source, '**/*') : source;
+					if(paths && paths.length)
 					{
-						path = path.replace('file:///', '').replace(/\/*$/, '');
-						if(path == '')
-						{
-							continue;
-						}
-						segments	= path.split('/');
-						name		= segments.pop();
-						indent		= '\t'.repeat(segments.length);
-						tree		+= indent + '/' + name + '\n';
+						// pparameters
+							paths = paths.sort();
+							
+						// variables
+							var segments, name, indent;
+							var path	= paths[0].replace('file:///', '').replace(/\/*$/, '');
+							var depth	= path.split('/').length - 1;
+							var tree	= '';
+
+						// process
+							for each(path in paths)
+							{
+								path = path.replace('file:///', '').replace(/\/*$/, '');
+								if(path == '')
+								{
+									continue;
+								}
+								segments	= path.split('/');
+								name		= segments.pop();
+								indent		= '\t'.repeat(segments.length - depth);
+								tree		+= indent + '/' + name + '\n';
+							}
+							
+						// return
+							return tree;						
 					}
-					return tree;
+
 				},
 
 
