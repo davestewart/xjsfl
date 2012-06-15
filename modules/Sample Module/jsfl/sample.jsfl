@@ -23,16 +23,27 @@ Sample =
 	// ------------------------------------------------------------------------------------------------
 	// properties
 
-		// config
-			config:null,
+		/**
+		 * This property holds a Config instance, which is a wrapper class around some XML
+		 * You can use the 
+		 * @type {Config}
+		 */
+		config:null,
 
-		// arbitrary value
-			date:null,
+		/**
+		 * This property is an arbitrary value, to demonstrate how you can add values to your own Modules
+		 * @type {Date}
+		 */
+		date:null,
 
 
 	// ------------------------------------------------------------------------------------------------
 	// public functions from Flash Panel
 
+		/**
+		 * This method is called from the Flash panel, and returns a value
+		 * @returns		{Date}				A Date object
+		 */
 		test:function()
 		{
 			// trace confirmation to Output panel
