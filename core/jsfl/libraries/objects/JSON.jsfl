@@ -204,5 +204,5 @@
 	// ----------------------------------------------------------------------------------------------------
 	// register
 
-		//xjsfl.classes.register('JSON', JSON);
+		xjsfl.classes.register('JSON', JSON);
 		
