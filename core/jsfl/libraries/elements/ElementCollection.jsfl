@@ -550,56 +550,79 @@
 	
 			/**
 			 * Reorder the elements om the stage by an arbitrary property
-			 * @param	{String}			prop			The property to compare. Available properties are 'name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY'
+			 * @param	{String}			prop			The property to compare. Available properties are 'random|name|elementType|x|y|width|height|size|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY'
+			 * @param	{Function}			prop			A sort function of the format function(a, b){ } which reurns 1, 0, or -1;
 			 * @param	{Boolean}			reverseOrder	Optionally arrange in reverse order
 			 * @returns	{ElementCollection}					The original ElementCollection object
 			 */
 			orderBy:function(prop, reverseOrder)
 			{
+				// variables
+					var cmp;
+					
+				// check if prop is a function
+					if(typeof prop === 'function')
+					{
+						cmp = prop;
+					}
 	
-			// look up more efficient sort functions?
-				if(prop.match(/(name|elementType|x|y|width|height|size|left|top|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)/))
-				{
-					// update selection
-						this._deselect(false);
-	
-					// helper functions
-						getProperty = function(element, prop)
-						{
-							if(prop == 'size')
+				// look up more efficient sort functions?
+					else if(prop.match(/(name|elementType|x|y|width|height|size|left|top|rotation|scaleX|scaleY|transformX|transformY|skewX|skewY)/))
+					{
+						// helper functions
+							getProperty = function(element, prop)
 							{
-								return element.width * element.height;
+								if(prop == 'size')
+								{
+									return element.width * element.height;
+								}
+								return element[prop];
 							}
-							return element[prop];
-						}
-	
-						cmp = function(a, b)
-						{
-							var aProp = getProperty(a, prop);
-							var bProp = getProperty(b, prop);
-							return aProp < bProp ? -1 : (aProp > bProp ? 1 : 0);
-						}
-	
-					// grab the array and sort it
-						var arr = [].concat(this.elements);
-						arr = arr.sort(cmp);
-	
-					// reorder elements
-						this.dom.selectNone();
-						for each(var element in arr)
-						{
-							this.dom.selection = [element]; // this actually adds the element to the selection! Weird old Flash :P
-							this.dom.arrange(reverseOrder ? 'back' : 'front');
-						}
-	
-					// re-order
-						this.elements = arr;
-	
-					// update selection
-						this._reselect();
-	
-				}
-				return this;
+		
+							cmp = function(a, b)
+							{
+								var aProp = getProperty(a, prop);
+								var bProp = getProperty(b, prop);
+								return aProp < bProp ? -1 : (aProp > bProp ? 1 : 0);
+							}
+		
+					}
+					else if(prop === 'random')
+					{
+						cmp = function(){ return Math.random() > 0.5 ? 1 : -1; }
+					}
+					
+				// if we have a comparison function, run it now
+					if(cmp)
+					{
+						// update selection
+							this._deselect(false);
+		
+						// grab the array and sort it
+							var arr = [].concat(this.elements);
+							arr = arr.sort(cmp);
+		
+						// reorder elements
+							this.dom.selectNone();
+							for each(var element in arr)
+							{
+								this.dom.selection = [element]; // this actually adds the element to the selection! Weird old Flash :P
+								this.dom.arrange(reverseOrder ? 'back' : 'front');
+							}
+		
+						// re-order
+							this.elements = arr;
+		
+						// update selection
+							this._reselect();
+					}
+					else
+					{
+						trace('Invalid property to sort by');
+					}
+
+				// return
+					return this;
 			},
 	
 	
