@@ -138,17 +138,12 @@
 				 */
 				remove:function(skipConfirmation)
 				{
-					var state = false;
-					if(skipConfirmation != true)
-					{
-						state = window.confirm('Do you want to delete "' +this.path+ '"') === true;
-					}
-					if(skipConfirmation == true || state)
+					if(skipConfirmation || window.confirm('Do you want to delete "' +this.path+ '"'))
 					{
 						FLfile.setAttributes(this.uri, 'W');
-						return FLfile.remove(this.uri);
+						return !! FLfile.remove(this.uri);
 					}
-					return this;
+					return false;
 				},
 				
 				toString:function()
