@@ -124,14 +124,31 @@
 		 */
 		function configRead()
 		{
-			var config = new Config('test');
-			config
-				.clear()
-				.set('four', 4)
-				.set('five', 5)
+			// create a new config, and clear it
+				var config = new Config('test').clear();
 				
-			trace(config.toXMLString());
-			trace('the product is: ' + config.get('five') * config.get('four'));
+			// set some values
+				config.set('@attr', 5);
+				config.set('a.b', 'hello');
+				config.set('c', <c attr="1">value</c>);
+			
+			// trace the XML
+				XML.prettyPrinting = true;
+				trace(config.toXMLString());
+				
+			// extract the values into a table	
+				var data = [];
+				var nodes = ['a', 'a.b', 'c', '@attr', 'somenode'];
+				XML.prettyPrinting = false;
+				for each(var node in nodes)
+				{
+					var value	= config.get(node);
+					data.push({node:node, value:value, type:typeof value});
+				}
+				XML.prettyPrinting = true;
+				
+			// trace values
+				Table.print(data);
 		}
 	
 		/**
