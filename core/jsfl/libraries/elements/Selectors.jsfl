@@ -1094,6 +1094,20 @@
 				return false;
 			},
 			
+			/**
+			 *
+			 * @param	element
+			 * @returns
+			 */
+			exported:function(element)
+			{
+				if(element.libraryItem)
+				{
+					return Selectors.item.pseudo.exported(element.libraryItem);
+				}
+				return false;
+			},
+			
 			filtered:function(element)
 			{
 				return element.filters && element.filters.length > 0;
