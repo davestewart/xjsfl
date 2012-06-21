@@ -277,7 +277,7 @@
 				removeFile:function()
 				{
 					var uri = this.getFile().uri;
-					if(uri.indexOf('/xJSFL/core/config/') === -1)
+					if(uri.indexOf(xjsfl.uri + 'core/config/') === -1)
 					{
 						return this.getFile().remove(true);
 					}
