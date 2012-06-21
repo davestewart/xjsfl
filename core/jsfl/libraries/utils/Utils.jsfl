@@ -2000,6 +2000,35 @@
 						return stack;
 				},
 				
+				/**
+				 * Binds the scope of a function to another object permanently
+				 * @param		{Object}		scope		The new "this" scope for the function
+				 * @param		{Function}		fn			The function to bind to the new scope
+				 * @param		{...rest}		...rest		Any arguments to curry
+				 * @returns		{Function}					The new bound function, or null if the function doesn't exist
+				 * @example									Utils.bind(someObject, this[functionName])(); // otherwise the function would run in Window scope
+				 * @see										http://fitzgeraldnick.com/weblog/26/
+				 * @see										http://javascriptweblog.wordpress.com/2010/04/05/curry-cooking-up-tastier-functions/
+				 */
+				bind:function(scope, fn /* arguments to curry */)
+				{
+					// if the passed-in function is not a function, return null
+						if(typeof fn !== 'function')
+						{
+							return null;
+						}
+						
+					// otherwise, grab any additional arguments as parameters
+						var params = Array.prototype.slice.call(arguments, 2);
+						
+					// then return a curried wrapper function
+						return function ()
+						{
+							var args = Array.prototype.slice.call(arguments);
+							return fn.apply(scope, args.concat(params));
+						};
+				},
+				
 			// ---------------------------------------------------------------------------------------------------------------
 			// Other
 

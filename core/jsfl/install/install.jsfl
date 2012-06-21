@@ -134,32 +134,16 @@
 						FLfile.setAttributes(trgURI, 'N');
 					}
 				}
-				
-				function remove(uri)
-				{
-					var path = URI.toPath(uri, true);
-					xjsfl.output.trace('removing "' +path+ '"');
-					FLfile.setAttributes(uri, 'N');
-					FLfile.remove(uri);
-				}
 		
-			// remove old commands
-				xjsfl.output.trace('removing old commands...', true);
-				var uris			= Utils.getURIs(fl.configURI + 'Commands/xJSFL/');
-				for each(var uri in uris)
-				{
-					remove(uri);
-				}
-				
 			// debug
 				xjsfl.output.trace('copying installation files...', true);
 				
 			// variables
 				var win				= fl.version.indexOf('WIN') !== -1;
 				var installURI		= xjsfl.uri + 'core/assets/install/flash/';
-				
-			// copy installation files
 				var uris			= Utils.glob(installURI, '**/*');
+				
+			// copy files
 				for each(var uri in uris)
 				{
 					// URIs
