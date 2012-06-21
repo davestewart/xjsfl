@@ -18,46 +18,46 @@
 	 */
 
 	xjsfl.init(this, ['Folder', 'URI', 'Utils']);
-		
+	
 	// --------------------------------------------------------------------------------
 	// Constructor
 
 		/**
 		 * URIList constructor
-		 * @param	{String}	pathOrURI	A valid folder path or URI
+		 * @param	{String}	source		A valid folder path or URI
+		 * @param	{Array}		source		A list of URIs
 		 * @param	{Boolean}	recursive	An optional flag to search the folder recursively
 		 */
-		function URIList(pathOrURI, recursive)
+		URIList = function(source, recursive)
 		{
 			// variables
-				var uris		= [];
+				var uris	= [];
 				var folderURI;
 				
 			// parse Array
-				if(Utils.isArray(pathOrURI))
+				if(Utils.isArray(source))
 				{
-					uris = pathOrURI;
+					uris = source;
 				}
 				
 			// string
 				else
 				{
-					//trace('1');
-					var uri			= URI.isAbsolute(pathOrURI) ? uri : new URI(pathOrURI, 1);
+					var uri			= URI.toURI(source, 1);
 					var folderURI	= new URI(uri).folder;
 					FLfile.exists(folderURI)
 					{
 						if(recursive)
 						{
-							var uris	= Utils.walkFolder(folderURI, true);
+							uris	= Utils.walkFolder(folderURI, true);
 						}
 						else
 						{
-							var uris	= new Folder(folderURI).uris;
+							uris	= new Folder(folderURI).uris;
 						}
 					}
 				}
-			
+				
 			// --------------------------------------------------------------------------------
 			// # Properties
 			
@@ -70,8 +70,12 @@
 			// # Methods
 			
 				/**
-				 * Returns the list of URIs
-				 * @returns	{Array}		An Array of URIs
+				 * Returns the full, or filtered list, of URIs
+				 * @param		{String}	pattern		A wildcard (*) pattern
+				 * @param		{RegExp}	pattern		A regular expression
+				 * @param		{Boolean}	find		An optional Boolean to return the first URI found
+				 * @returns		{URI}					A single URI, if find is passed as true
+				 * @returns		{Array}					An Array of URI strings
 				 */
 				this.getURIs = function(pattern, find)
 				{
@@ -86,15 +90,19 @@
 				}
 				
 				/**
-				 * Returns the list of Paths
-				 * @returns	{Array}		An Array of Paths
+				 * Returns the full, or filtered list, of paths
+				 * @param		{String}	pattern		A wildcard (*) pattern
+				 * @param		{RegExp}	pattern		A regular expression
+				 * @param		{Boolean}	find		An optional Boolean to return the first URI found
+				 * @returns		{URI}					A single URI, if find is passed as true
+				 * @returns		{Array}					An Array of path strings
 				 */
 				this.getPaths = function(pattern, find)
 				{
 					var results = this.getURIs(pattern, find);
 					if(find)
 					{
-						return URI.asPath(results);
+						return results ? URI.asPath(results) : null;
 					}
 					else
 					{
@@ -122,7 +130,7 @@
 				 * Finds the first URI that matches a wildcard pattern or regular expression
 				 * @param	{String}	pattern		A wildcard (*) pattern
 				 * @param	{RegExp}	pattern		A regular expression
-				 * @returns	{Array}					An Array of URIs
+				 * @returns	{URI}					A single URI
 				 */
 				this.find = function(pattern)
 				{
@@ -133,57 +141,42 @@
 						uri = uris[i];
 						if(rx.test(uri))
 						{
-							return uri;
+							return new URI(uri);
 						}
 					}
 					return null;
 				},
 				
 				/**
-				 * Updates the list in case the contents of the original folder have changed
-				 * @returns	{URIList}		The original URIList
+				 * Appends new URIs onto the existing list of URIs
+				 * @param	{String}	source		A valid folder path or URI
+				 * @param	{Array}		source		A list of URIs
+				 * @param	{Boolean}	recursive	An optional flag to search the folder recursively
+				 * @returns	{URIList}				The original URIList instance
 				 */
-				this.update = function(pathOrURI)
+				this.append = function(source, recursive)
 				{
-					uris = new URIList(pathOrURI || folderURI, recursive).getURIs();
+					var list = new URIList(source, recursive);
+					uris = uris.concat(list.getURIs());
 					return this;
 				}
 				
 				/**
-				 * Appends new URIs onto the ol
-				 * @param	{Object}	uris	Description
-				 * @returns	{Object}			Description
-				 */
-				this.append = function(uris)
-				{
-					
-				}
-				
-				/**
-				 * Resets any filtered results to the original URIList
-				 * @returns	{Object}		Description
-				 */
-				this.reset = function()
-				{
-					
-				}
-				
-				/**
 				 * Returns a new URIList based on the current filtered set
-				 * @returns	{Object}		Description
+				 * @returns	{URIList}		A new URIList instance
 				 */
 				this.clone = function()
 				{
-					
+					return new URIList(uris);
 				}
 				
 				/**
 				 * Returns a String representation of the URIList
-				 * @returns	{Object}		Description
+				 * @returns	{String}		The String representation of the URIList
 				 */
 				this.toString = function()
 				{
-					return '[object URIList uris=' +uris.length+ ' folder="' +URI.asPath(folderURI)+ '"]';
+					return '[object URIList length=' +uris.length+ ']';
 				}
 		}
 
