@@ -27,43 +27,52 @@
 		/**
 		 * Config class, loads and saves XML from the config folders
 		 *
-		 * @param	{String}	pathOrURI	The absolute or relative path to the config file. Passing a relative file path will attempt to find the file in the cascading file structure, defaulting to user/config/
+		 * @param	{String}	pathOrURI	The relative path to the config file, which will prompt the system to find the file in the cascading file structure, defaulting to user/config/
+		 * @param	{String}	pathOrURI	An absolute path to the config file. Th
 		 * @param	{XML}		xml			An XML object with which to populate the Config instance
+		 * @param	{Boolean}	autosave	An optional Boolean to not save the XML when updates are made via set()
 		 */
-		Config = function(pathOrURI, xml)
+		Config = function(pathOrURI, xml, autosave)
 		{
 			// ----------------------------------------------------------------------------------------------------
 			// resolve the URI
 			
+				// variable
+					var uri;
+			
 				// convert URIs to Strings
 					if(pathOrURI instanceof URI)
 					{
-						pathOrURI = pathOrURI.uri;
+						uri = pathOrURI.uri;
 					}
 
 				// throw error if no path passed
-					if(typeof pathOrURI !== 'string')
+					else if(typeof pathOrURI !== 'string')
 					{
 						throw new TypeError('TypeError in Config: pathOrURI "' +pathOrURI+ '" must be a String or URI instance')
 					}
 
 				// absolute uri
-					if(URI.isURI(pathOrURI))
+					else if(URI.isAbsolute(pathOrURI))
 					{
-						var uri = pathOrURI;
+						uri = URI.toURI(pathOrURI, 1);
 					}
 
 				// relative uri - find in paths
 					else
 					{
 						// error on empty strings
-							if(pathOrURI.trim() == '')
+							if(pathOrURI.trim() === '')
 							{
 								throw new TypeError('TypeError in Config: pathOrURI "' +pathOrURI+ '" must be a valid path, URI, filename, or token');
 							}
+							else if(pathOrURI.indexOf('/' == 0))
+							{
+								var uri = URI.toURI(pathOrURI);
+							}
 							
 						// find in paths
-							var uri	= xjsfl.file.find('config', pathOrURI);
+							uri	= xjsfl.file.find('config', pathOrURI);
 
 						// fall back to user config if module or user config doesn't exist (but don't save yet)
 							if(uri == null)
@@ -103,6 +112,15 @@
 					else if(this.getFile().exists)
 					{
 						this.load();
+						if(this.xml.localName() == undefined)
+						{
+							var str = 'A new Config instance cannot be instantiated, as the XML in file...\n\n"' +URI.asPath(uri)+ '"\n\n...appears to be invalid';
+							if(confirm(str + '\n\nWould you like to view this file?'))
+							{
+								this.getFile().reveal();
+							}
+							throw new Error(str);
+						}
 					}
 
 				// otherwise, just initialize XML
@@ -137,50 +155,8 @@
 				/** @type {Boolean}	A flag to save data as soon as it is set */
 				autosave:true,
 	
+				// reset constructor
 				constructor:Config,
-	
-			// --------------------------------------------------------------------------------
-			// # File methods
-	
-				/**
-				 * Loads the XML config from disk
-				 * @returns	{Config}		The current Config node
-				 */
-				load:function()
-				{
-					this.xml = new XML(this.getFile().contents);
-					return this;
-				},
-	
-				/**
-				 * Saves the pretty-printed XML to disk
-				 * @returns	{Config}		The current Config node
-				 */
-				save:function()
-				{
-					this.getFile().write(this.xml.prettyPrint());
-					return this;
-				},
-	
-				/**
-				 * Removes the config file from disk
-				 * @returns	{Config}		The current Config node
-				 */
-				removeFile:function()
-				{
-					this.clear();
-					var uri = this.getFile().uri;
-					if(uri.indexOf('/xJSFL/core/config/') === -1)
-					{
-						return this.getFile().remove(true);
-					}
-					return false;
-				},
-				
-				getFile:function()
-				{
-					return null;
-				},
 	
 			// --------------------------------------------------------------------------------
 			// # Data methods
@@ -190,7 +166,7 @@
 				 * @param	{String}		path		A dot-notation path to a node or attribute
 				 * @returns	{value}						The value of the node / attribute, or null (===) if no value, or undefined (===) if missing. Test for XML with typeof value === 'xml'
 				 */
-				get:function(path)
+				get:function(path, parseValue)
 				{
 					/**
 					 * nodes that exist, but with no value will return a null value (value === null)
@@ -207,13 +183,13 @@
 						{
 							return undefined;
 						}
-						else if(length == 1)
+						else if(value.hasComplexContent())
 						{
-							return value.nodeKind() === 'attribute' ? Utils.parseValue(value) : value;
+							return value;
 						}
 						else
 						{
-							return value;
+							return Utils.parseValue(value);
 						}
 	
 				},
@@ -224,7 +200,7 @@
 				 * @param	{String}		path		An xJSFL XML notation path to a node or attribute
 				 * @param	{Value}			value		Any value that can be converted to a string
 				 * @param	{Boolean}		append		An optional Boolean that allows you to add the items to path, rather than replacing it
-				 * @returns	{Config}					The current Config node
+				 * @returns	{Config}					The current Config instance
 				 */
 				set:function(path, value, append)
 				{
@@ -241,6 +217,11 @@
 						return this
 				},
 	
+				/**
+				 * Removes the node from the Config instance's XML
+				 * @param	{String}		path		An xJSFL XML notation path to a node or attribute
+				 * @returns	{Config}					The current Config instance
+				 */
 				remove:function(path)
 				{
 					// set value
@@ -258,14 +239,57 @@
 	
 				/**
 				 * Clears all nodes inside the internal XML
-				 * @returns	{Config}		The current Config node
+				 * @returns	{Config}		The current Config instance
 				 */
 				clear:function()
 				{
-					delete this.xml.*;
+					this.xml = <config />;
 					return this;
 				},
 				
+			// --------------------------------------------------------------------------------
+			// # File methods
+	
+				/**
+				 * Loads the XML config from disk
+				 * @returns	{Config}		The current Config instance
+				 */
+				load:function()
+				{
+					this.xml = new XML(this.getFile().contents);
+					return this;
+				},
+	
+				/**
+				 * Saves the pretty-printed XML to disk
+				 * @returns	{Config}		The current Config instance
+				 */
+				save:function()
+				{
+					this.getFile().write(this.xml.prettyPrint());
+					return this;
+				},
+	
+				/**
+				 * Removes the config file from disk
+				 * @returns	{Config}		The current Config instance
+				 */
+				removeFile:function()
+				{
+					var uri = this.getFile().uri;
+					if(uri.indexOf('/xJSFL/core/config/') === -1)
+					{
+						return this.getFile().remove(true);
+					}
+					return false;
+				},
+				
+				getFile:function()
+				{
+					// temporary function
+					return null;
+				},
+	
 			// --------------------------------------------------------------------------------
 			// # Utility methods
 	
