@@ -98,7 +98,7 @@
 			 * Trace arguments to the Output panel
 			 * @param {Mixed}	...args		Multiple parameters
 			 */
-			trace = function()
+			trace = function trace()
 			{
 				fl.outputPanel.trace(Array.slice.call(this, arguments).join(', '))
 			};
@@ -112,7 +112,7 @@
 			 * @param	{Mixed}		...values	Any values, passed in as parameters, which replace named placeholders in the order they are found
 			 * @returns	{String}				The populated String
 			 */
-			format = function(template, values)
+			format = function format(template, values)
 			{
 				values = Array.prototype.splice.call(arguments, 1);
 				fl.outputPanel.trace(String(template).inject(values));
@@ -131,7 +131,7 @@
 			 * A shortcut to the Output inspect() method
 			 * @see Output.inspect
 			 */
-			inspect = function()
+			inspect = function inspect()
 			{
 				if(xjsfl.classes.cache.Output)
 				{
@@ -147,7 +147,7 @@
 			 * A shortcut to the Output list() method
 			 * @see Output.list
 			 */
-			list = function()
+			list = function list()
 			{
 				if(xjsfl.classes.cache.Output)
 				{
@@ -168,7 +168,7 @@
 			 * @param	{Object}	scope		An alternative scope to run the function in
 			 * @returns	{Value}					The result of the function if successful
 			 */
-			debug = function(obj, params, scope)
+			debug = function debug(obj, params, scope)
 			{
 				if(obj instanceof Error)
 				{
@@ -193,7 +193,7 @@
 			 * @param	{String}	className	The class filename (without extension) to load
 			 * @info							This method accepts multiple arguments
 			 */
-			include = function(className)
+			include = function include(className)
 			{
 				xjsfl.classes.load(Array.slice.call(this, arguments));
 			}
@@ -203,7 +203,7 @@
 			 * @param	{String}	className	The class filename (without extension) to load
 			 * @info							This method accepts multiple arguments
 			 */
-			require = function(className)
+			require = function require(className)
 			{
 				xjsfl.file.stackLimit = 1;
 				xjsfl.classes.load(Array.slice.call(this, arguments), true);
@@ -225,7 +225,7 @@
 			 * @returns	{XML}						An XML object of the content of the file, if XML
 			 * @returns	{String}					The string content of the file otherwise
 			 */
-			load = function(pathOrURI, type)
+			load = function load(pathOrURI, type)
 			{
 				pathOrURI = type ? pathOrURI : URI.toURI(pathOrURI, 1);
 				return xjsfl.file.load(pathOrURI, type);
@@ -237,7 +237,7 @@
 			 * @param	{String}	contents	The contents to save
 			 * @returns	{Boolean}				Trie of false, depeneding on whether the file saved
 			 */
-			save = function(pathOrURI, contents)
+			save = function save(pathOrURI, contents)
 			{
 				return xjsfl.file.save(URI.toURI(pathOrURI, 1), contents);
 			};
