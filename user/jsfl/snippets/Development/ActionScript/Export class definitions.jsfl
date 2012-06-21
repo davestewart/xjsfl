@@ -219,8 +219,8 @@
 	// global variables
 		var collection;
 		var author		= 'Dave Stewart';
-		var templateURI	= new URI('/assets/templates/class.as.txt');
-		var folderURI	= new URI('/temp/src/');
+		var templateURI	= new URI('//user/assets/templates/class.as.txt');
+		var folderURI	= new URI('//user/temp/src/');
 		var path		= folderURI.path;
 
 	// start
