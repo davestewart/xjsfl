@@ -1265,7 +1265,82 @@
 					// String
 						return value;
 				},
-
+				
+				/**
+				 * Parses a compound CSS (or CSS-like) expression into single elements, respecting :nested(:tokens, [like=these,ones])
+				 * @param		{String}		expression		A CSS or otherwise comma-delimited string
+				 * @param		{String}		delimiter		An optional delimiter character(s) to split the string on. Defaults to ","
+				 * @param		{String}		nestStart		An optional opening character(s) to start ignoring splits, i.e. "(". Defaults to "([{"
+				 * @param		{String}		nestEnd			An optional closing character(s) to stop ignoring splits, i.e. ")". Defaults to "}])"
+				 * @returns		{Array}							An Array of String elements
+				 * @example										var selectors = Utils.parseExpression(':not(body[attr=hello]),hello,[dave=1,ian=2]');
+				 * @example										var controls  = Utils.parseExpression('title:Create Bitmap definitions,columns:[120,200],dropdown:Options={one:1,two:2,three:3},checkbox:Selected Only=true');
+				 */
+				parseExpression:function(expression, delimiter, nestStart, nestEnd)
+				{
+					// utility functions
+						function makeHash(value)
+						{
+							return Utils.makeHash(String(value).split(''), true);
+						}
+						
+						function addElement(element)
+						{
+							element = element.trim();
+							if(element !== '')
+							{
+								elements.push(element);
+							}
+						}
+						
+					// parameters
+						expression		= String(expression);
+						delimiter		= makeHash(delimiter || ',');
+						nestStart		= makeHash(nestStart || '([{');
+						nestEnd			= makeHash(nestEnd || '}])');
+						
+					// variables
+						var elements	= [];
+						var element		= '';
+						var nesting		= 0;
+						
+					// parse string
+						for (var i = 0; i < expression.length; i++)
+						{
+							var char = expression.charAt(i);
+							if(char in delimiter)
+							{
+								if(nesting == 0)
+								{
+									addElement(element);
+									element = '';
+								}
+								else
+								{
+									element += char;
+								}
+							}
+							else
+							{
+								element += char;
+								if(char in nestStart)
+								{
+									nesting++;
+								}
+								if(char in nestEnd)
+								{
+									nesting--;
+								}
+							}
+						}
+						
+					// push last remaining element
+						addElement(element);
+						
+					// return
+						return elements;	
+				},
+				
 
 			// ---------------------------------------------------------------------------------------------------------------
 			// # RegExp methods 

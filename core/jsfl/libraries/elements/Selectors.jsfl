@@ -22,7 +22,7 @@
 	// ----------------------------------------------------------------------------------------------------
 	// # Main Selectors class
 
-		var Selectors =
+		Selectors =
 		{
 			/**
 			 *
@@ -71,7 +71,7 @@
 						}
 	
 					// break up any comma-delimited expressions into an array of discrete expressions
-						var expressions	= Selectors.parseCSS(expression);
+						var expressions	= Utils.parseExpression(expression);
 	
 					// get items
 						var results		= [];
@@ -358,65 +358,6 @@
 					return selectors;
 			},
 			
-			/**
-			 * Parses a compound CSS expression, into single selctors, respecting :nested(:tokens, :like(these, ones))
-			 * @param	{String}	expression	A CSS string
-			 * @returns	{Array}					An Array of String selectors
-			 */
-			parseCSS:function(expression)
-			{
-				// variables
-					var selectors	= [];
-					var selector	= '';
-					var nesting		= 0;
-					
-				// utility function
-					function addSelector(selector)
-					{
-						selector = selector.trim();
-						if(selector !== '')
-						{
-							selectors.push(selector);
-						}
-					}
-					
-				// parse string
-					expression = String(expression);
-					for (var i = 0; i < expression.length; i++)
-					{
-						var char = expression.charAt(i);
-						if(char === ',')
-						{
-							if(nesting == 0)
-							{
-								addSelector(selector);
-								selector = '';
-							}
-							else
-							{
-								selector += char;
-							}
-						}
-						else
-						{
-							selector += char;
-							if(char == '(')
-							{
-								nesting++;
-							}
-							else if(char == ')')
-							{
-								nesting--;
-							}
-						}
-					}
-					
-				// push last remaining selector
-					addSelector(selector);
-					
-				// return
-					return selectors;	
-			},
 	
 			/**
 			 * Tests the selectors against the supplied items and returns matches
@@ -1373,8 +1314,9 @@
 			 */
 			selected:function(items)
 			{
-				var selected = this.getSelectedItems() || [];
-				return Utils.diff(items, selected, 0)
+				var selected	= this.getSelectedItems() || [];
+				var common		= Utils.diff(items, selected, 0);
+				return common;
 			}
 
 		},
