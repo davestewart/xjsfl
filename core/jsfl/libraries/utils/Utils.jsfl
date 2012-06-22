@@ -1202,6 +1202,115 @@
 					}
 					return value;
 				},
+				
+				/**
+				 * Converts a delimited block of text to tab-separated columns
+				 * @param		{String}		text			The block of text to tabify
+				 * @param		{Number}		padding			An optional amount of tabs to pad each column by. Defaults to 0
+				 * @param		{String}		delimiter		An optional delimiter (can also be a RegExp) to split the columns on. Defaults to '\t'
+				 * @param		{Number}		tabWidth		An optional system tab width. Defaults to 4
+				 * @returns		{String}						The columnized output
+				 */
+				columnizeText:function(text, padding, delimiter, tabWidth)
+				{
+					// parameters
+						padding			= padding === undefined ? 1 : padding;
+						delimiter		= delimiter || '\t';
+						tabWidth		= tabWidth || 4;
+					
+					// variables
+						var lines		= String(text).split('\n');
+						var widths		= [];
+						
+					// functions
+						function roundUp(width)
+						{
+							return Math.ceil(width / tabWidth) * tabWidth;
+						}
+						
+						function pad(str, maxWidth)
+						{
+							// output string
+								var output		= '';
+								
+							// virtual width of the string (with tabs expanded)
+								var strWidth	= str.length;
+					
+							// pad initial text to the next column & update strWidth
+								var mod			= strWidth % tabWidth;
+								if(mod !== 0)
+								{
+									output		+= '\t';
+									strWidth	+= (tabWidth - mod);
+								}
+					
+							// while the string width is smaller than the max maxWidth, pad to fit
+								while(strWidth <= maxWidth) //  + (padding * tabWidth)
+								{
+									output		+= '\t';
+									strWidth	+= tabWidth;
+								}
+								
+							// add any extra gutters between columns
+								if(padding > 0)
+								{
+									output += '\t'.repeat(padding);
+								}
+					
+							// return
+								return str + output;
+						}
+					
+					// get max widths
+						for (var i = 0; i < lines.length; i++)
+						{
+							// variables
+								var line		= lines[i].trim();
+								var segments	= line.trim().split(delimiter);
+								lines[i]		= segments;
+								
+							// loop over segments
+								for (var j = 0; j < segments.length; j++)
+								{
+									var segment		= segments[j];
+									var width		= segment.length;
+									if(widths[j] == undefined || widths[j] < width)
+									{
+										widths[j] = width;//roundUp(width); // add one on so we always get some space
+									}
+								}
+						}
+						
+					// if any of the widths are a multiple of tabWidth, we need to lengthen them by 1, so columns don't touch
+						for (var i = 0; i < widths.length; i++)
+						{
+							if(widths[i] % tabWidth === 0)
+							{
+								 widths[i]++;
+							}
+						}
+						
+					// debug
+						//format('\n> {widths} ---------------------------------------------', widths.join(':'));
+						
+					// update lines
+						for (var i = 0; i < lines.length; i++)
+						{
+							for (var j = 0; j < lines[i].length; j++)
+							{
+								var segment = lines[i][j];
+								if(j < widths.length - 1)
+								{
+									segment = pad(segment, widths[j] - 1);
+								}
+								lines[i][j] = segment;
+							}
+							lines[i] = lines[i].join('');
+						}
+						
+					// return
+						return lines.join('\n');
+				},
 
 				/**
 				 * Parse any string into a real datatype. Supports Number, Boolean, hex (0x or #), XML, XMLList, Array notation, Object notation, JSON, Date, undefined, null
@@ -2117,4 +2226,3 @@
 	// register
 
 		xjsfl.classes.register('Utils', Utils);
-
