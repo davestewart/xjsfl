@@ -5,10 +5,9 @@
 {
 	// setup
 		xjsfl.init(this);
-		clear();
 
 	// onAccept
-		function onAccept(packageName, renameClasses, selectedOnly)
+		function onAccept(selectedOnly, rename, userPackageName, columnize)
 		{
 			// callback
 				/**
@@ -20,13 +19,14 @@
 				function process(item, index, elements)
 				{
 					// variables
-						var varName, className;
+						var varName, className, packageName;
 						
 					// update item export properties
-						if(renameClasses)
+						if(rename)
 						{
 							varName					= item.shortName.replace(/\.\w+$/, '').toCamelCase();
 							className				= varName.toSentenceCase();
+							packageName				= userPackageName.replace(/\.?$/, '.');
 							item.linkageExportForAS	= true;
 							item.linkageClassName	= packageName + className;
 						}
@@ -34,6 +34,7 @@
 						{
 							if( ! item.linkageClassName)
 							{
+								skipped.push(item.name);
 								return;
 							}
 							className				= item.linkageClassName.split('.').pop();
@@ -41,12 +42,6 @@
 							varName					= className.fromCamelCase().toCamelCase();
 						}
 		
-					// rename item
-						if(renameItem)
-						{
-							item.name = className;
-						}
-						
 					// get bitmap size				
 						$library.addItemToDocument(new Point(), item.name);
 						var bounds	= new Bounds($selection);
@@ -55,52 +50,69 @@
 						$dom.deleteSelection();
 						
 					// output
-						format('var {varName}	:Bitmap	= new Bitmap(new {packageName}{className}({width}, {height}));', varName, packageName, className, width, height);
+						output += 'var {varName}	:Bitmap	= new Bitmap(new {packageName}{className}({width}, {height}));\n'.inject(varName, packageName, className, width, height);
 				}
-
+				
 			// checks
-				if( ! selectedOnly && ! confirm('Do you really want to update all bitmaps in the library?'))
+				if( ! selectedOnly && rename && ! confirm('Are you sure you want to update *all* bitmap class names in the library to "' +(packageName ? packageName + '.' : '')+ 'BitmapName" ?'))
 				{
 					return;
 				}
 				
 			// do it
 			
-				// setup
-					clear();
-					$timeline.addNewLayer();
-					
 				// parameters
 					packageName		= packageName || '';
 					
 				// variables
-					var renameItem	= false;
+					var output		= '';
 					var selector	= ':bitmap' + (selectedOnly ? ':selected' : '');
 					var collection	= $$(selector);
-					
-				// hack - it appears that adding items to stage invalidates library item selection, so we need to store this here
-					var selected	= $$(':selected');
+					var skipped		= [];
 					
 				// output
 					if(collection.elements.length > 0)
 					{
-						if(packageName)
-						{
-							trace('import ' + packageName + '*;\n');
-						}
-						collection.each(process)
+						// setup
+							clear();
+							$timeline.addNewLayer();
+							
+						// hack - it appears that adding items to stage invalidates library item selection, so we need to store this here
+							var selected	= $$(':selected');
+							
+						// do it
+							collection.each(process);
+							
+						// output
+							if(packageName && output)
+							{
+								trace('import ' + packageName + '*;\n');
+							}
+							trace(columnize ? Utils.columnizeText(output) : output.replace(/\t/g, ' '));
+							
+					// cleanup
+						$timeline.deleteLayer();
+
+						selectedOnly ? selected.select() : collection.select();
+					}
+					else
+					{
+						trace('No bitmaps were found or selected for declaration.');
 					}
 					
-				// cleanup
-					$timeline.deleteLayer();
-					selected.select();
+				// report skipped items
+					if(skipped.length)
+					{
+						trace('WARNING: The following items were skipped, as their export paths were not set:\n');
+						trace(' > ' + skipped.join('\n > '));
+					}
 					
 		}
 
 	// delete
 		if(UI.dom)
 		{
-			var packageName = 'assets.bitmaps.data.';
-			XUL.create('title:Create Bitmap definitions,text:Package Name=' +packageName+ ',checkbox:Rename classes=true,checkbox:Selected Only=true', onAccept)
+			var packageName = 'assets.bitmaps.data';
+			XUL.create('title:Create Bitmap definitions,columns:[100, 150],radios:Bitmaps={Selected:true, All:false},radios:Naming={Use current class names:false, Rename classes from item:true},text:Package=' +packageName + ',checkbox:Columnize results=true', onAccept)
 		}
 })()
