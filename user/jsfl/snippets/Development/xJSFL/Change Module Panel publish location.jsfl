@@ -1,5 +1,4 @@
-﻿xjsfl.init(this, 'Snippets');
-clear();
+﻿xjsfl.init(this);
 
 /**
  * Changes the publish location of the SWF to either the Flash WindowSWF folder, or the Module's UI folder
@@ -11,14 +10,22 @@ clear();
 	// setup
 
 		// load libraries
-			load('../../_libraries/uri.jsfl', true);
+			load('../../_libraries/uri.jsfl');
 			
-		// get publish path
+		// get URIs
 			var publishURI	= getPublishURI();
+			var moduleURI	= getModuleURI($dom.pathURI);
 			
-			if(!publishURI)
+		// bail if settings aren't right
+			if( ! publishURI)
 			{
 				alert('The publish location can\'t be set until the document has been saved');
+				return;
+			}
+
+			if( ! moduleURI)
+			{
+				alert('This .fla doesn\'t appear to be within a module folder.\n\nThis snippet is designed to change the publish location of module .fla\'s from the Flash folder, to the Module folder.');
 				return;
 			}
 
@@ -56,21 +63,14 @@ clear();
 			// local publish parameters
 				else
 				{
-					var moduleURI = getModuleURI();
-					if(moduleURI)
-					{
-						var targetURI	= new URI(moduleURI + 'flash/WindowSWF/' + publishURI.name);
-						path			= new URI(document.pathURI).pathTo(targetURI);
-					}
-					else
-					{
-						alert('The publish path could not be set, as this .fla is not within an xJSFL module sub folder');
-					}
+					var targetURI	= new URI(moduleURI + 'flash/WindowSWF/' + publishURI.name);
+					path			= new URI(document.pathURI).pathTo(targetURI);
 				}
 
 		// update publish profile
-			if(path)
-			{
-				setPublishPath(path);
-			}
+			var profile				= new PublishProfile();
+			profile.file.flashPath	= path;
+			
+		// feedback
+			trace('Publish location changed to: "' + path + '"')
 })()

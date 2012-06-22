@@ -22,6 +22,7 @@
 	XUL
 		.factory()
 		.setTitle('Execute JSFL')
+		.setColumns([50, 400])
 		.addTextbox('JSFL', 'jsfl', {multiline:true, width:400})
 		.show(onAccept)
 	

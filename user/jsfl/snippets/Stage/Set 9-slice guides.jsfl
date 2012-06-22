@@ -38,4 +38,4 @@
 	}
 
 // UI
-	XUL.create('numeric:Padding=5', setSlice9Guides)
+	XUL.create('title:Add 9-slice scaling,columns:[60, 60],numeric:Padding=5', setSlice9Guides)

@@ -53,6 +53,7 @@
 		{
 			XUL
 				.factory('title:Make selected elements circular')
+				.setColumns([70, 110])
 				.addSlider('Radius', 'radius', [100,0, 300])
 				.addCheckbox('Scale elements', 'scale')
 				.addButton('Apply', 'apply')

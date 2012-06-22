@@ -9,7 +9,7 @@
 
 		// setup and load
 			xjsfl.init(this);
-			load('../../_libraries/uri.jsfl', true);
+			load('../../_libraries/uri.jsfl');
 			
 		// check this is a module .fla
 			var moduleURI = getModuleURI();
@@ -59,7 +59,7 @@
 			if(flashFile.exists || moduleFile.exists)
 			{
 				// debug
-					trace('\nAbout to synchronise "' +filename+ '" files');
+					trace('\nSynchronising "' +filename+ '" panels...');
 					
 				// both files exist, copy newer over older
 					if(flashFile.exists && moduleFile.exists)

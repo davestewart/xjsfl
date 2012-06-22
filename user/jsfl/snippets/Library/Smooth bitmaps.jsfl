@@ -15,5 +15,8 @@
 		}
 
 	// delete
-		XUL.create('title:Smooth Library Bitmaps,checkbox:Smooth=true,checkbox:SelectedOnly=false', onAccept)
+		if(UI.items)
+		{
+			XUL.create('title:Smooth Library Bitmaps,checkbox:Smooth=true,checkbox:SelectedOnly=false', onAccept)
+		}
 })()

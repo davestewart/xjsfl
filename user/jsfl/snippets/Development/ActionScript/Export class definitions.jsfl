@@ -199,6 +199,7 @@
 					XUL
 						.factory()
 						.setTitle('Export ' +collection.elements.length+ ' classes (' +selectionType+ ')')
+						.setColumns([100, 350])
 						.addListbox('Items', 'items', names, {rows:rows, multiple:true})
 						.addTextbox('Template path', 'template', {width:500, value:templateURI.path})
 						.addTextbox('Output path', 'path', {width:500, value:path})
@@ -219,7 +220,7 @@
 	// global variables
 		var collection;
 		var author		= 'Dave Stewart';
-		var templateURI	= new URI('//user/assets/templates/class.as.txt');
+		var templateURI	= new URI('//user/assets/templates/class.as');
 		var folderURI	= new URI('//user/temp/src/');
 		var path		= folderURI.path;
 

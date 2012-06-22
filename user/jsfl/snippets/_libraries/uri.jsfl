@@ -11,7 +11,7 @@ xjsfl.init(this);
 	function getModuleURI(uri)
 	{
 		// variables
-			uri				= uri || document.pathURI;
+			uri				= uri || $dom.pathURI;
 			var folderURI	= new URI(uri).getParent();
 			var moduleURI;
 
@@ -25,6 +25,7 @@ xjsfl.init(this);
 					if(xml.module.length())
 					{
 						moduleURI = new URI(file.uri).folder;
+						break;
 					}
 				}
 				folderURI = folderURI.getParent();
@@ -40,36 +41,11 @@ xjsfl.init(this);
 	 */
 	function getPublishURI()
 	{
-		if(document.pathURI)
-		{
-			// publish profile information
-				var xml				= new XML(Superdoc.settings.publishProfile.exportString());
-				var nodes			= xml..flashFileName;
+		// publish profile information
+			var profile			= new PublishProfile();
+			var publishPath		= profile.file.flashPath;
+			var publishURI		= URI.isAbsolute(publishPath) ? new URI(publishPath) : new URI(publishPath, $dom.pathURI);
 
-			// currently-publishing filename, e.g. "../../Module Name.swf"
-				var publishPath		= nodes.toString();
-				var documentURI		= document.pathURI;
-				var publishURI		= URI.isAbsolute(publishPath) ? new URI(publishPath) : new URI(publishPath, documentURI);
-
-			// return
-				return publishURI;
-		}
-	}
-
-	/**
-	 * Sets the publish URI of the current .fla
-	 * @param	{String}		A path to set the publish profile to
-	 */
-	function setPublishPath(path)
-	{
-		// get node values
-			var xml		= new XML(Superdoc.settings.publishProfile.exportString());
-			var nodes	= xml..flashFileName;
-
-		// set node values
-			nodes[0]	= path;
-			Superdoc.settings.publishProfile.importString(xml.toXMLString());
-
-		// debug
-			trace('Publish location changed to: "' + path + '"')
+		// return
+			return publishURI;
 	}
