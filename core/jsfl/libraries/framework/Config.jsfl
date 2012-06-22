@@ -177,13 +177,13 @@
 					// get the value
 						var value	= this.xml.get(path);
 						var length	= value.length();
-	
+						
 					// result will always be an XMLList, now choose whether to convert it
 						if(length == 0)
 						{
 							return undefined;
 						}
-						else if(value.hasComplexContent())
+						else if(value.nodeKind() === 'element' && (value.hasComplexContent() || value.attributes().length() > 0))
 						{
 							return value;
 						}
