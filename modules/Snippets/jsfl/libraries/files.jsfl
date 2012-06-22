@@ -35,7 +35,7 @@ FileManager =
 		},
 
 		/**
-		 * Creates a SNippet file on the hard disk
+		 * Creates a Snippet file on the hard disk
 		 * @param	{String}	targetURI		The URI to save the newly-created file to
 		 * @param	{String}	contents		The contents of the newly-created file
 		 * @param	{String}	description		An optional description that will show up as a tooltip
@@ -141,6 +141,17 @@ FileManager =
 						xml.appendChild(item);
 				}
 				
+				function addFolder(item)
+				{
+					// grab the current open / closed state from the existing config file
+						var path		= String(item.@path);
+						var node		= xmlOld ? xmlOld.item.(function::attribute('path') == path) : null;
+						var closed		= node ? node.@closed : false;
+
+					// add item
+						addItem(item, {closed:closed});
+				}
+				
 			// --------------------------------------------------------------------------------
 			// variables
 			
@@ -150,7 +161,7 @@ FileManager =
 				// uris
 					folderURI			= URI.toURI(folderURI);
 					var uris			= Utils.getSearchableURIs(folderURI);
-					uris.shift();
+					uris.shift();		// remove root URI
 					
 				// create data
 					var iconsURI		= Snippets.uri + 'assets/icons/16x16/';
@@ -186,12 +197,7 @@ FileManager =
 							// folder
 								if(uri.type === 'folder')
 								{
-									// grab the current open / closed state from the existing config file
-										var node		= xmlOld ? xmlOld.find('@path=' + itemPath) : null;
-										var closed		= node ? node.@closed : false;
-										
-									// add item
-										addItem(item, {closed:closed});
+									addFolder(item);
 								}
 		
 						// --------------------------------------------------------------------------------
@@ -204,13 +210,13 @@ FileManager =
 									// get file details
 									
 										// skip non jsfl files.
-											if( ! /\.jsfl$/.test(uri) )
+											if(uri.extension !== 'jsfl')
 											{
 												continue;
 											}
 											
 										// debug
-											Snippets.log('processing "' + uri.path + '"')
+											// Snippets.log('processing "' + uri.path + '"')
 										
 										// get source
 											try
@@ -250,7 +256,7 @@ FileManager =
 												var strNode	= item.toXMLString();
 												
 											// add group head
-												addItem(item);
+												addFolder(item);
 												
 											// add members
 												for (var i = 0; i < members.length; i++)
@@ -295,6 +301,7 @@ FileManager =
 				if(dataURI)
 				{
 					save(dataURI, xml);
+					//trace(xml);
 				}
 				
 				return xml;
