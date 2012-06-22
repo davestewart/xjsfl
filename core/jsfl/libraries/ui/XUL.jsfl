@@ -28,7 +28,7 @@
 		 * @param	{String}	title		The title of the new dialog
 		 * @returns	{XUL}					A new XUL instance
 		 */
-		function XUL(title)
+		XUL = function(title)
 		{
 			//TODO Allow a file: uri to be passed into the constructor
 
@@ -46,7 +46,7 @@
 			// private properties
 				this.events		= {};
 				this.rules		= {};
-				this.columns	= [80, 150],
+				this.columns	= [100, 180],
 				this.error		= null;
 				this.id			= -1;
 
@@ -199,7 +199,7 @@
 					settings:	{},
 					events:		{},
 					rules:		{},
-					columns:	[100, 200],
+					columns:	[100, 180],
 
 				// template
 					content:	'',
@@ -305,6 +305,12 @@
 										element['@' + attr] = attributes[attr];
 									}
 								}
+							}
+							
+						// width
+							if(attributes && attributes.width > this.columns[1])
+							{
+								this.columns[1] = attributes.width;
 							}
 
 						// combo / selected
@@ -513,7 +519,7 @@
 
 					/**
 					 * Add control using shorthand notation
-					 * @param	{String}	str				A string of the format "type:Label=values,type:Label=values, ..."
+					 * @param	{String}	str				A string of the format "property:value,type:Label=values,type:Label=values, ..."
 					 * @returns	{XUL}						The XUL dialog
 					 */
 					add:function(str)
@@ -521,217 +527,200 @@
 						//TODO Add xml:<xml attr="value"> functionality
 
 						// variables
-							var chunker		= /\s*(\||\w*:)?([^,=]+)=?(\[[^\]]+\]|{[^}]+}|[^,]*)/g
+							var controls	= Utils.parseExpression(str);
+							var rxControl	= /(\||\w*:)?([^=]*)=?(.*)/
 							var rxObj		= /([^:,]+):([^,]+)/;
-							var exec, matches, rx, mats;
-
+							
 						// parse
-							while(matches = chunker.exec(str))
+							for each(var control in controls)
 							{
-								// debug
-									var match = matches[0].trim();
-									//inspect(matches);
-
-								// spacer
-									if(match == '')
-									{
-										this.addSpacer();
-									}
+								// variables
+									var matches		= control.match(rxControl);
+									var control		= matches[1].trim().replace(':', '');
+									var label		= matches[2].trim();
+									var value		= matches[3].trim();
 
 								// control
-									else
+									if(control === '')
 									{
-										// variables
-											var control = matches[1].trim();
-											var label	= matches[2].trim();
-											var value	= matches[3].trim();
-
-										// control
-											if(label == '|') // small hack, as the RegExp doesn't catch \| as a control
-											{
-												control = 'separator';
-												label = '';
-											}
-											else if(control == '|')
-											{
-												control = 'separator';
-											}
-											else if(control == '')
-											{
-												control = 'textbox';
-											}
-											else
-											{
-												control = control.substring(0, matches[1].length - 1);
-											}
-
-										//TODO update this to work with Utils.parseValue
-
-											// inspect([control, label, value])
-
-										// compound value
-											if(/^[\[{]/.test(value))
-											{
-												// variables
-													var isObject	= value[0] == '{';
-													var values		= value.substring(1, value.length - 1).split(',');
-
-												// loop through the array and convert elements to values / objects
-													for(var i = 0; i < values.length; i++)
-													{
-														if(isObject)
-														{
-															mats = values[i].match(rxObj)
-															if(mats)
-															{
-																var lab		= mats[1].trim();
-																var val		= mats[2].trim();
-																values[i]	= {label:lab, value:val};
-															}
-														}
-														else
-														{
-															var val		= values[i].trim();
-															values[i]	= /^popupslider|slider|numeric$/.test(control) ? val : {label:val, value:val};
-														}
-													}
-
-												// update control type
-													if(control == 'textbox')
-													{
-														control = 'dropdown';
-													}
-
-												// re-assign values
-													value = values;
-											}
-
-											//list([label, control)
-
-										// add control
-											switch(control)
-											{
-												// single controls
-
-													case 'button':
-														this.addButton(label);
-													break;
-
-													case 'checkbox':
-														this.addCheckbox(label, null, {checked:value});
-													break;
-
-													case 'color':
-													case 'colorchip':
-													case 'colorpicker':
-														this.addColorchip(label, null, {value:value});
-													break;
-
-													case 'expression':
-														this.addExpression(label, null, {value:value});
-													break;
-
-													case 'choosefile':
-													case 'openfile':
-													case 'file':
-														this.addFile(label, null);
-													break;
-
-													case 'savefile':
-													case 'save':
-														this.addFile(label, null, {value:'', type:'save'});
-													break;
-
-													case 'flash':
-														this.setFlash(label, control, value);
-													break;
-
-													case 'numeric':
-													case 'slider':
-													case 'popupslider':
-														this.addSlider(label, null, value);
-													break;
-
-													case 'targetlist':
-														this.addTargetlist(label, null, {value:value});
-													break;
-
-													case 'text':
-													case 'textbox':
-													case 'textfield':
-														this.addTextbox(label, null, {value:value});
-													break;
-
-													case 'textarea':
-														this.addTextbox(label, null, {value:value, multiline:true});
-													break;
-
-												// compound controls
-
-													case 'checkboxgroup':
-													case 'checkboxes':
-														this.addCheckboxgroup(label, null, value);
-													break;
-
-													case 'radiogroup':
-													case 'radios':
-													case 'radio':
-														this.addRadiogroup(label, null, value);
-													break;
-
-													case 'list':
-													case 'listbox':
-														this.addListbox(label, null, value);
-													break;
-
-													case 'menulist':
-													case 'dropdown':
-														this.addDropdown(label, null, value);
-													break;
-
-												// other
-
-													case 'xml':
-														this.addXML(label);
-													break;
-
-													case 'label':
-														this.addLabel(label, null, {value:label});
-													break;
-
-													case 'separator':
-														this.addSeparator(label);
-													break;
-
-													case 'property':
-														this.addProperty(label);
-													break;
-
-												// properties
-
-													case 'title':
-														this.setTitle(label);
-													break;
-
-													case 'width':
-														this.setWidths(parseInt(label));
-													break;
-
-													case 'columns':
-														this.setColumns(Utils.parseValue(label));
-													break;
-
-											default:
-												xjsfl.debug.error('XUL.add(): Undefined control type "' +control+ '"');
-											}
+										control = 'textbox';
+									}
+									
+								// handle properties
+									if(/^(title|columns|width|xml)$/.test(control))
+									{
+										value = label;
+										label = '';
 									}
 
+								// compound value
+									else if(/^[\[{]/.test(value))
+									{
+										// variables
+											var isObject	= value[0] == '{';
+											var values		= value.substring(1, value.length - 1).split(',');
+
+										// loop through the array and convert elements to values / objects
+											for(var i = 0; i < values.length; i++)
+											{
+												if(isObject)
+												{
+													var matches = values[i].match(rxObj)
+													if(matches)
+													{
+														var lab		= matches[1].trim();
+														var val		= matches[2].trim();
+														values[i]	= {label:lab, value:val};
+													}
+												}
+												else
+												{
+													var val		= values[i].trim();
+													values[i]	= /^(popupslider|slider|numeric)$/.test(control) ? val : {label:val, value:val};
+												}
+											}
+
+										// update control type
+											if(control == 'textbox')
+											{
+												control = 'dropdown';
+											}
+
+										// re-assign values
+											value = values;
+									}
+
+								// debug
+									//inspect([control, label, value])
+
+								// add control
+									switch(control)
+									{
+										// single controls
+
+											case 'button':
+												this.addButton(label);
+											break;
+
+											case 'checkbox':
+												this.addCheckbox(label, null, {checked:value});
+											break;
+
+											case 'color':
+											case 'colorchip':
+											case 'colorpicker':
+												this.addColorchip(label, null, {value:value});
+											break;
+
+											case 'expression':
+												this.addExpression(label, null, {value:value});
+											break;
+
+											case 'choosefile':
+											case 'openfile':
+											case 'file':
+												this.addFile(label, null);
+											break;
+
+											case 'savefile':
+											case 'save':
+												this.addFile(label, null, {value:'', type:'save'});
+											break;
+
+											case 'flash':
+												this.setFlash(label, control, value);
+											break;
+
+											case 'value':
+											case 'number':
+											case 'numeric':
+											case 'slider':
+											case 'popupslider':
+												this.addSlider(label, null, value);
+											break;
+
+											case 'targetlist':
+												this.addTargetlist(label, null, {value:value});
+											break;
+
+											case 'text':
+											case 'textbox':
+											case 'textfield':
+												this.addTextbox(label, null, {value:value});
+											break;
+
+											case 'textarea':
+												this.addTextbox(label, null, {value:value, multiline:true});
+											break;
+
+										// compound controls
+
+											case 'checkboxgroup':
+											case 'checkboxes':
+												this.addCheckboxgroup(label, null, value);
+											break;
+
+											case 'radiogroup':
+											case 'radios':
+											case 'radio':
+												this.addRadiogroup(label, null, value);
+											break;
+
+											case 'list':
+											case 'listbox':
+												this.addListbox(label, null, value);
+											break;
+
+											case 'menulist':
+											case 'dropdown':
+												this.addDropdown(label, null, value);
+											break;
+
+										// other
+
+											case 'xml':
+												this.addXML(value);
+											break;
+
+											case 'label':
+												this.addLabel(label, null);
+											break;
+
+											case 'property':
+												this.addProperty(value);
+											break;
+
+											case 'spacer':
+											case '-':
+												this.addSpacer();
+											break;
+
+											case 'separator':
+											case '|':
+												this.addSeparator();
+											break;
+
+										// properties
+
+											case 'title':
+												this.setTitle(value);
+											break;
+
+											case 'width':
+												this.setWidth(parseInt(value));
+											break;
+
+											case 'columns':
+												this.setColumns(Utils.parseValue(value));
+											break;
+
+									default:
+										xjsfl.debug.error('XUL.add(): Undefined control type "' +control+ '"');
+									}
+									
 								// output
 									//inspect([matches[0]..trim(), control, label, value], 'Add');
-
-
 							}
-
 						// return
 							return this;
 					},
@@ -1163,8 +1152,8 @@
 						// build xml
 							var xml				= XUL.templates.label.copy();
 							var sum				= 0; this.columns.forEach( function(e){sum += e} );
-							xml.@width			= sum;
-							xml.@value			= label;
+							xml.label.@width	= sum;
+							xml.label.@value	= label;
 
 						// add xml
 							this.addXML(xml);
@@ -1368,7 +1357,16 @@
 				 */
 				setColumns:function(columns)
 				{
-					this.columns = columns;
+					if(Utils.isArray(columns))
+					{
+						this.columns = columns;
+					}
+					return this;
+				},
+				
+				setWidth:function(value)
+				{
+					trace('XUL.setWidth() not yet implemented');
 					return this;
 				},
 
@@ -1800,6 +1798,10 @@
 						for each(var label in this.xml..row.label)
 						{
 							label.@width = this.columns[0];
+						}
+						for each(var control in this.xml..row.*.(function::attribute('class') == 'control'))
+						{
+							control.@width = this.columns[1];
 						}
 
 					// replace separators
