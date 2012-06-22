@@ -22,10 +22,42 @@
 	 */
 	ActionScript =
 	{
+		
+		/**
+		 * Gets the AS3 class of an item or element
+		 * @param		{LibraryItem}	item		A library item
+		 * @param		{Element}		item		A stage element
+		 * @returns		{String}					The String class of the object
+		 */
+		getClass:function(item)
+		{
+			if(item instanceof Element)
+			{
+				var types =
+				{
+					'tlfText'			: 'fl.text.TLFTextField',
+					'text'				: 'flash.text.TextField',
+				};
+				
+				if(item.elementType in types)
+				{
+					return types[item.elementType];
+				}
+				item = item.libraryItem;
+			}
+			
+			if(item instanceof LibraryItem)
+			{
+				return item.linkageClassName || ActionScript.getBaseClass(item);
+			}
+			
+			return null;
+		},		
+		
 		/**
 		 * Gets the AS3 base class of an item or element
 		 * @param		{LibraryItem}	item		A library item
-		 * @param		{Element}		item		A library item
+		 * @param		{Element}		item		A stage element
 		 * @returns		{String}					The String class of the object
 		 */
 		getBaseClass:function(item)
