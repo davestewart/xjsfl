@@ -1,208 +1,62 @@
 ﻿/**
- * Generates AS3 class declarations for stage instances
+ * Generates AS3 class declarations for scriptable stage elements
  *
  * @author      Dave Stewart
  */
 
-
-// ----------------------------------------------------------------------------------------------------------------------
-// utilities
-
-	function tabify(code, tabWidth, tabStop)
-	{
-		// functions
-			function getNextTabStop(colIndex)
-			{
-				if(colIndex % tabWidth == 0)
-				{
-					colIndex ++;
-				}
-				return Math.ceil(colIndex / tabWidth) * tabWidth;
-			}
-
-			function getNumTabs(colIndex, colTarget)
-			{
-				return Math.ceil((colTarget - colIndex) / tabWidth);
-			}
-
-			function getTabs(colIndex, colTarget)
-			{
-				if(colIndex % tabWidth == 0)
-				{
-					colIndex --;
-				}
-				var n = Math.ceil((colTarget - colIndex) / tabWidth);
-				return '\t'.repeat(n + 1);
-			}
-
-		// properties
-			var tabSpaces	= '';
-			var tabStop		= tabStop ? tabStop * tabWidth : 0;
-
-		// code
-			var lines		= code.split(/[\r\n]/);
-
+	// --------------------------------------------------------------------------------
+	// setup
+	
+		// init
+			xjsfl.init(this, ['ActionScript', 'Selectors', 'ElementSelector']);
+	
 		// variables
-			var tabWidth	= tabWidth || 8;
-			var char		= ':';
+			var imports		= {};
+			var elements	= [];
+			var unnamed		= [];
 
-
-		// code
-			// get max tab stop
-				var tabAsSpaces = ' '.repeat(tabWidth);
-				for(var i = 0; i < lines.length; i++)
-				{
-					var line		= lines[i];
-					var colIndex	= line.indexOf(char);
-					if(colIndex > tabStop)
-					{
-						tabStop = colIndex;
-					}
-				}
-
-			// go through text and add tabs
-				for(var i = 0; i < lines.length; i++)
-				{
-					var line		= lines[i];
-					var colIndex	= line.indexOf(char);
-					lines[i]		= line.substr(0, colIndex) + getTabs(colIndex, tabStop) + line.substr(colIndex);
-				}
-
-			// echo
-				return lines.join('\n');
-
-	}
-
-// ----------------------------------------------------------------------------------------------------------------------
-// variables
-
-	var imports		= {};
-	var elements	= {};
-
-
-// ----------------------------------------------------------------------------------------------------------------------
-// functions
-
-	function addElement(name, type, path)
-	{
-		if(! imports[path])
-		{
-			imports[path] = path;
-		}
-
-		if(! elements[name])
-		{
-			elements[name] = {name:name, type:type}
-		}
-	}
-
-	function getImports()
-	{
-		var arrIn	= Utils.getValues(imports)
-		var arrOut	= [];
-
-		for (var i = 0; i < arrIn.length; i++)
-		{
-			arrOut.push('import ' + arrIn[i] + ';');
-		}
-
-		return Utils.sort(arrOut, false, true).join('\n') + '\n';
-	}
-
-	function getElements()
-	{
-		var arrIn	= Utils.getValues(elements)
-		var arrOut	= [];
-
-		for (var i = 0; i < arrIn.length; i++)
-		{
-			arrOut.push('public var ' + arrIn[i].name + '\t\t:' + arrIn[i].type + ';');
-		}
-
-		return arrOut.sort().join('\n') + '\n';
-	}
-
-	function processElement(element)
-	{
-		if(element.name)
-		{
-			switch( element.elementType )
+	// --------------------------------------------------------------------------------
+	// process
+	
+		// callback
+			function processElement(element)
 			{
-				case "instance":
-					var type			= element.symbolType;
-					var classname		= element.libraryItem.linkageClassName;
-					var baseclassName	= element.libraryItem.linkageBaseClass;
-
-					if(type !== 'graphic')
+				if(element.name)
+				{
+					var classPath = ActionScript.getClass(element);
+					if(classPath)
 					{
-						// If class attached, import it and use the base name, otherwise use the MovieClip class
-						if(baseclassName != '')
-						{
-							classname = baseclassName;
-						}
-
-						if(classname != null)
-						{
-							addElement(element.name, classname.split('.').pop(), classname );
-						}
-						else
-						{
-							if(type === 'button')
-							{
-								addElement(element.name, 'SimpleButton', 'flash.display.SimpleButton');
-							}
-							else if(type === 'movie clip')
-							{
-								if(element.libraryItem.timeline.frameCount > 1)
-								{
-									addElement(element.name, 'MovieClip', 'flash.display.MovieClip');
-								}
-								else
-								{
-									addElement(element.name, 'Sprite', 'flash.display.Sprite');
-								}
-							}
-						}
+						var className		= classPath.split('.').pop();
+						imports[classPath]	= 'import ' + classPath + ';';
+						elements.push('public var {name}	:{type};'.inject(element.name, className));
 					}
-				break;
-
-				case "text":
-					if(element.textType != 'static')
-					{
-						addElement(element.name, 'TextField', 'flash.text.TextField');
-					}
-				break;
-
-				case "shape":
-					if(element.isGroup)
-					{
-						// found a group of items, not supported
-					}
-				break;
+				}
+				else
+				{
+					unnamed.push(element);
+				}
 			}
-		}
-	}
-
-
-// ----------------------------------------------------------------------------------------------------------------------
-// main code
-
-	// init
-		xjsfl.init(this);
-		clear();
-
-	// process elements
-		$('*').each(processElement);
-
-	// trace
-		trace(getImports());
-		trace('// stage instances')
-		trace(tabify(getElements(), 4, 7))
-
-	// select any unnamed items on stage
-		var collection = $(':movieclip[name=]');
-		if(collection.elements.length)
+			
+		// process scriptable elements
+			var collection = $(':scriptable').each(processElement);
+			
+	// --------------------------------------------------------------------------------
+	// output
+	
+		if(elements.length)
 		{
-			collection.select();
-			alert('The selected items are unnamed, so were skipped in the output process.');
+			// format
+				imports		= Utils.sort(Utils.getValues(imports), false, true).join('\n');
+				elements	= Utils.columnizeText(elements.join('\n'));
+		
+			// output
+				clear();
+				format('{imports}\n\n{elements}\n', imports, elements);
+				
+			// select any unnamed items on stage
+				if(unnamed.length)
+				{
+					$selection = unnamed;
+					alert('The selected items are unnamed, so were skipped in the output process.');
+				}
 		}
