@@ -25,7 +25,7 @@
 		 * @param	{Number}	x	The x coordinate in pixels
 		 * @param	{Number}	yx	The y coordinate in pixels
 		 */
-		function Point(x, y)
+		Point = function(x, y)
 		{
 			this.x = x || 0;
 			this.y = y || 0;

@@ -30,7 +30,7 @@
 		 * @param	{Object}	data		An object of key:value pairs
 		 * @returns	{Template}				A new Template instance
 		 */
-		function Template(pathOrURI, data)
+		Template = function(pathOrURI, data)
 		{
 			if(pathOrURI)
 			{

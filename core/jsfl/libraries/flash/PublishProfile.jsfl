@@ -26,7 +26,7 @@
 		 * @param		{Document}		dom				An optional Document instance; defaults to the currently open Document
 		 * @param		{Boolean}		autoSave		An optional Boolean to resave the profile immediately when properties are set; defaults to true
 		 */
-		function PublishProfile(dom, autoSave)
+		PublishProfile = function(dom, autoSave)
 		{
 			// parameters
 				dom			= dom || fl.getDocumentDOM();

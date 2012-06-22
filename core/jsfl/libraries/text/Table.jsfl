@@ -33,7 +33,7 @@
 		 * @param	{Number}	maxColWidth		Max Row Width (chars)
 		 * @param	{Number}	maxRowHeight	Max Column Height (carriage returns)
 		 */
-		function Table(rows, caption, keys, maxColWidth, maxRowHeight)
+		Table = function(rows, caption, keys, maxColWidth, maxRowHeight)
 		{
 			//TODO Add option to automatically skip functions, including constructors
 

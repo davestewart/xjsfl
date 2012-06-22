@@ -29,7 +29,7 @@
 		 * @param	{XUL}		xul		The parent XUL instance of the control
 		 * @param	{XML}		xml		The XML of the control, that will be added to the UI
 		 */
-		function XULControl(id, type, xul, xml)
+		XULControl = function(id, type, xul, xml)
 		{
 			// --------------------------------------------------------------------------------
 			// # Properties

@@ -26,7 +26,7 @@
 		 * The Selector constructor
 		 * @param	{String}	pattern		The CSS selector pattern
 		 */
-		function Selector(pattern)
+		Selector = function(pattern)
 		{
 			// NOTE: Scope is no longer passed in, as we don't want it to be inspected when we debug
 			this.pattern	= pattern;

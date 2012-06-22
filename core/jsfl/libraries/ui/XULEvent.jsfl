@@ -27,7 +27,7 @@
 		 * @param	{XUL}			xul			The xJSFL XUL instance the control belongs to
 		 * @param	{XMLUI}			xmlui		The Flash XMLUI instance the control belongs to
 		 */
-		function XULEvent(type, control, xul, xmlui)
+		XULEvent = function(type, control, xul, xmlui)
 		{
 			/**
 			 * @type {String}		The type of event, i.e. 'click', 'change', 'create'

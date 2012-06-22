@@ -88,7 +88,7 @@
 		 * @param	{Folder}	context			An optional Folder from which to start the URI
 		 * @param	{Number}	context			An optional stack-function index, the location of which to derive the URI from
 		 */
-		function URI(pathOrURI, context)
+		URI = function(pathOrURI, context)
 		{
 			if(typeof pathOrURI === 'undefined' || pathOrURI == null)
 			{

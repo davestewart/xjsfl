@@ -36,7 +36,7 @@
 		 * @param	{Number}	y			The bounds y position
 		 * @returns	{Object}    			A Bounds object
 		 */
-		function Bounds()
+		Bounds = function()
 		{
 			// variables
 				var args = arguments;

@@ -31,7 +31,7 @@
 		 * @param	{URI}		uriOrPath	An optional URI instance to which to save a log file
 		 * @param	{Boolean}	append		An optional Boolean to append (rather than clear) any existing file, defaults to false
 		 */
-		function Logger(template, uriOrPath, append)
+		Logger = function(template, uriOrPath, append)
 		{
 			this.template = new SimpleTemplate(template || '{message}');
 			if(uriOrPath)
