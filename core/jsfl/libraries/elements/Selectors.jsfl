@@ -1021,6 +1021,15 @@
 				return false;
 			},
 
+			scriptable:function(element)
+			{
+				return (
+						(element.elementType === 'instance' && ! (element.symbolType === 'graphic' || element.instanceType === 'bitmap'))
+						|| (element.elementType === 'text' && /(dynamic|input)/.test(element.textType))
+						|| element.elementType === 'tlfText'
+					)
+			},
+			
 			/**
 			 *
 			 * @param	element
@@ -1067,7 +1076,7 @@
 			component:function(element)
 			{
 				return element.instanceType === 'compiled clip';
-			}
+			},
 		},
 
 		custom:
