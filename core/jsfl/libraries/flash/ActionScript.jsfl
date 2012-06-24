@@ -17,13 +17,13 @@
 		
 	/**
 	 * ActionScript
-	 * @overview	Provides ActionScript 3 related utilities
+	 * @overview	Provides ActionScript 3 related functionality
 	 * @instance	ActionScript
 	 */
 	ActionScript =
 	{
 		
-		types:
+		classes:
 		{
 			'movie clip'		: 'flash.display.MovieClip',
 			'sprite'			: 'flash.display.Sprite',
@@ -53,9 +53,9 @@
 					if(element.symbolType !== 'graphic')
 					{
 						// element is text
-							if(element.textType && element.elementType in ActionScript.types)
+							if(element.textType && element.elementType in ActionScript.classes)
 							{
-								classPath = ActionScript.types[element.elementType];
+								classPath = ActionScript.classes[element.elementType];
 							}
 							
 						// element is an instance
@@ -75,15 +75,15 @@
 								// non-exported, including video
 									else
 									{
-										var itemClass	= ActionScript.types[item.itemType];
-										var baseClass	= ActionScript.types[element.symbolType];
+										var itemClass	= ActionScript.classes[item.itemType];
+										var baseClass	= ActionScript.classes[element.symbolType];
 										classPath		= itemClass || baseClass;
 									}
 								
 								// finalize
-									if(classPath === ActionScript.types['movie clip'] && item.timeline.frameCount === 1)
+									if(classPath === ActionScript.classes['movie clip'] && item.timeline.frameCount === 1)
 									{
-										classPath = ActionScript.types.sprite;
+										classPath = ActionScript.classes.sprite;
 									}
 							}
 					}
@@ -129,61 +129,21 @@
 						{
 							if(item.itemType === 'movie clip')
 							{
-								classPath = item.timeline.frameCount === 1 ? ActionScript.types.sprite : ActionScript.types['movie clip'];
+								classPath = item.timeline.frameCount === 1 ? ActionScript.classes.sprite : ActionScript.classes['movie clip'];
 							}
 							else
 							{
-								classPath = ActionScript.types[item.itemType] || '';
+								classPath = ActionScript.classes[item.itemType] || '';
 							}
 						}
 				}
 
 			}
 			return nameOnly ? classPath.split('.').pop() : classPath;
-		},
-		
-		compileSWC:function()
-		{
-			
-		},
+		}
 	
 	}
 
 	xjsfl.classes.register('ActionScript', ActionScript);
 		
 		
-// http://help.adobe.com/en_US/flex/using/WS2db454920e96a9e51e63e3d11c0bf69084-7a80.html
-// http://troyworks.com/blog/2010/03/04/how-to-create-swc-actionscript-libraries/
-
-/*
-	"C:\Program Files (x86)\Development\flex_sdk_4\bin\compc" -source-path "E:\05 - Commercial Projects\xJSFL\3 - development\dev\AS3\_classes" -include-sources "E:\05 - Commercial Projects\xJSFL\3 - development\xJSFL\core\assets\swc\src" -optimize -output "E:\05 - Commercial Projects\xJSFL\3 - development\xJSFL\core\assets\swc\xJSFL.swc"
-
-	"{flexsdk}" -source-path "{lib}" -include-sources "{src}" -optimize -output "{swc}"
-
-*/
-
-/*
-
-'"{flexsdk}" -source-path "E:\05 - Commercial Projects\xJSFL\3 - development\dev\AS3\_classes" -include-sources "E:\05 - Commercial Projects\xJSFL\3 - development\xJSFL\core\assets\swc\src" -optimize -output "E:\05 - Commercial Projects\xJSFL\3 - development\xJSFL\core\assets\swc\xJSFL.swc"'
-
-
-
-var config		= new Config('flexsdk');
-var flexPath	= config.get('path') || 'C:/Program Files (x86)/flex_sdk_4/bin/compc';
-
-function onAccept(sources, file)
-{
-	Output.inspect(Utils.getArguments(arguments))
-}
-
-XUL
-	.factory()
-	.setTitle('Compile SWC')
-	.setColumns(100, 400)
-	.addTextbox('Flex SDK Path', null, {value:flexPath, width:600})
-	.addTextbox('Document Class Path', null, {value:Superdoc.settings.as3.docClass, width:600})
-	.addTextbox('Libraries Path', null, {value:flexPath, width:600})
-	.addTextbox('Output Path', null, {value:flexPath, width:600})
-	.show(onAccept)
-
-*/
