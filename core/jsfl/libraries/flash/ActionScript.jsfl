@@ -23,45 +23,92 @@
 	ActionScript =
 	{
 		
+		types:
+		{
+			'movie clip'		: 'flash.display.MovieClip',
+			'sprite'			: 'flash.display.Sprite',
+			'button'			: 'flash.display.SimpleButton',
+			'bitmap'			: 'flash.display.Bitmap',
+			'sound'				: 'flash.media.Sound',
+			'video'				: 'flash.media.Video',
+			'font'				: 'flash.text.Font',
+			'text'				: 'flash.text.TextField',
+			'tlfText'			: 'fl.text.TLFTextField',
+		},
+
 		/**
-		 * Gets the AS3 class of an item or element
-		 * @param		{LibraryItem}	item		A library item
+		 * Gets the AS3 class of an element or item
 		 * @param		{Element}		item		A stage element
+		 * @param		{LibraryItem}	item		A library item
+		 * @param		{Boolean}		nameOnly	An optional Boolean to return only the Class name
 		 * @returns		{String}					The String class of the object
 		 */
-		getClass:function(item)
+		getClass:function(element, nameOnly)
 		{
-			if(item instanceof Element)
+			var classPath = '';
+			
+			if(element instanceof Element)
 			{
-				var types =
-				{
-					'tlfText'			: 'fl.text.TLFTextField',
-					'text'				: 'flash.text.TextField',
-				};
+				// ignore graphic elements
+					if(element.symbolType !== 'graphic')
+					{
+						// element is text
+							if(element.textType && element.elementType in ActionScript.types)
+							{
+								classPath = ActionScript.types[element.elementType];
+							}
+							
+						// element is an instance
+							if(element.instanceType)
+							{
+								// variables
+									var item		= element.libraryItem;
+								
+								// exported types
+									if(item.linkageExportForAS)
+									{
+										var itemClass	= item.linkageClassName;
+										var baseClass	= ActionScript.getBaseClass(item);
+										classPath		= itemClass || baseClass;
+									}
+									
+								// non-exported, including video
+									else
+									{
+										var itemClass	= ActionScript.types[item.itemType];
+										var baseClass	= ActionScript.types[element.symbolType];
+										classPath		= itemClass || baseClass;
+									}
+								
+								// finalize
+									if(classPath === ActionScript.types['movie clip'] && item.timeline.frameCount === 1)
+									{
+										classPath = ActionScript.types.sprite;
+									}
+							}
+					}
 				
-				if(item.elementType in types)
-				{
-					return types[item.elementType];
-				}
-				item = item.libraryItem;
 			}
 			
-			if(item instanceof LibraryItem)
+			else if(element instanceof LibraryItem)
 			{
-				return item.linkageClassName || ActionScript.getBaseClass(item);
+				classPath = element.linkageClassName || ActionScript.getBaseClass(element);
 			}
 			
-			return null;
+			return nameOnly ? classPath.split('.').pop() : classPath;
 		},		
 		
 		/**
 		 * Gets the AS3 base class of an item or element
 		 * @param		{LibraryItem}	item		A library item
 		 * @param		{Element}		item		A stage element
+		 * @param		{Boolean}		nameOnly	An optional Boolean to return only the Class name
 		 * @returns		{String}					The String class of the object
 		 */
-		getBaseClass:function(item)
+		getBaseClass:function(item, nameOnly)
 		{
+			var classPath = '';
+			
 			if(item instanceof Element)
 			{
 				item = item.libraryItem;
@@ -69,33 +116,30 @@
 			
 			if(item instanceof LibraryItem)
 			{
-				if(item.linkageBaseClass)
+				if(item.linkageExportForAS)
 				{
-					return item.linkageBaseClass
+					// custom class
+						if(item.linkageBaseClass)
+						{
+							classPath = item.linkageBaseClass
+						}
+						
+					// native class
+						else
+						{
+							if(item.itemType === 'movie clip')
+							{
+								classPath = item.timeline.frameCount === 1 ? ActionScript.types.sprite : ActionScript.types['movie clip'];
+							}
+							else
+							{
+								classPath = ActionScript.types[item.itemType] || '';
+							}
+						}
 				}
-				else
-				{
-					var types =
-					{
-						'movie clip'		: 'flash.display.MovieClip',
-						'button'			: 'flash.display.SimpleButton',
-						'bitmap'			: 'flash.display.Bitmap',
-						'sound'				: 'flash.media.Sound',
-						'video'				: 'flash.media.Video',
-						'font'				: 'flash.text.Font',
-					};
-					
-					if(item.itemType === 'movie clip')
-					{
-						return item.timeline.frameCount === 1 ? 'flash.display.Sprite' : types['movie clip'];
-					}
-					else
-					{
-						return types[item.itemType] || null;
-					}
-				}
+
 			}
-			return null;
+			return nameOnly ? classPath.split('.').pop() : classPath;
 		},
 		
 		compileSWC:function()
