@@ -48,7 +48,10 @@
 	{
 		className:'ItemCollection',
 
-		library:null,
+		getLibrary:function()
+		{
+			// placeholder function
+		},
 
 		/**
 		 * ItemCollection constructor
@@ -63,7 +66,11 @@
 			{
 				throw new Error('ItemCollection requires that a document be open before instantiation');
 			}
-			this.library = dom.library;
+			this.className = ItemCollection;
+			this.getLibrary = function()
+			{
+				return dom.library;
+			}
 			this._super(elements instanceof Array ? elements : [elements]);
 		},
 	
@@ -78,7 +85,7 @@
 			{
 				for(var i = this.elements.length - 1; i >= 0; i--)
 				{
-					this.library.deleteItem(this.elements[i].name);
+					this.getLibrary().deleteItem(this.elements[i].name);
 				}
 				return this;
 			},
@@ -92,10 +99,10 @@
 			 */
 			select:function()
 			{
-				this.library.selectNone();
+				this.getLibrary().selectNone();
 				for(var i = 0; i < this.elements.length; i++)
 				{
-					this.library.selectItem(this.elements[i].name, false, true);
+					this.getLibrary().selectItem(this.elements[i].name, false, true);
 				}
 				this.reveal();
 				return this;
@@ -115,7 +122,7 @@
 					var item = this.elements[i];
 					if(item.itemType == 'folder')
 					{
-						this.library.expandFolder(state, recurse, item.name)
+						this.getLibrary().expandFolder(state, recurse, item.name)
 					}
 				}
 				return this;
@@ -136,11 +143,11 @@
 						path = path.replace(/\/[^\/]*$/, '');
 						if(cache.indexOf(path) == -1)
 						{
-							this.library.expandFolder(true, false, path);
+							this.getLibrary().expandFolder(true, false, path);
 							cache.push(path)
 						}
 					}
-					this.library.expandFolder(true, false, path);
+					this.getLibrary().expandFolder(true, false, path);
 				}
 				return this;
 			},
@@ -237,15 +244,15 @@
 					expand	= expand === false ? false : true;
 	
 				// create folder if it doesn't exist
-					if( ! this.library.itemExists(path))
+					if( ! this.getLibrary().itemExists(path))
 					{
-						this.library.addNewItem('folder', path);
+						this.getLibrary().addNewItem('folder', path);
 					}
 	
 				// move items
 					for(var i = 0; i < this.elements.length; i++)
 					{
-						this.library.moveToFolder(path, this.elements[i].name, Boolean(replace));
+						this.getLibrary().moveToFolder(path, this.elements[i].name, Boolean(replace));
 					}
 	
 				// expand folders
@@ -256,7 +263,7 @@
 						while(path != '')
 						{
 							path = path.replace(/\/?[^\/]+$/, '');
-							//this.library.expandFolder(true, true, path);
+							//this.getLibrary().expandFolder(true, true, path);
 						}
 						*/
 					}
@@ -333,7 +340,7 @@
 			 */
 			update:function()
 			{
-				this.elements.forEach(function(e){ this.library.updateItem(e.name) }, this);
+				this.elements.forEach(function(e){ this.getLibrary().updateItem(e.name) }, this);
 				return this;
 			},
 	
