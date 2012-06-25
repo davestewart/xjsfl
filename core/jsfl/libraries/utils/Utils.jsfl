@@ -1208,17 +1208,19 @@
 				 * @param		{String}		text			The block of text to tabify
 				 * @param		{Number}		padding			An optional amount of tabs to pad each column by. Defaults to 0
 				 * @param		{String}		delimiter		An optional delimiter (can also be a RegExp) to split the columns on. Defaults to '\t'
+				 * @param		{Boolean}		useSpaces		An optional Boolean to use spaces instead of tabs. Defaults to false
 				 * @param		{Number}		tabWidth		An optional system tab width. Defaults to 4
 				 * @returns		{String}						The columnized output
 				 */
-				columnizeText:function(text, padding, delimiter, tabWidth)
+				columnizeText:function(text, padding, delimiter, useSpaces, tabWidth)
 				{
 					// parameters
-						padding			= padding === undefined ? 1 : padding;
+						padding			= padding === undefined ? 0 : padding;
 						delimiter		= delimiter || '\t';
 						tabWidth		= tabWidth || 4;
 					
 					// variables
+						var tab			= useSpaces ? ' '.repeat(tabWidth) : '\t';
 						var lines		= String(text).split('\n');
 						var widths		= [];
 						
@@ -1240,21 +1242,22 @@
 								var mod			= strWidth % tabWidth;
 								if(mod !== 0)
 								{
-									output		+= '\t';
-									strWidth	+= (tabWidth - mod);
+									var offset	= tabWidth - mod;
+									strWidth	+= offset;
+									output		+= useSpaces ? ' '.repeat(offset) : tab;
 								}
 					
 							// while the string width is smaller than the max maxWidth, pad to fit
 								while(strWidth <= maxWidth) //  + (padding * tabWidth)
 								{
-									output		+= '\t';
+									output		+= tab;
 									strWidth	+= tabWidth;
 								}
 								
 							// add any extra gutters between columns
 								if(padding > 0)
 								{
-									output += '\t'.repeat(padding);
+									output += tab.repeat(padding);
 								}
 					
 							// return
