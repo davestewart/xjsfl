@@ -88,7 +88,7 @@
 							{
 								trace('import ' + packageName + '*;\n');
 							}
-							trace(columnize ? Utils.columnizeText(output) : output.replace(/\t/g, ' '));
+							trace(columnize ? Utils.columnizeText(output, 1) : output.replace(/\t/g, ' '));
 							
 					// cleanup
 						$timeline.deleteLayer();

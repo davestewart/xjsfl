@@ -47,7 +47,7 @@
 		{
 			// format
 				imports		= Utils.sort(Utils.getValues(imports), false, true).join('\n');
-				elements	= Utils.columnizeText(elements.join('\n'));
+				elements	= Utils.columnizeText(elements.join('\n'), 1);
 		
 			// output
 				clear();
