@@ -30,8 +30,8 @@ JSFLConstants =
 			 */
 			compressionType: 
 			{
-				'photo':				'photo',
-				'lossless':				'lossless',
+				PHOTO:					'photo',
+				LOSSLESS:				'lossless',
 			},
 			
 		},
@@ -47,11 +47,11 @@ JSFLConstants =
 			 */
 			elementType:
 			{
-				'shape':				'shape',
-				'text':					'text',
-				'tlfText':				'tlfText',
-				'instance':				'instance',
-				'shapeObj':				'shapeObj',
+				SHAPE:					'shape',
+				TEXT:					'text',
+				TLF_TEXT:				'tlfText',
+				INSTANCE:				'instance',
+				SHAPE_OBJ:				'shapeObj',
 			},
 		},
 	
@@ -66,9 +66,9 @@ JSFLConstants =
 			 */
 			type: 
 			{
-				'inner':				'inner',
-				'outer':				'outer',
-				'full':					'full',
+				INNER:					'inner',
+				OUTER:					'outer',
+				FULL:					'full',
 			},
 			/**
 			 * filter.name
@@ -76,13 +76,13 @@ JSFLConstants =
 			 */
 			name:
 			{
-				'adjustColorFilter':	'adjustColorFilter',
-				'bevelFilter':			'bevelFilter',
-				'blurFilter':			'blurFilter',
-				'dropShadowFilter':		'dropShadowFilter',
-				'glowFilter':			'glowFilter',
-				'gradientBevelFilter':	'gradientBevelFilter',
-				'gradientGlowFilter':	'gradientGlowFilter',	
+				ADJUST_COLOR_FILTER:	'adjustColorFilter',
+				BEVEL_FILTER:			'bevelFilter',
+				BLUR_FILTER:			'blurFilter',
+				DROP_SHADOW_FILTER:		'dropShadowFilter',
+				GLOW_FILTER:			'glowFilter',
+				GRADIENT_BEVEL_FILTER:	'gradientBevelFilter',
+				GRADIENT_GLOW_FILTER:	'gradientGlowFilter',	
 			},
 			/**
 			 * filter.property
@@ -90,17 +90,17 @@ JSFLConstants =
 			 */
 			property:
 			{
-				'blurX':				'blurX',
-				'blurY':				'blurY',
-				'quality':				'quality',
-				'distance':				'distance',
-				'strength':				'strength',
-				'knockout':				'knockout',
-				'inner':				'inner',
-				'bevelType':			'bevelType',
-				'color':				'color',
-				'shadowColor':			'shadowColor',
-				'highlightColor':		'highlightColor',
+				BLUR_X:					'blurX',
+				BLUR_Y:					'blurY',
+				QUALITY:				'quality',
+				DISTANCE:				'distance',
+				STRENGTH:				'strength',
+				KNOCKOUT:				'knockout',
+				INNER:					'inner',
+				BEVEL_TYPE:				'bevelType',
+				COLOR:					'color',
+				SHADOW_COLOR:			'shadowColor',
+				HIGHLIGHT_COLOR:		'highlightColor',
 			}
 		},
 	
@@ -115,11 +115,11 @@ JSFLConstants =
 			 */
 			fillStyle:
 			{
-				'bitmap':				'bitmap',
-				'solid':				'solid',
-				'linearGradient':		'linearGradient',
-				'radialGradient':		'radialGradient',
-				'noFill':				'noFill',
+				BITMAP:					'bitmap',
+				SOLID:					'solid',
+				LINEAR_GRADIENT:		'linearGradient',
+				RADIAL_GRADIENT:		'radialGradient',
+				NO_FILL:				'noFill',
 			}
 		},
 	
@@ -134,10 +134,10 @@ JSFLConstants =
 			 */
 			labelType: 
 			{
-				'none':					'none',
-				'name':					'name',
-				'comment':				'comment',
-				'anchor':				'anchor',
+				NONE:					'none',
+				NAME:					'name',
+				COMMENT:				'comment',
+				ANCHOR:					'anchor',
 			},
 			/**
 			 * frame.tweenType
@@ -145,9 +145,9 @@ JSFLConstants =
 			 */
 			tweenType:
 			{
-				'motion':				'motion',
-				'shape':				'shape',
-				'none':					'none',
+				MOTION:					'motion',
+				SHAPE:					'shape',
+				NONE:					'none',
 			},
 			/**
 			 * frame.easeCurve
@@ -155,12 +155,12 @@ JSFLConstants =
 			 */
 			easeCurve:
 			{
-				'all':					'all',
-				'position':				'position',
-				'rotation':				'rotation',
-				'scale':				'scale',
-				'color':				'color',
-				'filters':				'filters',
+				ALL:					'all',
+				POSITION:				'position',
+				ROTATION:				'rotation',
+				SCALE:					'scale',
+				COLOR:					'color',
+				FILTERS:				'filters',
 			}
 		},
 	
@@ -175,12 +175,12 @@ JSFLConstants =
 			 */
 			instanceType: 
 			{
-				'symbol':				'symbol',
-				'bitmap':				'bitmap',
-				'embeddedVideo':		'embedded video',
-				'linkedVideo':			'linked video',
-				'video':				'video',
-				'compiledClip':			'compiled clip',
+				SYMBOL:					'symbol',
+				BITMAP:					'bitmap',
+				EMBEDDED_VIDEO:			'embedded video',
+				LINKED_VIDEO:			'linked video',
+				VIDEO:					'video',
+				COMPILED_CLIP:			'compiled clip',
 			},
 		},
 	
@@ -195,18 +195,18 @@ JSFLConstants =
 			 */
 			itemType:
 			{
-				'undefined':			'undefined',
-				'component':			'component',
-				'movieClip':			'movie clip',
-				'graphic':				'graphic',
-				'button':				'button',
-				'folder':				'folder',
-				'font':					'font',
-				'sound':				'sound',
-				'bitmap':				'bitmap',
-				'compiledClip':			'compiled clip',
-				'screen':				'screen',
-				'video':				'video',
+				UNDEFINED:				'undefined',
+				COMPONENT:				'component',
+				MOVIE_CLIP:				'movie clip',
+				GRAPHIC:				'graphic',
+				BUTTON:					'button',
+				FOLDER:					'folder',
+				FONT:					'font',
+				SOUND:					'sound',
+				BITMAP:					'bitmap',
+				COMPILED_CLIP:			'compiled clip',
+				SCREEN:					'screen',
+				VIDEO:					'video',
 			},
 			
 		},
@@ -222,9 +222,9 @@ JSFLConstants =
 			 */
 			animationType:
 			{
-				'none':					'none',
-				'motionObject':			'motion object',
-				'ikPose':				'IK pose',
+				NONE:					'none',
+				MOTION_OBJECT:			'motion object',
+				IK_POSE:				'IK pose',
 			},
 			/**
 			 * layer.layerType
@@ -232,12 +232,12 @@ JSFLConstants =
 			 */
 			layerType:
 			{
-				'normal':				'normal',
-				'guide':				'guide',
-				'guided':				'guided',
-				'mask':					'mask',
-				'masked':				'masked',
-				'folder':				'folder',
+				NORMAL:					'normal',
+				GUIDE:					'guide',
+				GUIDED:					'guided',
+				MASK:					'mask',
+				MASKED:					'masked',
+				FOLDER:					'folder',
 			},
 		},
 	
@@ -252,18 +252,18 @@ JSFLConstants =
 			 */
 			valueType:
 			{
-				'default':				'Default',
-				'array':				'Array',
-				'object':				'Object',
-				'list':					'List',
-				'string':				'String',
-				'number':				'Number',
-				'boolean':				'Boolean',
-				'fontName':				'Font Name',
-				'color':				'Color',
-				'collection':			'Collection',
-				'webServiceUrl':		'Web Service URL',
-				'webServiceOperation':	'Web Service Operation',
+				DEFAULT:				'Default',
+				ARRAY:					'Array',
+				OBJECT:					'Object',
+				LIST:					'List',
+				STRING:					'String',
+				NUMBER:					'Number',
+				BOOLEAN:				'Boolean',
+				FONT_NAME:				'Font Name',
+				COLOR:					'Color',
+				COLLECTION:				'Collection',
+				WEB_SERVICE_URL:		'Web Service URL',
+				WEB_SERVICE_OPERATION:	'Web Service Operation',
 			},
 		},
 	
@@ -279,9 +279,9 @@ JSFLConstants =
 			 */
 			symbolType: 
 			{
-				'button':				'button',
-				'movieClip':			'movie clip',
-				'graphic':				'graphic',
+				BUTTON:					'button',
+				MOVIE_CLIP:				'movie clip',
+				GRAPHIC:				'graphic',
 			},
 			/**
 			 * symbol.blendMode
@@ -289,20 +289,20 @@ JSFLConstants =
 			 */
 			blendMode:
 			{
-				'normal':		'normal',
-				'layer':		'layer',
-				'multiply':		'multiply',
-				'screen':		'screen',
-				'overlay':		'overlay',
-				'hardlight':	'hardlight',
-				'lighten':		'lighten',
-				'darken':		'darken',
-				'difference':	'difference',
-				'add':			'add',
-				'subtract':		'subtract',
-				'invert':		'invert',
-				'alpha':		'alpha',
-				'erase':		'erase',
+				NORMAL:					'normal',
+				LAYER:					'layer',
+				MULTIPLY:				'multiply',
+				SCREEN:					'screen',
+				OVERLAY:				'overlay',
+				HARDLIGHT:				'hardlight',
+				LIGHTEN:				'lighten',
+				DARKEN:					'darken',
+				DIFFERENCE:				'difference',
+				ADD:					'add',
+				SUBTRACT:				'subtract',
+				INVERT:					'invert',
+				ALPHA:					'alpha',
+				ERASE:					'erase',
 			}
 		},
 	
@@ -317,11 +317,11 @@ JSFLConstants =
 			 */
 			compressionType: 
 			{
-				'default':				'Default',
-				'adpcm':				'ADPCM',
-				'mp3':					'MP3',
-				'raw':					'Raw',
-				'speech':				'Speech',
+				DEFAULT:				'Default',
+				ADPCM:					'ADPCM',
+				MP3:					'MP3',
+				RAW:					'Raw',
+				SPEECH:					'Speech',
 			},
 		},
 	
@@ -336,9 +336,9 @@ JSFLConstants =
 			 */
 			capType:
 			{
-				'none':					'none',
-				'round':				'round',
-				'square':				'square',
+				NONE:					'none',
+				ROUND:					'round',
+				SQUARE:					'square',
 			},
 			/**
 			 * stroke.joinType
@@ -346,9 +346,9 @@ JSFLConstants =
 			 */
 			joinType:
 			{
-				'miter':				'miter',
-				'round':				'round',
-				'bevel':				'bevel',
+				MITER:					'miter',
+				ROUND:					'round',
+				BEVEL:					'bevel',
 			},
 			/**
 			 * stroke.scaleType
@@ -356,10 +356,10 @@ JSFLConstants =
 			 */
 			scaleType:
 			{
-				'normal':				'normal',
-				'horizontal':			'horizontal',
-				'vertical':				'vertical',
-				'none':					'none',
+				NORMAL:					'normal',
+				HORIZONTAL:				'horizontal',
+				VERTICAL:				'vertical',
+				NONE:					'none',
 			},
 			/**
 			 * stroke.style
@@ -367,13 +367,13 @@ JSFLConstants =
 			 */
 			style:
 			{
-				'noStroke':				'noStroke',
-				'solid':				'solid',
-				'dashed':				'dashed',
-				'dotted':				'dotted',
-				'ragged':				'ragged',
-				'stipple':				'stipple',
-				'hatched':				'hatched',
+				NO_STROKE:				'noStroke',
+				SOLID:					'solid',
+				DASHED:					'dashed',
+				DOTTED:					'dotted',
+				RAGGED:					'ragged',
+				STIPPLE:				'stipple',
+				HATCHED:				'hatched',
 			}
 		},
 	
@@ -388,9 +388,9 @@ JSFLConstants =
 			 */
 			textType:
 			{
-				'static':				'static',
-				'dynamic':				'dynamic',
-				'input':				'input',		
+				STATIC:					'static',
+				DYNAMIC:				'dynamic',
+				INPUT:					'input',		
 			},
 			/**
 			 * text.lineType
@@ -398,10 +398,10 @@ JSFLConstants =
 			 */
 			lineType:
 			{
-				'singleLine':			'single line',
-				'multiline':			'multiline',
-				'multilineNoWrap':		'multiline no wrap',
-				'password':				'password',
+				SINGLE_LINE:			'single line',
+				MULTILINE:				'multiline',
+				MULTILINE_NO_WRAP:		'multiline no wrap',
+				PASSWORD:				'password',
 			},
 			/**
 			 * text.alignment
@@ -409,10 +409,10 @@ JSFLConstants =
 			 */
 			alignment:
 			{
-				'left':					'left',
-				'center':				'center',
-				'right':				'right',
-				'justify':				'justify',
+				LEFT:					'left',
+				CENTER:					'center',
+				RIGHT:					'right',
+				JUSTIFY:				'justify',
 			}
 			
 		},
@@ -428,12 +428,12 @@ JSFLConstants =
 			 */
 			align:
 			{
-				'left':					'left',
-				'right':				'right',
-				'top':					'top',
-				'bottom':				'bottom',
-				'verticalCenter':		'vertical center',
-				'horizontalCenter':		'horizontal center',
+				LEFT:					'left',
+				RIGHT:					'right',
+				TOP:					'top',
+				BOTTOM:					'bottom',
+				VERTICAL_CENTER:		'vertical center',
+				HORIZONTAL_CENTER:		'horizontal center',
 			},
 			/**
 			 * transform.corner
@@ -441,14 +441,14 @@ JSFLConstants =
 			 */
 			corner:
 			{
-				'bottomLeft':			'bottom left',
-				'bottomRight':			'bottom right',
-				'topRight':				'top right',
-				'topLeft':				'top left',
-				'topCenter':			'top center',
-				'rightCenter':			'right center',
-				'bottomCenter':			'bottom center',
-				'leftCenter':			'left center',
+				BOTTOM_LEFT:			'bottom left',
+				BOTTOM_RIGHT:			'bottom right',
+				TOP_RIGHT:				'top right',
+				TOP_LEFT:				'top left',
+				TOP_CENTER:				'top center',
+				RIGHT_CENTER:			'right center',
+				BOTTOM_CENTER:			'bottom center',
+				LEFT_CENTER:			'left center',
 			},
 			/**
 			 * transform.distribute
@@ -456,12 +456,12 @@ JSFLConstants =
 			 */
 			distribute:
 			{
-				'leftEdge':				'left edge',
-				'horizontalCenter':		'horizontal center',
-				'rightEdge':			'right edge',
-				'topEdge':				'top edge',
-				'verticalCenter':		'vertical center',
-				'bottomEdge':			'bottom edge',
+				LEFT_EDGE:				'left edge',
+				HORIZONTAL_CENTER:		'horizontal center',
+				RIGHT_EDGE:				'right edge',
+				TOP_EDGE:				'top edge',
+				VERTICAL_CENTER:		'vertical center',
+				BOTTOM_EDGE:			'bottom edge',
 			}
 		},
 	
@@ -476,15 +476,12 @@ JSFLConstants =
 			 */
 			videoType:
 			{
-				'embeddedVideo':		'embedded video',
-				'linkedVideo':			'linked video',
-				'video':				'video',
+				EMBEDDED_VIDEO:			'embedded video',
+				LINKED_VIDEO:			'linked video',
+				VIDEO:					'video',
 			},
 		}
 			
 }
 
 xjsfl.classes.register('JSFLConstants', JSFLConstants, this);
-
-
-
