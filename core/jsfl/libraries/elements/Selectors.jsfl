@@ -266,7 +266,7 @@
 										var name = exec[8];
 										
 									// type
-										if(/instance|symbol|bitmap|embeddedvideo|linkedvideo|video|compiledclip|text|folder|static|dynamic|input|primitive|group|shape|movieclip|graphic|button/.test(name))
+										if(/instance|symbol|bitmap|sound|embeddedvideo|linkedvideo|video|compiledclip|text|folder|static|dynamic|input|primitive|group|shape|movieclip|graphic|button/.test(name))
 										{
 											selector.type	= 'type';
 											selector.params	= [null, name];
@@ -1114,8 +1114,7 @@
 			 */
 			name:function(item, rx, range)
 			{
-				var name	= item.name.split('/').pop();
-				var matches	= name.match(rx);
+				var matches	= item.shortName.match(rx);
 				if(matches)
 				{
 					if(range)
