@@ -113,5 +113,28 @@
 			inspect(hash)
 		}
 		
-		
-		
+		function columnizeText()
+		{
+
+			clear();
+			
+			var xml = <xml>
+				a	a	a
+				aa	a	a
+				aaa	a	a
+				aaaa	a	a
+				aaaaa	a	a
+				aaaaaa	a	a
+				aaaaaaa	a	a
+				aaaaaaaa	a	a
+				aaaaaaaaa	a	a
+			</xml>
+			
+			var lines = String(xml).trim().split(/[\r\n]+/);
+			for (var i = 1; i < lines.length; i++)
+			{
+				var str = lines.slice(0, i).join('\n');
+				trace(Utils.columnizeText(str));
+				trace('');
+			}
+		}

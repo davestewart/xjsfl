@@ -1,4 +1,4 @@
-// -----------------------------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------------------------------------------------------------------------
 // Demo code
 
 	/**
@@ -14,7 +14,7 @@
 	// data
 
 		var arr = [1,2,3,4,5,6,7,8,9,10];
-		trace('\n' + arr);
+		trace('\nin:  ' + arr);
 		
 	// ----------------------------------------------------------------------------------------------------
 	// functions
@@ -24,7 +24,7 @@
 		 */
 		function selectorOdd()
 		{
-			trace(Selectors.core.combo.nth(arr, 'odd'));
+			trace('out: ' + Selectors.core.combo.nth(arr, 'odd'));
 		}		
 		
 		/**
@@ -32,7 +32,7 @@
 		 */
 		function selectorEven()
 		{
-			trace(Selectors.core.combo.nth(arr, 'even'));
+			trace('out: ' + Selectors.core.combo.nth(arr, 'even'));
 		}		
 		
 		/**
@@ -40,7 +40,7 @@
 		 */
 		function selectorRandom()
 		{
-			trace(Selectors.core.combo.nth(arr, 'random'));
+			trace('out: ' + Selectors.core.combo.nth(arr, 'random'));
 		}		
 		
 		/**
@@ -48,7 +48,7 @@
 		 */
 		function selector3()
 		{
-			trace(Selectors.core.combo.nth(arr, '3'));
+			trace('out: ' + Selectors.core.combo.nth(arr, '3'));
 		}		
 		
 		/**
@@ -56,7 +56,7 @@
 		 */
 		function selector3n()
 		{
-			trace(Selectors.core.combo.nth(arr, '3n'));
+			trace('out: ' + Selectors.core.combo.nth(arr, '3n'));
 		}
 				
 		/**
@@ -64,7 +64,7 @@
 		 */
 		function selector3nplus1()
 		{
-			trace(Selectors.core.combo.nth(arr, '3n+1'));
+			trace('out: ' + Selectors.core.combo.nth(arr, '3n+1'));
 		}
 				
 		/**
@@ -72,5 +72,5 @@
 		 */
 		function selector3nminus1()
 		{
-			trace(Selectors.core.combo.nth(arr, '3n-1'));
+			trace('out: ' + Selectors.core.combo.nth(arr, '3n-1'));
 		}

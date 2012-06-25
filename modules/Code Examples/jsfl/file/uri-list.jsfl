@@ -1,4 +1,4 @@
-// -----------------------------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------------------------------------------------------------------------
 // Demo code
 
 	/**
@@ -36,6 +36,7 @@
 			/**
 			 * Find an item in the list
 			 * @param	{XULEvent}	event	Description
+			 * @private
 			 */
 			function onShow(event)
 			{
@@ -78,9 +79,10 @@
 			
 			XUL
 				.factory()
+				.setTitle('URIList example')
 				.addTextbox('Path', 'path', {value:'//core/'})
 				.addTextbox('Pattern')
-				.addRadiogroup('Operation', 'operation', ['all', 'filter', 'find', 'update'])
+				.addRadiogroup('Operation', 'operation', ['all', 'filter', 'find'])
 				.addCheckbox('Show paths', 'paths')
 				.addButton('Show')
 				.add('Time')

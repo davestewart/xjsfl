@@ -252,19 +252,19 @@
 		// Path, containing folder, or name
 
 			/**
-			 * get item path
-			 */
-			function uriGetPath()
-			{
-				test('get path', paths, URI.getPath);
-			}
-
-			/**
 			 * get item name
 			 */
 			function uriGetName()
 			{
 				test('get name', paths, URI.getName);
+			}
+
+			/**
+			 * get item folder
+			 */
+			function uriGetPath()
+			{
+				test('get path', paths, URI.getFolder);
 			}
 
 			/**

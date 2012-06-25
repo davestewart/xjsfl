@@ -24,7 +24,7 @@
 		 */
 		function fileCreate()
 		{
-			var file	= new File(temp + 'this/is/a/new/file.txt', 'Hello!')
+			var file	= new File(temp + 'this/is/a/new/file.txt', 'this a new text file')
 			var folder	= file.parent;
 
 			fl.trace('file: ' + file.toString(true))
@@ -71,7 +71,7 @@
 		 */
 		function fileOpenWord()
 		{
-			var file = new File(temp + 'document.doc', 'Hello!').open();
+			var file = new File(temp + 'document.doc', 'this is a new word document').open();
 		}
 		
 		/**
@@ -186,7 +186,7 @@
 		}
 
 		/**
-		 * Same function, but using the Output library
+		 * Same function, but using the Output.folder()
 		 */
 		function folderOutput()
 		{
@@ -196,7 +196,7 @@
 		//TODO - implemement Utils.walk properly!
 
 		/**
-		 * Same function, but using the Data library
+		 * Same function, but using Utils.walk()
 		 */
 		function folderWalk()
 		{
