@@ -1608,18 +1608,17 @@
 				/**
 				 * Returns a list of URIs for a glob string
 				 * @see									http://www.codeproject.com/Articles/2809/Recursive-patterned-File-Globbing
-				 * @param	{String}	path			The root path to the folder to search
-				 * @param	{String}	pattern			The wildcard pattern, * = any character, ** = files recursive, ** / folders recursive
+				 * @param	{String}	globPathOrURI	The path or URI to the folder to search, including the wildcard pattern, * = any character, ** = files recursive, ** / (no space!) folders recursive. Defaults to '*'
 				 * @param	{Boolean}	searchableOnly	An optional Boolean to respect any folders with file manifests that set themselves as non-searchable
+				 * @param	{Boolean}	asPaths			An optional Boolean to return paths not URIs
 				 * @param	{Boolean}	debug			An optional Boolean to print debugging information about the generated RegExp
-				 * @returns	{Array}						An Array or URIs
+				 * @param	{Object}	debug			An optional Object to return debugging information about the generated RegExp
+				 * @returns	{Array}						An Array of URI strings
 				 */
-				glob:function(pathOrURI, pattern, searchableOnly, debug)
+				glob:function(globPathOrURI, searchableOnly, asPaths, debug)
 				{
 					// ----------------------------------------------------------------------------------------------------
 					// callback function
-					
-						//TODO - Allow one single glob path, "path/to/files/**/*.jsfl"
 					
 						function process(folderURI)
 						{
@@ -1651,7 +1650,7 @@
 									{
 										if(rxMatch.test(matchURI))
 										{
-											uris.push(itemURI);
+											uris.push(asPaths ? URI.asPath(itemURI) : itemURI);
 										}
 										if(recursive && isFolder)
 										{
@@ -1661,6 +1660,36 @@
 							}
 						}
 				
+					// ----------------------------------------------------------------------------------------------------
+					// determine root folder and glob pattern
+					
+						// convert path or URI
+							globPathOrURI	= URI.toURI(globPathOrURI, 1);
+					
+						// variables
+							var uri			= '';
+							var pattern		= '';
+							var parts		= String(globPathOrURI).split('/');
+							
+						// determine root folder and glob pattern
+							while(parts.length)
+							{
+								var part = parts.shift();
+								if(part.indexOf('*') === -1)
+								{
+									uri += part + '/';
+								}
+								else
+								{
+									pattern = [part].concat(parts).join('/');
+									break;
+								}
+							}
+							
+						// cleanup
+							uri			= uri.replace(/\/+$/, '/');
+							pattern		= pattern || '*'
+
 					// ----------------------------------------------------------------------------------------------------
 					// build glob regexp
 					
@@ -1761,6 +1790,7 @@
 									print = true;
 									debug = {};
 								}
+								debug.path		= URI.asPath(uri);
 								debug.pattern	= pattern;
 								debug.match		= Utils.rxUnescape(rxMatch.source);
 								debug.search	= Utils.rxUnescape(rxSearch.source);
@@ -1773,7 +1803,6 @@
 							}
 							
 						// process paths and grab URIs
-							var uri			= typeof pathOrURI === 'string' ? URI.toURI(pathOrURI, 1) : pathOrURI;
 							var uris		= [];
 							process(uri);
 						
@@ -2077,7 +2106,7 @@
 				 */
 				makeTree:function(source)
 				{
-					var paths = typeof source === 'string' ? Utils.glob(source, '**/*') : source;
+					var paths = typeof source === 'string' ? Utils.glob(source.replace(/\*+$/, '**')) : source;
 					if(paths && paths.length)
 					{
 						// pparameters

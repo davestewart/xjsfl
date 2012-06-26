@@ -31,14 +31,14 @@
 				}
 				
 			// check if user is using CS5, and if so, warn about empty error messages
-				if(fl.version.split(/[, ]/)[1] == '11')
+				if(parseInt(fl.version.split(/[, ]/)[1]) >= 11)
 				{
 					var strs =
 					[
-						"It looks like you're using Flash CS5.",
-						"Unfortunately, CS5 has a bug where JavaScript error messages are output empty, meaning that on this platform, any JSFL errors that are thrown will be difficult to impossible to debug.",
+						"It looks like you're using Flash CS5 or above.",
+						"Unfortunately, CS5 (and higher) has a bug where JavaScript error messages are output empty, meaning that on this platform, any JSFL errors that are thrown will be difficult to impossible to debug.",
 						"This issue doesn't affect the normal operation of xJSFL, but it *is* problematic during the everyday development of scripts (which invariably, will throw errors).",
-						"Note that Flash CS4 does not exhibit this behaviour, so if possible, you might find it easier to develop on CS4 instead.",
+						"Note that Flash CS4 (and below) does not exhibit this behaviour, so if possible, you might find it easier to develop on CS4 instead.",
 						"Click OK to continue the installation."
 					];
 					var result = confirm(strs.join('\n\n'));
@@ -159,7 +159,7 @@
 				var installURI		= xjsfl.uri + 'core/assets/install/flash/';
 				
 			// copy installation files
-				var uris			= Utils.glob(installURI, '**/*');
+				var uris			= Utils.glob(installURI + '**');
 				for each(var uri in uris)
 				{
 					// URIs

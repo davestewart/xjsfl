@@ -905,9 +905,7 @@
 				else if(typeof fileRef === 'string' && fileRef.indexOf('*') !== -1)
 				{
 					// variables
-						var folder 	= URI.toURI(fileRef.substr(0, fileRef.indexOf('*')), 1);
-						var pattern	= fileRef.substr(fileRef.indexOf('*'));
-						var uris	= Utils.glob(folder, pattern);
+						var uris	= Utils.glob(fileRef);
 
 					// debug
 						if(uris.length)

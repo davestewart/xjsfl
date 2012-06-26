@@ -52,7 +52,7 @@
 				for each(var folder in folderURIs)
 				{
 					var baseURI		= folder + 'flash/'
-					var uris		= Utils.glob(baseURI, '**/*');
+					var uris		= Utils.glob(baseURI + '**');
 					for each(var uri in uris)
 					{
 						var trgURI	= URI.reTarget(uri, fl.configURI, baseURI);

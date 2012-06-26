@@ -7,7 +7,7 @@
 	 */
 
 	// initialize
-		xjsfl.init(this);
+		xjsfl.init(this, ['Utils']);
 		clear();
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
@@ -26,18 +26,17 @@
 					var debug		= {};
 					
 				// text
-					var text		=
-					[
-						'Pattern: ' + pattern,
-						'Desc:    ' + desc,
-						'Results'
-					].join('\n');
+					var input =
+					{
+						pattern: pattern,
+						path:    URI.toPath(uri) + pattern,
+					};
 					
 				// glob						
-					var uris		= Utils.glob(uri, pattern, false, debug);
+					var uris		= Utils.glob(uri + pattern, false, true, debug);
 					
 				// results
-					inspect({' path':uri, uris:uris, 'glob debug':debug}, text);
+					inspect({input:input, results:uris, 'glob debug':debug}, desc);
 			}
 		}
 	
@@ -57,6 +56,7 @@
 				['*.jsfl',			'Root files with a "jsfl" extension'],
 				['*.(as|jsfl)',		'Root files with a "jsfl" or "as" extension'],
 			];
+			
 			glob(patterns);
 		}
 	
@@ -103,8 +103,9 @@
 				
 				['s*/**',	'All JSFL files, beneath any root folder beginning with "S", recursively'],
 			];
+			
 			glob(patterns);
 		}
 	
-	//globRecursive()
-	globFolder()
+	globRecursive()
+	//globFolder()
