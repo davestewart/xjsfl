@@ -24,7 +24,7 @@
 
 		/**
 		 * URIList constructor
-		 * @param	{String}	source		A valid folder path or URI
+		 * @param	{String}	source		A valid folder path or URI (glob/wildcards allowed)
 		 * @param	{Array}		source		A list of URIs
 		 * @param	{Boolean}	recursive	An optional flag to search the folder recursively
 		 */
@@ -43,19 +43,31 @@
 			// string
 				else
 				{
-					var uri			= URI.toURI(source, 1);
-					var folderURI	= new URI(uri).folder;
-					FLfile.exists(folderURI)
-					{
-						if(recursive)
+					// variables
+						var uri = URI.toURI(source, 1);
+						
+					// test if wildcards
+						if(uri.indexOf('*') !== -1)
 						{
-							uris	= Utils.walkFolder(folderURI, true);
+							uris = Utils.glob(uri);
 						}
+						
+					// otherwise, just grab folder content
 						else
 						{
-							uris	= new Folder(folderURI).uris;
+							var folderURI = new URI(uri).folder;
+							FLfile.exists(folderURI)
+							{
+								if(recursive)
+								{
+									uris	= Utils.walkFolder(folderURI, true);
+								}
+								else
+								{
+									uris	= new Folder(folderURI).uris;
+								}
+							}
 						}
-					}
 				}
 				
 			// --------------------------------------------------------------------------------
