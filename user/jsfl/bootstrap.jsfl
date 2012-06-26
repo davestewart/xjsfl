@@ -17,7 +17,7 @@
 	{
 		// load user libraries
 			xjsfl.output.log('loading user libraries...', 1);
-			xjsfl.classes.load('/jsfl/libraries/*.jsfl'); // A leading / path defaults to the curretn root, in this case /xJSFL/user/
+			xjsfl.classes.load('libraries/**.jsfl'); // glob path to all library jSFL files, recursively
 			
 		// add any user code here
 		
