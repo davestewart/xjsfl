@@ -112,8 +112,8 @@
 				try
 				{
 					xjsfl.output.trace('loading supporting classes...', 1);
-					include('File', 'Folder', 'Module', 'Table', 'Template', 'XML');
-					xjsfl.classes.load('//core/jsfl/libraries/**/*.jsfl');
+					xjsfl.classes.load(['File', 'Folder', 'Module', 'Table', 'Template', 'XML']);
+					xjsfl.classes.load('libraries/**.jsfl');
 				}
 				catch(error)
 				{
