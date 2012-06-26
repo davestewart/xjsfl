@@ -30,6 +30,13 @@
 					return false;
 				}
 				
+			// check that xJSFL is being installed into a folder called xJSFL (not necessary, but useful)
+				if(! /\/xJSFL\/core\/jsfl\/install\/install.jsfl$/.test(fl.scriptURI))
+				{
+					alert('xJSFL should be installed in a folder called "xJSFL".\n\nPlease rename your current install folder, and try again');
+					return false;
+				}
+				
 			// check if user is using CS5, and if so, warn about empty error messages
 				if(parseInt(fl.version.split(/[, ]/)[1]) >= 11)
 				{
