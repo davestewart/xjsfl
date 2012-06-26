@@ -618,7 +618,7 @@
 		 * Attempts to directly load files, or find and run or return files from the cascading file structure.
 		 * Parameters and return type vary depending on file type!
 		 *
-		 * @param	{String}		pathOrName	The relative or absolute path, or uri to the file
+		 * @param	{String}		pathOrName	The relative or absolute path, or uri to the file (glob wildcards allowed)
 		 * @param	{String}		pathOrName	The name or path fragment to a file, with or without the file extension
 		 * @param	{String}		type		The folder type in which to look (i.e. settings) for the file(s)
 		 *
@@ -636,8 +636,6 @@
 				// signatures
 					load(path)
 					load(name, type)
-
-				// also allow load() to take a wildcard URI, i.e. load('path/to/ *.jsfl', true);
 			*/
 
 			// --------------------------------------------------------------------------------
@@ -645,9 +643,18 @@
 
 				// variables
 					var uriResult	= null;
+					//trace(pathOrName)
+					
+				// a wildcard (path or URI) is passed in, so glob it
+					if(String(pathOrName).indexOf('*') !== -1)
+					{
+						var uri		= URI.toURI(pathOrName, 1);
+						uriResult	= Utils.glob(uri);
+						inspect(uriResult)
+					}
 
-				// a URI was passed in
-					if(URI.isURI(pathOrName))
+				// a URI was passed in, test that it exists
+					else if(URI.isURI(pathOrName))
 					{
 						uriResult	= FLfile.exists(pathOrName) ? pathOrName : null;
 					}
@@ -825,7 +832,7 @@
 		 *
 		 * @param	{String}	fileRef		A class name
 		 * @param	{String}	fileRef		A class filename or path, relative to any jsfl/libraries folder
-		 * @param	{String}	fileRef		A wildcard string pointing to a folder, i.e. '//user/jsfl/libraries/*.jsfl'
+		 * @param	{String}	fileRef		A wildcard string, i.e. '//user/jsfl/libraries/**.jsfl'
 		 * @param	{Array}		fileRef		An Array of class filepaths
 		 * @param	{Boolean}	reload		An optional Boolean to force a reload of loaded URIs
 		 * @returns	{xjsfl}					The main xJSFL object
@@ -905,8 +912,9 @@
 				else if(typeof fileRef === 'string' && fileRef.indexOf('*') !== -1)
 				{
 					// variables
+						fileRef		= URI.toURI(fileRef, 1);
 						var uris	= Utils.glob(fileRef);
-
+						
 					// debug
 						if(uris.length)
 						{
@@ -1152,8 +1160,9 @@
 						};
 
 					// find and load modules automatically
-						var uris = [];
-						Utils.walkFolder(uri || xjsfl.settings.folders.modules, processFile);
+						var uris	= [];
+						uri			= uri ? URI.toURI(uri, 1) : xjsfl.settings.folders.modules;
+						Utils.walkFolder(uri, processFile);
 
 					// return
 						return uris;
