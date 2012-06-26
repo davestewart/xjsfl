@@ -156,6 +156,20 @@
 		// # Attribute methods
 		
 			/**
+			 * Modifies a particular attribute on all items in the collection
+			 * @param	{Object}		prop		An object containing name:value pairs of attribute to modify
+			 * @param	{String}		prop		The name of the attribute to modify
+			 * @param	{Value}			value		A value attribute value
+			 * @param	{Function}		value		A callback function that returns a value, of the format function(element, index, elements);
+			 * @returns	{ItemCollection}				The current Collection
+			 */
+			attr:function(prop, value)
+			{
+				this._super(prop, value);
+				return this.update();
+			},
+			
+			/**
 			 * Sequentially rename the the items in the collection using an alphanumeric pattern, a callback, or parameters
 			 * @param	{Function}			baseName	A callback of the format function(name, index, item) which should return a custom name
 			 * @param	{String}			baseName	A single "name_###" name/number pattern string
@@ -340,7 +354,8 @@
 			 */
 			update:function()
 			{
-				this.elements.forEach(function(e){ this.getLibrary().updateItem(e.name) }, this);
+				var library = this.getLibrary();
+				this.elements.forEach(function(e){ library.updateItem(e.name) }, this);
 				return this;
 			},
 	
