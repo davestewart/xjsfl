@@ -45,7 +45,7 @@
 				var trgURIs			= [];
 				
 			// get all flash folders that would have content copied to the main Flash folder
-				var installURI		= xjsfl.uri + 'core/assets/install/';
+				var installURI		= xjsfl.uri + 'core/install/';
 				var folderURIs		= xjsfl.settings.uris.get().concat([installURI]);
 				
 			// grab file and folder URIs
