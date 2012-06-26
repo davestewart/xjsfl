@@ -145,9 +145,10 @@
 				{
 					if(this.exists)
 					{
-						switch(this.extension)
+						switch(this.extension.toLowerCase())
 						{
 							case 'fla':
+							case 'xfl':
 								fl.openDocument(this.uri);
 							break;
 
