@@ -58,8 +58,13 @@
 		app:
 		{
 			// Apple: "mac" | Windows: "win"
-			//TODO consider adding object properties here: isWin, isMac
 				platform:	fl.version.substr(0, 3).toLowerCase(),
+				
+			// an object property to test against
+				os:			{
+								mac:fl.version.substr(0, 3) == 'MAC',
+								win:fl.version.substr(0, 3) == 'WIN'
+							},
 
 			// the product name of flash, i.e. CS4
 				name:		(function(){
