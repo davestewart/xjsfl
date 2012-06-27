@@ -12,3 +12,4 @@ _old/
 /user/config/xjsfl.xml
 /core/jsfl/run/temp
 /core/logs
+.DS_Store
