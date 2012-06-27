@@ -161,9 +161,9 @@
 				 */
 				open:function()
 				{
-					if(xjsfl.settings.app.platform === 'win')
+					if(xjsfl.settings.app.os.win)
 					{
-						var command		= xjsfl.settings.app.platform === 'win' ? 'start' : 'open';
+						var command		= xjsfl.settings.app.os.win ? 'start' : 'open';
 						var exec		= command + " \"\" \"" +this.path+ "\""
 					}
 					else
@@ -197,7 +197,7 @@
 				{
 					var src			= this.path;
 					var trg			= URI.toPath(URI.toURI(toPathOrURI, 1));
-					if(xjsfl.settings.app.platform === 'win')
+					if(xjsfl.settings.app.os.win)
 					{
 						var command = 'robocopy "' +src+ '" "' +trg+ '" /S /E';
 					}
