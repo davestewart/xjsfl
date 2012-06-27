@@ -1,4 +1,4 @@
-// -----------------------------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------------------------------------------------------------------------
 // Demo code
 
 	/**
@@ -44,6 +44,7 @@
 				// nothing
 					null,
 					undefined,
+					this,
 					'',
 
 				// relative paths
@@ -159,20 +160,11 @@
 			}
 
 			/**
-			 * convert to URIs and force parsing of URIs
-			 */
-			function uriForceConvertToURI()
-			{
-				test('convert to URIs and force parsing of URIs', paths, URI.toURI, 1, true);
-			}
-
-			/**
 			 * convert to URIs with URI context
 			 */
 			function uriContextConvertToURI()
 			{
 				test('convert to URIs with URI context', paths, URI.toURI, 'file:///C:/SOME PATH/TO/');
-				test('convert to URIs with URI context and force parsing of URIs', paths, URI.toURI, 'file:///C:/SOME PATH/TO/', true);
 			}
 
 		// --------------------------------------------------------------------------------
