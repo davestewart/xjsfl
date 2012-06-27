@@ -185,9 +185,9 @@ FileManager =
 								uri				= new URI(uri);
 								
 							// variables
-								var itemPath	= uri.uri.replace(/\.jsfl$/, '').substr(folderURI.length);
+								var itemPath	= uri.uri.substr(folderURI.length).replace(/%20/g, ' ').replace(/\.jsfl$/, '');
 								var itemURI		= uri.uri;
-								
+
 							// create node
 								var item		= <item path={itemPath} uri={itemURI} />
 								
