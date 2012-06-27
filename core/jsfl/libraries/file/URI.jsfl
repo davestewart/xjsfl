@@ -83,6 +83,7 @@
 		/**
 		 * URI Constructor
 		 * @param	{String}	pathOrURI		A token, path or URI-formatted string
+		 * @param	{Boolean}	pathOrURI		A Boolean, to get the current file
 		 * @param	{String}	context			An optional uri or path context, from which to start the URI
 		 * @param	{File}		context			An optional File from which to start the URI
 		 * @param	{Folder}	context			An optional Folder from which to start the URI
@@ -90,15 +91,24 @@
 		 */
 		URI = function(pathOrURI, context)
 		{
-			if(typeof pathOrURI === 'undefined' || pathOrURI == null)
-			{
-				pathOrURI = Utils.getStack()[1].uri;
-			}
-			else if(pathOrURI === '')
-			{
-				pathOrURI = Utils.getStack()[1].path;
-			}
-			this.uri = URI.toURI(pathOrURI, context || 1);
+			// if pathOrURI is null, undefined, error
+				if(typeof pathOrURI === 'undefined' || pathOrURI == null)
+				{
+					throw new Error('ReferenceError in URI.toURI(): pathOrURI cannot be undefined')
+				}
+			// if pathOrURI is true, grab the calling file
+				if(pathOrURI === true)
+				{
+					pathOrURI = Utils.getStack()[1].uri;
+				}
+			// if pathOrURI is an empty string, grab the calling file's folder
+				else if(pathOrURI === '')
+				{
+					pathOrURI = Utils.getStack()[1].path;
+				}
+	
+			// assign URI
+				this.uri = URI.toURI(pathOrURI, context || 1);
 		}
 
 		URI.prototype =
@@ -178,7 +188,7 @@
 		// # Creation functions 
 
 			/**
-			 * Create a valid URI from virtually any URI or path
+			 * Create an absolute URI from virtually any URI or path
 			 *
 			 * - Resolves relative paths (automatically or via context)
 			 * - Allows concatenation and resolution of paths
@@ -191,28 +201,53 @@
 			 * @param	{File}		context			An optional File from which to start the URI
 			 * @param	{Folder}	context			An optional Folder from which to start the URI
 			 * @param	{Number}	context			An optional stack-function index, the location of which to derive the URI from
-			 * @param	{Boolean}	parseURI		An optional Boolean, to bypass immediate returning of file:/// URIs, and parse their content. Defaults to off
 			 * @param	{Boolean}	checkLength		An optional Boolean, to test resulting URIs are not longer than the 260 characters allowed for most FLfile operations. Defaults to true
 			 * @returns	{String}					An absolute URI
 			 */
-			URI.toURI = function(pathOrURI, context, parseURI, checkLength)
+			URI.toURI = function(pathOrURI, context, checkLength)
 			{
 				// ---------------------------------------------------------------------------------------------------------------
-				// process URI
+				// special cases for null, undefined, true or ''
 
-					// if pathOrURI is null, grab the calling file
-					// error if pathOrURI is null
-						if(pathOrURI == null || pathOrURI === '' || typeof pathOrURI === 'undefined')
-						{
-							throw new ReferenceError('ReferenceError in URI.toURI(): the parameter pathOrURI cannot be empty, null or undefined');
-						}
+					if( ! context )
+					{
+						// if pathOrURI is null, undefined, error
+							if(typeof pathOrURI === 'undefined' || pathOrURI == null)
+							{
+								throw new Error('ReferenceError in URI.toURI(): pathOrURI cannot be undefined')
+							}
+						// if pathOrURI is true, grab the calling file
+							if(pathOrURI === true)
+							{
+								pathOrURI = Utils.getStack()[1].uri;
+							}
+						// if pathOrURI is an empty string, grab the calling file's folder
+							else if(pathOrURI === '')
+							{
+								pathOrURI = Utils.getStack()[1].path;
+							}
+					}
+
+				// ---------------------------------------------------------------------------------------------------------------
+				// parameters
 
 					// parameters
-						pathOrURI	= String(pathOrURI || '');
-						parseURI	= typeof parseURI === 'undefined' ? false : parseURI;
-						checkLength = typeof checkLength === 'undefined' ? true : checkLength;
+						pathOrURI		= String(pathOrURI || '');
+						context			= context || 0;
+						checkLength 	= typeof checkLength === 'undefined' ? true : checkLength;
 						
-					// process URIs
+					// variables
+						var uri;
+						var root;
+						var path;
+
+					// debug
+						//trace('1 > original  : ' + pathOrURI)
+
+				// ---------------------------------------------------------------------------------------------------------------
+				// exit early if path is a URI, i.e. file:/// (as we treat these as absolute, no matter what)
+
+					// test for URI
 						if(pathOrURI.indexOf('file:///') === 0)
 						{
 							// check length
@@ -221,54 +256,155 @@
 									URI.checkURILength(pathOrURI);
 								}
 
-							// if URI parsing is set to off, return immediately
-								if(parseURI == false)
-								{
-									return pathOrURI;
-								}
+							// debug
+								//trace('2 > URI       : ' + pathOrURI);
+									
+							// return immediately
+								return pathOrURI;
+						}
+					// set path to the pathOrURI
+						else
+						{
+							path = pathOrURI.replace(/\\+/g, '/');
+						}
 
-							// otherwise, convert URI to a path
-								pathOrURI	= URI.asPath(pathOrURI);
+					// debug
+						//trace('3 > path      : ' + path);
+							
+				// ---------------------------------------------------------------------------------------------------------------
+				// handle absolute paths / notation, i.e. //, /, {placeholder}, Macintosh HD:, c:
+
+					// variables
+						var rx			= /^(\/\/|\/|{|[\w ]+:)/;
+						var matches		= path.match(rx);
+
+					// parse relative-path formats to resolve root
+						if(matches)
+						{
+							// take action on match results
+								switch(matches[1])
+								{
+									// xJSFL folder
+										case '//':
+											root		= xjsfl.uri;
+											path		= path.substr(2);
+										break;
+	
+									// mac root folder
+										case '/':
+											// if Mac, set the root to '' as / signifies an absolute path to a root folder, or another drive root
+												if(xjsfl.settings.app.os.mac)
+												{
+													root = '';
+												}
+											
+											// if PC, grab the root of the config URI
+												else
+												{
+													root = fl.configURI.substr(0, 10);
+												}
+										break;
+	
+									// placeholder folder
+										case '{':
+											var matches = path.match(/{(\w+)}/);
+											if(matches)
+											{
+												var folder = xjsfl.settings.folders[matches[1]];
+												if(folder)
+												{
+													uri = path.replace(matches[0], folder);
+												}
+											}
+											else
+											{
+												throw new URIError('Error in URI.toURI(): Unrecognised placeholder ' +matches[0]+ ' in path "' +path+ '"');
+											}
+										break;
+	
+									// drive, i.e., 'Macintosh HD:', 'c:'
+										default:
+											var separator	= xjsfl.settings.app.os.mac || matches[1].length > 2 ? '/' : '|';
+											root			= path.replace(':', separator);
+											path			= '';
+								}
+								
+							// create uri if a root was found
+								if(root != null)
+								{
+									uri = root.replace(/\/*$/, '/') + path;
+								}
+	
+							// debug
+								//trace('4 > absolute  : ' + uri);
+								
 						}
 
 				// ---------------------------------------------------------------------------------------------------------------
-				// variables
-
-					// variables
-						var uri;
-						var root;
-						var path = pathOrURI.replace(/\\+/g, '/');
-						
-						trace('1:' + path)
-
-				// ---------------------------------------------------------------------------------------------------------------
-				// process context, i.e. get the starting location of the path reference
-
-					// check to see if supplied context resolves to a URI
-						if( context && (typeof context !== 'number') )
+				// resolve relative tokens, i.e. resolve ./, ../, path/to/file.txt
+				
+					// if a URI isn't yet resolved, the path is relative, so we need to derive its context
+						if( ! uri )
 						{
-							// grab URI of context if possible
-								if(typeof context === 'string')
-								{
-									if(URI.isURI(context))
+							// ---------------------------------------------------------------------------------------------------------------
+							// define root from context, i.e. get the starting location of the path reference
+
+								// context is a number
+								
+									/*
+										Now we're looking for relative paths, we need to work out the calling file.
+										This is done by getting the current stack (an Array) of function calls, and
+										working backwards.
+										
+										If there's no numeric context, that means we need to simply grab the URI of the
+										function that called this function, so we set a stackIndex of 1 (1 step back).
+										
+										If there is an existing numeric context, we need to add 1 to it, so that we
+										compensate for this function now being the top of the stack.
+									*/
+									if(typeof context === 'number')
 									{
-										root = context;
+										var stack		= Utils.getStack();
+										var object		= stack[context + 1];
+										if(object)
+										{
+											root		= URI.getFolder(object.uri);
+										}
+										else
+										{
+											throw new ReferenceError('ReferenceError in URI.toURI(): The supplied call stack index (context) ' + stackIndex + ' is out of bounds');
+										}
 									}
+									
+								// context is a File
+									else if(context instanceof File)
+									{
+										root = context.uri;
+									}
+									
+								// context is a Folder
+									else if(context instanceof Folder)
+									{
+										root = context.uri + '/';
+									}
+									
+								// convert context to a string, and try to convert it to a URI
 									else
 									{
-										root = URI.toURI(context);
+										context = String(context);
+										if(URI.isURI(context))
+										{
+											root = URI.getFolder(context);
+										}
+										else
+										{
+											root = URI.toURI(context);
+										}
 									}
-								}
-								else if(context instanceof File)
-								{
-									root = context.uri;
-								}
-								else if(context instanceof Folder)
-								{
-									root = context.uri + '/';
-								}
-
-							// test that a URI was found
+	
+							// ---------------------------------------------------------------------------------------------------------------
+							// check if a root was defined, and if so, derive the full URI
+							
 								if(root)
 								{
 									// check that path isn't absolute (or else it can't be resolved)
@@ -285,148 +421,10 @@
 								{
 									throw new URIError('Error in URI.toURI(): It is not possible to resolve the path "' +path+ '" as the context "' +context+ '" as is not a valid URI, File or Folder');
 								}
+								
+							// debug
+								//trace('5 > relative  : ' + uri);
 						}
-
-				// ---------------------------------------------------------------------------------------------------------------
-				// process {placeholders}, i.e. swap out registered folder names for URIs
-
-					// check path for and convert any leading {placeholder} variables
-						else if(path.indexOf('{') === 0)
-						{
-							var matches = path.match(/{(\w+)}/);
-							if(matches)
-							{
-								var folder = xjsfl.settings.folders[matches[1]];
-								if(folder)
-								{
-									uri = path.replace(matches[0], folder);
-								}
-							}
-							else
-							{
-								throw new URIError('Error in URI.toURI(): Unrecognised placeholder ' +matches[0]+ ' in path "' +path+ '"');
-							}
-						}
-						
-					// if URI was asked to be parsed, and we've not got one yet,
-					// set the URI to the path, so we don't process relative paths within what would have been the URI
-						if( ! uri && parseURI)
-						{
-							//uri = path;
-						}
-						
-					trace('2:' + uri)
-
-				// ---------------------------------------------------------------------------------------------------------------
-				// process relative paths, i.e. resolve ./, ../, //, drive:, or 'path'
-				
-					/*
-						Now we're looking for relative paths, we need to work out the calling file.
-						This is done by getting the current stack (an Array) of function calls, and
-						working backwards.
-						
-						If there's no numeric context, that means we need to simply grab the URI of the
-						function that called this function, so we set a stackIndex of 1 (1 step back).
-						
-						If there is an existing numeric context, we need to add 1 to it, so that we
-						compensate for this function now being the top of the stack.
-					*/
-						
-						var stackIndex	= typeof context === 'number' ? context + 1 : 1; 
-						
-					// if a URI isn't yet resolved, check path for leading relative tokens and attempt to resolve correct source of file location
-						if( ! uri)
-						{
-							// variables
-								var rx			= /^(\.\/|\.\.\/|\/\/|\/|[\w ]+:)/;
-								var matches		= path.match(rx);
-
-							// parse relative-path formats to resolve root
-								if(matches)
-								{
-									switch(matches[1])
-									{
-										// current folder
-											case './':
-												root		= null;
-												//path		= path.substr(2);
-											break;
-
-										// parent folder
-											case '../':
-												root		= null;
-											break;
-
-										// "framework root" folder
-											case '//':
-												root		= xjsfl.uri;
-												path		= path.substr(2);
-											break;
-
-										// mac root folder
-											case '/':
-												// if Mac, set the root to '' as / signifies an absolute path to a root folder, or another drive root
-													if(xjsfl.settings.app.os.mac)
-													{
-														root = '';
-													}
-												
-												// if PC, throw an error, as / makes no sense for Windows systems
-													else
-													{
-														throw new URIError('ReferenceError in URI.toURI(): The supplied leading-slash absolute path ' + path + ' is meaningless on a PC');
-													}
-											break;
-
-										// drive, i.e., 'Macintosh HD:', 'c:'
-										// or same folder, i.e. ''
-											default:
-
-												// drive
-													if(matches[1].indexOf(':') !== -1)
-													{
-														if(matches[1].length > 2 || xjsfl.settings.app.os.mac)
-														{
-															root = path.replace(':', '/');
-														}
-														else
-														{
-															root = path.replace(':', '|');
-														}
-														path = '';
-													}
-
-												// same folder (i.e. no match)
-													else
-													{
-														root	= null;
-													}
-									}
-
-									if(root != null)
-									{
-										uri = root + path;
-									}
-								}
-						}
-					trace('3:' + uri)
-
-					// if still no URI, the root wasn't implied by the path (i.e. c:/folder/file.txt) therefore it must be relative, so derive from the calling file
-						if( ! uri )
-						{
-							var stack	= Utils.getStack();
-							var object	= stack[stackIndex];
-							if(object)
-							{
-								var source	= object.uri;
-								uri			= URI.getFolder(source) + path;
-							}
-							else
-							{
-								throw new ReferenceError('ReferenceError in URI.toURI(): The supplied call stack index (context) ' + stackIndex + ' is out of bounds');
-							}
-						}
-					trace('4:' + uri)
 
 				// ---------------------------------------------------------------------------------------------------------------
 				// tidy URI
@@ -446,12 +444,6 @@
 					// replace spaces with %20 
 						uri = uri.replace(/ /g, '%20');
 						
-					// for macs, add a leading slash
-						if(xjsfl.settings.app.os.mac)
-						{
-							//uri = '/' + uri;
-						}
-
 					// add 'file:///'
 						uri = 'file:///' + uri;
 
@@ -463,6 +455,9 @@
 
 				// ---------------------------------------------------------------------------------------------------------------
 				// done!
+
+					// debug
+						//trace('6 > final     : ' + uri);
 
 					// return
 						return uri;
@@ -480,10 +475,27 @@
 			 */
 			URI.toPath = function(pathOrURI, shorten)
 			{
-				// need to remove URI conversion, as Macs are ambiguous with their 
+				// convert to String
+					pathOrURI = String(pathOrURI);
+					
+				// if absolute URI, we need some preprocessing
+					if(pathOrURI.indexOf('file:///') === 0)
+					{
+						// remove file:/// so it will get processed by URI.toURI()
+							pathOrURI = pathOrURI.substr(8);
+							
+						//and if Mac, and no drive:) make sure there's a leading slash
+							if( ! /^[\w ]+:/.test(pathOrURI))
+							{
+								pathOrURI = '/' + pathOrURI;
+							}
+					}
+
+				// debug
+					//trace('>' + pathOrURI)
 				
 				// parse all input via toURI()
-					var uri = URI.toURI(String(pathOrURI), 1, true, false);
+					var uri = URI.toURI(String(pathOrURI), 1);
 
 				// convert and return result
 					return URI.asPath(uri, shorten);
