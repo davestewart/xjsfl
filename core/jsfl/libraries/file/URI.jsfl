@@ -591,12 +591,6 @@
 				// convert to string
 					pathOrURI = String(pathOrURI);
 				
-				// return existing paths early
-					if(URI.isPath(pathOrURI) && shorten !== true)
-					{
-						return pathOrURI.replace(/\\/g, '/');
-					}
-
 				// return the {placeholder} version of registered URIs
 					if(shorten && URI.isURI(pathOrURI))
 					{
