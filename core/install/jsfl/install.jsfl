@@ -151,7 +151,7 @@
 				}
 		
 			// remove old commands
-				var uris = Utils.getURIs(fl.configURI + 'Commands/xJSFL/');
+				var uris = Utils.glob(fl.configURI + 'Commands/xJSFL**');
 				if(uris.length)
 				{
 					xjsfl.output.trace('removing old files...', true);
@@ -222,6 +222,13 @@
 					.show();
 	}
 
-	install(this);
+	try
+	{
+		install(this);
+	}
+	catch(error)
+	{
+		debug(error);
+	}
 
 
