@@ -197,6 +197,7 @@
 			 * - Tidies badly-formatted URIs
 			 *
 			 * @param	{String}	pathOrURI		A token, path or URI-formatted string
+			 * @param	{Boolean}	pathOrURI		A Boolean, to get the current file
 			 * @param	{String}	context			An optional uri or path context, from which to start the URI
 			 * @param	{File}		context			An optional File from which to start the URI
 			 * @param	{Folder}	context			An optional Folder from which to start the URI
@@ -209,22 +210,26 @@
 				// ---------------------------------------------------------------------------------------------------------------
 				// special cases for null, undefined, true or ''
 
-					if( ! context )
+					if( typeof context === 'number' || typeof context === 'undefined')
 					{
 						// if pathOrURI is null, undefined, error
 							if(typeof pathOrURI === 'undefined' || pathOrURI == null)
 							{
 								throw new Error('ReferenceError in URI.toURI(): pathOrURI cannot be undefined')
 							}
+							
+						// get stack index
+							var stackIndex = typeof context === 'number' ? context + 1 : 1
+							
 						// if pathOrURI is true, grab the calling file
 							if(pathOrURI === true)
 							{
-								pathOrURI = Utils.getStack()[1].uri;
+								pathOrURI = Utils.getStack()[stackIndex].uri;
 							}
 						// if pathOrURI is an empty string, grab the calling file's folder
 							else if(pathOrURI === '')
 							{
-								pathOrURI = Utils.getStack()[1].path;
+								pathOrURI = Utils.getStack()[stackIndex].path;
 							}
 					}
 
@@ -260,7 +265,7 @@
 								//trace('2 > URI       : ' + pathOrURI);
 									
 							// return immediately
-								return pathOrURI;
+								return URI.tidy(pathOrURI);
 						}
 					// set path to the pathOrURI
 						else
@@ -296,6 +301,7 @@
 												if(xjsfl.settings.app.os.mac)
 												{
 													root = '';
+													path = path.substr(1);
 												}
 											
 											// if PC, grab the root of the config URI
@@ -322,17 +328,23 @@
 											}
 										break;
 	
-									// drive, i.e., 'Macintosh HD:', 'c:'
+									// drive, i.e., 'Macintosh HD:', 'C:'
 										default:
-											var separator	= xjsfl.settings.app.os.mac || matches[1].length > 2 ? '/' : '|';
-											root			= path.replace(':', separator);
-											path			= '';
+											if(xjsfl.settings.app.os.mac)
+											{
+												root = path.replace(':', '/');
+											}
+											else
+											{
+												root = path.replace(':', '|');
+											}
+											path = '';
 								}
 								
 							// create uri if a root was found
 								if(root != null)
 								{
-									uri = root.replace(/\/*$/, '/') + path;
+									uri = root.replace(/\/+$/, '/') + path;
 								}
 	
 							// debug
@@ -437,10 +449,16 @@
 
 					// tidy drive letter
 						uri	= uri.replace(/^([a-z ]+):/i, '$1|');
+						
+					// check for leading /
+						if(uri[0] === '/' && uri[1] !== '/')
+						{
+							//uri = uri.substr(1);
+						}
 
 					// tidy path
 						uri = URI.tidy(uri);
-
+						
 					// replace spaces with %20 
 						uri = uri.replace(/ /g, '%20');
 						
@@ -475,30 +493,37 @@
 			 */
 			URI.toPath = function(pathOrURI, shorten)
 			{
-				// convert to String
-					pathOrURI = String(pathOrURI);
+				// variables
+					var path;
+					var uri;
 					
 				// if absolute URI, we need some preprocessing
-					if(pathOrURI.indexOf('file:///') === 0)
+					if(URI.isURI(pathOrURI))
 					{
-						// remove file:/// so it will get processed by URI.toURI()
-							pathOrURI = pathOrURI.substr(8);
+						// remove file:/// so it will get processed by URI.asPath()
+							uri = String(pathOrURI).substr(8);
 							
-						//and if Mac, and no drive:) make sure there's a leading slash
-							if( ! /^[\w ]+:/.test(pathOrURI))
-							{
-								pathOrURI = '/' + pathOrURI;
-							}
+						// tidy URI
+							uri = URI.tidy(uri);
 					}
-
-				// debug
-					//trace('>' + pathOrURI)
-				
+					
 				// parse all input via toURI()
-					var uri = URI.toURI(String(pathOrURI), 1);
-
-				// convert and return result
-					return URI.asPath(uri, shorten);
+					else
+					{
+						uri = URI.toURI(pathOrURI, 1);
+					}
+					
+				// convert
+					path = URI.asPath(uri, shorten);
+					
+				// add leading slash for mac absolute paths
+					if(URI.isAbsolute(pathOrURI) && xjsfl.settings.app.os.mac)
+					{
+						path = '/' + path;
+					}
+				
+				// return result
+					return path;
 			}
 
 
