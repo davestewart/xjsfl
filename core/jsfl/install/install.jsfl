@@ -145,10 +145,18 @@
 		
 			// remove old commands
 				xjsfl.output.trace('removing old commands...', true);
-				var uris			= Utils.getURIs(fl.configURI + 'Commands/xJSFL/');
-				for each(var uri in uris)
+				var commandsFolder = fl.configURI + 'Commands/xJSFL/';
+				if (FLfile.exists(commandsFolder))
 				{
-					remove(uri);
+					var uris			= Utils.getURIs(commandsFolder);
+					for each(var uri in uris)
+					{
+						remove(uri);
+					}
+				}
+				else
+				{
+					FLfile.createFolder(commandsFolder);
 				}
 				
 			// debug
