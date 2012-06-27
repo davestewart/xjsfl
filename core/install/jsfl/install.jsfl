@@ -30,22 +30,11 @@
 					return false;
 				}
 				
-			// check if user is using CS5, and if so, warn about empty error messages
-				if(fl.version.split(/[, ]/)[1] == '11')
+			// check that xJSFL is being installed into a folder called xJSFL (not necessary, but useful)
+				if(! /\/xJSFL\/core\/install\/jsfl\/install.jsfl$/.test(fl.scriptURI))
 				{
-					var strs =
-					[
-						"It looks like you're using Flash CS5.",
-						"Unfortunately, CS5 has a bug where JavaScript error messages are output empty, meaning that on this platform, any JSFL errors that are thrown will be difficult to impossible to debug.",
-						"This issue doesn't affect the normal operation of xJSFL, but it *is* problematic during the everyday development of scripts (which invariably, will throw errors).",
-						"Note that Flash CS4 does not exhibit this behaviour, so if possible, you might find it easier to develop on CS4 instead.",
-						"Click OK to continue the installation."
-					];
-					var result = confirm(strs.join('\n\n'));
-					if(result !== true)
-					{
-						return false;
-					}
+					alert('xJSFL should be installed in a folder called "xJSFL".\n\nPlease rename your current install folder, and try again');
+					return false;
 				}
 				
 			// check that another extension hasn't broken for..in or for..each loops
@@ -60,6 +49,24 @@
 					fl.trace('\nThe offending code is:\n\n\t' + names.join('\n\n').replace(/\n/g, '\n\t') + '\n\nPlease do a text search in your Flash configuration and Flash application folders for this \nJSFL code, and remove / disable their owning extensions for xJSFL installation to succeed.');
 					alert(str);
 					return false;
+				}
+				
+			// check if user is using CS5, and if so, warn about empty error messages
+				if(parseInt(fl.version.split(/[, ]/)[1]) >= 11)
+				{
+					var strs =
+					[
+						"It looks like you're using Flash CS5 or above.",
+						"Unfortunately, CS5 (and higher) has a bug where JavaScript error messages are output empty, meaning that on this platform, any JSFL errors that are thrown will be difficult to impossible to debug.",
+						"This issue doesn't affect the normal operation of xJSFL, but it *is* problematic during the everyday development of scripts (which invariably, will throw errors).",
+						"Note that Flash CS4 (and below) does not exhibit this behaviour, so if possible, you might find it easier to develop on CS4 instead.",
+						"Click OK to continue the installation."
+					];
+					var result = confirm(strs.join('\n\n'));
+					if(result !== true)
+					{
+						return false;
+					}
 				}
 				
 		// ----------------------------------------------------------------------------------------
@@ -113,7 +120,7 @@
 			// copy function
 				function copy(srcURI, trgURI)
 				{
-					var trgPath = URI.toPath(trgURI, true);
+					var trgPath = URI.toPath(trgURI);
 					if(URI.isFolder(trgURI))
 					{
 						if( ! FLfile.exists(trgURI))
@@ -137,29 +144,32 @@
 				
 				function remove(uri)
 				{
-					var path = URI.toPath(uri, true);
+					var path = URI.toPath(uri);
 					xjsfl.output.trace('removing "' +path+ '"');
 					FLfile.setAttributes(uri, 'N');
 					FLfile.remove(uri);
 				}
 		
 			// remove old commands
-				xjsfl.output.trace('removing old commands...', true);
-				var uris			= Utils.getURIs(fl.configURI + 'Commands/xJSFL/');
-				for each(var uri in uris)
+				var uris = Utils.getURIs(fl.configURI + 'Commands/xJSFL/');
+				if(uris.length)
 				{
-					remove(uri);
+					xjsfl.output.trace('removing old files...', true);
+					for each(var uri in uris)
+					{
+						remove(uri);
+					}
 				}
 				
 			// debug
-				xjsfl.output.trace('copying installation files...', true);
+				xjsfl.output.trace('copying new files...', true);
 				
 			// variables
 				var win				= fl.version.indexOf('WIN') !== -1;
 				var installURI		= xjsfl.uri + 'core/install/flash/';
 				
 			// copy installation files
-				var uris			= Utils.glob(installURI, '**/*');
+				var uris			= Utils.glob(installURI + '**');
 				for each(var uri in uris)
 				{
 					// URIs
@@ -184,6 +194,7 @@
 				xjsfl.modules.find(xjsfl.uri + 'modules/', true);
 				
 			// write install URI
+				xjsfl.output.trace('finalizing install...', true);
 				xjsfl.output.trace('writing xjsfl.uri file');
 				save(fl.configURI + 'Tools/xjsfl.ini', xjsfl.uri);
 				
