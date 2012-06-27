@@ -388,6 +388,7 @@
 						[
 							'utils/Utils.jsfl',
 							'utils/Class.jsfl',
+							'objects/JSON.jsfl',
 							'file/FileSystemObject.jsfl',
 							'file/File.jsfl',
 							'text/Output.jsfl',
