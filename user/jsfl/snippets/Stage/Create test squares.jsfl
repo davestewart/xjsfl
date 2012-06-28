@@ -38,8 +38,15 @@ function makeSquares(num, cols, gutter, style, setStage, clearStage)
 		lib.addNewItem('movie clip', itemName);
 		lib.editItem(itemName);
 		dom.addNewRectangle({left:-25, top:-25, right:25, bottom:25}, 0);
+		
+	// break apart (sometimes the new square is a primitive, sometimes not - weird)
 		dom.selectAll();
-		dom.breakApart();
+		if($selection[0].elementType == 'shape' && $selection[0].isGroup)
+		{
+			$dom.breakApart();
+		}
+
+	// color
 		switch(style)
 		{
 			case 'red':
@@ -87,7 +94,7 @@ function makeSquares(num, cols, gutter, style, setStage, clearStage)
 
 			// do it
 				var name = 'item_' + Utils.pad(i + 1, 2);
-				if( ! collection.find(name))
+				if(collection.find(name).length == 0)
 				{
 					lib.addItemToDocument({x:x, y:y}, itemName);
 					dom.selection[0].name = name;
