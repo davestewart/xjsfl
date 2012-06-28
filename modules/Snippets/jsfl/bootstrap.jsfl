@@ -1,4 +1,4 @@
-xjsfl.init(this);
+﻿xjsfl.init(this);
 
 load('libraries/sets.jsfl');
 load('libraries/files.jsfl');

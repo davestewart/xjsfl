@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Delete Empty folders
  * @icon {iconsURI}Filesystem/folder/folder_delete.png
  */

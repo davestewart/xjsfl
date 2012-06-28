@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Assign tints to selected objects
  * @icon {iconsURI}Design/color/color_wheel.png
  */

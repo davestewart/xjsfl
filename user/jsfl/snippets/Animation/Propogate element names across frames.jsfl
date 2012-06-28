@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Renames elements correctly across frames to ensure that they are accessible from actionscript
  * @icon {iconsURI}Objects/object/object_wand.png
  */

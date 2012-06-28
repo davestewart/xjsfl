@@ -1,4 +1,4 @@
-if(window.xjsfl && xjsfl.uri)
+﻿if(window.xjsfl && xjsfl.uri)
 {
 	xjsfl.reload();	
 }

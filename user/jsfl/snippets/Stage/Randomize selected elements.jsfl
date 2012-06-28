@@ -1,4 +1,4 @@
-xjsfl.init(this);
+﻿xjsfl.init(this);
 /**
  * Randomize width, height and rotation of selected elements on the stage
  * @icon {iconsURI}Objects/weather/weather_breeze.png

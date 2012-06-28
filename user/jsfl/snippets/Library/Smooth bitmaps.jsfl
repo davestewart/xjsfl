@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Smooth all bitmaps in the library
  * @icon {iconsURI}Design/image/image.png
  */

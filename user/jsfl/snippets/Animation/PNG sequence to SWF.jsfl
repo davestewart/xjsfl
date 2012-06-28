@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Imports a sequence of png files and exports an SWF
  * @icon		{iconsURI}Design/picture/picture_go.png
  * @author		Dave Stewart

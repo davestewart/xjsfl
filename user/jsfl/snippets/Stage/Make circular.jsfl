@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Re-arrange elements in a circular formation
  * @icon	{iconsURI}UI/icon/icon_update.png
  */

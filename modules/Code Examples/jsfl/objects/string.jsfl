@@ -1,4 +1,4 @@
-
+﻿
 
 var str = 'I am "{name}" and I like "{thing.a}". My name, "{name}" is nothing to do with "{stuff}" or "{thing.a}"';
 var obj	= {name:'one', thing:{a:'two', b:'three'}, stuff:'four'}

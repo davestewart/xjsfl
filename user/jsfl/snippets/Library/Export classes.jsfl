@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Export library item classes
  * @icon {iconsURI}Actions/disk/disk_multiple.png
  */
