@@ -47,7 +47,6 @@
 				this.advanced.parent = 
 				this.file.parent = 
 				this.as3.parent = function(){ return parent; };
-				
 	
 			// set XML
 				this.setXML = function(parentNodeName, childNodeName, value)
@@ -222,14 +221,14 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.defaultNames
 					 * @name			file.defaultNames
 					 */
-					get defaultNames(){ return this.parent().getXML().PublishFormatProperties.defaultNames == 1; },
+					get defaultNames(){ return this.parent && this.parent().getXML().PublishFormatProperties.defaultNames == 1; },
 					set defaultNames(value){ this.parent().setXML('PublishFormatProperties', 'defaultNames', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFormatProperties.flashFileName
 					 * @name			file.flashPath
 					 */
-					get flashPath(){ return String(this.parent().getXML().PublishFormatProperties.flashFileName); },
+					get flashPath(){ return this.parent && String(this.parent().getXML().PublishFormatProperties.flashFileName); },
 					set flashPath(value)
 					{
 						this.defaultNames = false;
@@ -241,14 +240,14 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.flash
 					 * @name			file.flash
 					 */
-					get flash(){ return this.parent().getXML().PublishFormatProperties.flash == 1; },
+					get flash(){ return this.parent && this.parent().getXML().PublishFormatProperties.flash == 1; },
 					set flash(value){ this.parent().setXML('PublishFormatProperties', 'flash', !! value ? 1 : 0); },
 			
 					/**
 					 * @type {String}	Get and set the value for PublishFormatProperties.htmlFileName
 					 * @name			file.htmlPath
 					 */
-					get htmlPath(){ return String(this.parent().getXML().PublishFormatProperties.htmlFileName); },
+					get htmlPath(){ return this.parent && String(this.parent().getXML().PublishFormatProperties.htmlFileName); },
 					set htmlPath(value)
 					{
 						this.defaultNames = false;
@@ -260,14 +259,14 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.html
 					 * @name			file.html
 					 */
-					get html(){ return this.parent().getXML().PublishFormatProperties.html == 1; },
+					get html(){ return this.parent && this.parent().getXML().PublishFormatProperties.html == 1; },
 					set html(value){ this.parent().setXML('PublishFormatProperties', 'html', !! value ? 1 : 0); },
 			
 					/**
 					 * @type {String}	Get and set the value for PublishFormatProperties.pngFileName
 					 * @name			file.pngPath
 					 */
-					get pngPath(){ return String(this.parent().getXML().PublishFormatProperties.pngFileName); },
+					get pngPath(){ return this.parent && String(this.parent().getXML().PublishFormatProperties.pngFileName); },
 					set pngPath(value)
 					{
 						this.defaultNames = false;
@@ -279,14 +278,14 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.png
 					 * @name			file.png
 					 */
-					get png(){ return this.parent().getXML().PublishFormatProperties.png == 1; },
+					get png(){ return this.parent && this.parent().getXML().PublishFormatProperties.png == 1; },
 					set png(value){ this.parent().setXML('PublishFormatProperties', 'png', !! value ? 1 : 0); },
 			
 					/**
 					 * @type {String}	Get and set the value for PublishFormatProperties.jpegFileName
 					 * @name			file.jpegPath
 					 */
-					get jpegPath(){ return String(this.parent().getXML().PublishFormatProperties.jpegFileName); },
+					get jpegPath(){ return this.parent && String(this.parent().getXML().PublishFormatProperties.jpegFileName); },
 					set jpegPath(value)
 					{
 						this.defaultNames = false;
@@ -298,14 +297,14 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.jpeg
 					 * @name			file.jpeg
 					 */
-					get jpeg(){ return this.parent().getXML().PublishFormatProperties.jpeg == 1; },
+					get jpeg(){ return this.parent && this.parent().getXML().PublishFormatProperties.jpeg == 1; },
 					set jpeg(value){ this.parent().setXML('PublishFormatProperties', 'jpeg', !! value ? 1 : 0); },
 			
 					/**
 					 * @type {String}	Get and set the value for PublishFormatProperties.gifFileName
 					 * @name			file.gifPath
 					 */
-					get gifPath(){ return String(this.parent().getXML().PublishFormatProperties.gifFileName); },
+					get gifPath(){ return this.parent && String(this.parent().getXML().PublishFormatProperties.gifFileName); },
 					set gifPath(value)
 					{
 						this.defaultNames = false;
@@ -317,14 +316,14 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.gif
 					 * @name			file.gif
 					 */
-					get gif(){ return this.parent().getXML().PublishFormatProperties.gif == 1; },
+					get gif(){ return this.parent && this.parent().getXML().PublishFormatProperties.gif == 1; },
 					set gif(value){ this.parent().setXML('PublishFormatProperties', 'gif', !! value ? 1 : 0); },
 			
 					/**
 					 * @type {String}	Get and set the value for PublishFormatProperties.projectorWinFileName
 					 * @name			file.projectorWinPath
 					 */
-					get projectorWinPath(){ return String(this.parent().getXML().PublishFormatProperties.projectorWinFileName); },
+					get projectorWinPath(){ return this.parent && String(this.parent().getXML().PublishFormatProperties.projectorWinFileName); },
 					set projectorWinPath(value)
 					{
 						this.defaultNames = false;
@@ -336,14 +335,14 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.projectorWin
 					 * @name			file.projectorWin
 					 */
-					get projectorWin(){ return this.parent().getXML().PublishFormatProperties.projectorWin == 1; },
+					get projectorWin(){ return this.parent && this.parent().getXML().PublishFormatProperties.projectorWin == 1; },
 					set projectorWin(value){ this.parent().setXML('PublishFormatProperties', 'projectorWin', !! value ? 1 : 0); },
 			
 					/**
 					 * @type {String}	Get and set the value for PublishFormatProperties.projectorMacFileName
 					 * @name			file.projectorMacPath
 					 */
-					get projectorMacPath(){ return String(this.parent().getXML().PublishFormatProperties.projectorMacFileName); },
+					get projectorMacPath(){ return this.parent && String(this.parent().getXML().PublishFormatProperties.projectorMacFileName); },
 					set projectorMacPath(value)
 					{
 						this.defaultNames = false;
@@ -355,7 +354,7 @@
 					 * @type {Boolean}	Get and set the value for PublishFormatProperties.projectorMac
 					 * @name			file.projectorMac
 					 */
-					get projectorMac(){ return this.parent().getXML().PublishFormatProperties.projectorMac == 1; },
+					get projectorMac(){ return this.parent && this.parent().getXML().PublishFormatProperties.projectorMac == 1; },
 					set projectorMac(value){ this.parent().setXML('PublishFormatProperties', 'projectorMac', !! value ? 1 : 0); },
 			
 				},
@@ -369,14 +368,14 @@
 					 * @type {Number}	Get and set the value for PublishFlashProperties.ActionScriptVersion
 					 * @name			as3.version
 					 */
-					get version(){ return parseInt(this.parent().getXML().PublishFlashProperties.ActionScriptVersion); },
+					get version(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.ActionScriptVersion); },
 					set version(value){ this.parent().setXML('PublishFlashProperties', 'ActionScriptVersion', value); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFlashProperties.ExternalPlayer and Version
 					 * @name			as3.player
 					 */
-					get player(){ return String(this.parent().getXML().PublishFlashProperties.ExternalPlayer); },
+					get player(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.ExternalPlayer); },
 					set player(value)
 					{
 						var version =
@@ -398,84 +397,84 @@
 					 * @type {String}	Get and set the value for PublishFlashProperties.DocumentClass
 					 * @name			as3.documentClass
 					 */
-					get documentClass(){ return String(this.parent().getXML().PublishFlashProperties.DocumentClass); },
+					get documentClass(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.DocumentClass); },
 					set documentClass(value){ this.parent().setXML('PublishFlashProperties', 'DocumentClass', value); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFlashProperties.AS3PackagePaths
 					 * @name			as3.packagePaths
 					 */
-					get packagePaths(){ return String(this.parent().getXML().PublishFlashProperties.AS3PackagePaths); },
+					get packagePaths(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.AS3PackagePaths); },
 					set packagePaths(value){ this.parent().setXML('PublishFlashProperties', 'AS3PackagePaths', value); },
 					
 					/**
 					 * @type {Number}	Get and set the value for PublishFlashProperties.PackageExportFrame
 					 * @name			as3.packageExportFrame
 					 */
-					get packageExportFrame(){ return parseInt(this.parent().getXML().PublishFlashProperties.PackageExportFrame); },
+					get packageExportFrame(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.PackageExportFrame); },
 					set packageExportFrame(value){ this.parent().setXML('PublishFlashProperties', 'PackageExportFrame', value); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFlashProperties.AS3LibraryPaths
 					 * @name			as3.libraryPaths
 					 */
-					get libraryPaths(){ return String(this.parent().getXML().PublishFlashProperties.AS3LibraryPaths); },
+					get libraryPaths(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.AS3LibraryPaths); },
 					set libraryPaths(value){ this.parent().setXML('PublishFlashProperties', 'AS3LibraryPaths', value); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFlashProperties.AS3ExternalLibraryPaths
 					 * @name			as3.externalLibraryPaths
 					 */
-					get externalLibraryPaths(){ return String(this.parent().getXML().PublishFlashProperties.AS3ExternalLibraryPaths); },
+					get externalLibraryPaths(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.AS3ExternalLibraryPaths); },
 					set externalLibraryPaths(value){ this.parent().setXML('PublishFlashProperties', 'AS3ExternalLibraryPaths', value); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFlashProperties.AS3ConfigConst
 					 * @name			as3.configConst
 					 */
-					get configConst(){ return String(this.parent().getXML().PublishFlashProperties.AS3ConfigConst); },
+					get configConst(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.AS3ConfigConst); },
 					set configConst(value){ this.parent().setXML('PublishFlashProperties', 'AS3ConfigConst', value); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.AS3Strict
 					 * @name			as3.strict
 					 */
-					get strict(){ return this.parent().getXML().PublishFlashProperties.AS3Strict == 1; },
+					get strict(){ return this.parent && this.parent().getXML().PublishFlashProperties.AS3Strict == 1; },
 					set strict(value){ this.parent().setXML('PublishFlashProperties', 'AS3Strict', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.AS3Coach (warnings)
 					 * @name			as3.warnings
 					 */
-					get warnings(){ return this.parent().getXML().PublishFlashProperties.AS3Coach == 1; },
+					get warnings(){ return this.parent && this.parent().getXML().PublishFlashProperties.AS3Coach == 1; },
 					set warnings(value){ this.parent().setXML('PublishFlashProperties', 'AS3Coach', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.AS3AutoDeclare
 					 * @name			as3.autoDeclare
 					 */
-					get autoDeclare(){ return this.parent().getXML().PublishFlashProperties.AS3AutoDeclare == 1; },
+					get autoDeclare(){ return this.parent && this.parent().getXML().PublishFlashProperties.AS3AutoDeclare == 1; },
 					set autoDeclare(value){ this.parent().setXML('PublishFlashProperties', 'AS3AutoDeclare', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFlashProperties.AS3Dialect (ES|AS3)
 					 * @name			as3.dialect
 					 */
-					get dialect(){ return String(this.parent().getXML().PublishFlashProperties.AS3Dialect); },
+					get dialect(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.AS3Dialect); },
 					set dialect(value){ this.parent().setXML('PublishFlashProperties', 'AS3Dialect', value); },
 					
 					/**
 					 * @type {Number}	Get and set the value for PublishFlashProperties.AS3ExportFrame
 					 * @name			as3.exportFrame
 					 */
-					get exportFrame(){ return parseInt(this.parent().getXML().PublishFlashProperties.AS3ExportFrame); },
+					get exportFrame(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.AS3ExportFrame); },
 					set exportFrame(value){ this.parent().setXML('PublishFlashProperties', 'AS3ExportFrame', value); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.AS3Optimize
 					 * @name			as3.optimize
 					 */
-					get optimize(){ return this.parent().getXML().PublishFlashProperties.AS3Optimize == 1; },
+					get optimize(){ return this.parent && this.parent().getXML().PublishFlashProperties.AS3Optimize == 1; },
 					set optimize(value){ this.parent().setXML('PublishFlashProperties', 'AS3Optimize', !! value ? 1 : 0); },
 					
 				},
@@ -489,14 +488,14 @@
 					 * @type {Number}	Get and set the value for PublishFlashProperties.Quality
 					 * @name			image.quality
 					 */
-					get quality(){ return parseInt(this.parent().getXML().PublishFlashProperties.Quality); },
+					get quality(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.Quality); },
 					set quality(value){ this.parent().setXML('PublishFlashProperties', 'Quality', value); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.DeblockingFilter
 					 * @name			image.deblockingFilter
 					 */
-					get deblockingFilter(){ return this.parent().getXML().PublishFlashProperties.DeblockingFilter == 1; },
+					get deblockingFilter(){ return this.parent && this.parent().getXML().PublishFlashProperties.DeblockingFilter == 1; },
 					set deblockingFilter(value){ this.parent().setXML('PublishFlashProperties', 'DeblockingFilter', !! value ? 1 : 0); },
 					
 					
@@ -512,7 +511,7 @@
 					 * @type {Number}	Get and set the value for PublishFlashProperties.StreamFormat (Pass in a PublishProfile.CONSTANTS.audioFormat value)
 					 * @name			image.streamFormat
 					 */
-					get streamFormat(){ return parseInt(this.parent().getXML().PublishFlashProperties.StreamFormat); },
+					get streamFormat(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.StreamFormat); },
 					set streamFormat(value){ this.parent().setXML('PublishFlashProperties', 'StreamFormat', value); },
 					
 					/**
@@ -521,7 +520,7 @@
 					 */
 					get streamBitRate()
 					{
-						var index	= parseInt(String(this.parent().getXML().PublishFlashProperties.StreamCompress));
+						var index	= this.parent && parseInt(String(this.parent().getXML().PublishFlashProperties.StreamCompress));
 						var value	= PublishProfile.utils.getKbsValue(index);
 						return value;
 					},
@@ -537,7 +536,7 @@
 					 * @type {Number}	Get and set the value for PublishFlashProperties.EventFormat (Pass in a PublishProfile.CONSTANTS.audioFormat value)
 					 * @name			image.eventFormat
 					 */
-					get eventFormat(){ return parseInt(this.parent().getXML().PublishFlashProperties.EventFormat); },
+					get eventFormat(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.EventFormat); },
 					set eventFormat(value)
 					{
 						//BUG - for some reason can't seem to set eventFormat. Used to work, but now it doesn't
@@ -555,7 +554,7 @@
 					 */
 					get eventBitRate()
 					{
-						var index	= parseInt(String(this.parent().getXML().PublishFlashProperties.EventCompress));
+						var index	= this.parent && parseInt(String(this.parent().getXML().PublishFlashProperties.EventCompress));
 						var value	= PublishProfile.utils.getKbsValue(index);
 						return value;
 					},
@@ -571,28 +570,28 @@
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.OverrideSounds
 					 * @name			image.overrideSounds
 					 */
-					get overrideSounds(){ return this.parent().getXML().PublishFlashProperties.OverrideSounds == 1; },
+					get overrideSounds(){ return this.parent && this.parent().getXML().PublishFlashProperties.OverrideSounds == 1; },
 					set overrideSounds(value){ this.parent().setXML('PublishFlashProperties', 'OverrideSounds', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.DeviceSound
 					 * @name			image.deviceSound
 					 */
-					get deviceSound(){ return this.parent().getXML().PublishFlashProperties.DeviceSound == 1; },
+					get deviceSound(){ return this.parent && this.parent().getXML().PublishFlashProperties.DeviceSound == 1; },
 					set deviceSound(value){ this.parent().setXML('PublishFlashProperties', 'DeviceSound', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.StreamUse8kSampleRate
 					 * @name			image.streamUse8kSampleRate
 					 */
-					get streamUse8kSampleRate(){ return this.parent().getXML().PublishFlashProperties.StreamUse8kSampleRate == 1; },
+					get streamUse8kSampleRate(){ return this.parent && this.parent().getXML().PublishFlashProperties.StreamUse8kSampleRate == 1; },
 					set streamUse8kSampleRate(value){ this.parent().setXML('PublishFlashProperties', 'StreamUse8kSampleRate', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.EventUse8kSampleRate
 					 * @name			image.eventUse8kSampleRate
 					 */
-					get eventUse8kSampleRate(){ return this.parent().getXML().PublishFlashProperties.EventUse8kSampleRate == 1; },
+					get eventUse8kSampleRate(){ return this.parent && this.parent().getXML().PublishFlashProperties.EventUse8kSampleRate == 1; },
 					set eventUse8kSampleRate(value){ this.parent().setXML('PublishFlashProperties', 'EventUse8kSampleRate', !! value ? 1 : 0); },
 					
 					
@@ -607,28 +606,28 @@
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.CompressMovie
 					 * @name			swf.compressMovie
 					 */
-					get compressMovie(){ return this.parent().getXML().PublishFlashProperties.CompressMovie == 1; },
+					get compressMovie(){ return this.parent && this.parent().getXML().PublishFlashProperties.CompressMovie == 1; },
 					set compressMovie(value){ this.parent().setXML('PublishFlashProperties', 'CompressMovie', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.InvisibleLayer
 					 * @name			swf.includeHiddenLayers
 					 */
-					get includeHiddenLayers(){ return this.parent().getXML().PublishFlashProperties.InvisibleLayer == 1; },
+					get includeHiddenLayers(){ return this.parent && this.parent().getXML().PublishFlashProperties.InvisibleLayer == 1; },
 					set includeHiddenLayers(value){ this.parent().setXML('PublishFlashProperties', 'InvisibleLayer', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.ExportSwc
 					 * @name			swf.exportSWC
 					 */
-					get exportSWC(){ return this.parent().getXML().PublishFlashProperties.ExportSwc == 1; },
+					get exportSWC(){ return this.parent && this.parent().getXML().PublishFlashProperties.ExportSwc == 1; },
 					set exportSWC(value){ this.parent().setXML('PublishFlashProperties', 'ExportSwc', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.IncludeXMP
 					 * @name			swf.includeMetaData
 					 */
-					get includeMetaData(){ return this.parent().getXML().PublishFlashProperties.IncludeXMP == 1; },
+					get includeMetaData(){ return this.parent && this.parent().getXML().PublishFlashProperties.IncludeXMP == 1; },
 					set includeMetaData(value){ this.parent().setXML('PublishFlashProperties', 'IncludeXMP', !! value ? 1 : 0); },
 					
 					
@@ -643,56 +642,56 @@
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.Report
 					 * @name			advanced.generateSizeReport
 					 */
-					get generateSizeReport(){ return this.parent().getXML().PublishFlashProperties.Report == 1; },
+					get generateSizeReport(){ return this.parent && this.parent().getXML().PublishFlashProperties.Report == 1; },
 					set generateSizeReport(value){ this.parent().setXML('PublishFlashProperties', 'Report', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.Protect
 					 * @name			advanced.protectFromImport
 					 */
-					get protectFromImport(){ return this.parent().getXML().PublishFlashProperties.Protect == 1; },
+					get protectFromImport(){ return this.parent && this.parent().getXML().PublishFlashProperties.Protect == 1; },
 					set protectFromImport(value){ this.parent().setXML('PublishFlashProperties', 'Protect', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.OmitTraceActions
 					 * @name			advanced.omitTraceActions
 					 */
-					get omitTraceActions(){ return this.parent().getXML().PublishFlashProperties.OmitTraceActions == 1; },
+					get omitTraceActions(){ return this.parent && this.parent().getXML().PublishFlashProperties.OmitTraceActions == 1; },
 					set omitTraceActions(value){ this.parent().setXML('PublishFlashProperties', 'OmitTraceActions', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.DebuggingPermitted
 					 * @name			advanced.permitDebugging
 					 */
-					get permitDebugging(){ return this.parent().getXML().PublishFlashProperties.DebuggingPermitted == 1; },
+					get permitDebugging(){ return this.parent && this.parent().getXML().PublishFlashProperties.DebuggingPermitted == 1; },
 					set permitDebugging(value){ this.parent().setXML('PublishFlashProperties', 'DebuggingPermitted', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {String}	Get and set the value for PublishFlashProperties.DebuggingPassword
 					 * @name			advanced.debuggingPassword
 					 */
-					get debuggingPassword(){ return String(this.parent().getXML().PublishFlashProperties.DebuggingPassword); },
+					get debuggingPassword(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.DebuggingPassword); },
 					set debuggingPassword(value){ this.parent().setXML('PublishFlashProperties', 'DebuggingPassword', value); },
 					
 					/**
 					 * @type {Boolean}	Get and set the value for PublishFlashProperties.UseNetwork (Playback security)
 					 * @name			advanced.useNetwork
 					 */
-					get useNetwork(){ return this.parent().getXML().PublishFlashProperties.UseNetwork == 1; },
+					get useNetwork(){ return this.parent && this.parent().getXML().PublishFlashProperties.UseNetwork == 1; },
 					set useNetwork(value){ this.parent().setXML('PublishFlashProperties', 'UseNetwork', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {Number}	Get and set the value for PublishFlashProperties.HardwareAcceleration
 					 * @name			advanced.hardwareAcceleration
 					 */
-					get hardwareAcceleration(){ return parseInt(this.parent().getXML().PublishFlashProperties.HardwareAcceleration); },
+					get hardwareAcceleration(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.HardwareAcceleration); },
 					set hardwareAcceleration(value){ this.parent().setXML('PublishFlashProperties', 'HardwareAcceleration', value); },
 					
 					/**
 					 * @type {Number}	Get and set the value for PublishFlashProperties.ScriptStuckDelay
 					 * @name			advanced.scriptTimeLimit
 					 */
-					get scriptTimeLimit(){ return parseInt(this.parent().getXML().PublishFlashProperties.ScriptStuckDelay); },
+					get scriptTimeLimit(){ return this.parent && parseInt(this.parent().getXML().PublishFlashProperties.ScriptStuckDelay); },
 					set scriptTimeLimit(value){ this.parent().setXML('PublishFlashProperties', 'ScriptStuckDelay', value); },
 					
 					
@@ -707,14 +706,14 @@
 					 * @type {object}	Get and set the value for PublishFlashProperties.TopDown
 					 * @name			top.topDown
 					 */
-					get topDown(){ return this.parent().getXML().PublishFlashProperties.TopDown == 1; },
+					get topDown(){ return this.parent && this.parent().getXML().PublishFlashProperties.TopDown == 1; },
 					set topDown(value){ this.parent().setXML('PublishFlashProperties', 'TopDown', !! value ? 1 : 0); },
 					
 					/**
 					 * @type {object}	Get and set the value for PublishFlashProperties.FireFox
 					 * @name			top.fireFox
 					 */
-					get fireFox(){ return String(this.parent().getXML().PublishFlashProperties.FireFox); },
+					get fireFox(){ return this.parent && String(this.parent().getXML().PublishFlashProperties.FireFox); },
 					set fireFox(value){ this.parent().setXML('PublishFlashProperties', 'FireFox', value); },
 				},
 				
