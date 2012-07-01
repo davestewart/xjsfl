@@ -105,7 +105,7 @@
 				{
 					if( ! /^(set|get)$/.test(this.name) )
 					{
-						this[name] = URI.toURI(uri);
+						this[name] = URI.toURI(uri, 1);
 					}
 				},
 
