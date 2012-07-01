@@ -106,6 +106,12 @@
 				{
 					pathOrURI = Utils.getStack()[1].path;
 				}
+				
+			// update context
+				if(typeof context === 'number')
+				{
+					context ++;
+				}
 	
 			// assign URI
 				this.uri = URI.toURI(pathOrURI, context || 1);
