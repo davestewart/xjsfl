@@ -203,6 +203,12 @@
 			// if a timeline was found, process its layers
 				if(context.timeline)
 				{
+					// update function
+						function update()
+						{
+							context.timeline.getSelectedLayers();
+						}
+						
 					//inspect(context, 'Context')
 
 					for(var i = 0; i < context.timeline.layers.length; i++)
@@ -217,7 +223,11 @@
 							if(layerCallback instanceof Function)
 							{
 								var result =  layerCallback(context.timeline.layers[i], i, context.timeline, context.clone());
-								if(result === true)return true;
+								if(result === true)
+								{
+									update();
+									return true;
+								}
 								if(result === false)continue
 							}
 
@@ -226,10 +236,12 @@
 							{
 								if(this.frames(context, frameCallback, elementCallback) === true)
 								{
+									update();
 									return true;
 								}
 							}
 					}
+					update();
 				}
 				else
 				{
