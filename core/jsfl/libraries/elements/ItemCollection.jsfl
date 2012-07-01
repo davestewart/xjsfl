@@ -303,7 +303,7 @@
 				(
 					function(element, index, array)
 					{
-						that.library.editItem(element.name);
+						that.getLibrary().editItem(element.name);
 						callback.apply(scope || that, [element, index].concat(params));
 					}
 				)
