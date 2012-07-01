@@ -2100,16 +2100,48 @@
 
 				/**
 				 * Returns a multiline string, showing the file/folder hierarchy of an input array of paths or URIs
-				 * @param	{Array}			source		An array of paths or URIs
 				 * @param	{String}		source		A path or URI
+				 * @param	{URI}			source		A URI instance
+				 * @param	{Folder}		source		A Folder instance
+				 * @param	{Array}			source		An array of paths or URIs
 				 * @returns	{String}					The hierarchial representation
 				 */
-				makeTree:function(source)
+				makeTree:function(source, includeRoot)
 				{
-					var paths = typeof source === 'string' ? Utils.glob(source.replace(/\*+$/, '**')) : source;
+					var uri, paths;
+					if(typeof source === 'string')
+					{
+						uri = URI.toURI(source, 1);
+					}
+					else if(source instanceof URI)
+					{
+						uri = source;
+					}
+					else if(source instanceof Folder)
+					{
+						uri = source.uri;
+					}
+					else if(Utils.isArray(source))
+					{
+						paths = source;
+					}
+					else
+					{
+						throw new TypeError('TypeError in Utils.makeTree(): the parameter source "' +source+ '" is invalid');
+					}
+					
+					if(uri)
+					{
+						paths = Utils.glob(uri + '**', true, true);
+					}
+					
 					if(paths && paths.length)
 					{
-						// pparameters
+						// parameters
+							if(includeRoot && uri)
+							{
+								paths.push(URI.toPath(uri));
+							}
 							paths = paths.sort();
 							
 						// variables
