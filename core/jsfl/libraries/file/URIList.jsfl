@@ -97,7 +97,7 @@
 					}
 					else
 					{
-						return uris;
+						return [].concat(uris);
 					}
 				}
 				
