@@ -42,7 +42,7 @@
 		
 		function uninstall()
 		{
-			fl.runScript(xjsfl.uri + 'core/jsfl/install/uninstall.jsfl');
+			fl.runScript(xjsfl.uri + 'core/install/jsfl/uninstall.jsfl');
 			if(xjsfl.uninstalled)
 			{
 				fl.xmlui.cancel();
