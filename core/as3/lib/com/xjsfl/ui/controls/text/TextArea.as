@@ -1,13 +1,12 @@
 package com.xjsfl.ui.controls.text 
 {
-	import com.xjsfl.ui.controls.Control;
 	
 
 	/**
 	 * ...
 	 * @author Dave Stewart
 	 */
-	public class TextArea extends textInput
+	public class TextArea extends TextInput
 	{
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Variables
@@ -29,7 +28,7 @@ package com.xjsfl.ui.controls.text
 				initialize();
 			}
 			
-			public function initialize() 
+			override public function initialize():void
 			{
 				
 			}
