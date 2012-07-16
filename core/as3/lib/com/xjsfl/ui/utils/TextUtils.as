@@ -1,9 +1,13 @@
 package com.xjsfl.ui.utils 
 {
-	import com.xjsfl.fonts.ReferenceSans;
+	import com.xjsfl.text.fonts.ReferenceSans;
+
+	import flash.text.AntiAliasType;
 	import flash.text.Font;
 	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
 
 	/**
 	 * ...
