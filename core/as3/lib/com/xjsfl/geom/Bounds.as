@@ -1,7 +1,5 @@
 package com.xjsfl.geom
 {
-	import flash.geom.Rectangle;
-
 	/**
 	 * An object-oriented bounds object that can be used in place of anonymous objects
 	 * @author Dave Stewart
@@ -27,7 +25,7 @@ package com.xjsfl.geom
 			 * 			2: top & bottom values, 
 			 * 			3: top, right, bottom & left values.
 			 */
-			public function Bounds(top:Number, right:Number, bottom:Number, right:Number) 
+			public function Bounds(...values) 
 			{
 				if (values.length == 1)
 				{
@@ -63,14 +61,14 @@ package com.xjsfl.geom
 				}
 				else if(values is Array)
 				{
-					if (values.length == 2)
+					if ((values as Array).length == 2)
 					{
 						top		= values[0];
 						right	= values[1];
 						bottom	= values[0];
 						left	= values[1];
 					}
-					else if (values.length == 4)
+					else if ((values as Array).length == 4)
 					{
 						top		= values[0];
 						right	= values[1];
@@ -84,15 +82,15 @@ package com.xjsfl.geom
 			{
 				if (top == bottom == left == right)
 				{
-					return '[Bounds {all: ' +top+ '} ]'
+					return '[Bounds {all: ' +top+ '} ]';
 				}
 				else if (top == bottom && left == right)
 				{
-					return '[Bounds {vertical:' +top+ ', horizontal:' +left+ '} ]'
+					return '[Bounds {vertical:' +top+ ', horizontal:' +left+ '} ]';
 				}
 				else
 				{
-					return '[Bounds {top:' +top+ ', right:' +right+ ', bottom:' +bottom+ ', left:' +left+ '} ]'
+					return '[Bounds {top:' +top+ ', right:' +right+ ', bottom:' +bottom+ ', left:' +left+ '} ]';
 				}
 			}
 
