@@ -1,15 +1,11 @@
 ﻿package com.xjsfl.ui.controls.tabs
 {
-	import flash.display.DisplayObject;
+	import com.xjsfl.ui.utils.TextUtils;
+	import com.xjsfl.ui.controls.Control;
+
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	import flash.filters.BevelFilter;
 	import flash.text.TextField;
-	import flash.text.TextFormat;
-	import flash.text.TextFormatAlign;
-	
-	import com.xjsfl.ui.controls.base.Control;
-	import com.xjsfl.utils.Utils;
 	
 	
 
@@ -31,7 +27,7 @@
 				protected var _active		:Boolean;
 				
 			// colors
-				protected var colorText		:int		= 0x2F2F2F
+				protected var colorText		:int		= 0x2F2F2F;
 				protected var colorOut		:int		= 0x999999;
 				protected var colorHover	:int		= 0xADADAD;
 				protected var colorActive	:int		= 0xC5C5C5;
@@ -44,23 +40,23 @@
 		
 			public function Tab(label:String)
 			{
-				trace('Tab label:' + label)
+				trace('Tab label:' + label);
 				this.label = label;
 				initialize();
 			}
 			
-			override public function initialize()
+			public function initialize():void
 			{
 				bg				= new Sprite();
 				addChild(bg);
 				
 				tf				= new TextField();
-				Utils.initText(tf, 10, 0x000000);
+				TextUtils.initializeText(tf, 10, 0x000000);
 				tf.text			= label.toUpperCase();
 				tf.thickness			= 150;
 				addChild(tf);
 				
-				trace(label)
+				trace(label);
 			}
 			
 			
