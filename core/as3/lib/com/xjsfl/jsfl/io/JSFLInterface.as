@@ -1,6 +1,5 @@
 package com.xjsfl.jsfl.io
 {
-	import adobe.utils.MMExecute;
 	import flash.utils.describeType;
 
 	/**
@@ -40,7 +39,7 @@ package com.xjsfl.jsfl.io
 
 				if (obj is String)
 				{
-					result = '"' + obj.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"';
+					result = '"' + (obj as String).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"';
 				}
 				else if (obj === null || obj === undefined || obj is int || obj is uint || obj is Number || obj is Boolean)
 				{
@@ -55,7 +54,7 @@ package com.xjsfl.jsfl.io
 						case 'Array':
 							var values:Array = [];
 							var i:int;
-							for (i = 0; i < obj.length; i++)
+							for (i = 0; i < (obj as Array).length; i++)
 							{
 								values.push(serialize(obj[i], json));
 							}
@@ -69,9 +68,10 @@ package com.xjsfl.jsfl.io
 								props.push( (json ? serialize(prop, json) : prop ) + ':' + serialize(obj[prop], json));
 							}
 							result = '{ ' + props.join(', ') + ' }';
-						break
+						break;
 						
 						default:
+							JSFL.trace('Error: Objects of type ' + type + ' cannot be passed to JSFL');
 							throw new Error('Objects of type ' + type + ' cannot be passed to JSFL');
 					}
 				}
@@ -116,14 +116,14 @@ package com.xjsfl.jsfl.io
 					break;
 					case 'object':
 						obj = {};
-						for each (property in xml.property)
+						for each (property in xml.child('property'))
 						{
 							obj[property.@id] = xmlToObject(property.*[0]);
 						}
 					break;
 					case 'array':
 						obj = [];
-						for each (property in xml.property)
+						for each (property in xml.child('property'))
 						{
 							obj[property.@id] = xmlToObject(property.*[0]);
 						}
@@ -135,7 +135,7 @@ package com.xjsfl.jsfl.io
 	}
 }
 
-function unescapeXML(xml)
+function unescapeXML(xml:String):String
 {
 	return xml
 		.replace(/&amp;/g, "&")
