@@ -1,7 +1,8 @@
 package com.xjsfl.jsfl.modules 
 {
+	import com.xjsfl.utils.debugging.Output;
+
 	import flash.net.SharedObject;
-	import com.xjsfl.utils.Output;
 	
 	/**
 	 * A Model who's storage mechanism is the Shared Object
