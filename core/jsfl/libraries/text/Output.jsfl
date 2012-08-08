@@ -222,26 +222,43 @@
 
 					function processObject(obj)
 					{
-						//TODO have two loops - one for illegal instances, one for legal instances.
-						//TODO use PropertyResolver class
-
-						down(obj);
-						for (var key in obj)
-						{
-							//fl.trace('~' + key)
-							if( ! key.match(rxIllegal))// && obj.hasOwnProperty(i)
+						// go down
+							down(obj);
+							
+						// check for and resolve any illegal properties in object
+							var class	= Utils.getClass(obj);
+							var illegal, result;
+							if(illegalProperties[class])
 							{
-								processLeaf(obj, key);
-							}
-							else
-							{
-								if(key !== 'constructor')
+								illegal = illegalProperties[class];
+								for (var key in obj)
 								{
-									output(' ' + key + ": [ SKIPPING! ]");
+									if(illegal[key])
+									{
+										result = illegal[key](obj, key);
+										if(result !== false)
+										{
+											output(' ' + key + ': ' + result);
+										}
+									}
+									else
+									{
+										processLeaf(obj, key);
+									}
 								}
 							}
-						}
-						up();
+							
+						// if no illegal properties, just run a normal loop
+							else
+							{
+								for (var key in obj)
+								{
+									processLeaf(obj, key);
+								}
+							}
+							
+						// go up
+							up();
 					}
 
 					function processArray(arr)
@@ -439,7 +456,7 @@
 							case 'xml':
 								var ind = indent.join('\t').replace('\t', '')
 								value = obj.toXMLString();
-								value = value.replace(/ {2}/g, '\t').replace(/^/gm, ind).replace(/^\s*/, '');
+								//value = value.replace(/ {2}/g, '\t').replace(/^/gm, ind).replace(/^\s*/, '');
 							break;
 							/*
 							*/
@@ -498,15 +515,43 @@
 					var stack			= [];
 
 				// uncallable properties
-					var illegal			= [
-											'constructor', // class
-											'tools|toolObjs|activeTool', // window
-											'morphShape|hintsList|actionScriptOffsets', // shape
-											'brightness|tintColor|tintPercent', // SymbolInstance
-											]
+					function fnIllegal(element, key)
+					{
+						return '[Unable to retrieve (possibly volatile) property]';
+					}
+					
+					function fnFalse()
+					{
+						return false;
+					}
+					
+					var illegalProperties =
+					{
+						Object:
+						{
+							constructor: 		fnFalse,
+						},
+						Shape:
+						{
+							morphShape: 		fnIllegal,
+							hintsList: 			fnIllegal,
+							actionScriptOffsets:fnIllegal,
+							layer:				fnIllegal,
+						},
+						Tools:
+						{
+							toolObjs: 			fnIllegal,
+							activeTool:			fnIllegal,
+						},
+						SymbolInstance:
+						{	
+							brightness: 		function(element, key){return element.colorMode === 'brightness' ? element.brightness : fnIllegal(element, key); },
+							tintColor:			function(element, key){return element.colorMode === 'tint' ? element.tintColor : fnIllegal(element, key); },
+							tintPercent:		function(element, key){return element.colorMode === 'tint' ? element.tintPercent : fnIllegal(element, key); },
+						}
+					}
 
 				// init
-					var rxIllegal		= new RegExp('^' + illegal.join('|') + '$');
 					var indent			= [];
 					var strOutput		= '';
 					var type			= getType(obj);
