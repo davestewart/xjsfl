@@ -47,7 +47,7 @@
 			function ()
 			{
 				// variables
-					var indices			= this.getSelectedLayers();
+					var indices			= Utils.sort(this.getSelectedLayers());
 					var selectedLayers	= [];
 					
 				// get layers
