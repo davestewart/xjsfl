@@ -225,17 +225,19 @@
 						// go down
 							down(obj);
 							
-						// check for and resolve any illegal properties in object
+						// variables
 							var class	= Utils.getClass(obj);
-							var illegal, result;
-							if(illegalProperties[class])
+							var volatile, result;
+							
+						// special loop to inspect any objects with volatile properties
+							if(volatileProperties[class])
 							{
-								illegal = illegalProperties[class];
+								volatile = volatileProperties[class];
 								for (var key in obj)
 								{
-									if(illegal[key])
+									if(volatile[key])
 									{
-										result = illegal[key](obj, key);
+										result = volatile[key](obj, key);
 										if(result !== false)
 										{
 											output(' ' + key + ': ' + result);
@@ -248,12 +250,15 @@
 								}
 							}
 							
-						// if no illegal properties, just run a normal loop
+						// normal loop for stable objects
 							else
 							{
 								for (var key in obj)
 								{
-									processLeaf(obj, key);
+									if(key !== 'constructor')
+									{
+										processLeaf(obj, key);
+									}
 								}
 							}
 							
@@ -515,7 +520,7 @@
 					var stack			= [];
 
 				// uncallable properties
-					function fnIllegal(element, key)
+					function fnVolatile(element, key)
 					{
 						return '[Unable to retrieve (possibly volatile) property]';
 					}
@@ -525,7 +530,7 @@
 						return false;
 					}
 					
-					var illegalProperties =
+					var volatileProperties =
 					{
 						Object:
 						{
@@ -533,21 +538,21 @@
 						},
 						Shape:
 						{
-							morphShape: 		fnIllegal,
-							hintsList: 			fnIllegal,
-							actionScriptOffsets:fnIllegal,
-							layer:				fnIllegal,
+							morphShape: 		fnVolatile,
+							hintsList: 			fnVolatile,
+							actionScriptOffsets:fnVolatile,
+							layer:				fnVolatile,
 						},
 						Tools:
 						{
-							toolObjs: 			fnIllegal,
-							activeTool:			fnIllegal,
+							toolObjs: 			fnVolatile,
+							activeTool:			fnVolatile,
 						},
 						SymbolInstance:
 						{	
-							brightness: 		function(element, key){return element.colorMode === 'brightness' ? element.brightness : fnIllegal(element, key); },
-							tintColor:			function(element, key){return element.colorMode === 'tint' ? element.tintColor : fnIllegal(element, key); },
-							tintPercent:		function(element, key){return element.colorMode === 'tint' ? element.tintPercent : fnIllegal(element, key); },
+							brightness: 		function(element, key){return element.colorMode === 'brightness' ? element.brightness : fnVolatile(element, key); },
+							tintColor:			function(element, key){return element.colorMode === 'tint' ? element.tintColor : fnVolatile(element, key); },
+							tintPercent:		function(element, key){return element.colorMode === 'tint' ? element.tintPercent : fnVolatile(element, key); },
 						}
 					}
 
