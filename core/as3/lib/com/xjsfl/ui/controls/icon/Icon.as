@@ -112,7 +112,7 @@ package com.xjsfl.ui.controls.icon
 			}
 			
 			/// Gets or sets the visiblity of the label
-			public function get label():Boolean { return _label; }
+			public function get label():Boolean { return _label.parent != null; }
 			public function set label(state:Boolean):void 
 			{
 				if (state)
@@ -162,7 +162,7 @@ package com.xjsfl.ui.controls.icon
 			override public function draw():void 
 			{
 				updateIcon();
-				updateBg()
+				updateBg();
 				super.draw();
 			}
 			

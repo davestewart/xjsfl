@@ -78,7 +78,7 @@ package com.xjsfl.ui.controls.icon
 			 * Directly sets the image of the icon by passing in a DisplayObject instance
 			 * @param	icon	Either a DisplayObject instance, or a String path to the icon source
 			 */
-			public function set icon(icon:*):void 
+			override public function set icon(icon:*):void 
 			{
 				if (icon is DisplayObject)
 				{
@@ -102,8 +102,8 @@ package com.xjsfl.ui.controls.icon
 			}
 
 			/// gets and sets the text of the icon
-			public function get text():String { return _text; }
-			public function set text(value:String):void 
+			override public function get text():String { return _text; }
+			override public function set text(value:String):void 
 			{
 				_text			= value;
 				_label.text		= value;
@@ -112,8 +112,8 @@ package com.xjsfl.ui.controls.icon
 			}
 			
 			/// Gets or sets the visiblity of the label
-			public function get label():Boolean { return _label; }
-			public function set label(state:Boolean):void 
+			override public function get label():Boolean { return _label.parent != null; }
+			override public function set label(state:Boolean):void 
 			{
 				if (state)
 				{
@@ -136,8 +136,8 @@ package com.xjsfl.ui.controls.icon
 			}
 			*/
 			
-			public function get interactive():Boolean { return _interactive; }
-			public function set interactive(state:Boolean):void 
+			override public function get interactive():Boolean { return _interactive; }
+			override public function set interactive(state:Boolean):void 
 			{
 				_interactive = state;
 				if (state)
@@ -172,7 +172,7 @@ package com.xjsfl.ui.controls.icon
 			/**
 			 * Updates the icon layout
 			 */
-			protected function updateIcon():void
+			override protected function updateIcon():void
 			{
 				if (_icon)
 				{
@@ -185,7 +185,7 @@ package com.xjsfl.ui.controls.icon
 			/**
 			 * Draws the background shape
 			 */
-			protected function updateBg():void
+			override protected function updateBg():void
 			{
 				// sprite
 					if (_bg == null)
@@ -205,7 +205,7 @@ package com.xjsfl.ui.controls.icon
 			 * Replaces any existing icon and sets the new one
 			 * @param	icon
 			 */
-			protected function setIcon(icon:DisplayObject):void 
+			override protected function setIcon(icon:DisplayObject):void 
 			{
 				if (_icon != null && _icon.stage)
 				{
@@ -221,19 +221,19 @@ package com.xjsfl.ui.controls.icon
 		
 			// mouse
 			
-				protected function onRollOver(event:MouseEvent):void 
+				override protected function onRollOver(event:MouseEvent):void 
 				{
 					addChildAt(_bg, 0)
 				}
 				
-				protected function onRollOut(event:MouseEvent):void 
+				override protected function onRollOut(event:MouseEvent):void 
 				{
 					removeChild(_bg);
 				}
 				
 			// loading
 			
-				protected function onLoadComplete(event:Event):void 
+				override protected function onLoadComplete(event:Event):void 
 				{
 					setIcon(_loader);
 					dispatchEvent(event.clone());
@@ -242,7 +242,7 @@ package com.xjsfl.ui.controls.icon
 					invalidate();
 				}
 				
-				protected function onLoadError(event:IOErrorEvent):void 
+				override protected function onLoadError(event:IOErrorEvent):void 
 				{
 					dispatchEvent(event.clone());
 					removeListeners();
@@ -254,7 +254,7 @@ package com.xjsfl.ui.controls.icon
 			/**
 			 * Removes load listeners
 			 */
-			protected function removeListeners():void 
+			override protected function removeListeners():void 
 			{
 				removeEventListener(Event.COMPLETE, onLoadComplete);
 				removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);

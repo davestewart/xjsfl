@@ -1,11 +1,9 @@
 ﻿package com.xjsfl.ui.controls.tabs
 {
+	import com.xjsfl.ui.containers.Container;
+
 	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
-	
-	import com.xjsfl.ui.controls.base.Container;
-	import com.xjsfl.ui.controls.tabs.Tab;
 
 	/**
 	 * ...
@@ -62,19 +60,19 @@
 					}
 					
 				// debug
-					trace(content)
+					trace(content);
 							
 				// content
 					if (content)
 					{
 						// debug
-							trace('itemRenderer:' + itemRenderer)
-							trace('label:' + label)
+							trace('itemRenderer:' + itemRenderer);
+							trace('label:' + label);
 						
 						// tab
-							trace('About to make tab')
+							trace('About to make tab');
 							var tab:Tab		= new itemRenderer(label);
-							trace('Made tab')
+							trace('Made tab');
 							tab.active		= itemsContainer.numChildren == 0;
 							itemsContainer.addChild(tab);
 							
@@ -110,7 +108,7 @@
 		
 			override protected function draw():void
 			{
-				super.draw()
+				super.draw();
 			}
 			
 		// ---------------------------------------------------------------------------------------------------------------------

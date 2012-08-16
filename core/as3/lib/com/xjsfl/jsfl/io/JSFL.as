@@ -1,11 +1,6 @@
 package com.xjsfl.jsfl.io
 {
-
 	import adobe.utils.MMExecute;
-	import flash.utils.getTimer;
-	
-	import com.xjsfl.jsfl.io.JSFLInterface;
-	import com.xjsfl.utils.debugging.Output;
 	
 	/**
 	 * ...
@@ -58,7 +53,7 @@ package com.xjsfl.jsfl.io
 					{
 						if (args[i] is RegExp) // don't serialize regexp - this is a cheat to treat them as unparsed strings
 						{
-							args[i] = args[i].source;
+							args[i] = (args[i] as RegExp).source;
 						}
 						else
 						{
@@ -68,7 +63,7 @@ package com.xjsfl.jsfl.io
 					}
 					
 				// build the JSFL call
-					var jsfl:String
+					var jsfl:String;
 					if (scope == '')
 					{
 						jsfl = functionName + '(' +args.join(', ') + ')';
@@ -89,6 +84,7 @@ package com.xjsfl.jsfl.io
 						result				= JSFLInterface.deserialize(value);
 					}
 					
+					JSFL.trace('result: ' + result);
 
 					
 				// return

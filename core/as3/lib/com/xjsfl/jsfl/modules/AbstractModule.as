@@ -71,7 +71,7 @@
 			 */
 			public static function create(classRef:Class, root:DisplayObjectContainer = null):AbstractModule 
 			{
-				var module:AbstractModule = classRef.instance ? classRef.instance : new classRef;
+				var module:AbstractModule = classRef.instance ? classRef.instance : new classRef();
 				if (root)
 				{
 					module.root = root;
