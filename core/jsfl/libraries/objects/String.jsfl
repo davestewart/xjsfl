@@ -1,17 +1,17 @@
 ﻿// ------------------------------------------------------------------------------------------------------------------------
 //
-//  ██████  ██        ██             
-//  ██      ██                       
-//  ██     █████ ████ ██ █████ █████ 
-//  ██████  ██   ██   ██ ██ ██ ██ ██ 
-//      ██  ██   ██   ██ ██ ██ ██ ██ 
-//      ██  ██   ██   ██ ██ ██ ██ ██ 
-//  ██████  ████ ██   ██ ██ ██ █████ 
-//                                ██ 
-//                             █████ 
+//  ██████  ██        ██
+//  ██      ██
+//  ██     █████ ████ ██ █████ █████
+//  ██████  ██   ██   ██ ██ ██ ██ ██
+//      ██  ██   ██   ██ ██ ██ ██ ██
+//      ██  ██   ██   ██ ██ ██ ██ ██
+//  ██████  ████ ██   ██ ██ ██ █████
+//                                ██
+//                             █████
 //
 // ------------------------------------------------------------------------------------------------------------------------
-// String 
+// String
 
 	/**
 	 * String
@@ -20,9 +20,9 @@
 	 */
 
 	xjsfl.init(this, ['SimpleTemplate', 'Utils']);
-		
+
 	// ----------------------------------------------------------------------------------------------------
-	// # Modify content 
+	// # Modify content
 
 		/**
 		 * Trims the whitespace from both sides of a string
@@ -32,7 +32,7 @@
 		{
 			return this.replace(/(^\s*|\s*$)/g, '');
 		}
-	
+
 		/**
 		 * Pads a value to a certain length with a specific character
 		 * @param	{Number}	length		An optional length, defaults to 6
@@ -44,7 +44,7 @@
 		{
 			return Utils.pad(this, length, chr, right);
 		}
-	
+
 		/**
 		 * Repeat a string a specified number of times
 		 * @param	{Number}	num			The number of times to repeat the string
@@ -54,7 +54,7 @@
 		{
 			return Array(num + 1).join(this);
 		}
-	
+
 		/**
 		 * Injects a template string with values
 		 * @param	{Object}	obj			Any Object or instance of Class that with named properties
@@ -71,13 +71,13 @@
 								: typeof params[0] === 'object'
 									? params[0]
 									: [params];
-				
+
 			// variables
 				var rx		= /{([^}]+)}/g;
 				var values	= {};
 				var length	= 0;
-				
-				
+
+
 			// replacement functions
 				function arrMatch(match, key)
 				{
@@ -87,7 +87,7 @@
 					}
 					return obj[values[key]];
 				}
-				
+
 				function objMatch(match, key)
 				{
 					if(typeof values[key] === 'undefined')
@@ -100,9 +100,9 @@
 			// return
 				return this.replace(rx, obj instanceof Array ? arrMatch : objMatch);
 		}
-	
+
 	// ----------------------------------------------------------------------------------------------------
-	// # Change case 
+	// # Change case
 
 		/**
 		 * camelCase a string or variable name, separating on alpha-numeric characters
@@ -114,7 +114,7 @@
 			var part;
 			var parts	= this.replace(/(^\W*|\W*$)/g, '').split(/[^0-9a-z]/i);
 			var str		= '';
-			
+
 			while(parts.length)
 			{
 				if(str === '')
@@ -128,7 +128,7 @@
 			}
 			return str;
 		}
-		
+
 		/**
 		 * Convert a value from "camelCase" to "separate words"
 		 * @returns {String}
@@ -141,7 +141,7 @@
 				.replace(/([a-z])([A-Z0-9])/g, '$1 $2')
 				.replace(/^ /g, '').toLowerCase();
 		}
-		
+
 		/**
 		 * Converts a the string to sentense case, by capitalising the first letter
 		 * @returns {String}
@@ -150,7 +150,7 @@
 		{
 			return this.replace(/^\s+/, '').substr(0, 1).toUpperCase() + this.substr(1);
 		}
-		
+
 		/**
 		 * Converts a string of words (separated by non-word characters, such as spaces or dashes) to underscore_case
 		 * @returns {String}
@@ -159,9 +159,9 @@
 		{
 			return this.toLowerCase().replace(/(^\W*|\W*$)/g, '').replace(/\W+/g, '_');
 		}
-		
+
 	// ----------------------------------------------------------------------------------------------------
-	// # Escape 
+	// # Escape
 
 		/**
 		 * Escapes an HTML string using HTML entities
@@ -175,9 +175,9 @@
 				.replace(/</g,'&lt;')
 				.replace(/'/g,'&apos;')
 				.replace(/"/g,'&quot;')
-			);                                                                     
+			);
 		};
-		
+
 		/**
 		 * Unescapes a string of HTML entities to a valid HTML string
 		 * @returns {String}
@@ -190,5 +190,13 @@
 				.replace(/&lt;/g,'<')
 				.replace(/&apos;/g,"'")
 				.replace(/&quot;/g,'"')
-			);                                                                     
+			);
 		};
+
+	// ----------------------------------------------------------------------------------------------------
+	// # Utility
+
+		String.prototype.toSystem = function()
+		{
+			return this.replace(/(\r\n|\r|\n)/g, xjsfl.settings.newLine)
+		}
