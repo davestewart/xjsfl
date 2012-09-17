@@ -66,25 +66,26 @@
 				},
 
 				/**
-				 * Clones and object
-				 * @param	{Object}	obj		The object reference
-				 * @returns	{Object}			The object cloned
+				 * Creates a new object from a reference and parameters
+				 * @param		{Object}		class		A class reference
+				 * @param		{String}		class		A class reference name or package (this can be fully qualified)
+				 * @param		{Array}			params		An optional Array of constructor parameters
+				 * @returns		{Object}					The new instance
 				 */
-				clone:function(obj)
+				create:function (class, params)
 				{
-					if(obj == null || typeof(obj) != 'object')
-					{
-						return obj;
-					}
-
-					var temp = obj.constructor() || {}; // changed
-
-					for(var key in obj)
-					{
-						temp[key] = Utils.clone(obj[key]);
-					}
-
-					return temp;
+					// params
+						class = typeof class === 'string' ? Utils.getDeepValue(window, class) : class;
+						params = params || [];
+						
+					// create
+						trace('>' + class);
+						trace('>' + params);
+						var instance = new class();
+						//return class.apply(null, params);
+						
+					// return
+						return instance;
 				},
 				
 				/**
@@ -98,15 +99,17 @@
 					{
 						return obj;
 					}
-
-					var temp = obj.constructor() || {}; // changed
-
-					for(var key in obj)
+					
+					if(obj.constructor)
 					{
-						temp[key] = Utils.clone(obj[key]);
+						var temp = obj.constructor() || {}; // changed
+						for(var key in obj)
+						{
+							temp[key] = Utils.clone(obj[key]);
+						}
+						return temp;
 					}
-
-					return temp;
+					return null;
 				},
 
 
@@ -346,46 +349,49 @@
 				 */
 				getClass:function(value)
 				{
-					if (value != null && value.constructor && value.constructor.toSource !== undefined)
-					{
-						// match constructor function name
-							var matches = value.constructor.toSource().match(/^function\s*(\w+)/);
-							if (matches && matches.length == 2)
+					// return null if the value is not an object
+						if(value === null || typeof value === 'undefined') return null;
+						
+					// return the object's class if it's a native type
+						if(typeof value !== 'object')
+						{
+							var class = Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1];
+							if(class !== 'Object')
 							{
-								// fail if the return value is an anonymous / wrapped Function
-									if(matches[1] != 'Function')
+								return class;
+							}
+						}
+					
+					// if the value has a proper toString() method, i.e. "[object ClassName]" and is not a native Object, parse that
+						var matches = value.toString().match(/^\[\w+\s*(\w+)/);
+						if(matches && matches[1] && matches[1] !== 'Object')
+						{
+							return matches[1];
+						}
+					
+					// otherwise, attempt to parse the constructor source
+						var matches = value.constructor.toSource().match(/^function\s*(\w+)/);
+						if (matches && matches.length == 2)
+						{
+							// fail if the return value is an anonymous / wrapped Function
+								if(matches[1] != 'Function')
+								{
+									return matches[1];
+								}
+					
+							// attempt to grab value.toSource() result
+								else
+								{
+									matches = value.toSource().match(/^function\s*(\w+)/);
+									if(matches && matches[1])
 									{
-										trace('Constructor:' + value);
 										return matches[1];
 									}
-
-								// attempt to grab value.toSource() result
-									else
-									{
-										matches = value.toSource().match(/^function\s*(\w+)/);
-										if(matches && matches[1])
-										{
-											//trace('Source')
-											return matches[1];
-										}
-
-									// attempt to grab value.toString() result
-										else
-										{
-											return Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1];
-											//matches = Object.prototype.toString.call(value).match(/^\[\w+\s*(\w+)/);
-											matches = value.toString().match(/^\[\w+\s*(\w+)/);
-											if(matches && matches[1])
-											{
-												//trace('String')
-												return matches[1];
-											}
-										}
-									}
+								}
 						}
-					}
-
-					return undefined;
+					
+					// if we still can't get it, return 'Object'
+						return 'Object';
 				},
 				
 				/**
@@ -1477,7 +1483,7 @@
 						
 					// global regexp
 						var flags			= 'g{m}{i}'.inject(rx.multiline ? 'm' : '', rx.ignoreCase ? 'i' : '');
-						rxGlobal			= new RegExp(rx.source, flags);
+						var rxGlobal		= new RegExp(rx.source, flags);
 						
 					// local regexp
 						var rxLocal			= new RegExp(rx.source);
@@ -1623,9 +1629,12 @@
 						function process(folderURI)
 						{
 							var itemURI, matchURI, isFolder, matches;
-							var names		= FLfile.listFolder(folderURI);
+							var names = FLfile.listFolder(folderURI);
 							for each(var name in names)
 							{
+								// debug
+									//trace('> ' + name)
+									
 								// create URI
 									itemURI		= folderURI + name;
 									isFolder	= String(FLfile.getAttributes(itemURI)).indexOf('D') !== -1;
@@ -1792,6 +1801,7 @@
 								}
 								debug.path		= URI.asPath(uri);
 								debug.pattern	= pattern;
+								debug.recursive	= recursive;
 								debug.match		= Utils.rxUnescape(rxMatch.source);
 								debug.search	= Utils.rxUnescape(rxSearch.source);
 								debug.parts		= parts;
@@ -1926,7 +1936,7 @@
 								for each(var name in names)
 								{
 									itemURI = folderURI + name;
-									if(String(FLfile.getAttributes(itemURI)).indexOf('D') !== -1)
+									if(FLfile.exists(itemURI + '/'))
 									{
 										processAll(itemURI + '/');
 									}
@@ -2169,7 +2179,102 @@
 					}
 
 				},
-
+				
+				/**
+				 * Convert a tabbed list of folder/ and file tokens to a list of paths - essentially the opposite of Utils.makeTree() (note that $dollar param can be passed in any order)
+				 * @param		{String}		tree				A tabbed list of folder/ and file tokens
+				 * @param		{String}		tree				A valid URI to a file containing a tabbed list of folder/ and file tokens
+				 * @param		{Function}		$fnFile				An optional callback function to call for each file
+				 * @param		{Function}		$fnFolder			An optional callback function to call for each folder
+				 * @param		{Boolean}		$returnObjects		An optional boolean to return Folder and File objects rather than a list of paths
+				 * @returns		{Array}								An Array of paths or Folder and File objects
+				 */
+				makePaths:function(tree, $fnFile, $fnFolder, $returnObjects)
+				{
+					// parameter shift
+						var fnFile, fnFolder, returnObjects;
+						for each(var param in [$fnFile, $fnFolder, $returnObjects])
+						{
+							if(typeof param === 'boolean')
+							{
+								returnObjects = param;
+							}
+							else if(typeof param === 'function')
+							{
+								if(!fnFile)
+								{
+									fnFile = param;
+								}
+								else
+								{
+									fnFolder = param;
+								}
+							}
+						}
+						
+						inspect([tree, fnFile, fnFolder, returnObjects])
+					
+					// variables
+						var text 		= URI.isFile(tree) ? xjsfl.file.load(tree) : tree;
+						var lines		= text.split(/[\r\n]+/);
+						
+					// callbacks
+						fnFile			= fnFile || function(){};
+						fnFolder		= fnFolder || function(){};
+						
+					// variables
+						var path;
+						var depth		= 0;
+						var segment, folder;
+						var stack		= [];
+						var elements	= [];
+						
+					// process lines
+						for each(var line in lines)
+						{
+							// grab line
+								var matches = line.match(/(\s*)(.+)/);
+							
+							// if there's a match, preocess it
+								if(matches && matches[2].trim() !== '')
+								{
+									// variables
+										depth		= matches[1].length;
+										segment		= matches[2];
+										folder		= segment.indexOf('/') !== -1
+										
+									// folder (indicated by '/' at end of line)
+										if(folder)
+										{
+											if(depth >= stack.length)
+											{
+												stack.push(segment);
+											}
+											else if(depth < stack.length)
+											{
+												stack = stack.slice(0, depth);
+												stack.push(segment);
+											}
+											path = stack.join('');
+											elements.push(returnObjects ? new Folder(path) : path);
+										}
+										
+									// file
+										else
+										{
+											path = stack.join('') + segment;
+											elements.push(returnObjects ? new File(path) : path);
+										}
+										
+									// callback
+										folder ? fnFolder(path) : fnFile(path);
+								}
+							}
+							
+					// return
+						return elements;
+					
+				},
 
 			// ---------------------------------------------------------------------------------------------------------------
 			// # Framework methods 
