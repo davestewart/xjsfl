@@ -135,7 +135,7 @@
 							{
 								URI.throwURILengthError(uri);
 							}
-							if(FLfile.getAttributes(uri).indexOf('D') > -1)
+							if(FLfile.exists(uri + '/'))
 							{
 								 uri += '/';
 							}

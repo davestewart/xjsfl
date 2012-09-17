@@ -1637,7 +1637,7 @@
 									
 								// create URI
 									itemURI		= folderURI + name;
-									isFolder	= String(FLfile.getAttributes(itemURI)).indexOf('D') !== -1;
+									isFolder	= FLfile.exists(folderURI + name + '/');
 									if(isFolder)
 									{
 										itemURI += '/';
