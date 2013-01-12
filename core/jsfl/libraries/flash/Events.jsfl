@@ -135,11 +135,12 @@
 	// --------------------------------------------------------------------------------
 	// # Constants
 
-		// CS5 only
-			DocumentEvent.PUBLISHED		= 'documentPublished';
+		// CS5.5+ only
+			DocumentEvent.PUBLISH		= 'prePublish';
+			DocumentEvent.PUBLISHED		= 'postPublish';
 			DocumentEvent.SAVED			= 'documentSaved';
 
-		// CS4
+		// CS4+
 			DocumentEvent.NEW			= 'documentNew';
 			DocumentEvent.OPENED		= 'documentOpened';
 			DocumentEvent.CLOSED		= 'documentClosed';
@@ -202,8 +203,8 @@
 					// check event type
 
 						// CS5 only
-							var rxCS5	= /^documentPublished|documentSaved$/;
-							var rxAll	= /^documentPublished|documentSaved|documentNew|documentOpened|documentClosed|mouseMove|documentChanged|layerChanged|frameChanged$/;
+							var rxCS5	= /^prePublish|postPublish|documentSaved$/;
+							var rxAll	= /^prePublish|postPublish|documentSaved|documentNew|documentOpened|documentClosed|mouseMove|documentChanged|layerChanged|frameChanged$/;
 							if(rxCS5.test(type) && xjsfl.settings.app.version < 11)
 							{
 								throw new Error('xjsfl.events:add(): CS5 or greater required for event type "' +type+ '"');
@@ -214,7 +215,7 @@
 							{
 								throw new Error('xjsfl.events:add(): Invalid event type "' +type+ '"');
 							}
-
+							
 					// check callback
 						if(callback instanceof Function)
 						{
@@ -241,7 +242,7 @@
 							 * document, timeline, layer and frame references once, before all callbacks are
 							 * then fired.
 							 */
-
+							
 							// add gateway event handler if not already added
 								if(this.handlers[type].callbacks == null)
 								{
@@ -383,9 +384,16 @@
 
 				handlers:
 				{
-					// CS5 document
+					// CS5+ document
 
-						documentPublished:
+						prePublish:
+						{
+							callbacks:	null,
+							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.PUBLISH, 'publish') ); },
+							id:			-1
+						},
+
+						postPublish:
 						{
 							callbacks:	null,
 							handler:	function(){ xjsfl.events.fire( new DocumentEvent(DocumentEvent.PUBLISHED, 'published') ); },
