@@ -29,6 +29,7 @@
 		}
 
 
+
 // ------------------------------------------------------------------------------------------------------------------------
 //
 //  ██████        ██    ██   ██
@@ -1407,7 +1408,7 @@
 				xjsfl.output.log('Showing XUL dialog "' +xul.title+ '"');
 
 			// show
-				var settings = $dom.xmlPanel(uri);
+				var settings = fl.xmlPanel(uri);
 
 			// unregister
 				this.dialogs.pop();
@@ -1459,7 +1460,38 @@
 	// add events stub. event code will be added in core/jsfl/libraries/events.jsfl
 		if( ! xjsfl.events )
 		{
-			xjsfl.events = {};
+			xjsfl.events =
+			{
+				/**
+				 * Add an event handler function for a particular event type
+				 * @param	{String}	type		A String Event constant
+				 * @param	{Function}	callback	A callback function to be fired when the event happens
+				 * @param	{String}	name		A named id with which to get, delete or overwrite the callback
+				 * @param	{Object}	scope		An optional scope in which to call the callback function
+				 */
+				add:function(type, callback, name, scope){},
+				
+				/**
+				 * Remove an event handler function for a single or all event types
+				 * @param	{String}	type		A String Event constant
+				 * @param	{String}	name		The supplied name of a previously-registered callback
+				 */
+				remove:function(type, name){},
+				
+				/**
+				 * Remove all event handler functions for a single, or all event types
+				 * @param	{String}	type	An optional String Event constant
+				 */
+				removeAll:function(type){},
+				
+				/**
+				 * Get a reference to an event handler function for an event type
+				 * @param	{String}	type		A String Event constant
+				 * @param	{String}	name		A name of a previously-registered callback
+				 * @returns	{Function}				An event handler function or null if it doesn't exist
+				 */
+				get:function(type, name){}
+			};
 		}
 
 
@@ -1546,3 +1578,5 @@
 			}
 
 	}
+
+
