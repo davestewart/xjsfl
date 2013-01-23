@@ -1187,6 +1187,12 @@
 				{
 					// ensure path has a trailing slash
 						folderNameOrURI = folderNameOrURI.replace(/\/*$/, '/');
+						
+					// if URI is a path, and absolute, convert to be a URI (this allows us to use paths to load init user modules)
+						if(URI.isAbsolute(folderNameOrURI) && URI.isPath(folderNameOrURI))
+						{
+							folderNameOrURI = URI.toURI(folderNameOrURI);
+						}
 
 					// if path is not a URI, it will probably be a path fragment, so default to the modules folder
 						var uri = URI.isURI(folderNameOrURI) ? folderNameOrURI : xjsfl.settings.folders.modules + folderNameOrURI;
