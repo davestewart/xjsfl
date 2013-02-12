@@ -149,12 +149,19 @@
 		 * @param	{Function}	props		A Function, the parameters of which will map to dialog controls
 		 * @param	{Function}	accept		An optional callback function to be called when the user clicks the OK button
 		 * @param	{Function}	cancel		An optional callback function to be called when the user clicks the Cancel button
+		 * @param	{Object}	defaults	An optional Object of name:value properties to apply to the dialog
 		 * @returns	{Object}				An Object containing the accepted values, or null if the user cancels the dialog
 		 */
-		XUL.create = function(props, accept, cancel)
+		XUL.create = function(props, accept, cancel, defaults)
 		{
 			// build new XUL
 				var xul = XUL.factory(props);
+				
+			// assign defaults
+				if(defaults)
+				{
+					xul.setValues(defaults);
+				}
 
 			// show
 				if(xul && Utils.getKeys(xul.controls).length > 0)
@@ -1614,7 +1621,7 @@
 
 						if( ! $dom )
 						{
-							fl.createDocument();
+							//fl.createDocument();
 						}
 						
 						/*
