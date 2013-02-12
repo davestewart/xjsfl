@@ -5,6 +5,7 @@ package com.xjsfl.jsfl.io
 	import flash.utils.getTimer;
 	
 	import com.xjsfl.jsfl.io.JSFLInterface;
+	import com.xjsfl.jsfl.io.JSFLConnector;
 	import com.xjsfl.utils.debugging.Output;
 	
 	/**
@@ -18,16 +19,19 @@ package com.xjsfl.jsfl.io
 		// constants
 		
 			/// A Boolean indicating if the current environment is an SWFPanel (and can therefore run MMExecute() commands)
-			public static const isPanel		:Boolean		= MMExecute('(function(){return 1})()') != false;
+			public static const isPanel		:Boolean			= (function(){ try{ return MMExecute('1') == '1'; } catch (error:Error) { return false; } })();
 			
 			/// A String specifying the Flash config URI
-			public static const configURI	:String			= String(MMExecute('fl.configURI')).indexOf('file:') == 0 ? MMExecute('fl.configURI') : null;
+			public static const configURI	:String				= JSFL.isPanel ? MMExecute('fl.configURI') : '';
 		
 			/// A String specifying the xJSFL URI
-			public static const xjsflURI	:String			= String(MMExecute('xjsfl.uri')).indexOf('file:') == 0 ? MMExecute('xjsfl.uri') : null;
+			public static const xjsflURI	:String				= JSFL.isPanel ? MMExecute('xjsfl.uri') : '';;
 		
+			/// JSFLConnector instance to connect to JSFL via LocalConnection at authoring time
+			public static var connector		:JSFLConnector		= null;
+			
 			/// A Boolean indicating to output debugging information as functions run
-			public static var debug			:Boolean		= true;
+			public static var debug			:Boolean			= true;
 			
 		// ---------------------------------------------------------------------------------------------------------------------
 		// { region: Public Methods
@@ -37,7 +41,7 @@ package com.xjsfl.jsfl.io
 			 * Calls a JSFL function, optionally passing arguments, and automatically resolving scope
 			 * 
 			 * @param functionName		The function or method to call
-			 * @param arguments			Optional arguments to pass to the function.
+			 * @param params			Optional arguments to pass to the function.
 			 * @param scope				The scope to call the function in. Defaults to the object the function is attached to
 			 * @return					The response received from the jsfl function, or null if there is no such function or 
 			 * 							if the interface is not available an error is thrown.
@@ -45,51 +49,67 @@ package com.xjsfl.jsfl.io
 			 * @see flash.external.ExternalInterface#call()		 		 
 			 *
 			 */		 		 		 		
-			public static function call(functionName:String, args:Array = null, scope:String = null):*
+			public static function call(functionName:String, params:Array = null, scope:String = null, callback:Function = null):*
 			{
-				//return;
-				
-				// variables
-					args		= args || [];
-					scope		= scope || functionName.replace(/\.\w+$/, '');
-					
-				// serialize arguments
-					for (var i:int = 0; i < args.length; i++) 
-					{
-						if (args[i] is RegExp) // don't serialize regexp - this is a cheat to treat them as unparsed strings
-						{
-							args[i] = args[i].source;
-						}
-						else
-						{
-							// BUG - is there a bug in authoring here?
-							args[i] = JSFLInterface.serialize(args[i]);
-						}
-					}
-					
-				// build the JSFL call
-					var jsfl:String
-					if (scope == '')
-					{
-						jsfl = functionName + '(' +args.join(', ') + ')';
-					}
-					else
-					{
-						jsfl = functionName + '.apply(' +scope + ', [' + args.join(', ') + '])';
-					}
-					log('call', jsfl);
-
 				// make the call
 					var result:*;
+					
+				// if we're in a panel, build and execute JSFL
 					if (JSFL.isPanel)
 					{
-						// A load/scope bug with Flash/JSFL sometimes seems to prevent JSFLInterface from loading properly, then all calls fail :(
-						var call	:String	= 'try{xjsfl.classes.cache.JSFLInterface.serialize(' + jsfl + ');}catch(err){xjsfl.debug.error(err);}';
-						var value	:String	= MMExecute(call);
-						result				= JSFLInterface.deserialize(value);
+						//return;
+						
+						// variables
+							params		= params || [];
+							scope		= scope || functionName.replace(/\.\w+$/, '');
+							
+						// serialize arguments
+							for (var i:int = 0; i < params.length; i++) 
+							{
+								if (params[i] is RegExp) // don't serialize regexp - this is a trick to treat them as unparsed strings
+								{
+									params[i] = params[i].source;
+								}
+								else
+								{
+									// BUG - is there a bug in authoring here?
+									params[i] = JSFLInterface.serialize(params[i]);
+								}
+							}
+							
+						// build the JSFL call
+							var jsfl:String
+							if (scope == '')
+							{
+								jsfl = functionName + '(' +params.join(', ') + ')';
+							}
+							else
+							{
+								jsfl = functionName + '.apply(' +scope + ', [' + params.join(', ') + '])';
+							}
+							log('call', jsfl);
+							
+						// execute JSFL
+							//JSFL.trace('>>> ' + jsfl);
+							// A load/scope bug with Flash/JSFL sometimes seems to prevent JSFLInterface from loading properly, then all calls fail :(
+							var call	:String	= 'try{xjsfl.classes.cache.JSFLInterface.serialize(' + jsfl + ');}catch(err){xjsfl.debug.error(err);}';
+							JSFL.trace(call);
+							var value	:String	= MMExecute(call);
+							//JSFL.trace('>>> ' + value);
+							result				= JSFLInterface.deserialize(value);
+							
+						// fire callback if supplied
+							if (callback !== null)
+							{
+								callback(result);
+							}
 					}
 					
-
+				// if not in panel, and there's an active JSFLConnection, forward all parameters
+					else if (connector)
+					{
+						connector.send('call', [functionName, params, scope, callback], callback);
+					}
 					
 				// return
 					return result;
@@ -101,7 +121,7 @@ package com.xjsfl.jsfl.io
 			 * @param	property
 			 * @return
 			 */
-			static public function grab(property:String):* 
+			static public function grab(property:String, callback:Function = null):* 
 			{
 				if (JSFL.isPanel)
 				{
@@ -114,21 +134,34 @@ package com.xjsfl.jsfl.io
 				}
 			}
 			
-			static public function get(property:String):*
+			static public function get(property:String, callback:Function = null):*
 			{
+				var value:*;
 				if (JSFL.isPanel)
 				{
-					return JSFLInterface.deserialize(MMExecute('xjsfl.classes.cache.JSFLInterface.serialize(' + property + ')'));
+					value = JSFLInterface.deserialize(MMExecute('xjsfl.classes.cache.JSFLInterface.serialize(' + property + ')'));
+					if (callback !== null)
+					{
+						callback(value);
+					}
+				}
+				else if (connector)
+				{
+					connector.send('get', [property, callback], callback);
 				}
 				else
 				{
 					log('get', property);
-					return null;
 				}
+				return value;
 			}
 			
 			static public function set(property:String, value:*):void
 			{
+				if (typeof value == 'string')
+				{
+					value = '"' + value.replace(/"/g, '\\"') + '"';
+				}
 				var jsfl:String = property + ' = ' + value;
 				if (JSFL.isPanel)
 				{
@@ -147,10 +180,26 @@ package com.xjsfl.jsfl.io
 			 * @param	jsfl	A valid fragment of JSFL
 			 * @return	mixed	The result of the executed JSFL call
 			 */
-			public static function exec(jsfl:String):*
+			public static function exec(jsfl:String, callback:Function = null):*
 			{
-				log('exec', jsfl);
-				return MMExecute(jsfl);
+				var value:*;
+				if (isPanel)
+				{
+					value = MMExecute(jsfl);
+					if (callback !== null)
+					{
+						callback(value);
+					}
+				}
+				else if (connector)
+				{
+					connector.send('exec', [jsfl, callback], callback);
+				}
+				else
+				{
+					log('exec', jsfl);
+				}
+				return value;
 			}
 			
 		// ---------------------------------------------------------------------------------------------------------------------
@@ -223,18 +272,24 @@ package com.xjsfl.jsfl.io
 				}
 			}
 		
-			public static function prompt(message:String, prompt:String = '', authortimeDefault:String = ''):String 
+			public static function prompt(message:String, prompt:String = '', authoringDefault:String = ''):String 
 			{
 				if (!isPanel)
 				{
-					return authortimeDefault;
+					return authoringDefault;
 				}
 				else
 				{
-					message	= message.replace(/"/, '\\"');
-					prompt	= prompt.replace(/"/, '\\"');
+					message	= message.replace(/"/g, '\\"');
+					prompt	= prompt.replace(/"/g, '\\"');
 					return MMExecute('prompt("' +message+ '", "' +prompt+ '");');
 				}
+			}
+			
+			public static function connect(id:String):JSFLConnector
+			{
+				connector = new JSFLConnector(id, JSFL);
+				return connector;
 			}
 			
 			private static function log(type:String, message:*):void
