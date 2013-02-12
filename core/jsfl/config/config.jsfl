@@ -24,13 +24,6 @@
 	// -----------------------------------------------------------------------------------------------------------
 	// setup
 
-		// document dom
-			var dom = fl.getDocumentDOM();
-			if( ! dom )
-			{
-				dom = fl.createDocument();
-			}
-			
 		// config
 			var configURI	= xjsfl.uri + 'core/config/xjsfl.xml';
 			var configStr	= FLfile.read(configURI);
@@ -50,7 +43,7 @@
 			xjsfl.settings.enabled = config.settings.enabled == 1;
 
 		// show panel
-			var results		= dom.xmlPanel(xjsfl.uri + 'core/ui/config.xul');
+			var results		= fl.xmlPanel(xjsfl.uri + 'core/ui/config.xul');
 		
 	// -----------------------------------------------------------------------------------------------------------
 	// handle results
