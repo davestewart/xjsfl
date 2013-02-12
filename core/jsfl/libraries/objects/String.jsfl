@@ -46,6 +46,26 @@
 		}
 
 		/**
+		 * Append a value to the end of the string
+		 * @param	{String}		value		The string to append
+		 * @returns	{String}					The new string
+		 */
+		String.prototype.append = function(value)
+		{
+			return this + value;
+		}
+		
+		/**
+		 * Prepend a value to the start of the string
+		 * @param	{String}		value		The string to prepend
+		 * @returns	{String}					The new string
+		 */
+		String.prototype.prepend = function(value)
+		{
+			return value + this;
+		}
+
+		/**
 		 * Repeat a string a specified number of times
 		 * @param	{Number}	num			The number of times to repeat the string
 		 * @returns {String}
@@ -152,6 +172,15 @@
 		}
 
 		/**
+		 * Converts a the string to sentense case, by capitalising the first letter
+		 * @returns {String}
+		 */
+		String.prototype.toTitleCase = function()
+		{
+			return this.replace(/^\s+/, '').replace(/(^[a-z]|\s[a-z])/g, function(match){ return match.toUpperCase(); } );
+		}
+
+		/**
 		 * Converts a string of words (separated by non-word characters, such as spaces or dashes) to underscore_case
 		 * @returns {String}
 		 */
@@ -196,6 +225,10 @@
 	// ----------------------------------------------------------------------------------------------------
 	// # Utility
 
+		/**
+		 * Converts the line endings of the string to the current system's line endings
+		 * @returns	{String}					The new string
+		 */
 		String.prototype.toSystem = function()
 		{
 			return this.replace(/(\r\n|\r|\n)/g, xjsfl.settings.newLine)
