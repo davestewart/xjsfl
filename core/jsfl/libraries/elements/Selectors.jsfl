@@ -1114,7 +1114,7 @@
 			 */
 			name:function(item, rx, range)
 			{
-				var matches	= item.shortName.match(rx);
+				var matches	= item.itemName.match(rx);
 				if(matches)
 				{
 					if(range)
