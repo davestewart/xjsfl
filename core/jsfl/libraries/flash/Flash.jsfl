@@ -39,7 +39,7 @@
 	
 		/**
 		 * Gets the selected layers of a Timeline
-		 * @type		{String}
+		 * @type		{Array}
 		 * @name		Timeline.selectedLayers
 		 * @example		var layers = $timeline.selectedLayers;
 		 */
@@ -61,19 +61,45 @@
 			}
 		);
 		
+		/**
+		 * Gets the selected frames of a Timeline as an Array of Objects with 'index', 'start', 'end' and 'layer' properties
+		 * @type		{Array}
+		 * @name		Timeline.selectedFrames
+		 * @example		var layers = $timeline.selectedFrames;
+		 */
+		Timeline.prototype.__defineGetter__('selectedFrames',
+			function ()
+			{
+				// variables
+					var values, index, layer, start, end;
+					var frames	= [];
+					var indices	= $timeline.getSelectedFrames();
+					
+				// 
+					while(indices.length)
+					{
+						values	= indices.splice(0, 3);
+						index	= values[0];
+						start	= values[1];
+						end		= values[2];
+						layer	= $timeline.layers[index];
+						frames.push({index:index, start:start, end:end, layer:layer});
+					}
+					
+				// return frames
+					return frames;
+			}
+		);
+		
 	// ----------------------------------------------------------------------------------------------------
 	// Library
 	
 		/**
-		 * The short name of an item
+		 * Gets the name of an item only, minus the full library path
 		 * @type		{String}
-		 * @name		LibraryItem.shortname
-		 * @example		$library.items[20].shortName = 'Symbol 5'
+		 * @name		LibraryItem.itemName
+		 * @example		if($library.items[20].itemName == 'Symbol 5')
 		 */
-		LibraryItem.prototype.__defineGetter__('shortName',
-			function()
-			{
-				return this.name.split('/').pop();
-			}
-		);
+		LibraryItem.prototype.__defineGetter__('itemName', function(){ return this.name.split('/').pop(); } );
+		LibraryItem.prototype.__defineSetter__('itemName', function(value){ this.name = value; } );
 
