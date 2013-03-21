@@ -1,0 +1,20 @@
+package {package}
+{
+	import flash.text.Font;
+	
+	/**
+	 * {name} font
+	 */
+	
+	[Embed(source='{source}', fontName='{name}', unicodeRange='U+0020-U+007E')]  
+	public class {classname} extends Font
+	{
+		
+		public static const instance	:Font = new {classname}();
+		public static const name		:String = '{name}';
+		
+		// nothing here!
+		// the metatag above does it all :)
+	}
+
+}

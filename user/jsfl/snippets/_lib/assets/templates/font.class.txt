@@ -1,0 +1,32 @@
+package {package} 
+{
+	import flash.text.Font;
+	
+	/**
+	 * Font embedding example
+	 * @author	Dave Stewart
+	 * @usage	
+	 * 
+	 * import text.fonts.*;
+	 * import flash.text.*;
+	 * 
+	 * var font	:Font			= new Rockwell.Normal();
+	 * var fmt	:TextFormat		= new TextFormat(font.name, 10);
+	 * var tf	:TextField		= new TextField();
+	 * 
+	 * tf.defaultTextFormat		= fmt;
+	 * tf.embedFonts			= true;
+	 * tf.text					= "The quick brown fox...";
+	 * addChild(tf);
+	 * 
+	 * @note	Make sure the paths below point to the correct font file location!
+	 */
+	
+	{embed}
+	public class {name} extends Font
+	{
+		{>embeds}
+		
+	}
+
+}
