@@ -102,4 +102,15 @@
 		 */
 		LibraryItem.prototype.__defineGetter__('itemName', function(){ return this.name.split('/').pop(); } );
 		LibraryItem.prototype.__defineSetter__('itemName', function(value){ this.name = value; } );
+		
+		/**
+		 * Gets all or optionally selected library items, but sorted by name
+		 * @param	{Boolean}	selected	Optional boolean to return selected items only
+		 * @returns	{Array}					An Array of LibraryItems
+		 */
+		Library.prototype.getItems = function(selected)
+		{
+			var items = selected ? this.getSelectedItems() : this.items;
+			return Utils.sortOn(items, 'name', true);
+		}
 
