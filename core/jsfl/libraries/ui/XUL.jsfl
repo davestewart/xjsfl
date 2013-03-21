@@ -1663,7 +1663,14 @@
 
 					// --------------------------------------------------------------------------------
 					// process result
-
+					
+						// kill quoted strings
+						//TODO check if this is Flash or me adding the quotes
+							for(var name in this.settings)
+							{
+								this.settings[name] = this.settings[name].replace(/^"([\s\S]*?)"$/, '$1');
+							}
+							
 						// get control values and convert to array for callbacks
 							if(onAccept || onCancel)
 							{
