@@ -16,9 +16,10 @@ clear();
  *     
  *   Creation:
  *     - Intelligent naming (Drawing Object 01, 02, 03, Text 01, 02, 03, etc)
- *     - Optionally prompts for names
- *     - Creates elements in currently-chosen library folder, or supplied alternative
- *     - Optionally creates sibfolders per layer
+ *     - Optionally prompt for names
+ *     - Optionally skip elements
+ *     - Creates items in currently-chosen library folder, or supplied alternative
+ *     - Optionally create subfolders per layer
  *     - Optionally names stage instances (in camelCase)
  *
  */
@@ -83,7 +84,7 @@ clear();
 					
 				// generate name
 					var type		= getType(element);
-					var count		= counts[type]	= type in counts ? counts[type] + 1 : 1;
+					var count		= counts[type] || 1;
 					var name		= type + ' ' + count.pad(options.numberPadding);
 					if(options.promptForName)
 					{
@@ -93,6 +94,7 @@ clear();
 							return;
 						}
 					}
+					counts[type] = count + 1;
 					
 				// create item
 					dom.convertToSymbol(options.convertTo, name, 'center');
@@ -102,7 +104,7 @@ clear();
 					var libraryPath = options.libraryPath;
 					if(libraryPath)
 					{
-						if(options.useSubfolders && options.process == 'layers')
+						if(options.useSubfolders && options.process == 'layer')
 						{
 							libraryPath += '/' + options.subFolder;
 							$library.newFolder(libraryPath)
@@ -210,7 +212,7 @@ clear();
 				{
 					$library.newFolder(options.libraryPath);
 				}
-				options.process == 'elements' ? processSelection() : processLayers();
+				options.process == 'element' ? processSelection() : processLayers();
 				$selection = instances;
 
 		}
@@ -256,13 +258,13 @@ clear();
 				var xul = XUL
 					.factory([
 							  'title:Convert Elements to Library Items',
-							  'columns:[150,200]',
-							  'radios:Process selected=[Elements, Layers]',
+							  'columns:[120,200]',
+							  'radios:Process by=[Element, Layer]',
 							  'radios:Convert to=[Movie Clip,Graphic,Button]',
 							  'checkboxes:Include=[Shapes,Symbols]',
 							  'checkboxes:Naming=[Prompt for names,Name stage instances]',
 							  'text:Create in folder=' + folder,
-							  'checkbox:Create subfolders per layer'
+							  'checkbox:Create subfolder per layer'
 							  ].toString())
 					.setValue('options', [true,true,true])
 					.show(onAccept);
