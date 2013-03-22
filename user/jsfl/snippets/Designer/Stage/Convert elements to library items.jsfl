@@ -1,84 +1,272 @@
-/**
- * Converts elements on stage to items in the library
- * @icon {iconsURI}filesystem/folder/folder_page.png
- */
-function convertElementsToItems(type, options, folder)
-{
-	// parameters
-		type = type.toLowerCase();
-		var ignoreSymbols		= options.indexOf('ignoreSymbols') > -1;
-		var promptName			= options.indexOf('promptName') > -1;
-	
-	// variables
-		var dom = document, timeline, element, names = [], name;
-		
-	// create a new movieclip in which to do our conversion
-		dom.convertToSymbol('graphic', '__temp__', 'center');
-		dom.enterEditMode('inPlace');
-		dom.distributeToLayers();
-		timeline = document.getTimeline();
-		
-	// loop through the layers, converting elements and propting for names
-		for (var i = 1; i < timeline.layers.length; i++)
-		{
-			element = timeline.layers[i].frames[0].elements[0];
-			if(element)
-			{
-				// skip symbols if selected
-					if(element.elementType == 'instance' && ignoreSymbols)
-					{
-						continue;
-					}
-					
-				// select
-					dom.selectNone();
-					dom.selection = [element];
-					
-				// name & convert
-					name = 'Symbol ' + (names.length + 1);
-					name = promptName ? prompt('Name this object, hit "Cancel" to skip', name) : name;
-					if(name)
-					{
-						names.push(name)
-						dom.convertToSymbol(type, name, 'center');
-					}
-					
-				//TODO update the number index if the user changes the number
-			}
-		}
-		
-	// return to the parent timeline
-		dom.exitEditMode();
-		dom.breakApart();
-		dom.library.deleteItem('__temp__');
-		
-	// name elements after their library items, and select items in library
-		dom.library.selectNone();
-		for each(element in dom.selection)
-		{
-			if(element.elementType == 'instance' && element.name == '')
-			{
-				name = element.libraryItem.name;
-				dom.library.selectItem(name, false);
-				element.name = name.replace(/ /g, '_').toLowerCase();
-			}
-		}
-		
-	// move items to new folder
-		if(folder)
-		{
-			$library.newFolder(folder)
-			$library.moveToFolder(folder);
-		}
-}
-
 xjsfl.init(this);
 clear();
 
-function test(){inspect(Utils.getArguments(arguments))}
+/**
+ * Converts elements on stage to items in the library
+ * @icon {iconsURI}filesystem/folder/folder_page.png
+ * 
+ * Features:
+ *
+ *   Conversion:
+ *     - Processes by elements or layers
+ *     - Creates movieclips, graphics, or buttons
+ *     - Optionally converts shapes and sub-shapes
+ *     - Optionally converts existing symbols
+ *     - Retains original stage selection
+ *     
+ *   Creation:
+ *     - Intelligent naming (Drawing Object 01, 02, 03, Text 01, 02, 03, etc)
+ *     - Optionally prompts for names
+ *     - Creates elements in currently-chosen library folder, or supplied alternative
+ *     - Optionally creates sibfolders per layer
+ *     - Optionally names stage instances (in camelCase)
+ *
+ */
+(function(){
+	
+	// --------------------------------------------------------------------------------
+	// Utilities
+	
+		function getType(element)
+		{
+			switch(element.elementType)
+			{
+				case 'shape':
+					var names =
+					{
+						isGroup				:'Group',
+						isOvalObject		:'Oval',
+						isRectangleObject	:'Rectangle',
+						isDrawingObject		:'Drawing Object'
+					}
+					for(var name in names)
+					{
+						if(element[name]) return names[name];
+					}
+					return 'Shape';
+				break;
+			
+				case 'instance':
+					return element.symbolType.toTitleCase(true);
+				break;
+			}
+			return element.elementType.toTitleCase(true);
+		}
+		
+		function getElements(layer)
+		{
+			return layer.frames[$timeline.currentFrame].elements;
+		}
+		
+	// --------------------------------------------------------------------------------
+	// Conversion function
+	
+		function convertElement(element)
+		{
+			if(element)
+			{
+				// skip symbols if selected
+					if(element.elementType == 'instance' && ! options.includeSymbols)
+					{
+						return;
+					}
+					
+				// select
+					$selection = element;
+					dom.update();
+					
+				// return if there's no selection (we can't select the shape unless it is passed in via a frame reference; looks like a bug in Flash)
+					if($selection.length == 0)
+					{
+						return;
+					}
+					
+				// generate name
+					var type		= getType(element);
+					var count		= counts[type]	= type in counts ? counts[type] + 1 : 1;
+					var name		= type + ' ' + count.pad(options.numberPadding);
+					if(options.promptForName)
+					{
+						name = prompt('Name this item, or Cancel to skip', name);
+						if( ! name )
+						{
+							return;
+						}
+					}
+					
+				// create item
+					dom.convertToSymbol(options.convertTo, name, 'center');
+					instances.push($selection[0]);
+					
+				// move item
+					var libraryPath = options.libraryPath;
+					if(libraryPath)
+					{
+						if(options.useSubfolders && options.process == 'layers')
+						{
+							libraryPath += '/' + options.subFolder;
+							$library.newFolder(libraryPath)
+						}
+						$library.moveToFolder(libraryPath, name);
+					}
+					
+				// update names
+					names.push(libraryPath + '/' + name);
+					
+				// name instance
+					if(options.nameInstances)
+					{
+						$selection[0].name = name.toCamelCase();
+					}
+			}
+		}
+		
+	// --------------------------------------------------------------------------------
+	// Processing functions
+	
+		function processElements(elements)
+		{
+			if(options.includeShapes)
+			{
+				// create a new movieclip in which to do our conversion
+					dom.convertToSymbol('graphic', '__temp__', 'center');
+					dom.enterEditMode('inPlace');
+					dom.distributeToLayers();
+					
+				// loop through the layers, and converting elements
+					var timeline = document.getTimeline();
+					for (var i = 1; i < timeline.layers.length; i++)
+					{
+						convertElement(timeline.layers[i].frames[0].elements[0])
+					}
+					
+				// return to the parent timeline
+					dom.exitEditMode();
+					dom.breakApart();
+					$library.deleteItem('__temp__');
+					instances = instances.concat($selection);
+			}
+			else
+			{
+				for each(var element in elements)
+				{
+					convertElement(element);
+				}
+			}
+		}
+		
+		function processLayers()
+		{
+			// variables
+				var timeline	= $timeline;
+				var frames		= timeline.selectedFrames;
+				var indices		= Utils.getValues(frames, 'index', true);
+				
+			// loop over layer indices
+				var index, layer, elements;
+				for (var i = 0; i < indices.length; i++)
+				{
+					// variables
+						index				= indices[i];
+						layer				= timeline.layers[index];
+						elements			= getElements(layer);
+						options.subFolder	= layer.name;
+						
+					// set layer and selection
+						$timeline.setSelectedLayers(index, true);
+						$selection			= elements;
+						
+					// process
+						processElements(elements);
+				}
+		}
+		
+		function processSelection()
+		{
+			if($selection.length)
+			{
+				processElements($selection);
+			}
+		}
+		
+	// --------------------------------------------------------------------------------
+	// Main code
+		
+		function onAccept(process, convertTo, includeOptions, namingOptions, libraryPath, useSubfolders)
+		{
+			// parameters
+				options.process			= process.match(/^\w+/).pop().toLowerCase();
+				options.convertTo		= convertTo.toLowerCase();
+				options.includeShapes	= includeOptions.indexOf('Shapes') > -1;
+				options.includeSymbols	= includeOptions.indexOf('Symbols') > -1;
+				options.promptForName	= namingOptions.indexOf('Prompt for names') > -1;
+				options.nameInstances	= namingOptions.indexOf('Name stage instances') > -1;
+				options.libraryPath		= libraryPath;
+				options.useSubfolders	= useSubfolders;
+				options.numberPadding	= String($selection.length).length;
+				
+			// code
+				if(options.libraryPath)
+				{
+					$library.newFolder(options.libraryPath);
+				}
+				options.process == 'elements' ? processSelection() : processLayers();
+				$selection = instances;
 
-var xul = XUL
-	//.factory('title:Create Library Items,radios:Process selected=[Elements, Layers],radios:Convert to=[Movie Clip,Graphic,Button],checkboxes:Options={Detect shapes:shapes,Prompt for names:prompt,Ignore existing symbols:ignore},text:Naming format=Symbol 01,text:Library folder=assets/new')
-	.factory('title:Create Library Items,radios:radios:Convert to=[Movie Clip,Graphic,Button],checkboxes:Options={Prompt for names:promptName,Ignore existing symbols:ignoreSymbols},text:Library folder=assets/new')
-	.setValue('options', [true,true,true])
-	.show(convertElementsToItems);
+		}
+		
+	// --------------------------------------------------------------------------------
+	// Main code
+	
+		// parameters
+			var dom			= $dom;
+			var names		= [];
+			var instances	= [];
+			var counts		= {};
+			var options		=
+			{
+				process			:'',
+				convertTo		:'',
+				includeShapes	:false,
+				includeSymbols	:false,
+				promptForName	:false,
+				nameInstances	:false,
+				numberPadding	:2,
+				libraryPath		:'',
+				subFolder		:'',
+				useSubfolders	:false
+			};
+			
+		// debug
+			//dom.selectAll();
+
+		// code
+			if(UI.dom && UI.selection)
+			{
+				var item	= $library.getItems(true).shift();
+				var folder	= (item
+								? item.itemType == 'folder'
+									? item.name
+									: item.name.indexOf('/') > -1
+										? item.name.replace(/\/[^\/]+$/, '')
+										: ''
+								: '') || 'Converted Items';
+					
+			// ui
+				var xul = XUL
+					.factory([
+							  'title:Convert Elements to Library Items',
+							  'columns:[150,200]',
+							  'radios:Process selected=[Elements, Layers]',
+							  'radios:Convert to=[Movie Clip,Graphic,Button]',
+							  'checkboxes:Include=[Shapes,Symbols]',
+							  'checkboxes:Naming=[Prompt for names,Name stage instances]',
+							  'text:Create in folder=' + folder,
+							  'checkbox:Create subfolders per layer'
+							  ].toString())
+					.setValue('options', [true,true,true])
+					.show(onAccept);
+			}
+
+})();
+
