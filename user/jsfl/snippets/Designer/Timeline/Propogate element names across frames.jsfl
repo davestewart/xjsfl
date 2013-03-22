@@ -1,6 +1,6 @@
 ﻿/**
  * Renames elements correctly across frames to ensure that they are accessible from actionscript
- * @icon {iconsURI}objects/object/object_wand.png
+ * @icon {iconsURI}ui/textfield/textfield_key.png
  */
 (function()
 {
