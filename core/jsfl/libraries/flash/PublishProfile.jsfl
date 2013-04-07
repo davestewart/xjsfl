@@ -77,6 +77,13 @@
 				'AdobeAIR1_1'		:'AdobeAIR1_1',
 				'FlashPlayer10'		:'FlashPlayer10',
 				'FlashPlayer11'		:'FlashPlayer11',
+				'FlashPlayer11.2'	:'FlashPlayer11.2',
+				'FlashPlayer11.3'	:'FlashPlayer11.3',
+				'FlashPlayer11.4'	:'FlashPlayer11.4',
+				'FlashPlayer11.5'	:'FlashPlayer11.5',
+				'FlashPlayer11.6'	:'FlashPlayer11.6',
+				'FlashPlayer11.7'	:'FlashPlayer11.7',
+				
 			},
 			
 			version:
@@ -89,6 +96,12 @@
 				'AdobeAIR1_1'		:9,
 				'FlashPlayer10'		:10,
 				'FlashPlayer11'		:11,
+				'FlashPlayer11.2'	:15,
+				'FlashPlayer11.3'	:16,
+				'FlashPlayer11.4'	:17,
+				'FlashPlayer11.5'	:18,
+				'FlashPlayer11.6'	:19,
+				'FlashPlayer11.7'	:20,
 			},
 			
 			versionLookup:
@@ -101,6 +114,12 @@
 				9					:'AdobeAIR1_1',
 				10					:'FlashPlayer10',
 				11					:'FlashPlayer11',
+				15					:'FlashPlayer11.2',
+				16					:'FlashPlayer11.3',
+				17					:'FlashPlayer11.4',
+				18					:'FlashPlayer11.5',
+				19					:'FlashPlayer11.6',
+				20					:'FlashPlayer11.7',
 			},
 			
 			audioFormat:
@@ -388,6 +407,12 @@
 							'AdobeAIR1_1'		:9,
 							'FlashPlayer10'		:10,
 							'FlashPlayer11'		:11,
+							'FlashPlayer11.2'	:15,
+							'FlashPlayer11.3'	:16,
+							'FlashPlayer11.4'	:17,
+							'FlashPlayer11.5'	:18,
+							'FlashPlayer11.6'	:19,
+							'FlashPlayer11.7'	:20,
 						};
 						this.parent().setXML('PublishFlashProperties', 'ExternalPlayer', value);
 						this.parent().setXML('PublishFlashProperties', 'Version', version[value]);
