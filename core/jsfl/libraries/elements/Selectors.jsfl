@@ -1319,6 +1319,7 @@
 			 */
 			selected:function(items)
 			{
+				//BUG Why does this return all children? It should only return the folder(s) itself
 				var selected	= this.getSelectedItems() || [];
 				var common		= Utils.diff(items, selected, 0);
 				return common;
@@ -1341,7 +1342,7 @@
 
 			timeline:function(item)
 			{
-				return /movie clip|graphic|button/.test(item.itemType);
+				return /^(movie clip|graphic|button)/.test(item.itemType);
 			},
 
 			/**
