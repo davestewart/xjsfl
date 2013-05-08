@@ -301,6 +301,22 @@
 				callback.apply(scope || this, params);
 				return this;
 			},
+			
+			/**
+			 * A chainable utility function, to invoke existing named methods on collection elements
+			 * @param	{String}		name		The name of the method to call
+			 * @params				 	...params	Optional arguments to be passed to the callback
+			 * @returns	{Collection}				The original Collection object
+			 */
+			invoke:function(name)
+			{
+				var params = Utils.getArguments(arguments, 1);
+				for each(var element in this.elements)
+				{
+					element[name](params);
+				}
+				return this;
+			},
 
 		// --------------------------------------------------------------------------------
 		// # Utility methods
