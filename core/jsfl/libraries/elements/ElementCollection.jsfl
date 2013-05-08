@@ -354,6 +354,7 @@
 				this._deselect();
 				this.dom.resetTransformation();
 				this._reselect();
+				this.refresh();
 				return this;
 			},
 	
@@ -442,6 +443,7 @@
 							}
 	
 						// return
+							this.refresh();
 							return this;
 					}
 					
@@ -476,6 +478,7 @@
 						{
 							this.elements[i][prop] = fn(this.elements[i], i, this.elements);
 						}
+						this.refresh();
 					}
 	
 				return this;
@@ -862,6 +865,9 @@
 							}
 						}
 						//this.dom.match(props.match(/(width|size)/), props.match(/(height|size)/), toStage);
+						
+					// refresh
+						this.refresh();
 				}
 				return this;
 			},
@@ -930,27 +936,53 @@
 						element.x	= x;
 						element.y	= y;
 					}
+					
+				// refresh
+					this.refresh();
 	
 				// return
 					return this;
 			},
 	
+			/**
+			 * Lays out the elements one by one in a grid pattern
+			 * This method is unfinished!
+			 * @param		{Number}			columns		An optional number of columns to lay out the elements into. Defaults to the number of elements
+			 * @param		{Number}			gutter		The width in pixels between each column
+			 * @returns		{ElementCollection}				The original ElementCollection object
+			 */
 			layout:function(columns, gutter, spacing)
 			{
-				if(this.elements.length)
-				{
-					var element	= this.elements[0];
-					var x		= element.x;
-					var y		= element.y;
+				// parameters
+					columns		= columns || this.elements.length;
+					gutter		= gutter || 0;
+					spacing		= spacing || 0;
+					
+				// variables
+					rowHeight	= 0;
+					
+				// layout
 					var px, py;
-	
-					for(var i = 0; i < this.elements.length; i++)
+					if(this.elements.length)
 					{
-						px			= i % cols;
-						py			= (i - x) / cols;
-						element		= this.elements[i];
+						var element	= this.elements[0];
+						var x		= element.x;
+						var y		= element.y;
+		
+						for(var i = 0; i < this.elements.length; i++)
+						{
+							px			= i % columns;
+							py			= (i - x) / columns;
+							element		= this.elements[i];
+							element.x	= px * element.width * element.scaleX;
+							element.y	= py * element.width * element.scaleY
+							;
+						}
 					}
-				}
+				
+				// refresh and return
+					this.refresh();
+					return this;
 			},
 	
 			/**
@@ -960,7 +992,7 @@
 			 * @param	{Number}			modifier	A multiplier value
 			 * @param	{String}			modifier	A valid modifier property: n%, +n, -n, *n
 			 * @param	{Array}				modifier	A valid modifier range: [from, to]
-			 * @returns	{ElementCollection}				The original ElementCollection object
+			 * @returns	{ElementCollection}				
 			 */
 			randomize:function(prop, modifier)
 			{
@@ -1058,6 +1090,9 @@
 							}
 	
 					}
+					
+				// refresh
+					this.refresh();
 	
 				// return
 					return this;
@@ -1137,3 +1172,4 @@
 	}
 
 	xjsfl.classes.register('ElementCollection', ElementCollection);
+
