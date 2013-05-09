@@ -93,7 +93,7 @@
 									: [params];
 
 			// variables
-				var rx		= /{([^}]+)}/g;
+				var rx		= /{([a-z0-9]+)}/gi;
 				var values	= {};
 				var length	= 0;
 

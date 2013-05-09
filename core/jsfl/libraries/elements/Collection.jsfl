@@ -173,6 +173,8 @@
 			/**
 			 * Adds elements to the collection
 			 * @param	{Array}			elements	An Array of elements
+			 * @param	{Element}		elements	A single Element
+			 * @param	{...rest}		elements	Multiple elements as function parameters
 			 * @returns	{Collection}				The original Collection object
 			 */
 			add:function(elements)
@@ -180,6 +182,10 @@
 				if(arguments.length > 1)
 				{
 					elements		= Array.slice.call(this, arguments)
+				}
+				else if( ! Utils.isArray(elements) )
+				{
+					elements = [elements];
 				}
 	
 				if(elements instanceof Array)
