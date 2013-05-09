@@ -128,10 +128,6 @@
 					{
 						var uri;
 						var uris = FLfile.listFolder(this.uri);
-						
-						//BUG Need to fix UNC paths. If // is passed in, windows doesn't know what to do, the following code fails, castinf files as folders and appending a trailing slash
-						//BUG Looks like if / are passed after // on windows, the lookup is MUCH slower. \\name\folder\file is much faster than \\name/folder/file
-						
 						for (var i = 0; i < uris.length; i++)
 						{
 							uri = this.uri + encodeURI(uris[i]);
@@ -139,7 +135,7 @@
 							{
 								URI.throwURILengthError(uri);
 							}
-							if(FLfile.exists(uri + '/'))
+							if(FLfile.getAttributes(uri).indexOf('D') > -1)
 							{
 								 uri += '/';
 							}
@@ -191,7 +187,7 @@
 				{
 					File.prototype.open.apply(this);
 				},
-				
+
 				/**
 				 * Copy the folder to a new uri
 				 * @param	{String}		toUri		The URI to copy to
@@ -288,19 +284,7 @@
 		{
 			return '[class Folder]';
 		}
-		
-		/**
-		 * Alias for fl.browseForFolderURL that appends a trailing slash
-		 * @param	{String}		prompt		An optional user prompt
-		 * @param	{Boolean}		asPath		An optional flag to return a path instead of a URI
-		 * @returns	{String}					A URI or undefined if no pick
-		 */
-		Folder.pick = function(prompt, asPath)
-		{
-			var uri = fl.browseForFolderURL(prompt);
-			uri = uri ? uri.replace(/\/?$/, '/') : uri;
-			return asPath ? URI.asPath(uri) : uri;
-		}
+
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// register classes with xjsfl

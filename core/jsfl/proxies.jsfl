@@ -208,7 +208,7 @@
 				for each(var item in items)
 				{
 					var uri = folderURI + item;
-					if(FLfile.exists(uri + '/'))
+					if(FLfile.getAttributes(uri).indexOf('D') > -1)
 					{
 						if( ! filesOnly )
 						{
