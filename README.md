@@ -9,4 +9,4 @@ JSFL easy.
 
 * Overview: http://www.xjsfl.com
 * Support:  http://www.xjsfl.com/support
-
+* License:  http://www.xjsfl.com/license
