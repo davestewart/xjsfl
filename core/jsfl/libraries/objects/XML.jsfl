@@ -37,7 +37,7 @@
 		 * @type {RegExp}	type, attr, operator, value
 		 * @ignore
 		 */
-		var rxFilter		= /([@#\.])([\w_-:]+)([\^\$!=<>]+)?([^"'\(\)]+)?/;
+		var rxFilter		= /([@#\.])([\w:-_]+)([\^\$!=<>]+)?([^"'\(\)]+)?/;
 		
 		/**
 		 * 
