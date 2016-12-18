@@ -62,26 +62,27 @@
 			<columns id="columns">
 				<column flex="1"/>
 				<column flex="2"/>
+				<column flex="3"/>
 			</columns>
 			<rows id="controls">
 				<row>
-					<label value="Status: " width="80"/>
+					<label value="Status:" />
 					<hbox>
-						<menulist id="enabled" flex="1" oncreate="getEnabled()">
+						<menulist id="enabled" oncreate="getEnabled()">
 							<menupop id="menupop">
 								<menuitem label="Enabled" value="1" />
 								<menuitem label="Disabled" value="0" />
 							</menupop>
 						</menulist>
-						<button label="Uninstall" width="63" id="uninstall" oncommand="uninstall()" oncreate="getInstalled()" />
+						<label value=" " width="175"/>
+						
 					</hbox>
+					<button label="Uninstall" width="63" id="uninstall" oncommand="uninstall()" oncreate="getInstalled()" />
 				</row>
 				<row>
-					<label value="Installation folder: " width="100"/>
-					<hbox>
-						<textbox id="installfolder" value="" width="300" oncreate="setInstallFolder(xjsfl.uri)" />
-						<button label="Change" width="63" oncommand="updateInstallFolder()" />
-					</hbox>
+					<label value="Install path:" />
+					<textbox id="installfolder" value="" width="270" oncreate="setInstallFolder(xjsfl.uri)" />
+					<button label="Change" width="63" oncommand="updateInstallFolder()" />
 				</row>
 			</rows>
 		</grid>
