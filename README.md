@@ -5,6 +5,8 @@ xJSFL
 
 **xJSFL is an open source JSFL framework for creating tools and plugins for the Adobe Flash IDE**
 
+![xjsfl-api](https://xjsfl.vercel.app/wp-content/uploads/xjsfl-1-01-api.png)
+
 It combines the expressive nature and extensibility of a JavaScript framework like jQuery with
 the structure and file management features of PHP frameworks such as Kohana, to make working with JSFL easy.
 
